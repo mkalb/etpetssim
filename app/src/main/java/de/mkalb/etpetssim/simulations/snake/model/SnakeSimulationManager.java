@@ -1,14 +1,30 @@
 package de.mkalb.etpetssim.simulations.snake.model;
 
-import de.mkalb.etpetssim.engine.*;
-import de.mkalb.etpetssim.engine.executor.*;
-import de.mkalb.etpetssim.engine.model.*;
-import de.mkalb.etpetssim.engine.support.*;
-import de.mkalb.etpetssim.simulations.core.model.*;
-import de.mkalb.etpetssim.simulations.snake.model.entity.*;
-import de.mkalb.etpetssim.simulations.snake.model.strategy.*;
+import de.mkalb.etpetssim.engine.GridCoordinate;
+import de.mkalb.etpetssim.engine.GridStructure;
+import de.mkalb.etpetssim.engine.executor.AsynchronousStepRunner;
+import de.mkalb.etpetssim.engine.executor.DefaultSimulationExecutor;
+import de.mkalb.etpetssim.engine.executor.TimedSimulationExecutor;
+import de.mkalb.etpetssim.engine.model.GridCell;
+import de.mkalb.etpetssim.engine.model.ReadableGridModel;
+import de.mkalb.etpetssim.engine.model.SparseGridModel;
+import de.mkalb.etpetssim.engine.model.WritableGridModel;
+import de.mkalb.etpetssim.engine.support.GridInitializer;
+import de.mkalb.etpetssim.engine.support.GridInitializers;
+import de.mkalb.etpetssim.simulations.core.model.AbstractTimedSimulationManager;
+import de.mkalb.etpetssim.simulations.core.model.SimulationInitializationCancellation;
+import de.mkalb.etpetssim.simulations.snake.model.entity.SnakeEntity;
+import de.mkalb.etpetssim.simulations.snake.model.entity.SnakeHead;
+import de.mkalb.etpetssim.simulations.snake.model.entity.TerrainConstant;
+import de.mkalb.etpetssim.simulations.snake.model.strategy.SnakeMoveStrategies;
+import de.mkalb.etpetssim.simulations.snake.model.strategy.SnakeMoveStrategy;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Random;
+import java.util.Set;
+import java.util.TreeSet;
 
 import static de.mkalb.etpetssim.engine.support.WorkCheckpoints.isCancellationCheckpoint;
 

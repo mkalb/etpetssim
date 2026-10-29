@@ -2,7 +2,9 @@ package de.mkalb.etpetssim.ui;
 
 import de.mkalb.etpetssim.core.AppLogger;
 import javafx.beans.binding.StringBinding;
-import javafx.beans.property.*;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 
 /**
  * Represents an integer property with a defined range and step size.

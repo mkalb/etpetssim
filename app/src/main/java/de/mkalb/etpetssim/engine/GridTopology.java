@@ -1,6 +1,6 @@
 package de.mkalb.etpetssim.engine;
 
-import java.util.*;
+import java.util.Locale;
 
 /**
  * Represents the topological configuration of a grid, including its cell shape and boundary behavior.

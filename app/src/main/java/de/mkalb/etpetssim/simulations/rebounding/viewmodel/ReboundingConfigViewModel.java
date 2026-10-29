@@ -5,10 +5,37 @@ import de.mkalb.etpetssim.engine.neighborhood.NeighborhoodMode;
 import de.mkalb.etpetssim.simulations.core.shared.SimulationState;
 import de.mkalb.etpetssim.simulations.core.viewmodel.AbstractConfigViewModel;
 import de.mkalb.etpetssim.simulations.rebounding.model.ReboundingConfig;
-import de.mkalb.etpetssim.ui.*;
+import de.mkalb.etpetssim.ui.InputChoiceProperty;
+import de.mkalb.etpetssim.ui.InputDoubleProperty;
+import de.mkalb.etpetssim.ui.InputIntegerProperty;
 import javafx.beans.property.ReadOnlyObjectProperty;
 
-import static de.mkalb.etpetssim.simulations.rebounding.model.ReboundingConstraints.*;
+import static de.mkalb.etpetssim.simulations.rebounding.model.ReboundingConstraints.CELL_DISPLAY_MODE_DEFAULT;
+import static de.mkalb.etpetssim.simulations.rebounding.model.ReboundingConstraints.CELL_DISPLAY_MODE_VALUES;
+import static de.mkalb.etpetssim.simulations.rebounding.model.ReboundingConstraints.CELL_EDGE_LENGTH_DEFAULT;
+import static de.mkalb.etpetssim.simulations.rebounding.model.ReboundingConstraints.CELL_EDGE_LENGTH_MAX;
+import static de.mkalb.etpetssim.simulations.rebounding.model.ReboundingConstraints.CELL_EDGE_LENGTH_MIN;
+import static de.mkalb.etpetssim.simulations.rebounding.model.ReboundingConstraints.CELL_SHAPE_DEFAULT;
+import static de.mkalb.etpetssim.simulations.rebounding.model.ReboundingConstraints.CELL_SHAPE_VALUES;
+import static de.mkalb.etpetssim.simulations.rebounding.model.ReboundingConstraints.GRID_EDGE_BEHAVIOR_DEFAULT;
+import static de.mkalb.etpetssim.simulations.rebounding.model.ReboundingConstraints.GRID_EDGE_BEHAVIOR_VALUES;
+import static de.mkalb.etpetssim.simulations.rebounding.model.ReboundingConstraints.GRID_HEIGHT_DEFAULT;
+import static de.mkalb.etpetssim.simulations.rebounding.model.ReboundingConstraints.GRID_HEIGHT_MAX;
+import static de.mkalb.etpetssim.simulations.rebounding.model.ReboundingConstraints.GRID_HEIGHT_MIN;
+import static de.mkalb.etpetssim.simulations.rebounding.model.ReboundingConstraints.GRID_HEIGHT_STEP;
+import static de.mkalb.etpetssim.simulations.rebounding.model.ReboundingConstraints.GRID_WIDTH_DEFAULT;
+import static de.mkalb.etpetssim.simulations.rebounding.model.ReboundingConstraints.GRID_WIDTH_MAX;
+import static de.mkalb.etpetssim.simulations.rebounding.model.ReboundingConstraints.GRID_WIDTH_MIN;
+import static de.mkalb.etpetssim.simulations.rebounding.model.ReboundingConstraints.GRID_WIDTH_STEP;
+import static de.mkalb.etpetssim.simulations.rebounding.model.ReboundingConstraints.MOVING_ENTITY_PERCENT_DEFAULT;
+import static de.mkalb.etpetssim.simulations.rebounding.model.ReboundingConstraints.MOVING_ENTITY_PERCENT_MAX;
+import static de.mkalb.etpetssim.simulations.rebounding.model.ReboundingConstraints.MOVING_ENTITY_PERCENT_MIN;
+import static de.mkalb.etpetssim.simulations.rebounding.model.ReboundingConstraints.NEIGHBORHOOD_MODE_DEFAULT;
+import static de.mkalb.etpetssim.simulations.rebounding.model.ReboundingConstraints.SEED_DEFAULT;
+import static de.mkalb.etpetssim.simulations.rebounding.model.ReboundingConstraints.VERTICAL_WALLS_DEFAULT;
+import static de.mkalb.etpetssim.simulations.rebounding.model.ReboundingConstraints.VERTICAL_WALLS_MAX;
+import static de.mkalb.etpetssim.simulations.rebounding.model.ReboundingConstraints.VERTICAL_WALLS_MIN;
+import static de.mkalb.etpetssim.simulations.rebounding.model.ReboundingConstraints.VERTICAL_WALLS_STEP;
 
 public final class ReboundingConfigViewModel
         extends AbstractConfigViewModel<ReboundingConfig> {

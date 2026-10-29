@@ -1,0 +1,44 @@
+root = true
+
+[*]
+charset = utf-8
+indent_size = 4
+indent_style = space
+insert_final_newline = true
+max_line_length = 120
+tab_width = 4
+trim_trailing_whitespace = true
+
+[*.json]
+indent_size = 2
+
+[*.java]
+ij_continuation_indent_size = 8
+ij_java_blank_lines_after_class_header = 1
+ij_java_blank_lines_before_class_end = 1
+ij_java_class_count_to_use_import_on_demand = 999
+ij_java_class_names_in_javadoc = 2
+ij_java_doc_keep_empty_parameter_tag = false
+ij_java_doc_keep_empty_return_tag = false
+ij_java_doc_keep_empty_throws_tag = false
+ij_java_doc_keep_invalid_tags = true
+ij_java_extends_keyword_wrap = normal
+ij_java_extends_list_wrap = normal
+ij_java_keep_blank_lines_before_right_brace = 1
+ij_java_keep_blank_lines_between_package_declaration_and_header = 1
+ij_java_keep_blank_lines_in_code = 1
+ij_java_keep_blank_lines_in_declarations = 1
+ij_java_keep_control_statement_in_one_line = false
+ij_java_keep_first_column_comment = false
+ij_java_keep_simple_classes_in_one_line = true
+ij_java_keep_simple_lambdas_in_one_line = true
+ij_java_line_comment_add_space = true
+ij_java_line_comment_add_space_on_reformat = true
+ij_java_line_comment_at_first_column = false
+ij_java_names_count_to_use_import_on_demand = 999
+ij_java_packages_to_use_import_on_demand =
+
+[*.properties]
+ij_properties_align_group_field_declarations = true
+ij_properties_keep_blank_lines = true
+ij_properties_spaces_around_key_value_delimiter = true

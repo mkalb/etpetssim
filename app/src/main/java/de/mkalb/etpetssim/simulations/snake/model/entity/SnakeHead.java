@@ -5,7 +5,11 @@ import de.mkalb.etpetssim.engine.neighborhood.CompassDirection;
 import de.mkalb.etpetssim.simulations.snake.model.strategy.SnakeMoveStrategy;
 import org.jspecify.annotations.Nullable;
 
-import java.util.*;
+import java.util.ArrayDeque;
+import java.util.Deque;
+import java.util.List;
+import java.util.Locale;
+import java.util.Optional;
 
 public final class SnakeHead implements SnakeEntity {
 

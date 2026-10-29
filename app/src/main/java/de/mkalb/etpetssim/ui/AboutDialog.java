@@ -1,17 +1,38 @@
 package de.mkalb.etpetssim.ui;
 
-import de.mkalb.etpetssim.core.*;
+import de.mkalb.etpetssim.core.AppLocalization;
+import de.mkalb.etpetssim.core.AppLocalizationKeys;
+import de.mkalb.etpetssim.core.AppLogger;
+import de.mkalb.etpetssim.core.AppResources;
 import javafx.application.HostServices;
 import javafx.scene.Node;
-import javafx.scene.control.*;
-import javafx.scene.image.*;
-import javafx.scene.layout.*;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.Dialog;
+import javafx.scene.control.DialogPane;
+import javafx.scene.control.Hyperlink;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.Tooltip;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.VBox;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
-import java.util.jar.*;
-import java.util.regex.*;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.jar.Attributes;
+import java.util.jar.Manifest;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Displays the application's About dialog.
@@ -53,6 +74,21 @@ public final class AboutDialog {
     }
 
     /**
+     * Formats the README for plain-text display.
+     * <p>
+     * The README starts with an HTML header (logo, title, links, and badges) that is only
+     * useful when rendered. The text is therefore shown from the first line starting with
+     * {@code "## "}; text without such a line is returned unchanged.
+     *
+     * @param readme the README text
+     * @return the README text from its first second-level heading
+     */
+    static String formatReadmeText(String readme) {
+        Matcher matcher = README_FIRST_SECTION_PATTERN.matcher(readme);
+        return matcher.find() ? readme.substring(matcher.start()) : readme;
+    }
+
+    /**
      * Shows the About dialog and waits until it is closed.
      */
     public void show() {
@@ -89,21 +125,6 @@ public final class AboutDialog {
     }
 
     /**
-     * Formats the README for plain-text display.
-     * <p>
-     * The README starts with an HTML header (logo, title, links, and badges) that is only
-     * useful when rendered. The text is therefore shown from the first line starting with
-     * {@code "## "}; text without such a line is returned unchanged.
-     *
-     * @param readme the README text
-     * @return the README text from its first second-level heading
-     */
-    static String formatReadmeText(String readme) {
-        Matcher matcher = README_FIRST_SECTION_PATTERN.matcher(readme);
-        return matcher.find() ? readme.substring(matcher.start()) : readme;
-    }
-
-    /**
      * Creates the header with the application icon, title, and version.
      *
      * @param manifestInfo manifest attributes read by {@link #readManifestInfo()}
@@ -121,15 +142,15 @@ public final class AboutDialog {
         HBox header = new HBox();
         header.getStyleClass().add(FXStyleClasses.ABOUT_HEADER_HBOX);
         icons.stream()
-             .max(Comparator.comparingDouble(Image::getWidth))
-             .ifPresent(icon -> {
-                 ImageView iconView = new ImageView(icon);
-                 iconView.setFitWidth(HEADER_ICON_SIZE);
-                 iconView.setFitHeight(HEADER_ICON_SIZE);
-                 iconView.setPreserveRatio(true);
-                 iconView.setSmooth(true);
-                 header.getChildren().add(iconView);
-             });
+                .max(Comparator.comparingDouble(Image::getWidth))
+                .ifPresent(icon -> {
+                    ImageView iconView = new ImageView(icon);
+                    iconView.setFitWidth(HEADER_ICON_SIZE);
+                    iconView.setFitHeight(HEADER_ICON_SIZE);
+                    iconView.setPreserveRatio(true);
+                    iconView.setSmooth(true);
+                    header.getChildren().add(iconView);
+                });
         header.getChildren().add(titleBox);
         return header;
     }
@@ -185,7 +206,7 @@ public final class AboutDialog {
         for (ManifestLine line : MANIFEST_LINES) {
             String value = resolveManifestValue(manifestInfo, line.attributeName());
             summary.append(AppLocalization.getFormattedText(line.localizationKey(), value))
-                   .append(lineSeparator);
+                    .append(lineSeparator);
         }
         return summary.toString();
     }
@@ -237,9 +258,9 @@ public final class AboutDialog {
      */
     private String getResourceAsString(String resourceRelativePath) {
         return AppResources.getResourceAsString(resourceRelativePath, StandardCharsets.UTF_8)
-                           .orElse(AppLocalization.getFormattedText(
-                                   AppLocalizationKeys.ABOUT_RESOURCE_NOT_FOUND,
-                                   resourceRelativePath));
+                .orElse(AppLocalization.getFormattedText(
+                        AppLocalizationKeys.ABOUT_RESOURCE_NOT_FOUND,
+                        resourceRelativePath));
     }
 
     private record ManifestLine(String attributeName, String localizationKey) {

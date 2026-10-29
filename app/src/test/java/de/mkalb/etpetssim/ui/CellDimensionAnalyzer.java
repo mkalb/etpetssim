@@ -2,7 +2,7 @@ package de.mkalb.etpetssim.ui;
 
 import de.mkalb.etpetssim.engine.CellShape;
 
-import java.util.*;
+import java.util.Locale;
 
 /**
  * Manual analyzer for cell dimension calculations and stroke line width values.

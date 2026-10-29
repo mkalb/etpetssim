@@ -2,7 +2,7 @@ package de.mkalb.etpetssim.simulations.etpets.model;
 
 import de.mkalb.etpetssim.engine.executor.SimulationStepRunner;
 
-import java.util.*;
+import java.util.Random;
 
 public final class EtpetsStepRunner
         implements SimulationStepRunner<EtpetsStatistics> {

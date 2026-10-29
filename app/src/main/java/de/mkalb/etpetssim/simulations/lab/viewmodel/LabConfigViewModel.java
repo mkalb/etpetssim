@@ -1,17 +1,41 @@
 package de.mkalb.etpetssim.simulations.lab.viewmodel;
 
 import de.mkalb.etpetssim.core.AppLocalization;
-import de.mkalb.etpetssim.engine.*;
+import de.mkalb.etpetssim.engine.GridSize;
+import de.mkalb.etpetssim.engine.GridStructure;
+import de.mkalb.etpetssim.engine.GridTopology;
 import de.mkalb.etpetssim.engine.neighborhood.NeighborhoodMode;
 import de.mkalb.etpetssim.simulations.core.shared.SimulationState;
 import de.mkalb.etpetssim.simulations.core.viewmodel.AbstractConfigViewModel;
 import de.mkalb.etpetssim.simulations.lab.model.LabConfig;
 import de.mkalb.etpetssim.simulations.lab.shared.LabColorMode;
-import de.mkalb.etpetssim.ui.*;
+import de.mkalb.etpetssim.ui.InputChoiceProperty;
 import javafx.beans.binding.Bindings;
-import javafx.beans.property.*;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.ReadOnlyObjectProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 
-import static de.mkalb.etpetssim.simulations.lab.model.LabConstraints.*;
+import static de.mkalb.etpetssim.simulations.lab.model.LabConstraints.CELL_DISPLAY_MODE_DEFAULT;
+import static de.mkalb.etpetssim.simulations.lab.model.LabConstraints.CELL_DISPLAY_MODE_VALUES;
+import static de.mkalb.etpetssim.simulations.lab.model.LabConstraints.CELL_EDGE_LENGTH_DEFAULT;
+import static de.mkalb.etpetssim.simulations.lab.model.LabConstraints.CELL_EDGE_LENGTH_MAX;
+import static de.mkalb.etpetssim.simulations.lab.model.LabConstraints.CELL_EDGE_LENGTH_MIN;
+import static de.mkalb.etpetssim.simulations.lab.model.LabConstraints.CELL_SHAPE_DEFAULT;
+import static de.mkalb.etpetssim.simulations.lab.model.LabConstraints.CELL_SHAPE_VALUES;
+import static de.mkalb.etpetssim.simulations.lab.model.LabConstraints.COLOR_MODE_DEFAULT;
+import static de.mkalb.etpetssim.simulations.lab.model.LabConstraints.COLOR_MODE_VALUES;
+import static de.mkalb.etpetssim.simulations.lab.model.LabConstraints.GRID_EDGE_BEHAVIOR_DEFAULT;
+import static de.mkalb.etpetssim.simulations.lab.model.LabConstraints.GRID_EDGE_BEHAVIOR_VALUES;
+import static de.mkalb.etpetssim.simulations.lab.model.LabConstraints.GRID_HEIGHT_DEFAULT;
+import static de.mkalb.etpetssim.simulations.lab.model.LabConstraints.GRID_HEIGHT_MAX;
+import static de.mkalb.etpetssim.simulations.lab.model.LabConstraints.GRID_HEIGHT_MIN;
+import static de.mkalb.etpetssim.simulations.lab.model.LabConstraints.GRID_HEIGHT_STEP;
+import static de.mkalb.etpetssim.simulations.lab.model.LabConstraints.GRID_WIDTH_DEFAULT;
+import static de.mkalb.etpetssim.simulations.lab.model.LabConstraints.GRID_WIDTH_MAX;
+import static de.mkalb.etpetssim.simulations.lab.model.LabConstraints.GRID_WIDTH_MIN;
+import static de.mkalb.etpetssim.simulations.lab.model.LabConstraints.GRID_WIDTH_STEP;
+import static de.mkalb.etpetssim.simulations.lab.model.LabConstraints.NEIGHBORHOOD_MODE_DEFAULT;
+import static de.mkalb.etpetssim.simulations.lab.model.LabConstraints.SEED_DEFAULT;
 
 public final class LabConfigViewModel
         extends AbstractConfigViewModel<LabConfig> {

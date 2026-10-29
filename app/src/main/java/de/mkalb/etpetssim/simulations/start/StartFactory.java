@@ -4,7 +4,7 @@ import de.mkalb.etpetssim.simulations.core.SimulationType;
 import de.mkalb.etpetssim.simulations.core.view.SimulationMainView;
 import javafx.stage.Stage;
 
-import java.util.function.*;
+import java.util.function.BiConsumer;
 
 /**
  * Factory for the start screen main view.

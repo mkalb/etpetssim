@@ -1,9 +1,11 @@
 package de.mkalb.etpetssim.ui;
 
-import javafx.geometry.*;
+import javafx.geometry.Dimension2D;
+import javafx.geometry.Point2D;
+import javafx.geometry.Rectangle2D;
 
-import java.util.*;
-import java.util.stream.*;
+import java.util.Locale;
+import java.util.stream.DoubleStream;
 
 /**
  * Describes the geometric pixel dimensions of a single cell shape

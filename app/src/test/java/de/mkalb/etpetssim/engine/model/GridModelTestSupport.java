@@ -1,10 +1,15 @@
 package de.mkalb.etpetssim.engine.model;
 
-import de.mkalb.etpetssim.engine.*;
+import de.mkalb.etpetssim.engine.CellShape;
+import de.mkalb.etpetssim.engine.GridCoordinate;
+import de.mkalb.etpetssim.engine.GridEdgeBehavior;
+import de.mkalb.etpetssim.engine.GridSize;
+import de.mkalb.etpetssim.engine.GridStructure;
+import de.mkalb.etpetssim.engine.GridTopology;
 import de.mkalb.etpetssim.engine.model.entity.GridEntity;
 import org.jspecify.annotations.NonNull;
 
-import java.util.*;
+import java.util.Locale;
 
 final class GridModelTestSupport {
 

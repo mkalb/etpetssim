@@ -1,13 +1,27 @@
 package de.mkalb.etpetssim.simulations.etpets.model;
 
-import de.mkalb.etpetssim.engine.*;
+import de.mkalb.etpetssim.engine.CellShape;
+import de.mkalb.etpetssim.engine.GridCoordinate;
+import de.mkalb.etpetssim.engine.GridEdgeBehavior;
 import de.mkalb.etpetssim.engine.neighborhood.NeighborhoodMode;
 import de.mkalb.etpetssim.simulations.core.shared.CellDisplayMode;
-import de.mkalb.etpetssim.simulations.etpets.model.entity.*;
-import de.mkalb.etpetssim.simulations.etpets.shared.*;
+import de.mkalb.etpetssim.simulations.etpets.model.entity.Insect;
+import de.mkalb.etpetssim.simulations.etpets.model.entity.NoResource;
+import de.mkalb.etpetssim.simulations.etpets.model.entity.Pet;
+import de.mkalb.etpetssim.simulations.etpets.model.entity.PetTraits;
+import de.mkalb.etpetssim.simulations.etpets.model.entity.Plant;
+import de.mkalb.etpetssim.simulations.etpets.model.entity.ResourceEntity;
+import de.mkalb.etpetssim.simulations.etpets.model.entity.TerrainConstant;
+import de.mkalb.etpetssim.simulations.etpets.model.entity.Trail;
+import de.mkalb.etpetssim.simulations.etpets.shared.EtpetsResourceChoice;
+import de.mkalb.etpetssim.simulations.etpets.shared.EtpetsTerrainChoice;
+import de.mkalb.etpetssim.simulations.etpets.shared.EtpetsUserActionContext;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 @SuppressWarnings("OverlyStrongTypeCast")
 final class EtpetsUserActionTest {

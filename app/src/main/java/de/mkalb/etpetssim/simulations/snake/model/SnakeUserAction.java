@@ -1,13 +1,18 @@
 package de.mkalb.etpetssim.simulations.snake.model;
 
 import de.mkalb.etpetssim.engine.GridCoordinate;
-import de.mkalb.etpetssim.engine.model.*;
+import de.mkalb.etpetssim.engine.model.GridCell;
+import de.mkalb.etpetssim.engine.model.GridCellView;
+import de.mkalb.etpetssim.engine.model.ReadableGridModel;
+import de.mkalb.etpetssim.engine.model.WritableGridModel;
 import de.mkalb.etpetssim.simulations.core.model.SimulationUserAction;
-import de.mkalb.etpetssim.simulations.snake.model.entity.*;
+import de.mkalb.etpetssim.simulations.snake.model.entity.SnakeEntity;
+import de.mkalb.etpetssim.simulations.snake.model.entity.SnakeHead;
+import de.mkalb.etpetssim.simulations.snake.model.entity.TerrainConstant;
 import de.mkalb.etpetssim.simulations.snake.shared.SnakeUserActionContext;
 import org.jspecify.annotations.Nullable;
 
-import java.util.*;
+import java.util.Optional;
 
 public final class SnakeUserAction
         implements SimulationUserAction<
@@ -97,11 +102,11 @@ public final class SnakeUserAction
     private Optional<GridCoordinate> findSnakeHeadCoordinateBySegment(ReadableGridModel<SnakeEntity> model,
                                                                       GridCoordinate segmentCoordinate) {
         return model.filteredCells(e -> e instanceof SnakeHead)
-                    .stream()
-                    .filter(cell -> (cell.entity() instanceof SnakeHead head)
-                            && head.currentSegments().contains(segmentCoordinate))
-                    .map(GridCell::coordinate)
-                    .findFirst();
+                .stream()
+                .filter(cell -> (cell.entity() instanceof SnakeHead head)
+                        && head.currentSegments().contains(segmentCoordinate))
+                .map(GridCell::coordinate)
+                .findFirst();
     }
 
     private void removeSnake(WritableGridModel<SnakeEntity> model,

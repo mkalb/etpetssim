@@ -1,12 +1,14 @@
 package de.mkalb.etpetssim.testsupport;
 
 import de.mkalb.etpetssim.core.AppLocalizationKeys;
-import de.mkalb.etpetssim.engine.model.entity.*;
+import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorSpec;
+import de.mkalb.etpetssim.engine.model.entity.SpecBackedGridEntityDescriptorProvider;
 import org.junit.jupiter.api.Test;
 
-import java.util.*;
+import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 final class LocalizationTestSupportTest {
 

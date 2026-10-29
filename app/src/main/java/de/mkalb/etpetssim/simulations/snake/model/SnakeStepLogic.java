@@ -1,13 +1,27 @@
 package de.mkalb.etpetssim.simulations.snake.model;
 
-import de.mkalb.etpetssim.engine.*;
+import de.mkalb.etpetssim.engine.CellShape;
+import de.mkalb.etpetssim.engine.GridCoordinate;
+import de.mkalb.etpetssim.engine.GridStructure;
 import de.mkalb.etpetssim.engine.executor.AgentStepLogic;
-import de.mkalb.etpetssim.engine.model.*;
-import de.mkalb.etpetssim.engine.neighborhood.*;
-import de.mkalb.etpetssim.simulations.snake.model.entity.*;
-import de.mkalb.etpetssim.simulations.snake.model.strategy.*;
+import de.mkalb.etpetssim.engine.model.GridCell;
+import de.mkalb.etpetssim.engine.model.ReadableGridModel;
+import de.mkalb.etpetssim.engine.model.WritableGridModel;
+import de.mkalb.etpetssim.engine.neighborhood.CellNeighborWithEdgeBehavior;
+import de.mkalb.etpetssim.engine.neighborhood.CellNeighborhoods;
+import de.mkalb.etpetssim.engine.neighborhood.CompassDirection;
+import de.mkalb.etpetssim.engine.neighborhood.EdgeBehaviorAction;
+import de.mkalb.etpetssim.engine.neighborhood.NeighborhoodMode;
+import de.mkalb.etpetssim.simulations.snake.model.entity.SnakeEntity;
+import de.mkalb.etpetssim.simulations.snake.model.entity.SnakeHead;
+import de.mkalb.etpetssim.simulations.snake.model.entity.TerrainConstant;
+import de.mkalb.etpetssim.simulations.snake.model.strategy.MoveContext;
+import de.mkalb.etpetssim.simulations.snake.model.strategy.MoveDecision;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.Random;
 
 public final class SnakeStepLogic implements AgentStepLogic<SnakeEntity, SnakeStatistics> {
 
@@ -69,15 +83,15 @@ public final class SnakeStepLogic implements AgentStepLogic<SnakeEntity, SnakeSt
         switch (config.deathMode()) {
             case PERMADEATH -> statistics.decrementSnakeHeadCells();
             case RESPAWN -> model.findRandomDefaultCoordinate(random)
-                                 .ifPresentOrElse(
-                                         // Respawn snake head as new living snake head at free cell
-                                         freeCoordinate -> {
-                                             model.setEntity(freeCoordinate, snakeHead);
-                                             snakeHead.respawn(config.initialPendingGrowth(), stepIndex);
-                                             statistics.incrementLivingSnakeHeadCells();
-                                         },
-                                         // No free cell to respawn. Remove snake head from statistics. Similar to PERMADEATH.
-                                         statistics::decrementSnakeHeadCells);
+                    .ifPresentOrElse(
+                            // Respawn snake head as new living snake head at free cell
+                            freeCoordinate -> {
+                                model.setEntity(freeCoordinate, snakeHead);
+                                snakeHead.respawn(config.initialPendingGrowth(), stepIndex);
+                                statistics.incrementLivingSnakeHeadCells();
+                            },
+                            // No free cell to respawn. Remove snake head from statistics. Similar to PERMADEATH.
+                            statistics::decrementSnakeHeadCells);
         }
     }
 
@@ -101,9 +115,9 @@ public final class SnakeStepLogic implements AgentStepLogic<SnakeEntity, SnakeSt
         // Respawn food if eaten
         if (moveDecision.isFoodTarget()) {
             model.findRandomDefaultCoordinate(random)
-                 .ifPresentOrElse(
-                         freeCoordinate -> model.setEntity(freeCoordinate, TerrainConstant.GROWTH_FOOD),
-                         statistics::decrementFoodCells);
+                    .ifPresentOrElse(
+                            freeCoordinate -> model.setEntity(freeCoordinate, TerrainConstant.GROWTH_FOOD),
+                            statistics::decrementFoodCells);
         }
     }
 

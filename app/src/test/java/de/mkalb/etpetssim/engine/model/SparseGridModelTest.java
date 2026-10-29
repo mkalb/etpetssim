@@ -1,12 +1,19 @@
 package de.mkalb.etpetssim.engine.model;
 
 import de.mkalb.etpetssim.engine.GridCoordinate;
+import de.mkalb.etpetssim.engine.model.GridModelTestSupport.TestEntity;
 import org.junit.jupiter.api.Test;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
-import static de.mkalb.etpetssim.engine.model.GridModelTestSupport.*;
-import static org.junit.jupiter.api.Assertions.*;
+import static de.mkalb.etpetssim.engine.model.GridModelTestSupport.SQUARE_STRUCTURE_8X8;
+import static de.mkalb.etpetssim.engine.model.GridModelTestSupport.coordinate;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 final class SparseGridModelTest {
 

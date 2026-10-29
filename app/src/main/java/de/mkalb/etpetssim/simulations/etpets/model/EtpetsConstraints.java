@@ -1,10 +1,12 @@
 package de.mkalb.etpetssim.simulations.etpets.model;
 
-import de.mkalb.etpetssim.engine.*;
+import de.mkalb.etpetssim.engine.CellShape;
+import de.mkalb.etpetssim.engine.GridEdgeBehavior;
+import de.mkalb.etpetssim.engine.GridTopology;
 import de.mkalb.etpetssim.engine.neighborhood.NeighborhoodMode;
 import de.mkalb.etpetssim.simulations.core.shared.CellDisplayMode;
 
-import java.util.*;
+import java.util.List;
 
 /**
  * Defaults, limits, and allowed values of the ET Pets configuration.

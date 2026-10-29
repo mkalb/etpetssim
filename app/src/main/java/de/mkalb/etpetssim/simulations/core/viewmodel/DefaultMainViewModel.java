@@ -1,22 +1,41 @@
 package de.mkalb.etpetssim.simulations.core.viewmodel;
 
 import de.mkalb.etpetssim.core.AppLogger;
-import de.mkalb.etpetssim.engine.*;
-import de.mkalb.etpetssim.engine.model.*;
+import de.mkalb.etpetssim.engine.GridCoordinate;
+import de.mkalb.etpetssim.engine.GridStructure;
+import de.mkalb.etpetssim.engine.model.GridCellView;
+import de.mkalb.etpetssim.engine.model.GridModel;
 import de.mkalb.etpetssim.engine.model.entity.GridEntity;
 import de.mkalb.etpetssim.simulations.core.SimulationTerminationHandle;
-import de.mkalb.etpetssim.simulations.core.model.*;
-import de.mkalb.etpetssim.simulations.core.shared.*;
+import de.mkalb.etpetssim.simulations.core.model.AbstractTimedSimulationManager;
+import de.mkalb.etpetssim.simulations.core.model.SimulationConfig;
+import de.mkalb.etpetssim.simulations.core.model.SimulationInitializationCanceledException;
+import de.mkalb.etpetssim.simulations.core.model.SimulationInitializationCancellation;
+import de.mkalb.etpetssim.simulations.core.model.SimulationUserAction;
+import de.mkalb.etpetssim.simulations.core.model.TimedSimulationStatistics;
+import de.mkalb.etpetssim.simulations.core.shared.SimulationNotificationType;
+import de.mkalb.etpetssim.simulations.core.shared.SimulationState;
+import de.mkalb.etpetssim.simulations.core.shared.SimulationStepEvent;
+import de.mkalb.etpetssim.simulations.core.shared.SimulationUserActionContext;
 import de.mkalb.etpetssim.ui.SimulationTimer;
 import javafx.application.Platform;
-import javafx.beans.property.*;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.util.Duration;
 import org.jspecify.annotations.Nullable;
 
-import java.util.*;
-import java.util.concurrent.*;
-import java.util.function.*;
+import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.function.BiFunction;
+import java.util.function.Consumer;
 
 /**
  * Default main view-model implementation that orchestrates timed and batch execution.

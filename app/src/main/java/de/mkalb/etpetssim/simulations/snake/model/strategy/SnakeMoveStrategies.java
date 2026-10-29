@@ -1,10 +1,19 @@
 package de.mkalb.etpetssim.simulations.snake.model.strategy;
 
-import de.mkalb.etpetssim.engine.*;
-import de.mkalb.etpetssim.engine.neighborhood.*;
+import de.mkalb.etpetssim.engine.GridCoordinate;
+import de.mkalb.etpetssim.engine.GridStructure;
+import de.mkalb.etpetssim.engine.neighborhood.CellNeighbor;
+import de.mkalb.etpetssim.engine.neighborhood.CellNeighborWithEdgeBehavior;
+import de.mkalb.etpetssim.engine.neighborhood.CellNeighborhoods;
+import de.mkalb.etpetssim.engine.neighborhood.CompassDirection;
+import de.mkalb.etpetssim.engine.neighborhood.NeighborhoodMode;
 import org.jspecify.annotations.Nullable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
+import java.util.Random;
 
 /**
  * Catalog of the predefined snake move strategies.
@@ -161,9 +170,9 @@ public final class SnakeMoveStrategies {
                                          NeighborhoodMode neighborhoodMode,
                                          GridStructure structure) {
         return CellNeighborhoods.cellNeighborsIgnoringEdgeBehavior(coordinate, neighborhoodMode, structure.cellShape())
-                                .map(CellNeighbor::neighborCoordinate)
-                                .map(nc -> CellNeighborhoods.applyEdgeBehaviorToCoordinate(nc, structure).mapped())
-                                .anyMatch(coordinates::contains);
+                .map(CellNeighbor::neighborCoordinate)
+                .map(nc -> CellNeighborhoods.applyEdgeBehaviorToCoordinate(nc, structure).mapped())
+                .anyMatch(coordinates::contains);
     }
 
     private static ScoredMove createScoredMove(int score,

@@ -5,10 +5,38 @@ import de.mkalb.etpetssim.engine.neighborhood.NeighborhoodMode;
 import de.mkalb.etpetssim.simulations.core.shared.SimulationState;
 import de.mkalb.etpetssim.simulations.core.viewmodel.AbstractConfigViewModel;
 import de.mkalb.etpetssim.simulations.forest.model.ForestConfig;
-import de.mkalb.etpetssim.ui.*;
+import de.mkalb.etpetssim.ui.InputChoiceProperty;
+import de.mkalb.etpetssim.ui.InputDoubleProperty;
 import javafx.beans.property.ReadOnlyObjectProperty;
 
-import static de.mkalb.etpetssim.simulations.forest.model.ForestConstraints.*;
+import static de.mkalb.etpetssim.simulations.forest.model.ForestConstraints.CELL_DISPLAY_MODE_DEFAULT;
+import static de.mkalb.etpetssim.simulations.forest.model.ForestConstraints.CELL_DISPLAY_MODE_VALUES;
+import static de.mkalb.etpetssim.simulations.forest.model.ForestConstraints.CELL_EDGE_LENGTH_DEFAULT;
+import static de.mkalb.etpetssim.simulations.forest.model.ForestConstraints.CELL_EDGE_LENGTH_MAX;
+import static de.mkalb.etpetssim.simulations.forest.model.ForestConstraints.CELL_EDGE_LENGTH_MIN;
+import static de.mkalb.etpetssim.simulations.forest.model.ForestConstraints.CELL_SHAPE_DEFAULT;
+import static de.mkalb.etpetssim.simulations.forest.model.ForestConstraints.CELL_SHAPE_VALUES;
+import static de.mkalb.etpetssim.simulations.forest.model.ForestConstraints.GRID_EDGE_BEHAVIOR_DEFAULT;
+import static de.mkalb.etpetssim.simulations.forest.model.ForestConstraints.GRID_EDGE_BEHAVIOR_VALUES;
+import static de.mkalb.etpetssim.simulations.forest.model.ForestConstraints.GRID_HEIGHT_DEFAULT;
+import static de.mkalb.etpetssim.simulations.forest.model.ForestConstraints.GRID_HEIGHT_MAX;
+import static de.mkalb.etpetssim.simulations.forest.model.ForestConstraints.GRID_HEIGHT_MIN;
+import static de.mkalb.etpetssim.simulations.forest.model.ForestConstraints.GRID_HEIGHT_STEP;
+import static de.mkalb.etpetssim.simulations.forest.model.ForestConstraints.GRID_WIDTH_DEFAULT;
+import static de.mkalb.etpetssim.simulations.forest.model.ForestConstraints.GRID_WIDTH_MAX;
+import static de.mkalb.etpetssim.simulations.forest.model.ForestConstraints.GRID_WIDTH_MIN;
+import static de.mkalb.etpetssim.simulations.forest.model.ForestConstraints.GRID_WIDTH_STEP;
+import static de.mkalb.etpetssim.simulations.forest.model.ForestConstraints.LIGHTNING_IGNITION_PROBABILITY_DEFAULT;
+import static de.mkalb.etpetssim.simulations.forest.model.ForestConstraints.LIGHTNING_IGNITION_PROBABILITY_MAX;
+import static de.mkalb.etpetssim.simulations.forest.model.ForestConstraints.LIGHTNING_IGNITION_PROBABILITY_MIN;
+import static de.mkalb.etpetssim.simulations.forest.model.ForestConstraints.NEIGHBORHOOD_MODE_DEFAULT;
+import static de.mkalb.etpetssim.simulations.forest.model.ForestConstraints.SEED_DEFAULT;
+import static de.mkalb.etpetssim.simulations.forest.model.ForestConstraints.TREE_DENSITY_DEFAULT;
+import static de.mkalb.etpetssim.simulations.forest.model.ForestConstraints.TREE_DENSITY_MAX;
+import static de.mkalb.etpetssim.simulations.forest.model.ForestConstraints.TREE_DENSITY_MIN;
+import static de.mkalb.etpetssim.simulations.forest.model.ForestConstraints.TREE_GROWTH_PROBABILITY_DEFAULT;
+import static de.mkalb.etpetssim.simulations.forest.model.ForestConstraints.TREE_GROWTH_PROBABILITY_MAX;
+import static de.mkalb.etpetssim.simulations.forest.model.ForestConstraints.TREE_GROWTH_PROBABILITY_MIN;
 
 public final class ForestConfigViewModel
         extends AbstractConfigViewModel<ForestConfig> {

@@ -1,8 +1,16 @@
 package de.mkalb.etpetssim.core;
 
 import java.io.IOException;
-import java.util.*;
-import java.util.regex.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.EnumMap;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Parses and stores command-line arguments.
@@ -37,18 +45,6 @@ public final class AppArgs {
     }
 
     /**
-     * Returns the raw string value for a key.
-     *
-     * @param key the key to resolve
-     * @return an {@link Optional} with the stored value, or empty if the key is absent
-     * @throws NullPointerException if {@code key} is {@code null}
-     */
-    public Optional<String> getValue(Key key) {
-        Objects.requireNonNull(key, "Key must not be null");
-        return Optional.ofNullable(arguments.get(key));
-    }
-
-    /**
      * Parses a boolean value from text.
      * <p>
      * Accepted true values are {@code true}, {@code 1}, {@code yes}, and {@code on}.
@@ -67,6 +63,18 @@ public final class AppArgs {
             case "false", "0", "no", "off" -> Boolean.FALSE;
             default -> defaultValue;
         };
+    }
+
+    /**
+     * Returns the raw string value for a key.
+     *
+     * @param key the key to resolve
+     * @return an {@link Optional} with the stored value, or empty if the key is absent
+     * @throws NullPointerException if {@code key} is {@code null}
+     */
+    public Optional<String> getValue(Key key) {
+        Objects.requireNonNull(key, "Key must not be null");
+        return Optional.ofNullable(arguments.get(key));
     }
 
     /**
@@ -248,8 +256,8 @@ public final class AppArgs {
         public static Optional<Key> fromKeyName(String keyName) {
             Objects.requireNonNull(keyName, "Key name must not be null");
             return Arrays.stream(values())
-                         .filter(argument -> argument.key.equalsIgnoreCase(keyName))
-                         .findFirst();
+                    .filter(argument -> argument.key.equalsIgnoreCase(keyName))
+                    .findFirst();
         }
 
         /**
@@ -264,7 +272,7 @@ public final class AppArgs {
             Objects.requireNonNull(appendable, "Appendable must not be null");
             try {
                 appendable.append("List of available command-line arguments:")
-                          .append(System.lineSeparator());
+                        .append(System.lineSeparator());
                 for (Key key : values()) {
                     appendable.append(String.format(Locale.ROOT, "--%s: %s%s%n",
                             key.key(),

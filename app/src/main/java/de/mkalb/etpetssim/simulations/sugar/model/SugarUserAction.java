@@ -3,8 +3,12 @@ package de.mkalb.etpetssim.simulations.sugar.model;
 import de.mkalb.etpetssim.engine.GridCoordinate;
 import de.mkalb.etpetssim.engine.model.GridCellView;
 import de.mkalb.etpetssim.simulations.core.model.SimulationUserAction;
-import de.mkalb.etpetssim.simulations.sugar.model.entity.*;
-import de.mkalb.etpetssim.simulations.sugar.shared.*;
+import de.mkalb.etpetssim.simulations.sugar.model.entity.NoResource;
+import de.mkalb.etpetssim.simulations.sugar.model.entity.ResourceEntity;
+import de.mkalb.etpetssim.simulations.sugar.model.entity.Sugar;
+import de.mkalb.etpetssim.simulations.sugar.model.entity.SugarEntity;
+import de.mkalb.etpetssim.simulations.sugar.shared.SugarAddSugarLevel;
+import de.mkalb.etpetssim.simulations.sugar.shared.SugarUserActionContext;
 import org.jspecify.annotations.Nullable;
 
 public final class SugarUserAction

@@ -1,6 +1,7 @@
 package de.mkalb.etpetssim.simulations.etpets.model;
 
-import java.util.*;
+import java.util.List;
+import java.util.Locale;
 
 /**
  * Manual tuner for score calculation formulas and balance constants.

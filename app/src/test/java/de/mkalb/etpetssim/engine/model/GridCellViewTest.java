@@ -1,9 +1,10 @@
 package de.mkalb.etpetssim.engine.model;
 
 import de.mkalb.etpetssim.engine.GridCoordinate;
+import de.mkalb.etpetssim.engine.model.GridModelTestSupport.TestEntity;
 import org.junit.jupiter.api.Test;
 
-import static de.mkalb.etpetssim.engine.model.GridModelTestSupport.*;
+import static de.mkalb.etpetssim.engine.model.GridModelTestSupport.coordinate;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 final class GridCellViewTest {

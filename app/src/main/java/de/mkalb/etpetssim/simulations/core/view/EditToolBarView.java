@@ -1,19 +1,36 @@
 package de.mkalb.etpetssim.simulations.core.view;
 
-import de.mkalb.etpetssim.core.*;
-import de.mkalb.etpetssim.simulations.core.shared.*;
+import de.mkalb.etpetssim.core.AppLocalization;
+import de.mkalb.etpetssim.core.AppLocalizationKeys;
+import de.mkalb.etpetssim.core.AppLogger;
+import de.mkalb.etpetssim.simulations.core.shared.SimulationState;
+import de.mkalb.etpetssim.simulations.core.shared.SimulationUserActionContext;
+import de.mkalb.etpetssim.simulations.core.shared.SimulationUserActionScope;
 import de.mkalb.etpetssim.simulations.core.viewmodel.SimulationUserActionDescriptor;
 import de.mkalb.etpetssim.ui.FXStyleClasses;
-import javafx.beans.property.*;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.scene.Node;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.ButtonBase;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.Toggle;
+import javafx.scene.control.ToggleButton;
+import javafx.scene.control.ToggleGroup;
+import javafx.scene.control.Tooltip;
 import javafx.scene.input.ScrollEvent;
-import javafx.scene.layout.*;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Region;
 import org.jspecify.annotations.Nullable;
 
-import java.util.*;
-import java.util.function.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 final class EditToolBarView<CTX extends SimulationUserActionContext> {
 

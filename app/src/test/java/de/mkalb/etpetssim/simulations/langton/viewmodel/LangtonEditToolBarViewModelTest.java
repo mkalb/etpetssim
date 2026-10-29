@@ -1,12 +1,17 @@
 package de.mkalb.etpetssim.simulations.langton.viewmodel;
 
-import de.mkalb.etpetssim.engine.*;
+import de.mkalb.etpetssim.engine.CellShape;
+import de.mkalb.etpetssim.engine.GridCoordinate;
 import de.mkalb.etpetssim.engine.neighborhood.CompassDirection;
-import de.mkalb.etpetssim.simulations.langton.model.*;
+import de.mkalb.etpetssim.simulations.langton.model.LangtonConfig;
+import de.mkalb.etpetssim.simulations.langton.model.LangtonConstraints;
 import de.mkalb.etpetssim.simulations.langton.shared.LangtonMovementRules;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SuppressWarnings("SameParameterValue")
 final class LangtonEditToolBarViewModelTest {

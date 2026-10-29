@@ -1,17 +1,28 @@
 package de.mkalb.etpetssim.simulations.core.view;
 
-import de.mkalb.etpetssim.core.*;
-import de.mkalb.etpetssim.simulations.core.model.*;
+import de.mkalb.etpetssim.core.AppLocalization;
+import de.mkalb.etpetssim.core.AppLocalizationKeys;
+import de.mkalb.etpetssim.simulations.core.model.StatisticsChartGroup;
+import de.mkalb.etpetssim.simulations.core.model.StatisticsMetric;
+import de.mkalb.etpetssim.simulations.core.model.StatisticsSample;
 import de.mkalb.etpetssim.ui.FXStyleClasses;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.geometry.Side;
-import javafx.scene.chart.*;
+import javafx.scene.chart.LineChart;
+import javafx.scene.chart.NumberAxis;
+import javafx.scene.chart.XYChart;
 import javafx.scene.control.TitledPane;
 import javafx.scene.layout.VBox;
 
-import java.util.*;
-import java.util.stream.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.EnumMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * Renders one {@link LineChart} per distinct non-{@code NONE} {@link StatisticsChartGroup},
@@ -41,24 +52,24 @@ final class StatisticsHistoryChartView {
         this.historyProperty = historyProperty;
 
         distinctGroups = Arrays.stream(StatisticsChartGroup.values())
-                               .filter(g -> g != StatisticsChartGroup.NONE)
-                               .filter(g -> metrics.stream().anyMatch(m -> m.chartGroup() == g))
-                               .collect(Collectors.toList());
+                .filter(g -> g != StatisticsChartGroup.NONE)
+                .filter(g -> metrics.stream().anyMatch(m -> m.chartGroup() == g))
+                .collect(Collectors.toList());
 
         keysByGroup = new LinkedHashMap<>();
         windowSizeByGroup = new LinkedHashMap<>();
         for (StatisticsChartGroup group : distinctGroups) {
             List<String> keys = metrics.stream()
-                                       .filter(m -> m.chartGroup() == group)
-                                       .map(StatisticsMetric::key)
-                                       .collect(Collectors.toList());
+                    .filter(m -> m.chartGroup() == group)
+                    .map(StatisticsMetric::key)
+                    .collect(Collectors.toList());
             keysByGroup.put(group, keys);
             // Guarded by StatisticsMetricLayoutTest: metrics sharing a chartGroup use the same chartWindowSize.
             int windowSize = metrics.stream()
-                                    .filter(m -> m.chartGroup() == group)
-                                    .mapToInt(StatisticsMetric::chartWindowSize)
-                                    .findFirst()
-                                    .orElse(StatisticsMetric.DEFAULT_CHART_WINDOW_SIZE);
+                    .filter(m -> m.chartGroup() == group)
+                    .mapToInt(StatisticsMetric::chartWindowSize)
+                    .findFirst()
+                    .orElse(StatisticsMetric.DEFAULT_CHART_WINDOW_SIZE);
             windowSizeByGroup.put(group, windowSize);
         }
 
@@ -161,12 +172,12 @@ final class StatisticsHistoryChartView {
      */
     private static double maxValueAcrossKeys(StatisticsSample sample, List<String> keys) {
         return keys.stream()
-                   .map(k -> sample.values().get(k))
-                   .filter(Objects::nonNull)
-                   .filter(Double::isFinite)
-                   .mapToDouble(Double::doubleValue)
-                   .max()
-                   .orElse(0.0);
+                .map(k -> sample.values().get(k))
+                .filter(Objects::nonNull)
+                .filter(Double::isFinite)
+                .mapToDouble(Double::doubleValue)
+                .max()
+                .orElse(0.0);
     }
 
     void shutdown() {
@@ -206,9 +217,9 @@ final class StatisticsHistoryChartView {
                         : history.subList(history.size() - windowSize, history.size());
 
                 double windowedMax = windowedHistory.stream()
-                                                    .mapToDouble(s -> maxValueAcrossKeys(s, keys))
-                                                    .max()
-                                                    .orElse(0.0);
+                        .mapToDouble(s -> maxValueAcrossKeys(s, keys))
+                        .max()
+                        .orElse(0.0);
                 double latestMax = maxValueAcrossKeys(history.getLast(), keys);
                 double currentCeiling = ceilingByGroup.getOrDefault(group, 0.0);
                 double newCeiling;

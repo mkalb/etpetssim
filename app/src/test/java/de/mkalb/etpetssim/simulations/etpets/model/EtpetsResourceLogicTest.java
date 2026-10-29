@@ -1,11 +1,13 @@
 package de.mkalb.etpetssim.simulations.etpets.model;
 
 import de.mkalb.etpetssim.engine.GridCoordinate;
-import de.mkalb.etpetssim.simulations.etpets.model.entity.*;
+import de.mkalb.etpetssim.simulations.etpets.model.entity.Insect;
+import de.mkalb.etpetssim.simulations.etpets.model.entity.Plant;
 import org.junit.jupiter.api.Test;
 
 import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsLogicTestSupport.createGridModel;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SuppressWarnings("MagicNumber")
 final class EtpetsResourceLogicTest {

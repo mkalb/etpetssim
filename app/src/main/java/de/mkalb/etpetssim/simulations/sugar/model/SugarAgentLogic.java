@@ -1,11 +1,27 @@
 package de.mkalb.etpetssim.simulations.sugar.model;
 
-import de.mkalb.etpetssim.engine.*;
-import de.mkalb.etpetssim.engine.model.*;
-import de.mkalb.etpetssim.engine.neighborhood.*;
-import de.mkalb.etpetssim.simulations.sugar.model.entity.*;
+import de.mkalb.etpetssim.engine.GridCoordinate;
+import de.mkalb.etpetssim.engine.GridStructure;
+import de.mkalb.etpetssim.engine.model.GridCell;
+import de.mkalb.etpetssim.engine.model.ReadableGridModel;
+import de.mkalb.etpetssim.engine.model.WritableGridModel;
+import de.mkalb.etpetssim.engine.neighborhood.CellConnectionType;
+import de.mkalb.etpetssim.engine.neighborhood.CellNeighborWithEdgeBehavior;
+import de.mkalb.etpetssim.engine.neighborhood.CellNeighborhoods;
+import de.mkalb.etpetssim.engine.neighborhood.CompassDirection;
+import de.mkalb.etpetssim.engine.neighborhood.EdgeBehaviorAction;
+import de.mkalb.etpetssim.simulations.sugar.model.entity.Agent;
+import de.mkalb.etpetssim.simulations.sugar.model.entity.AgentEntity;
+import de.mkalb.etpetssim.simulations.sugar.model.entity.ResourceEntity;
+import de.mkalb.etpetssim.simulations.sugar.model.entity.Sugar;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
+import java.util.Random;
+import java.util.Set;
 
 /**
  * Agent phase of a Sugarscape step: the movement, harvest, metabolism, death, and replacement of the agents.
@@ -14,9 +30,9 @@ public final class SugarAgentLogic {
 
     private static final Comparator<AgentMoveCandidate> AGENT_MOVE_CANDIDATE_COMPARATOR =
             Comparator.comparingInt(AgentMoveCandidate::targetSugarAmount).reversed()
-                      .thenComparingInt(AgentMoveCandidate::distanceToTarget)
-                      // deterministic tie-breaker using direction of moveTo
-                      .thenComparing(candidate -> candidate.moveTo().direction());
+                    .thenComparingInt(AgentMoveCandidate::distanceToTarget)
+                    // deterministic tie-breaker using direction of moveTo
+                    .thenComparing(candidate -> candidate.moveTo().direction());
 
     private static final int DISTANCE_ORIGINAL = 0;
     private static final int DISTANCE_DIRECT_NEIGHBOR = 1;
@@ -61,8 +77,8 @@ public final class SugarAgentLogic {
                 List<AgentMoveCandidate> moveCandidates = collectMoveCandidates(originalCoordinate, config, structure,
                         agentModel, resourceModel);
                 GridCoordinate newCoordinate = Collections.min(moveCandidates, AGENT_MOVE_CANDIDATE_COMPARATOR)
-                                                          .moveTo()
-                                                          .mappedNeighborCoordinate();
+                        .moveTo()
+                        .mappedNeighborCoordinate();
                 GridCoordinate finalCoordinate = attemptMove(originalCoordinate, newCoordinate, agent, agentModel);
 
                 // Harvest all sugar of the current cell
@@ -136,8 +152,8 @@ public final class SugarAgentLogic {
                                                                                 SugarConfig config,
                                                                                 GridStructure structure) {
         return CellNeighborhoods.cellNeighborWithEdgeBehavior(coordinate, config.neighborhoodMode(), structure, direction)
-                                .filter(neighbor -> (neighbor.edgeBehaviorAction() == EdgeBehaviorAction.VALID)
-                                        || (neighbor.edgeBehaviorAction() == EdgeBehaviorAction.WRAPPED));
+                .filter(neighbor -> (neighbor.edgeBehaviorAction() == EdgeBehaviorAction.VALID)
+                        || (neighbor.edgeBehaviorAction() == EdgeBehaviorAction.WRAPPED));
     }
 
     private static void addMoveCandidateIfFreeWithSugar(List<AgentMoveCandidate> moveCandidates,

@@ -1,11 +1,15 @@
 package de.mkalb.etpetssim.simulations.etpets.viewmodel;
 
-import de.mkalb.etpetssim.simulations.etpets.shared.*;
-import javafx.beans.property.*;
-import javafx.collections.*;
+import de.mkalb.etpetssim.simulations.etpets.shared.EtpetsResourceChoice;
+import de.mkalb.etpetssim.simulations.etpets.shared.EtpetsTerrainChoice;
+import de.mkalb.etpetssim.simulations.etpets.shared.EtpetsUserActionContext;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import org.jspecify.annotations.Nullable;
 
-import java.util.*;
+import java.util.Optional;
 
 public final class EtpetsEditToolBarViewModel {
 

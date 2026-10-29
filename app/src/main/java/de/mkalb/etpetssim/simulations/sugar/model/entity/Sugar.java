@@ -1,6 +1,6 @@
 package de.mkalb.etpetssim.simulations.sugar.model.entity;
 
-import java.util.*;
+import java.util.Locale;
 
 public final class Sugar implements ResourceEntity {
 

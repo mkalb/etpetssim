@@ -1,11 +1,20 @@
 package de.mkalb.etpetssim.simulations.etpets.model;
 
-import de.mkalb.etpetssim.engine.*;
+import de.mkalb.etpetssim.engine.CellShape;
+import de.mkalb.etpetssim.engine.GridEdgeBehavior;
 import de.mkalb.etpetssim.engine.neighborhood.NeighborhoodMode;
 import de.mkalb.etpetssim.simulations.core.model.SimulationConfig;
 import de.mkalb.etpetssim.simulations.core.shared.CellDisplayMode;
 
-import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsConstraints.*;
+import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsConstraints.CELL_DISPLAY_MODE_VALUES;
+import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsConstraints.CELL_SHAPE_VALUES;
+import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsConstraints.COMBINED_PERCENT_MAX;
+import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsConstraints.GRID_EDGE_BEHAVIOR_VALUES;
+import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsConstraints.NEIGHBORHOOD_MODE_DEFAULT;
+import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsConstraints.PERCENT_MAX;
+import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsConstraints.PERCENT_MIN;
+import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsConstraints.PET_COUNT_MAX;
+import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsConstraints.PET_COUNT_MIN;
 
 /**
  * Immutable configuration of the ET Pets simulation.

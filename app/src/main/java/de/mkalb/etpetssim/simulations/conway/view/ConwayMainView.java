@@ -1,30 +1,45 @@
 package de.mkalb.etpetssim.simulations.conway.view;
 
-import de.mkalb.etpetssim.core.*;
-import de.mkalb.etpetssim.engine.model.*;
+import de.mkalb.etpetssim.core.AppLocalization;
+import de.mkalb.etpetssim.core.AppLogger;
+import de.mkalb.etpetssim.engine.model.GridCell;
+import de.mkalb.etpetssim.engine.model.WritableGridModel;
 import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorRegistry;
-import de.mkalb.etpetssim.simulations.conway.model.*;
+import de.mkalb.etpetssim.simulations.conway.model.ConwayConfig;
+import de.mkalb.etpetssim.simulations.conway.model.ConwaySimulationManager;
+import de.mkalb.etpetssim.simulations.conway.model.ConwayStatistics;
 import de.mkalb.etpetssim.simulations.conway.model.entity.ConwayEntity;
-import de.mkalb.etpetssim.simulations.conway.shared.*;
+import de.mkalb.etpetssim.simulations.conway.shared.ConwayPatternChoice;
+import de.mkalb.etpetssim.simulations.conway.shared.ConwayUserActionContext;
 import de.mkalb.etpetssim.simulations.conway.viewmodel.ConwayEditToolBarViewModel;
 import de.mkalb.etpetssim.simulations.core.shared.SimulationUserActionScope;
-import de.mkalb.etpetssim.simulations.core.view.*;
-import de.mkalb.etpetssim.simulations.core.viewmodel.*;
-import de.mkalb.etpetssim.ui.*;
+import de.mkalb.etpetssim.simulations.core.view.AbstractDefaultMainView;
+import de.mkalb.etpetssim.simulations.core.view.CoordinateDrawer;
+import de.mkalb.etpetssim.simulations.core.view.DefaultControlView;
+import de.mkalb.etpetssim.simulations.core.viewmodel.DefaultMainViewModel;
+import de.mkalb.etpetssim.simulations.core.viewmodel.SimulationUserActionDescriptor;
+import de.mkalb.etpetssim.ui.CellDimension;
+import de.mkalb.etpetssim.ui.FXComponentFactory;
+import de.mkalb.etpetssim.ui.FXGridCanvasPainter;
+import de.mkalb.etpetssim.ui.FXStyleClasses;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.control.*;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.ListCell;
+import javafx.scene.control.Tooltip;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.StrokeType;
 import org.jspecify.annotations.Nullable;
 
-import java.util.*;
-import java.util.function.*;
+import java.util.List;
+import java.util.Objects;
+import java.util.function.Function;
 
 public final class ConwayMainView
         extends AbstractDefaultMainView<
@@ -147,8 +162,8 @@ public final class ConwayMainView
         dynamicPainter.clearCanvasBackground();
 
         currentGridModel.nonDefaultCoordinates()
-                        .forEach(coordinate -> coordinateDrawer.draw(
-                                dynamicPainter, coordinate, stepCount));
+                .forEach(coordinate -> coordinateDrawer.draw(
+                        dynamicPainter, coordinate, stepCount));
     }
 
     @Override
@@ -172,7 +187,7 @@ public final class ConwayMainView
                         CONWAY_TOOLBAR_PLACE_PATTERN,
                         CONWAY_TOOLBAR_PLACE_PATTERN_TOOLTIP,
                         () -> editToolBarViewModel.resolveSelectedPatternContext()
-                                                  .map(Function.identity())));
+                                .map(Function.identity())));
     }
 
     @Override

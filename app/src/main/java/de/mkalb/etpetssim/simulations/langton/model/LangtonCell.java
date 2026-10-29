@@ -2,9 +2,12 @@ package de.mkalb.etpetssim.simulations.langton.model;
 
 import de.mkalb.etpetssim.engine.GridCoordinate;
 import de.mkalb.etpetssim.engine.model.GridCellView;
-import de.mkalb.etpetssim.simulations.langton.model.entity.*;
+import de.mkalb.etpetssim.simulations.langton.model.entity.Ant;
+import de.mkalb.etpetssim.simulations.langton.model.entity.AntEntity;
+import de.mkalb.etpetssim.simulations.langton.model.entity.LangtonEntity;
+import de.mkalb.etpetssim.simulations.langton.model.entity.TerrainConstant;
 
-import java.util.*;
+import java.util.Locale;
 
 /**
  * Snapshot of all Langton layers for a single grid coordinate.

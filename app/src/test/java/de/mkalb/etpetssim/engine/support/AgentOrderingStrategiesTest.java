@@ -6,7 +6,9 @@ import de.mkalb.etpetssim.engine.model.entity.GridEntity;
 import org.jspecify.annotations.NonNull;
 import org.junit.jupiter.api.Test;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -35,7 +37,7 @@ final class AgentOrderingStrategiesTest {
                 cell(0, 0, TestEntity.OTHER), cell(2, 1), cell(1, 0, TestEntity.OTHER), cell(1, 1)));
 
         cells.sort(AgentOrderingStrategies.<TestEntity>byDescriptorId()
-                                          .thenComparing(AgentOrderingStrategies.byPosition()));
+                .thenComparing(AgentOrderingStrategies.byPosition()));
 
         assertEquals(List.of(cell(1, 1), cell(2, 1), cell(0, 0, TestEntity.OTHER), cell(1, 0, TestEntity.OTHER)),
                 cells);

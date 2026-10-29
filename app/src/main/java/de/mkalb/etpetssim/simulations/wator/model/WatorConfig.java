@@ -1,11 +1,39 @@
 package de.mkalb.etpetssim.simulations.wator.model;
 
-import de.mkalb.etpetssim.engine.*;
+import de.mkalb.etpetssim.engine.CellShape;
+import de.mkalb.etpetssim.engine.GridEdgeBehavior;
 import de.mkalb.etpetssim.engine.neighborhood.NeighborhoodMode;
 import de.mkalb.etpetssim.simulations.core.model.SimulationConfig;
 import de.mkalb.etpetssim.simulations.core.shared.CellDisplayMode;
 
-import static de.mkalb.etpetssim.simulations.wator.model.WatorConstraints.*;
+import static de.mkalb.etpetssim.simulations.wator.model.WatorConstraints.CELL_DISPLAY_MODE_VALUES;
+import static de.mkalb.etpetssim.simulations.wator.model.WatorConstraints.CELL_SHAPE_VALUES;
+import static de.mkalb.etpetssim.simulations.wator.model.WatorConstraints.COMBINED_PERCENT_MAX;
+import static de.mkalb.etpetssim.simulations.wator.model.WatorConstraints.FISH_MAX_AGE_MAX;
+import static de.mkalb.etpetssim.simulations.wator.model.WatorConstraints.FISH_MAX_AGE_MIN;
+import static de.mkalb.etpetssim.simulations.wator.model.WatorConstraints.FISH_MIN_REPRODUCTION_AGE_MAX;
+import static de.mkalb.etpetssim.simulations.wator.model.WatorConstraints.FISH_MIN_REPRODUCTION_AGE_MIN;
+import static de.mkalb.etpetssim.simulations.wator.model.WatorConstraints.FISH_MIN_REPRODUCTION_INTERVAL_MAX;
+import static de.mkalb.etpetssim.simulations.wator.model.WatorConstraints.FISH_MIN_REPRODUCTION_INTERVAL_MIN;
+import static de.mkalb.etpetssim.simulations.wator.model.WatorConstraints.FISH_PERCENT_MAX;
+import static de.mkalb.etpetssim.simulations.wator.model.WatorConstraints.FISH_PERCENT_MIN;
+import static de.mkalb.etpetssim.simulations.wator.model.WatorConstraints.GRID_EDGE_BEHAVIOR_VALUES;
+import static de.mkalb.etpetssim.simulations.wator.model.WatorConstraints.SHARK_BIRTH_ENERGY_MAX;
+import static de.mkalb.etpetssim.simulations.wator.model.WatorConstraints.SHARK_BIRTH_ENERGY_MIN;
+import static de.mkalb.etpetssim.simulations.wator.model.WatorConstraints.SHARK_ENERGY_GAIN_PER_FISH_MAX;
+import static de.mkalb.etpetssim.simulations.wator.model.WatorConstraints.SHARK_ENERGY_GAIN_PER_FISH_MIN;
+import static de.mkalb.etpetssim.simulations.wator.model.WatorConstraints.SHARK_ENERGY_LOSS_PER_STEP_MAX;
+import static de.mkalb.etpetssim.simulations.wator.model.WatorConstraints.SHARK_ENERGY_LOSS_PER_STEP_MIN;
+import static de.mkalb.etpetssim.simulations.wator.model.WatorConstraints.SHARK_MAX_AGE_MAX;
+import static de.mkalb.etpetssim.simulations.wator.model.WatorConstraints.SHARK_MAX_AGE_MIN;
+import static de.mkalb.etpetssim.simulations.wator.model.WatorConstraints.SHARK_MIN_REPRODUCTION_AGE_MAX;
+import static de.mkalb.etpetssim.simulations.wator.model.WatorConstraints.SHARK_MIN_REPRODUCTION_AGE_MIN;
+import static de.mkalb.etpetssim.simulations.wator.model.WatorConstraints.SHARK_MIN_REPRODUCTION_ENERGY_MAX;
+import static de.mkalb.etpetssim.simulations.wator.model.WatorConstraints.SHARK_MIN_REPRODUCTION_ENERGY_MIN;
+import static de.mkalb.etpetssim.simulations.wator.model.WatorConstraints.SHARK_MIN_REPRODUCTION_INTERVAL_MAX;
+import static de.mkalb.etpetssim.simulations.wator.model.WatorConstraints.SHARK_MIN_REPRODUCTION_INTERVAL_MIN;
+import static de.mkalb.etpetssim.simulations.wator.model.WatorConstraints.SHARK_PERCENT_MAX;
+import static de.mkalb.etpetssim.simulations.wator.model.WatorConstraints.SHARK_PERCENT_MIN;
 
 /**
  * Immutable configuration of the Wa-Tor simulation.

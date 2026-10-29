@@ -1,11 +1,18 @@
 package de.mkalb.etpetssim.engine.support;
 
-import de.mkalb.etpetssim.engine.*;
-import de.mkalb.etpetssim.engine.model.*;
+import de.mkalb.etpetssim.engine.GridCoordinate;
+import de.mkalb.etpetssim.engine.GridSize;
+import de.mkalb.etpetssim.engine.model.GridCell;
+import de.mkalb.etpetssim.engine.model.WritableGridModel;
 import de.mkalb.etpetssim.engine.model.entity.GridEntity;
 
-import java.util.*;
-import java.util.function.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Random;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 /**
  * Static factories for {@link GridInitializer} instances that fill a {@link WritableGridModel} or place entities

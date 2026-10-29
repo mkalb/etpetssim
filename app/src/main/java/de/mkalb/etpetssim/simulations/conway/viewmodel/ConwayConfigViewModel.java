@@ -6,12 +6,43 @@ import de.mkalb.etpetssim.simulations.conway.shared.ConwayTransitionRules;
 import de.mkalb.etpetssim.simulations.core.shared.SimulationState;
 import de.mkalb.etpetssim.simulations.core.viewmodel.AbstractConfigViewModel;
 import de.mkalb.etpetssim.ui.InputDoubleProperty;
-import javafx.beans.property.*;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.ReadOnlyObjectProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
-import static de.mkalb.etpetssim.simulations.conway.model.ConwayConstraints.*;
+import static de.mkalb.etpetssim.simulations.conway.model.ConwayConstraints.ALIVE_PERCENT_DEFAULT;
+import static de.mkalb.etpetssim.simulations.conway.model.ConwayConstraints.ALIVE_PERCENT_MAX;
+import static de.mkalb.etpetssim.simulations.conway.model.ConwayConstraints.ALIVE_PERCENT_MIN;
+import static de.mkalb.etpetssim.simulations.conway.model.ConwayConstraints.CELL_DISPLAY_MODE_DEFAULT;
+import static de.mkalb.etpetssim.simulations.conway.model.ConwayConstraints.CELL_DISPLAY_MODE_VALUES;
+import static de.mkalb.etpetssim.simulations.conway.model.ConwayConstraints.CELL_EDGE_LENGTH_DEFAULT;
+import static de.mkalb.etpetssim.simulations.conway.model.ConwayConstraints.CELL_EDGE_LENGTH_MAX;
+import static de.mkalb.etpetssim.simulations.conway.model.ConwayConstraints.CELL_EDGE_LENGTH_MIN;
+import static de.mkalb.etpetssim.simulations.conway.model.ConwayConstraints.CELL_SHAPE_DEFAULT;
+import static de.mkalb.etpetssim.simulations.conway.model.ConwayConstraints.CELL_SHAPE_VALUES;
+import static de.mkalb.etpetssim.simulations.conway.model.ConwayConstraints.GRID_EDGE_BEHAVIOR_DEFAULT;
+import static de.mkalb.etpetssim.simulations.conway.model.ConwayConstraints.GRID_EDGE_BEHAVIOR_VALUES;
+import static de.mkalb.etpetssim.simulations.conway.model.ConwayConstraints.GRID_HEIGHT_DEFAULT;
+import static de.mkalb.etpetssim.simulations.conway.model.ConwayConstraints.GRID_HEIGHT_MAX;
+import static de.mkalb.etpetssim.simulations.conway.model.ConwayConstraints.GRID_HEIGHT_MIN;
+import static de.mkalb.etpetssim.simulations.conway.model.ConwayConstraints.GRID_HEIGHT_STEP;
+import static de.mkalb.etpetssim.simulations.conway.model.ConwayConstraints.GRID_WIDTH_DEFAULT;
+import static de.mkalb.etpetssim.simulations.conway.model.ConwayConstraints.GRID_WIDTH_MAX;
+import static de.mkalb.etpetssim.simulations.conway.model.ConwayConstraints.GRID_WIDTH_MIN;
+import static de.mkalb.etpetssim.simulations.conway.model.ConwayConstraints.GRID_WIDTH_STEP;
+import static de.mkalb.etpetssim.simulations.conway.model.ConwayConstraints.NEIGHBORHOOD_MODE_DEFAULT;
+import static de.mkalb.etpetssim.simulations.conway.model.ConwayConstraints.SEED_DEFAULT;
+import static de.mkalb.etpetssim.simulations.conway.model.ConwayConstraints.TRANSITION_RULES_DEFAULT;
 
 public final class ConwayConfigViewModel
         extends AbstractConfigViewModel<ConwayConfig> {

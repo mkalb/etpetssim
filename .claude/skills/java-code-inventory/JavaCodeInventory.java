@@ -118,8 +118,8 @@ public final class JavaCodeInventory {
         }
 
         List<Diagnostic<? extends JavaFileObject>> errors = diagnostics.getDiagnostics().stream()
-                                                                       .filter(diagnostic -> diagnostic.getKind() == Diagnostic.Kind.ERROR)
-                                                                       .toList();
+                .filter(diagnostic -> diagnostic.getKind() == Diagnostic.Kind.ERROR)
+                .toList();
         if (!errors.isEmpty()) {
             throw new ParseException(errors);
         }
@@ -130,9 +130,9 @@ public final class JavaCodeInventory {
         for (CompilationUnitTree compilationUnit : compilationUnits) {
             Path sourcePath = Path.of(compilationUnit.getSourceFile().toUri()).toAbsolutePath().normalize();
             SourceFile sourceFile = sourceFiles.stream()
-                                               .filter(candidate -> Objects.equals(candidate.path(), sourcePath))
-                                               .findFirst()
-                                               .orElseThrow(() -> new IOException("parsed unexpected source file " + sourcePath));
+                    .filter(candidate -> Objects.equals(candidate.path(), sourcePath))
+                    .findFirst()
+                    .orElseThrow(() -> new IOException("parsed unexpected source file " + sourcePath));
             String source = Files.readString(sourcePath, StandardCharsets.UTF_8);
             String packageName = compilationUnit.getPackageName() == null ? "" : compilationUnit.getPackageName().toString();
             for (Tree typeDeclaration : compilationUnit.getTypeDecls()) {
@@ -153,11 +153,11 @@ public final class JavaCodeInventory {
             }
         }
         memberDeclarations.sort(Comparator.comparing(MemberDeclaration::sourceSet)
-                                          .thenComparing(MemberDeclaration::sourcePath)
-                                          .thenComparingInt(MemberDeclaration::lineNumber));
+                .thenComparing(MemberDeclaration::sourcePath)
+                .thenComparingInt(MemberDeclaration::lineNumber));
         typeDeclarations.sort(Comparator.comparing(TypeDeclaration::sourceSet)
-                                        .thenComparing(TypeDeclaration::sourcePath)
-                                        .thenComparingInt(TypeDeclaration::lineNumber));
+                .thenComparing(TypeDeclaration::sourcePath)
+                .thenComparingInt(TypeDeclaration::lineNumber));
         return new InventoryResult(List.copyOf(memberDeclarations), List.copyOf(typeDeclarations));
     }
 
@@ -176,11 +176,11 @@ public final class JavaCodeInventory {
     ) throws IOException {
         try (Stream<Path> paths = Files.walk(sourceRoot)) {
             paths.filter(Files::isRegularFile)
-                 .filter(path -> path.getFileName().toString().endsWith(".java"))
-                 .sorted()
-                 .map(path -> path.toAbsolutePath().normalize())
-                 .map(path -> new SourceFile(sourceSet, path, toRepositoryPath(repositoryRoot, path)))
-                 .forEach(sourceFiles::add);
+                    .filter(path -> path.getFileName().toString().endsWith(".java"))
+                    .sorted()
+                    .map(path -> path.toAbsolutePath().normalize())
+                    .map(path -> new SourceFile(sourceSet, path, toRepositoryPath(repositoryRoot, path)))
+                    .forEach(sourceFiles::add);
         }
     }
 
@@ -293,8 +293,8 @@ public final class JavaCodeInventory {
                 typeModifiers(classTree),
                 annotations(classTree.getModifiers()),
                 classTree.getTypeParameters().stream()
-                         .map(TypeParameterTree::toString)
-                         .collect(Collectors.joining(", ")),
+                        .map(TypeParameterTree::toString)
+                        .collect(Collectors.joining(", ")),
                 lineNumber(classTree, compilationUnit, sourcePositions)
         );
     }
@@ -317,12 +317,12 @@ public final class JavaCodeInventory {
             List<MemberDeclaration> declarations
     ) {
         Set<String> explicitAccessorNames = recordTree.getMembers().stream()
-                                                      .filter(MethodTree.class::isInstance)
-                                                      .map(MethodTree.class::cast)
-                                                      .filter(methodTree -> (methodTree.getReturnType() != null)
-                                                              && methodTree.getParameters().isEmpty())
-                                                      .map(methodTree -> methodTree.getName().toString())
-                                                      .collect(Collectors.toSet());
+                .filter(MethodTree.class::isInstance)
+                .map(MethodTree.class::cast)
+                .filter(methodTree -> (methodTree.getReturnType() != null)
+                        && methodTree.getParameters().isEmpty())
+                .map(methodTree -> methodTree.getName().toString())
+                .collect(Collectors.toSet());
         for (VariableTree component : recordComponents(recordTree)) {
             if (!explicitAccessorNames.contains(component.getName().toString())) {
                 declarations.add(new MemberDeclaration(
@@ -349,10 +349,10 @@ public final class JavaCodeInventory {
     private static List<VariableTree> recordComponents(ClassTree recordTree) {
         // Records cannot declare instance fields, so non-static fields are the record components.
         return recordTree.getMembers().stream()
-                         .filter(VariableTree.class::isInstance)
-                         .map(VariableTree.class::cast)
-                         .filter(field -> !field.getModifiers().getFlags().contains(Modifier.STATIC))
-                         .toList();
+                .filter(VariableTree.class::isInstance)
+                .map(VariableTree.class::cast)
+                .filter(field -> !field.getModifiers().getFlags().contains(Modifier.STATIC))
+                .toList();
     }
 
     private static void collectImplicitConstructorDeclaration(
@@ -367,10 +367,10 @@ public final class JavaCodeInventory {
             List<MemberDeclaration> declarations
     ) {
         List<MethodTree> constructors = classTree.getMembers().stream()
-                                                 .filter(MethodTree.class::isInstance)
-                                                 .map(MethodTree.class::cast)
-                                                 .filter(methodTree -> methodTree.getReturnType() == null)
-                                                 .toList();
+                .filter(MethodTree.class::isInstance)
+                .map(MethodTree.class::cast)
+                .filter(methodTree -> methodTree.getReturnType() == null)
+                .toList();
         MemberKind memberKind;
         String visibility;
         String parameterTypes = "";
@@ -453,16 +453,16 @@ public final class JavaCodeInventory {
                 methodTree.getThrows().stream().map(Tree::toString).collect(Collectors.joining(", ")),
                 annotations(methodTree.getModifiers()),
                 methodTree.getTypeParameters().stream()
-                          .map(TypeParameterTree::toString)
-                          .collect(Collectors.joining(", ")),
+                        .map(TypeParameterTree::toString)
+                        .collect(Collectors.joining(", ")),
                 lineNumber(methodTree, compilationUnit, sourcePositions)
         );
     }
 
     private static String annotations(ModifiersTree modifiers) {
         return modifiers.getAnnotations().stream()
-                        .map(AnnotationTree::toString)
-                        .collect(Collectors.joining(" | "));
+                .map(AnnotationTree::toString)
+                .collect(Collectors.joining(" | "));
     }
 
     private static int lineNumber(Tree tree, CompilationUnitTree compilationUnit, SourcePositions sourcePositions) {
@@ -518,8 +518,8 @@ public final class JavaCodeInventory {
             String source
     ) {
         return parameters.stream()
-                         .map(parameter -> parameterType(parameter, sourcePositions, source))
-                         .collect(Collectors.joining(", "));
+                .map(parameter -> parameterType(parameter, sourcePositions, source))
+                .collect(Collectors.joining(", "));
     }
 
     private static String parameterType(
@@ -576,7 +576,7 @@ public final class JavaCodeInventory {
     private static boolean isCanonicalRecordConstructor(MethodTree constructor) {
         // Every non-canonical record constructor must contain a top-level this(...) invocation.
         return constructor.getBody().getStatements().stream()
-                          .noneMatch(JavaCodeInventory::isThisConstructorInvocation);
+                .noneMatch(JavaCodeInventory::isThisConstructorInvocation);
     }
 
     private static boolean isThisConstructorInvocation(StatementTree statement) {
@@ -686,12 +686,12 @@ public final class JavaCodeInventory {
 
     private static String modifiers(Set<Modifier> flags) {
         return Stream.of(Modifier.values())
-                     .filter(flags::contains)
-                     .filter(modifier -> (modifier != Modifier.PUBLIC)
-                             && (modifier != Modifier.PROTECTED)
-                             && (modifier != Modifier.PRIVATE))
-                     .map(modifier -> modifier.toString().toLowerCase(Locale.ROOT))
-                     .collect(Collectors.joining(" "));
+                .filter(flags::contains)
+                .filter(modifier -> (modifier != Modifier.PUBLIC)
+                        && (modifier != Modifier.PROTECTED)
+                        && (modifier != Modifier.PRIVATE))
+                .map(modifier -> modifier.toString().toLowerCase(Locale.ROOT))
+                .collect(Collectors.joining(" "));
     }
 
     private static <T> void writeInventory(

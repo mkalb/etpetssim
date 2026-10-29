@@ -1,11 +1,14 @@
 package de.mkalb.etpetssim.simulations.sugar.viewmodel;
 
-import de.mkalb.etpetssim.simulations.sugar.shared.*;
-import javafx.beans.property.*;
-import javafx.collections.*;
+import de.mkalb.etpetssim.simulations.sugar.shared.SugarAddSugarLevel;
+import de.mkalb.etpetssim.simulations.sugar.shared.SugarUserActionContext;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import org.jspecify.annotations.Nullable;
 
-import java.util.*;
+import java.util.Optional;
 
 public final class SugarEditToolBarViewModel {
 

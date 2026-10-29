@@ -1,6 +1,6 @@
 package de.mkalb.etpetssim.simulations.core.model;
 
-import java.util.function.*;
+import java.util.function.ToDoubleFunction;
 
 /**
  * Describes one numeric metric that can be sampled from simulation statistics.

@@ -1,11 +1,15 @@
 package de.mkalb.etpetssim.simulations.core.model;
 
 import de.mkalb.etpetssim.core.AppLogger;
-import de.mkalb.etpetssim.engine.executor.*;
+import de.mkalb.etpetssim.engine.executor.StepExecutionResult;
+import de.mkalb.etpetssim.engine.executor.StepTimingStatistics;
+import de.mkalb.etpetssim.engine.executor.TimedSimulationExecutor;
 import de.mkalb.etpetssim.engine.model.GridModel;
 import de.mkalb.etpetssim.engine.model.entity.GridEntity;
 
-import java.util.*;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Base implementation for managers backed by a timed simulation executor.

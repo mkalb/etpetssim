@@ -2,7 +2,7 @@ package de.mkalb.etpetssim.engine.neighborhood;
 
 import de.mkalb.etpetssim.engine.GridCoordinate;
 
-import java.util.*;
+import java.util.Locale;
 
 /**
  * Represents the result of applying an edge behavior to a grid coordinate.

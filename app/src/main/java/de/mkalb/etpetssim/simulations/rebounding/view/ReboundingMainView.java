@@ -1,30 +1,44 @@
 package de.mkalb.etpetssim.simulations.rebounding.view;
 
-import de.mkalb.etpetssim.core.*;
-import de.mkalb.etpetssim.engine.model.*;
+import de.mkalb.etpetssim.core.AppLocalization;
+import de.mkalb.etpetssim.core.AppLogger;
+import de.mkalb.etpetssim.engine.model.GridCell;
+import de.mkalb.etpetssim.engine.model.WritableGridModel;
 import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorRegistry;
 import de.mkalb.etpetssim.engine.neighborhood.CompassDirection;
-import de.mkalb.etpetssim.simulations.core.shared.*;
-import de.mkalb.etpetssim.simulations.core.view.*;
-import de.mkalb.etpetssim.simulations.core.viewmodel.*;
-import de.mkalb.etpetssim.simulations.rebounding.model.*;
+import de.mkalb.etpetssim.simulations.core.shared.CellDisplayMode;
+import de.mkalb.etpetssim.simulations.core.shared.SimulationUserActionScope;
+import de.mkalb.etpetssim.simulations.core.view.AbstractDefaultMainView;
+import de.mkalb.etpetssim.simulations.core.view.CellDrawer;
+import de.mkalb.etpetssim.simulations.core.view.DefaultControlView;
+import de.mkalb.etpetssim.simulations.core.viewmodel.DefaultMainViewModel;
+import de.mkalb.etpetssim.simulations.core.viewmodel.SimulationUserActionDescriptor;
+import de.mkalb.etpetssim.simulations.rebounding.model.ReboundingConfig;
+import de.mkalb.etpetssim.simulations.rebounding.model.ReboundingSimulationManager;
+import de.mkalb.etpetssim.simulations.rebounding.model.ReboundingStatistics;
 import de.mkalb.etpetssim.simulations.rebounding.model.entity.ReboundingEntity;
 import de.mkalb.etpetssim.simulations.rebounding.shared.ReboundingUserActionContext;
 import de.mkalb.etpetssim.simulations.rebounding.viewmodel.ReboundingEditToolBarViewModel;
-import de.mkalb.etpetssim.ui.*;
+import de.mkalb.etpetssim.ui.CellDimension;
+import de.mkalb.etpetssim.ui.FXComponentFactory;
+import de.mkalb.etpetssim.ui.FXGridCanvasPainter;
+import de.mkalb.etpetssim.ui.FXStyleClasses;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
-import javafx.scene.control.*;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.ListCell;
+import javafx.scene.control.Tooltip;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.StrokeType;
 import org.jspecify.annotations.Nullable;
 
-import java.util.*;
-import java.util.function.*;
+import java.util.List;
+import java.util.function.Function;
 
 public final class ReboundingMainView
         extends AbstractDefaultMainView<
@@ -136,9 +150,9 @@ public final class ReboundingMainView
         dynamicPainter.clearCanvasBackground();
 
         currentGridModel.nonDefaultCells()
-                        .forEach(cell -> cellDrawer.draw(
-                                entityDescriptorRegistry.requireByDescriptorId(cell.descriptorId()),
-                                dynamicPainter, cell, stepCount));
+                .forEach(cell -> cellDrawer.draw(
+                        entityDescriptorRegistry.requireByDescriptorId(cell.descriptorId()),
+                        dynamicPainter, cell, stepCount));
     }
 
     @Override
@@ -174,7 +188,7 @@ public final class ReboundingMainView
                         REBOUNDING_TOOLBAR_ADD_REBOUNDER,
                         REBOUNDING_TOOLBAR_ADD_REBOUNDER_TOOLTIP,
                         () -> editToolBarViewModel.resolveSelectedAddRebounderContext()
-                                                  .map(Function.identity())));
+                                .map(Function.identity())));
     }
 
     @Override

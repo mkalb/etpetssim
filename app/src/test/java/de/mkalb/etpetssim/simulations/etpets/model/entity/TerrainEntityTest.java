@@ -2,7 +2,8 @@ package de.mkalb.etpetssim.simulations.etpets.model.entity;
 
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 final class TerrainEntityTest {
 

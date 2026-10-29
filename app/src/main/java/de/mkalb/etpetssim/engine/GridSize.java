@@ -1,6 +1,6 @@
 package de.mkalb.etpetssim.engine;
 
-import java.util.*;
+import java.util.Locale;
 
 /**
  * Represents the logical size of a two-dimensional simulation grid.

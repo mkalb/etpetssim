@@ -2,9 +2,13 @@ package de.mkalb.etpetssim.simulations.langton.viewmodel;
 
 import de.mkalb.etpetssim.core.AppLogger;
 import de.mkalb.etpetssim.engine.CellShape;
-import de.mkalb.etpetssim.simulations.langton.shared.*;
+import de.mkalb.etpetssim.simulations.langton.shared.LangtonMovementRules;
+import de.mkalb.etpetssim.simulations.langton.shared.LangtonRulePresetHexagon;
+import de.mkalb.etpetssim.simulations.langton.shared.LangtonRulePresetSquare;
+import de.mkalb.etpetssim.simulations.langton.shared.LangtonRulePresetTriangle;
 import de.mkalb.etpetssim.ui.InputChoiceProperty;
-import javafx.beans.property.*;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 
 import static de.mkalb.etpetssim.simulations.langton.model.LangtonConstraints.MOVEMENT_RULES_DEFAULT;
 

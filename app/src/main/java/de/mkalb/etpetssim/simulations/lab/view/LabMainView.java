@@ -1,24 +1,37 @@
 package de.mkalb.etpetssim.simulations.lab.view;
 
 import de.mkalb.etpetssim.core.AppLogger;
-import de.mkalb.etpetssim.engine.*;
+import de.mkalb.etpetssim.engine.CellShape;
+import de.mkalb.etpetssim.engine.GridCoordinate;
+import de.mkalb.etpetssim.engine.GridStructure;
 import de.mkalb.etpetssim.engine.model.GridCell;
 import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorRegistry;
-import de.mkalb.etpetssim.engine.neighborhood.*;
-import de.mkalb.etpetssim.simulations.core.shared.*;
+import de.mkalb.etpetssim.engine.neighborhood.CellNeighborWithEdgeBehavior;
+import de.mkalb.etpetssim.engine.neighborhood.EdgeBehaviorResult;
+import de.mkalb.etpetssim.engine.neighborhood.RadiusRingCell;
+import de.mkalb.etpetssim.simulations.core.shared.CellDisplayMode;
+import de.mkalb.etpetssim.simulations.core.shared.NoUserActionContext;
 import de.mkalb.etpetssim.simulations.core.view.AbstractMainView;
 import de.mkalb.etpetssim.simulations.core.viewmodel.SimulationUserActionDescriptor;
 import de.mkalb.etpetssim.simulations.lab.model.LabConfig;
 import de.mkalb.etpetssim.simulations.lab.model.entity.LabEntity;
 import de.mkalb.etpetssim.simulations.lab.shared.LabColorMode;
-import de.mkalb.etpetssim.simulations.lab.viewmodel.*;
-import de.mkalb.etpetssim.ui.*;
+import de.mkalb.etpetssim.simulations.lab.viewmodel.LabMainViewModel;
+import de.mkalb.etpetssim.simulations.lab.viewmodel.LabNeighborhoodHighlights;
+import de.mkalb.etpetssim.ui.CellShapeSide;
+import de.mkalb.etpetssim.ui.FXGridCanvasPainter;
+import de.mkalb.etpetssim.ui.FXPaintFactory;
+import de.mkalb.etpetssim.ui.GridGeometry;
 import javafx.geometry.Point2D;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.StrokeType;
 import org.jspecify.annotations.Nullable;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.SortedMap;
 
 public final class LabMainView
         extends AbstractMainView<
@@ -116,7 +129,7 @@ public final class LabMainView
         painter.drawCellOuterCircle(mouseCoordinate, TRANSLUCENT_WHITE, MOUSE_CLICK_COLOR, MOUSE_CLICK_LINE_WIDTH, StrokeType.OUTSIDE);
 
         viewModel.computeNeighborhoodHighlights(mouseCoordinate, painter.gridStructure())
-                 .ifPresent(highlights -> drawNeighborhoodHighlights(highlights, painter));
+                .ifPresent(highlights -> drawNeighborhoodHighlights(highlights, painter));
     }
 
     private boolean isLastClickedCoordinate(GridCoordinate coordinate) {
@@ -142,12 +155,12 @@ public final class LabMainView
                           Color strokeColor,
                           FXGridCanvasPainter painter) {
         ringCells.getOrDefault(ringRadius, Collections.emptySortedMap())
-                 .values()
-                 .forEach(ringCell -> painter.drawCellInnerCircle(ringCell.coordinate(),
-                         null,
-                         strokeColor,
-                         HIGHLIGHT_RING_STROKE_SCALE * ringCell.reachedFromPreviousRing().size(),
-                         StrokeType.INSIDE));
+                .values()
+                .forEach(ringCell -> painter.drawCellInnerCircle(ringCell.coordinate(),
+                        null,
+                        strokeColor,
+                        HIGHLIGHT_RING_STROKE_SCALE * ringCell.reachedFromPreviousRing().size(),
+                        StrokeType.INSIDE));
     }
 
     private void drawNeighborCoordinates(Collection<GridCoordinate> neighborCoordinates,
@@ -265,8 +278,8 @@ public final class LabMainView
         }
         LabEntity entity = viewModel.getCurrentGridModel().getEntity(coordinate);
         entityDescriptorRegistry.findByDescriptorId(entity.descriptorId())
-                                .ifPresent(descriptor -> localOverlayPainter.drawCenteredTextInCell(
-                                        coordinate, descriptor.shortName(), Color.RED, cellFont));
+                .ifPresent(descriptor -> localOverlayPainter.drawCenteredTextInCell(
+                        coordinate, descriptor.shortName(), Color.RED, cellFont));
     }
 
     private void drawLastClickedCoordinate(FXGridCanvasPainter localOverlayPainter) {
@@ -330,11 +343,11 @@ public final class LabMainView
         drawBaseCanvasBackground(colorModeGrayscale);
 
         viewModel.getStructure()
-                 .coordinatesStream()
-                 .forEachOrdered(coordinate ->
-                         drawBaseCanvasCoordinate(coordinate, colorModeGrayscale, renderingModeCircle,
-                                 strokeColor, SHAPE_LINE_WIDTH,
-                                 textColor));
+                .coordinatesStream()
+                .forEachOrdered(coordinate ->
+                        drawBaseCanvasCoordinate(coordinate, colorModeGrayscale, renderingModeCircle,
+                                strokeColor, SHAPE_LINE_WIDTH,
+                                textColor));
 
         observationView.initializeForDraw();
     }
@@ -384,8 +397,8 @@ public final class LabMainView
 
         Color fillColor = FXPaintFactory.adjustColorAlpha(Color.RED, MODEL_FILL_ALPHA);
         viewModel.getCurrentGridModel()
-                 .nonDefaultCells()
-                 .forEach((GridCell<LabEntity> cell) -> basePainter.drawCell(cell.coordinate(), fillColor, null, NO_STROKE_LINE_WIDTH));
+                .nonDefaultCells()
+                .forEach((GridCell<LabEntity> cell) -> basePainter.drawCell(cell.coordinate(), fillColor, null, NO_STROKE_LINE_WIDTH));
     }
 
     private void drawTest() {

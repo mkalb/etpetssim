@@ -1,11 +1,12 @@
 package de.mkalb.etpetssim.ui;
 
 import de.mkalb.etpetssim.core.AppResources;
-import javafx.scene.control.*;
+import javafx.scene.control.Dialog;
+import javafx.scene.control.DialogPane;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
-import java.util.*;
+import java.util.List;
 
 /**
  * Applies the application look to dialogs and alerts.

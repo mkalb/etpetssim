@@ -1,14 +1,32 @@
 package de.mkalb.etpetssim.simulations.etpets.model;
 
-import de.mkalb.etpetssim.engine.*;
+import de.mkalb.etpetssim.engine.CellShape;
+import de.mkalb.etpetssim.engine.GridEdgeBehavior;
 import de.mkalb.etpetssim.engine.neighborhood.NeighborhoodMode;
 import de.mkalb.etpetssim.simulations.core.shared.CellDisplayMode;
 import org.junit.jupiter.api.Test;
 
-import java.util.function.*;
+import java.util.function.Consumer;
 
-import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsConstraints.*;
-import static org.junit.jupiter.api.Assertions.*;
+import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsConstraints.CELL_DISPLAY_MODE_DEFAULT;
+import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsConstraints.CELL_EDGE_LENGTH_DEFAULT;
+import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsConstraints.CELL_SHAPE_DEFAULT;
+import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsConstraints.GRID_EDGE_BEHAVIOR_DEFAULT;
+import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsConstraints.GRID_HEIGHT_DEFAULT;
+import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsConstraints.GRID_WIDTH_DEFAULT;
+import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsConstraints.INSECT_PERCENT_DEFAULT;
+import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsConstraints.NEIGHBORHOOD_MODE_DEFAULT;
+import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsConstraints.PERCENT_MAX;
+import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsConstraints.PERCENT_MIN;
+import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsConstraints.PET_COUNT_DEFAULT;
+import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsConstraints.PET_COUNT_MAX;
+import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsConstraints.PET_COUNT_MIN;
+import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsConstraints.PLANT_PERCENT_DEFAULT;
+import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsConstraints.ROCK_PERCENT_DEFAULT;
+import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsConstraints.WATER_PERCENT_DEFAULT;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SuppressWarnings("MagicNumber")
 final class EtpetsConfigTest {

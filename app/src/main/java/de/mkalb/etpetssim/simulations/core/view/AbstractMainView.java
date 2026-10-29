@@ -1,24 +1,44 @@
 package de.mkalb.etpetssim.simulations.core.view;
 
-import de.mkalb.etpetssim.core.*;
-import de.mkalb.etpetssim.engine.*;
+import de.mkalb.etpetssim.core.AppLocalization;
+import de.mkalb.etpetssim.core.AppLogger;
+import de.mkalb.etpetssim.engine.CellShape;
+import de.mkalb.etpetssim.engine.EdgeBehavior;
+import de.mkalb.etpetssim.engine.GridCoordinate;
+import de.mkalb.etpetssim.engine.GridStructure;
 import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorRegistry;
 import de.mkalb.etpetssim.simulations.core.SimulationTerminationHandle;
-import de.mkalb.etpetssim.simulations.core.shared.*;
-import de.mkalb.etpetssim.simulations.core.viewmodel.*;
-import de.mkalb.etpetssim.ui.*;
-import javafx.beans.property.*;
+import de.mkalb.etpetssim.simulations.core.shared.SimulationNotificationType;
+import de.mkalb.etpetssim.simulations.core.shared.SimulationUserActionContext;
+import de.mkalb.etpetssim.simulations.core.viewmodel.SimulationMainViewModel;
+import de.mkalb.etpetssim.simulations.core.viewmodel.SimulationUserActionDescriptor;
+import de.mkalb.etpetssim.ui.CellDimension;
+import de.mkalb.etpetssim.ui.FXGridCanvasPainter;
+import de.mkalb.etpetssim.ui.FXStyleClasses;
+import de.mkalb.etpetssim.ui.GridGeometry;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.ObjectProperty;
 import javafx.beans.value.ChangeListener;
-import javafx.geometry.*;
+import javafx.geometry.Orientation;
+import javafx.geometry.Point2D;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
-import javafx.scene.control.*;
+import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.SplitPane;
 import javafx.scene.input.MouseButton;
-import javafx.scene.layout.*;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import org.jspecify.annotations.Nullable;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Generic base view that composes config, control and observation regions.

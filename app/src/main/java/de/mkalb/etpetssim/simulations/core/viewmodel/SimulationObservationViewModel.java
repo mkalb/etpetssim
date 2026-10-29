@@ -1,12 +1,16 @@
 package de.mkalb.etpetssim.simulations.core.viewmodel;
 
 import de.mkalb.etpetssim.engine.GridCoordinate;
-import de.mkalb.etpetssim.simulations.core.model.*;
+import de.mkalb.etpetssim.simulations.core.model.SimulationStatistics;
+import de.mkalb.etpetssim.simulations.core.model.StatisticsExtrema;
+import de.mkalb.etpetssim.simulations.core.model.StatisticsSample;
 import de.mkalb.etpetssim.simulations.core.shared.SimulationState;
-import javafx.beans.property.*;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.ReadOnlyObjectProperty;
 import org.jspecify.annotations.Nullable;
 
-import java.util.*;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * ViewModel contract for simulation observation data and interaction state.

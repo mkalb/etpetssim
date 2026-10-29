@@ -5,12 +5,13 @@ import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorRegistry;
 import de.mkalb.etpetssim.simulations.core.view.AbstractObservationView;
 import de.mkalb.etpetssim.simulations.core.viewmodel.DefaultObservationViewModel;
 import de.mkalb.etpetssim.simulations.snake.model.SnakeStatistics;
-import de.mkalb.etpetssim.simulations.snake.model.entity.*;
+import de.mkalb.etpetssim.simulations.snake.model.entity.SnakeEntity;
+import de.mkalb.etpetssim.simulations.snake.model.entity.SnakeHead;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Region;
 import org.jspecify.annotations.Nullable;
 
-import java.util.*;
+import java.util.Optional;
 
 public final class SnakeObservationView
         extends AbstractObservationView<

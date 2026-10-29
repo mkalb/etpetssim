@@ -5,12 +5,13 @@ import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorRegistry;
 import de.mkalb.etpetssim.simulations.core.view.AbstractObservationView;
 import de.mkalb.etpetssim.simulations.core.viewmodel.DefaultObservationViewModel;
 import de.mkalb.etpetssim.simulations.rebounding.model.ReboundingStatistics;
-import de.mkalb.etpetssim.simulations.rebounding.model.entity.*;
+import de.mkalb.etpetssim.simulations.rebounding.model.entity.Rebounder;
+import de.mkalb.etpetssim.simulations.rebounding.model.entity.ReboundingEntity;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Region;
 import org.jspecify.annotations.Nullable;
 
-import java.util.*;
+import java.util.Optional;
 
 public final class ReboundingObservationView
         extends AbstractObservationView<

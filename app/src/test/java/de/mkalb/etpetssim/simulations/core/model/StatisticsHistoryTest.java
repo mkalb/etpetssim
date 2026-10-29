@@ -3,9 +3,12 @@ package de.mkalb.etpetssim.simulations.core.model;
 import de.mkalb.etpetssim.engine.executor.StepTimingStatistics;
 import org.junit.jupiter.api.Test;
 
-import java.util.*;
+import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 final class StatisticsHistoryTest {
 

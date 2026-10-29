@@ -2,13 +2,24 @@ package de.mkalb.etpetssim.simulations.sugar;
 
 import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorRegistry;
 import de.mkalb.etpetssim.simulations.core.shared.SimulationState;
-import de.mkalb.etpetssim.simulations.core.view.*;
-import de.mkalb.etpetssim.simulations.core.viewmodel.*;
-import de.mkalb.etpetssim.simulations.sugar.model.*;
-import de.mkalb.etpetssim.simulations.sugar.model.entity.*;
-import de.mkalb.etpetssim.simulations.sugar.view.*;
-import de.mkalb.etpetssim.simulations.sugar.viewmodel.*;
-import javafx.beans.property.*;
+import de.mkalb.etpetssim.simulations.core.view.DefaultControlView;
+import de.mkalb.etpetssim.simulations.core.view.SimulationMainView;
+import de.mkalb.etpetssim.simulations.core.viewmodel.DefaultControlViewModel;
+import de.mkalb.etpetssim.simulations.core.viewmodel.DefaultMainViewModel;
+import de.mkalb.etpetssim.simulations.core.viewmodel.DefaultObservationViewModel;
+import de.mkalb.etpetssim.simulations.sugar.model.SugarCell;
+import de.mkalb.etpetssim.simulations.sugar.model.SugarSimulationManager;
+import de.mkalb.etpetssim.simulations.sugar.model.SugarStatistics;
+import de.mkalb.etpetssim.simulations.sugar.model.SugarUserAction;
+import de.mkalb.etpetssim.simulations.sugar.model.entity.EntityDescriptors;
+import de.mkalb.etpetssim.simulations.sugar.model.entity.SugarEntity;
+import de.mkalb.etpetssim.simulations.sugar.view.SugarConfigView;
+import de.mkalb.etpetssim.simulations.sugar.view.SugarMainView;
+import de.mkalb.etpetssim.simulations.sugar.view.SugarObservationView;
+import de.mkalb.etpetssim.simulations.sugar.viewmodel.SugarConfigViewModel;
+import de.mkalb.etpetssim.simulations.sugar.viewmodel.SugarEditToolBarViewModel;
+import javafx.beans.property.ReadOnlyObjectProperty;
+import javafx.beans.property.ReadOnlyObjectWrapper;
 
 /**
  * Factory for the Sugarscape main view.

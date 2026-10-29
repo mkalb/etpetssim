@@ -1,13 +1,18 @@
 package de.mkalb.etpetssim.simulations.rebounding.viewmodel;
 
-import de.mkalb.etpetssim.engine.neighborhood.*;
+import de.mkalb.etpetssim.engine.neighborhood.CellNeighborhoods;
+import de.mkalb.etpetssim.engine.neighborhood.CompassDirection;
+import de.mkalb.etpetssim.engine.neighborhood.NeighborhoodMode;
 import de.mkalb.etpetssim.simulations.rebounding.model.ReboundingConfig;
 import de.mkalb.etpetssim.simulations.rebounding.shared.ReboundingUserActionContext;
-import javafx.beans.property.*;
-import javafx.collections.*;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import org.jspecify.annotations.Nullable;
 
-import java.util.*;
+import java.util.List;
+import java.util.Optional;
 
 public final class ReboundingEditToolBarViewModel {
 

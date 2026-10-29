@@ -1,15 +1,24 @@
 package de.mkalb.etpetssim.simulations.langton.model;
 
-import de.mkalb.etpetssim.engine.*;
+import de.mkalb.etpetssim.engine.CellShape;
+import de.mkalb.etpetssim.engine.GridEdgeBehavior;
 import de.mkalb.etpetssim.engine.neighborhood.NeighborhoodMode;
 import de.mkalb.etpetssim.simulations.core.shared.CellDisplayMode;
 import de.mkalb.etpetssim.simulations.langton.shared.LangtonMovementRules;
 import org.junit.jupiter.api.Test;
 
-import java.util.function.*;
+import java.util.function.Consumer;
 
-import static de.mkalb.etpetssim.simulations.langton.model.LangtonConstraints.*;
-import static org.junit.jupiter.api.Assertions.*;
+import static de.mkalb.etpetssim.simulations.langton.model.LangtonConstraints.CELL_DISPLAY_MODE_DEFAULT;
+import static de.mkalb.etpetssim.simulations.langton.model.LangtonConstraints.CELL_EDGE_LENGTH_DEFAULT;
+import static de.mkalb.etpetssim.simulations.langton.model.LangtonConstraints.CELL_SHAPE_DEFAULT;
+import static de.mkalb.etpetssim.simulations.langton.model.LangtonConstraints.GRID_EDGE_BEHAVIOR_DEFAULT;
+import static de.mkalb.etpetssim.simulations.langton.model.LangtonConstraints.GRID_HEIGHT_DEFAULT;
+import static de.mkalb.etpetssim.simulations.langton.model.LangtonConstraints.GRID_WIDTH_DEFAULT;
+import static de.mkalb.etpetssim.simulations.langton.model.LangtonConstraints.MOVEMENT_RULES_DEFAULT;
+import static de.mkalb.etpetssim.simulations.langton.model.LangtonConstraints.NEIGHBORHOOD_MODE_DEFAULT;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 final class LangtonConfigTest {
 

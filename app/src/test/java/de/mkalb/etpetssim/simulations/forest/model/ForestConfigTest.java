@@ -1,14 +1,32 @@
 package de.mkalb.etpetssim.simulations.forest.model;
 
-import de.mkalb.etpetssim.engine.*;
+import de.mkalb.etpetssim.engine.CellShape;
+import de.mkalb.etpetssim.engine.GridEdgeBehavior;
 import de.mkalb.etpetssim.engine.neighborhood.NeighborhoodMode;
 import de.mkalb.etpetssim.simulations.core.shared.CellDisplayMode;
 import org.junit.jupiter.api.Test;
 
-import java.util.function.*;
+import java.util.function.Consumer;
 
-import static de.mkalb.etpetssim.simulations.forest.model.ForestConstraints.*;
-import static org.junit.jupiter.api.Assertions.*;
+import static de.mkalb.etpetssim.simulations.forest.model.ForestConstraints.CELL_DISPLAY_MODE_DEFAULT;
+import static de.mkalb.etpetssim.simulations.forest.model.ForestConstraints.CELL_EDGE_LENGTH_DEFAULT;
+import static de.mkalb.etpetssim.simulations.forest.model.ForestConstraints.CELL_SHAPE_DEFAULT;
+import static de.mkalb.etpetssim.simulations.forest.model.ForestConstraints.GRID_EDGE_BEHAVIOR_DEFAULT;
+import static de.mkalb.etpetssim.simulations.forest.model.ForestConstraints.GRID_HEIGHT_DEFAULT;
+import static de.mkalb.etpetssim.simulations.forest.model.ForestConstraints.GRID_WIDTH_DEFAULT;
+import static de.mkalb.etpetssim.simulations.forest.model.ForestConstraints.LIGHTNING_IGNITION_PROBABILITY_DEFAULT;
+import static de.mkalb.etpetssim.simulations.forest.model.ForestConstraints.LIGHTNING_IGNITION_PROBABILITY_MAX;
+import static de.mkalb.etpetssim.simulations.forest.model.ForestConstraints.LIGHTNING_IGNITION_PROBABILITY_MIN;
+import static de.mkalb.etpetssim.simulations.forest.model.ForestConstraints.NEIGHBORHOOD_MODE_DEFAULT;
+import static de.mkalb.etpetssim.simulations.forest.model.ForestConstraints.TREE_DENSITY_DEFAULT;
+import static de.mkalb.etpetssim.simulations.forest.model.ForestConstraints.TREE_DENSITY_MAX;
+import static de.mkalb.etpetssim.simulations.forest.model.ForestConstraints.TREE_DENSITY_MIN;
+import static de.mkalb.etpetssim.simulations.forest.model.ForestConstraints.TREE_GROWTH_PROBABILITY_DEFAULT;
+import static de.mkalb.etpetssim.simulations.forest.model.ForestConstraints.TREE_GROWTH_PROBABILITY_MAX;
+import static de.mkalb.etpetssim.simulations.forest.model.ForestConstraints.TREE_GROWTH_PROBABILITY_MIN;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 final class ForestConfigTest {
 

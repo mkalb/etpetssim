@@ -1,12 +1,17 @@
 package de.mkalb.etpetssim.simulations.conway.viewmodel;
 
-import de.mkalb.etpetssim.simulations.conway.model.*;
-import de.mkalb.etpetssim.simulations.conway.shared.*;
-import javafx.beans.property.*;
-import javafx.collections.*;
+import de.mkalb.etpetssim.simulations.conway.model.ConwayConfig;
+import de.mkalb.etpetssim.simulations.conway.model.ConwayPatterns;
+import de.mkalb.etpetssim.simulations.conway.shared.ConwayPatternChoice;
+import de.mkalb.etpetssim.simulations.conway.shared.ConwayUserActionContext;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import org.jspecify.annotations.Nullable;
 
-import java.util.*;
+import java.util.List;
+import java.util.Optional;
 
 public final class ConwayEditToolBarViewModel {
 
@@ -47,8 +52,8 @@ public final class ConwayEditToolBarViewModel {
 
     private boolean containsChoiceId(String choiceId) {
         return availablePatternChoices.stream()
-                                      .map(ConwayPatternChoice::choiceId)
-                                      .anyMatch(choiceId::equals);
+                .map(ConwayPatternChoice::choiceId)
+                .anyMatch(choiceId::equals);
     }
 
 }

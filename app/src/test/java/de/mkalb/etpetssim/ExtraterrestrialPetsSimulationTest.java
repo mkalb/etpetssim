@@ -1,21 +1,32 @@
 package de.mkalb.etpetssim;
 
 import de.mkalb.etpetssim.core.AppLogger;
-import de.mkalb.etpetssim.simulations.core.*;
+import de.mkalb.etpetssim.simulations.core.SimulationInstance;
+import de.mkalb.etpetssim.simulations.core.SimulationTerminationHandle;
+import de.mkalb.etpetssim.simulations.core.SimulationType;
 import de.mkalb.etpetssim.simulations.core.view.SimulationMainView;
 import de.mkalb.etpetssim.testsupport.FXTestSupport;
 import javafx.scene.layout.Region;
 import org.jspecify.annotations.NonNull;
-import org.junit.jupiter.api.*;
-import org.junit.jupiter.api.parallel.*;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 
-import java.lang.reflect.*;
-import java.util.*;
-import java.util.concurrent.*;
-import java.util.concurrent.atomic.*;
-import java.util.concurrent.locks.*;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.util.Objects;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.concurrent.locks.LockSupport;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Execution(ExecutionMode.SAME_THREAD)
 final class ExtraterrestrialPetsSimulationTest {

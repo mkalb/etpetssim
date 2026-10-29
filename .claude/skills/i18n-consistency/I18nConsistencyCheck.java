@@ -12,7 +12,7 @@ public final class I18nConsistencyCheck {
 
     private static final Comparator<String> KEY_COMPARATOR =
             Comparator.comparing((String key) -> key.toLowerCase(Locale.ROOT))
-                      .thenComparing(Comparator.naturalOrder());
+                    .thenComparing(Comparator.naturalOrder());
 
     public static void main(String[] args) {
         try {
@@ -243,9 +243,9 @@ public final class I18nConsistencyCheck {
 
     private static byte[] encodeUtf8(String content) throws CharacterCodingException {
         ByteBuffer encoded = StandardCharsets.UTF_8.newEncoder()
-                                                   .onMalformedInput(CodingErrorAction.REPORT)
-                                                   .onUnmappableCharacter(CodingErrorAction.REPORT)
-                                                   .encode(CharBuffer.wrap(content));
+                .onMalformedInput(CodingErrorAction.REPORT)
+                .onUnmappableCharacter(CodingErrorAction.REPORT)
+                .encode(CharBuffer.wrap(content));
         byte[] bytes = new byte[encoded.remaining()];
         encoded.get(bytes);
         return bytes;
@@ -371,10 +371,10 @@ public final class I18nConsistencyCheck {
 
     private static String decodeUtf8(byte[] bytes) throws CharacterCodingException {
         return StandardCharsets.UTF_8.newDecoder()
-                                     .onMalformedInput(CodingErrorAction.REPORT)
-                                     .onUnmappableCharacter(CodingErrorAction.REPORT)
-                                     .decode(ByteBuffer.wrap(bytes))
-                                     .toString();
+                .onMalformedInput(CodingErrorAction.REPORT)
+                .onUnmappableCharacter(CodingErrorAction.REPORT)
+                .decode(ByteBuffer.wrap(bytes))
+                .toString();
     }
 
     private static String localeFrom(Path relativePath) {
@@ -394,17 +394,17 @@ public final class I18nConsistencyCheck {
 
     private static String formatEntries(Collection<Entry> entries, String lineSeparator) {
         List<RenderedEntry> sortedEntries = entries.stream()
-                                                   .map(I18nConsistencyCheck::renderEntry)
-                                                   .sorted(Comparator.comparing(RenderedEntry::decodedKey, KEY_COMPARATOR))
-                                                   .toList();
+                .map(I18nConsistencyCheck::renderEntry)
+                .sorted(Comparator.comparing(RenderedEntry::decodedKey, KEY_COMPARATOR))
+                .toList();
         int maxKeyLength = sortedEntries.stream()
-                                        .mapToInt(entry -> entry.key().length())
-                                        .max()
-                                        .orElse(0);
+                .mapToInt(entry -> entry.key().length())
+                .max()
+                .orElse(0);
 
         String content = sortedEntries.stream()
-                                      .map(entry -> formatEntry(entry, maxKeyLength))
-                                      .collect(Collectors.joining(lineSeparator));
+                .map(entry -> formatEntry(entry, maxKeyLength))
+                .collect(Collectors.joining(lineSeparator));
         return content + lineSeparator;
     }
 
@@ -657,10 +657,10 @@ public final class I18nConsistencyCheck {
 
     private static List<String> missingKeys(Bundle source, Bundle target) {
         return source.entries().keySet().stream()
-                     .filter(key -> !isUrlKey(key))
-                     .filter(key -> !target.entries().containsKey(key))
-                     .sorted(KEY_COMPARATOR)
-                     .toList();
+                .filter(key -> !isUrlKey(key))
+                .filter(key -> !target.entries().containsKey(key))
+                .sorted(KEY_COMPARATOR)
+                .toList();
     }
 
     private static boolean isUrlKey(String key) {
@@ -692,10 +692,10 @@ public final class I18nConsistencyCheck {
     private static List<Finding> analyzeAlignment(Bundle bundle) {
         List<Entry> entries = List.copyOf(bundle.entries().values());
         int maxKeyLength = entries.stream()
-                                  .map(I18nConsistencyCheck::renderEntry)
-                                  .mapToInt(entry -> entry.key().length())
-                                  .max()
-                                  .orElse(0);
+                .map(I18nConsistencyCheck::renderEntry)
+                .mapToInt(entry -> entry.key().length())
+                .max()
+                .orElse(0);
         List<String> misaligned = new ArrayList<>();
 
         for (Entry entry : entries) {
@@ -716,21 +716,21 @@ public final class I18nConsistencyCheck {
 
     private static List<Finding> analyzePlaceholderCount(Bundle enUs, Bundle deDe) {
         List<Finding> mismatches = enUs.entries().keySet().stream()
-                                       .filter(key -> !isUrlKey(key))
-                                       .filter(key -> deDe.entries().containsKey(key))
-                                       .sorted(KEY_COMPARATOR)
-                                       .flatMap(key -> {
-                                           long enUsCount = percentCount(enUs.entries().get(key).value());
-                                           long deDeCount = percentCount(deDe.entries().get(key).value());
-                                           if (enUsCount == deDeCount) {
-                                               return Stream.empty();
-                                           }
-                                           return Stream.of(Finding.fail(
-                                                   "placeholder count",
-                                                   "key " + key + " has " + enUsCount + " '%' in en_US but " + deDeCount + " '%' in de_DE"
-                                           ));
-                                       })
-                                       .toList();
+                .filter(key -> !isUrlKey(key))
+                .filter(key -> deDe.entries().containsKey(key))
+                .sorted(KEY_COMPARATOR)
+                .flatMap(key -> {
+                    long enUsCount = percentCount(enUs.entries().get(key).value());
+                    long deDeCount = percentCount(deDe.entries().get(key).value());
+                    if (enUsCount == deDeCount) {
+                        return Stream.empty();
+                    }
+                    return Stream.of(Finding.fail(
+                            "placeholder count",
+                            "key " + key + " has " + enUsCount + " '%' in en_US but " + deDeCount + " '%' in de_DE"
+                    ));
+                })
+                .toList();
 
         if (mismatches.isEmpty()) {
             return List.of(Finding.pass("placeholder count", "shared keys use the same number of '%' characters (.url keys exempt)"));
@@ -740,9 +740,9 @@ public final class I18nConsistencyCheck {
 
     private static Finding analyzeTrailingWhitespace(Bundle bundle) {
         List<String> affectedEntries = bundle.entries().values().stream()
-                                             .filter(entry -> hasTrailingWhitespace(entry.value()))
-                                             .map(entry -> entry.key() + " (line " + entry.lineNumber() + ")")
-                                             .toList();
+                .filter(entry -> hasTrailingWhitespace(entry.value()))
+                .map(entry -> entry.key() + " (line " + entry.lineNumber() + ")")
+                .toList();
         if (affectedEntries.isEmpty()) {
             return Finding.pass(
                     "trailing whitespace",
@@ -769,10 +769,10 @@ public final class I18nConsistencyCheck {
 
     private static List<Finding> analyzeUnicodeEscapes(Bundle bundle) {
         List<String> keysWithEscapes = bundle.entries().values().stream()
-                                             .filter(entry -> containsUnescapedUnicodeEscape(entry.rawValue()))
-                                             .map(Entry::key)
-                                             .sorted(KEY_COMPARATOR)
-                                             .toList();
+                .filter(entry -> containsUnescapedUnicodeEscape(entry.rawValue()))
+                .map(Entry::key)
+                .sorted(KEY_COMPARATOR)
+                .toList();
 
         if (keysWithEscapes.isEmpty()) {
             return List.of(Finding.pass("Unicode escapes", bundle.fileName() + " stores localized characters directly"));
@@ -785,10 +785,10 @@ public final class I18nConsistencyCheck {
 
     private static Finding analyzeUnicodeEscapesInKeys(Bundle bundle) {
         List<String> affectedEntries = bundle.entries().values().stream()
-                                             .filter(entry -> containsUnescapedUnicodeEscape(entry.rawKey()))
-                                             .sorted(Comparator.comparing(Entry::key, KEY_COMPARATOR))
-                                             .map(entry -> entry.key() + " (line " + entry.lineNumber() + ")")
-                                             .toList();
+                .filter(entry -> containsUnescapedUnicodeEscape(entry.rawKey()))
+                .sorted(Comparator.comparing(Entry::key, KEY_COMPARATOR))
+                .map(entry -> entry.key() + " (line " + entry.lineNumber() + ")")
+                .toList();
         if (affectedEntries.isEmpty()) {
             return Finding.pass(
                     "Unicode escapes in keys",
@@ -1176,9 +1176,9 @@ public final class I18nConsistencyCheck {
 
         private Severity highestSeverity() {
             return findings.stream()
-                           .map(Finding::severity)
-                           .max(Comparator.comparingInt(severity -> severity.exitCode))
-                           .orElse(Severity.PASS);
+                    .map(Finding::severity)
+                    .max(Comparator.comparingInt(severity -> severity.exitCode))
+                    .orElse(Severity.PASS);
         }
 
         private boolean hasFailure(String rule) {

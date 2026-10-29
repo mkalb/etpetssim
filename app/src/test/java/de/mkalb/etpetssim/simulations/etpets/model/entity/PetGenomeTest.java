@@ -3,9 +3,10 @@ package de.mkalb.etpetssim.simulations.etpets.model.entity;
 import de.mkalb.etpetssim.simulations.etpets.model.EtpetsBalance;
 import org.junit.jupiter.api.Test;
 
-import java.util.*;
+import java.util.Random;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SuppressWarnings("MagicNumber")
 final class PetGenomeTest {

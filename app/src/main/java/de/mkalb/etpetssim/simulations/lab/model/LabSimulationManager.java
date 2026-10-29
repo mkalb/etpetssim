@@ -1,13 +1,18 @@
 package de.mkalb.etpetssim.simulations.lab.model;
 
-import de.mkalb.etpetssim.engine.*;
+import de.mkalb.etpetssim.engine.GridCoordinate;
+import de.mkalb.etpetssim.engine.GridOffset;
+import de.mkalb.etpetssim.engine.GridStructure;
 import de.mkalb.etpetssim.engine.executor.StepExecutionResult;
-import de.mkalb.etpetssim.engine.model.*;
-import de.mkalb.etpetssim.engine.support.*;
+import de.mkalb.etpetssim.engine.model.SparseGridModel;
+import de.mkalb.etpetssim.engine.model.WritableGridModel;
+import de.mkalb.etpetssim.engine.support.GridInitializers;
+import de.mkalb.etpetssim.engine.support.GridPatterns;
 import de.mkalb.etpetssim.simulations.core.model.SimulationManager;
 import de.mkalb.etpetssim.simulations.lab.model.entity.LabEntity;
 
-import java.util.*;
+import java.util.List;
+import java.util.Random;
 
 public final class LabSimulationManager
         implements SimulationManager<LabEntity, WritableGridModel<LabEntity>, LabConfig, LabStatistics> {
@@ -28,19 +33,19 @@ public final class LabSimulationManager
 
         model = new SparseGridModel<>(structure, LabEntity.NORMAL);
         GridInitializers.placeRandomCount(INITIAL_HIGHLIGHTED_COUNT,
-                                () -> LabEntity.HIGHLIGHTED,
-                                e -> e == LabEntity.NORMAL,
-                                new Random(config.seed()))
-                        // Place a symmetric small cross pattern of highlighted entities
-                        .andThen(GridInitializers.placePattern(
-                                GridPatterns.of(LabEntity.HIGHLIGHTED, List.of(
-                                        new GridOffset(0, 1),
-                                        new GridOffset(1, 0),
-                                        new GridOffset(2, 1),
-                                        new GridOffset(1, 2)
-                                )),
-                                new GridCoordinate(5, 5)))
-                        .initialize(model);
+                        () -> LabEntity.HIGHLIGHTED,
+                        e -> e == LabEntity.NORMAL,
+                        new Random(config.seed()))
+                // Place a symmetric small cross pattern of highlighted entities
+                .andThen(GridInitializers.placePattern(
+                        GridPatterns.of(LabEntity.HIGHLIGHTED, List.of(
+                                new GridOffset(0, 1),
+                                new GridOffset(1, 0),
+                                new GridOffset(2, 1),
+                                new GridOffset(1, 2)
+                        )),
+                        new GridCoordinate(5, 5)))
+                .initialize(model);
     }
 
     @Override

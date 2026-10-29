@@ -3,7 +3,7 @@ package de.mkalb.etpetssim.engine.executor;
 import de.mkalb.etpetssim.engine.model.GridModel;
 import de.mkalb.etpetssim.engine.model.entity.GridEntity;
 
-import java.util.function.*;
+import java.util.function.Supplier;
 
 /**
  * Default implementation of {@link SimulationExecutor} that executes simulation steps

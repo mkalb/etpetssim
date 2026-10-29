@@ -3,11 +3,12 @@ package de.mkalb.etpetssim.simulations.langton.view;
 import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorRegistry;
 import de.mkalb.etpetssim.simulations.core.view.AbstractObservationView;
 import de.mkalb.etpetssim.simulations.core.viewmodel.DefaultObservationViewModel;
-import de.mkalb.etpetssim.simulations.langton.model.*;
+import de.mkalb.etpetssim.simulations.langton.model.LangtonCell;
+import de.mkalb.etpetssim.simulations.langton.model.LangtonStatistics;
 import de.mkalb.etpetssim.simulations.langton.model.entity.LangtonEntity;
 import javafx.scene.layout.Region;
 
-import java.util.*;
+import java.util.Optional;
 
 public final class LangtonObservationView
         extends AbstractObservationView<

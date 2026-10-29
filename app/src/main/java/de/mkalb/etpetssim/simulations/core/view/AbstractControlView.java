@@ -2,10 +2,14 @@ package de.mkalb.etpetssim.simulations.core.view;
 
 import de.mkalb.etpetssim.simulations.core.viewmodel.SimulationControlViewModel;
 import de.mkalb.etpetssim.ui.FXStyleClasses;
-import javafx.scene.control.*;
-import javafx.scene.layout.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
 
-import java.util.*;
+import java.util.Optional;
 
 /**
  * Base class for building the control section of a simulation UI.

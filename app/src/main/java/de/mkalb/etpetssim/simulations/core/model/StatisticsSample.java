@@ -2,7 +2,9 @@ package de.mkalb.etpetssim.simulations.core.model;
 
 import de.mkalb.etpetssim.engine.executor.StepTimingStatistics;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * Immutable sampled statistics at one step count.

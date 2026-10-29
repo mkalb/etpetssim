@@ -1,6 +1,7 @@
 package de.mkalb.etpetssim.simulations.core.view;
 
-import java.util.*;
+import java.util.ArrayDeque;
+import java.util.Queue;
 
 /**
  * Tracks recent draw durations and decides whether intermediate draws should be skipped.

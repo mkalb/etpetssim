@@ -8,7 +8,7 @@ import de.mkalb.etpetssim.simulations.lab.model.LabStatistics;
 import de.mkalb.etpetssim.simulations.lab.model.entity.LabEntity;
 import javafx.scene.layout.Region;
 
-import java.util.*;
+import java.util.Optional;
 
 public final class LabObservationView
         extends AbstractObservationView<

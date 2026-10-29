@@ -4,7 +4,9 @@ import de.mkalb.etpetssim.engine.GridStructure;
 import org.jspecify.annotations.NonNull;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SuppressWarnings("MagicNumber")
 final class StatisticsMetricTest {

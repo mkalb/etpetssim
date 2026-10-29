@@ -1,6 +1,6 @@
 package de.mkalb.etpetssim.simulations.etpets.model;
 
-import java.util.concurrent.atomic.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public final class EtpetsIdSequence {
 

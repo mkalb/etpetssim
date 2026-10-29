@@ -1,11 +1,17 @@
 package de.mkalb.etpetssim.simulations.conway.model;
 
-import de.mkalb.etpetssim.engine.*;
-import de.mkalb.etpetssim.engine.support.*;
+import de.mkalb.etpetssim.engine.CellShape;
+import de.mkalb.etpetssim.engine.GridOffset;
+import de.mkalb.etpetssim.engine.support.GridPattern;
+import de.mkalb.etpetssim.engine.support.GridPatterns;
 import de.mkalb.etpetssim.simulations.conway.model.entity.ConwayEntity;
-import de.mkalb.etpetssim.simulations.conway.shared.*;
+import de.mkalb.etpetssim.simulations.conway.shared.ConwayPatternChoice;
+import de.mkalb.etpetssim.simulations.conway.shared.ConwayRulePresetSquare;
+import de.mkalb.etpetssim.simulations.conway.shared.ConwayTransitionRules;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Catalog of the predefined {@link GridPattern} choices of Conway's Game of Life.
@@ -163,8 +169,8 @@ public final class ConwayPatterns {
      */
     public static List<ConwayPatternChoice> availableChoices(ConwayConfig config) {
         return CATALOG_CHOICES.stream()
-                              .filter(choice -> choice.isAvailableFor(config.cellShape(), config.transitionRules()))
-                              .toList();
+                .filter(choice -> choice.isAvailableFor(config.cellShape(), config.transitionRules()))
+                .toList();
     }
 
     private static boolean isAvailableForClassicSquareRules(CellShape cellShape,

@@ -1,12 +1,21 @@
 package de.mkalb.etpetssim.simulations.langton.model;
 
-import de.mkalb.etpetssim.engine.*;
+import de.mkalb.etpetssim.engine.CellShape;
+import de.mkalb.etpetssim.engine.GridCoordinate;
 import de.mkalb.etpetssim.engine.neighborhood.CompassDirection;
-import de.mkalb.etpetssim.simulations.langton.model.entity.*;
-import de.mkalb.etpetssim.simulations.langton.shared.*;
+import de.mkalb.etpetssim.simulations.langton.model.entity.Ant;
+import de.mkalb.etpetssim.simulations.langton.model.entity.LangtonEntity;
+import de.mkalb.etpetssim.simulations.langton.model.entity.NoAgent;
+import de.mkalb.etpetssim.simulations.langton.model.entity.TerrainConstant;
+import de.mkalb.etpetssim.simulations.langton.shared.LangtonMovementRules;
+import de.mkalb.etpetssim.simulations.langton.shared.LangtonUserActionContext;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 final class LangtonUserActionTest {
 
@@ -37,12 +46,12 @@ final class LangtonUserActionTest {
         LangtonSimulationManager manager = new LangtonSimulationManager(createConfig());
         LangtonUserAction userAction = new LangtonUserAction();
         GridCoordinate coordinate = manager.currentGridModel()
-                                           .terrainModel()
-                                           .filteredCoordinates(e -> e == TerrainConstant.UNVISITED)
-                                           .stream()
-                                           .filter(c -> manager.currentGridModel().antModel().getEntity(c) instanceof NoAgent)
-                                           .findFirst()
-                                           .orElseThrow();
+                .terrainModel()
+                .filteredCoordinates(e -> e == TerrainConstant.UNVISITED)
+                .stream()
+                .filter(c -> manager.currentGridModel().antModel().getEntity(c) instanceof NoAgent)
+                .findFirst()
+                .orElseThrow();
         int antCellsBefore = manager.statistics().antCells();
         int visitedCellsBefore = manager.statistics().visitedCells();
 
@@ -121,11 +130,11 @@ final class LangtonUserActionTest {
         LangtonSimulationManager manager = new LangtonSimulationManager(createConfig());
         LangtonUserAction userAction = new LangtonUserAction();
         GridCoordinate coordinate = manager.currentGridModel()
-                                           .antModel()
-                                           .filteredCoordinates(LangtonEntity::isAgent)
-                                           .stream()
-                                           .findFirst()
-                                           .orElseThrow();
+                .antModel()
+                .filteredCoordinates(LangtonEntity::isAgent)
+                .stream()
+                .findFirst()
+                .orElseThrow();
         int antCellsBefore = manager.statistics().antCells();
         int visitedCellsBefore = manager.statistics().visitedCells();
 
@@ -146,11 +155,11 @@ final class LangtonUserActionTest {
         LangtonSimulationManager manager = new LangtonSimulationManager(createConfig());
         LangtonUserAction userAction = new LangtonUserAction();
         GridCoordinate coordinate = manager.currentGridModel()
-                                           .terrainModel()
-                                           .filteredCoordinates(TerrainConstant::isUnvisited)
-                                           .stream()
-                                           .findFirst()
-                                           .orElseThrow();
+                .terrainModel()
+                .filteredCoordinates(TerrainConstant::isUnvisited)
+                .stream()
+                .findFirst()
+                .orElseThrow();
         int antCellsBefore = manager.statistics().antCells();
         int visitedCellsBefore = manager.statistics().visitedCells();
 

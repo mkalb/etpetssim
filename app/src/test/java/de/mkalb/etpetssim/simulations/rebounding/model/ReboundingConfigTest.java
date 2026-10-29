@@ -1,14 +1,29 @@
 package de.mkalb.etpetssim.simulations.rebounding.model;
 
-import de.mkalb.etpetssim.engine.*;
+import de.mkalb.etpetssim.engine.CellShape;
+import de.mkalb.etpetssim.engine.GridEdgeBehavior;
 import de.mkalb.etpetssim.engine.neighborhood.NeighborhoodMode;
 import de.mkalb.etpetssim.simulations.core.shared.CellDisplayMode;
 import org.junit.jupiter.api.Test;
 
-import java.util.function.*;
+import java.util.function.Consumer;
 
-import static de.mkalb.etpetssim.simulations.rebounding.model.ReboundingConstraints.*;
-import static org.junit.jupiter.api.Assertions.*;
+import static de.mkalb.etpetssim.simulations.rebounding.model.ReboundingConstraints.CELL_DISPLAY_MODE_DEFAULT;
+import static de.mkalb.etpetssim.simulations.rebounding.model.ReboundingConstraints.CELL_EDGE_LENGTH_DEFAULT;
+import static de.mkalb.etpetssim.simulations.rebounding.model.ReboundingConstraints.CELL_SHAPE_DEFAULT;
+import static de.mkalb.etpetssim.simulations.rebounding.model.ReboundingConstraints.GRID_EDGE_BEHAVIOR_DEFAULT;
+import static de.mkalb.etpetssim.simulations.rebounding.model.ReboundingConstraints.GRID_HEIGHT_DEFAULT;
+import static de.mkalb.etpetssim.simulations.rebounding.model.ReboundingConstraints.GRID_WIDTH_DEFAULT;
+import static de.mkalb.etpetssim.simulations.rebounding.model.ReboundingConstraints.MOVING_ENTITY_PERCENT_DEFAULT;
+import static de.mkalb.etpetssim.simulations.rebounding.model.ReboundingConstraints.MOVING_ENTITY_PERCENT_MAX;
+import static de.mkalb.etpetssim.simulations.rebounding.model.ReboundingConstraints.MOVING_ENTITY_PERCENT_MIN;
+import static de.mkalb.etpetssim.simulations.rebounding.model.ReboundingConstraints.NEIGHBORHOOD_MODE_DEFAULT;
+import static de.mkalb.etpetssim.simulations.rebounding.model.ReboundingConstraints.VERTICAL_WALLS_DEFAULT;
+import static de.mkalb.etpetssim.simulations.rebounding.model.ReboundingConstraints.VERTICAL_WALLS_MAX;
+import static de.mkalb.etpetssim.simulations.rebounding.model.ReboundingConstraints.VERTICAL_WALLS_MIN;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 final class ReboundingConfigTest {
 

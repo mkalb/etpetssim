@@ -10,8 +10,13 @@ Rules for all `.java` files; repository-wide instructions still apply.
 ## Code Style
 
 - Do not add comments that only restate obvious code.
-- Avoid formatting-only changes, import sorting, or import cleanup unless required by the task.
-- Keep existing wildcard imports unless a concrete change requires otherwise.
+- Avoid formatting-only changes unless required by the task.
+- Use single-type imports, also for static members; do not use on-demand imports (`.*`). Import a nested type with
+  a regular import, not with `import static`.
+- Group imports as IntelliJ does, with one blank line between the groups: all other packages, `javax.*`, `java.*`,
+  then static imports. Sort each group by name with uppercase before lowercase letters (`engine.GridCoordinate`
+  before `engine.model.GridModel`). Add new imports at their sorted position and remove imports that a change
+  leaves unused; leave the other imports unchanged.
 - Prefer modern Java 27 APIs and language features when they improve clarity; avoid novelty.
 - Use locale-stable normalization for technical text (e.g., `toLowerCase(Locale.ROOT)`).
 - Do not initialize fields explicitly to their default value (`0`, `false`, `null`); an explicit initializer is for a

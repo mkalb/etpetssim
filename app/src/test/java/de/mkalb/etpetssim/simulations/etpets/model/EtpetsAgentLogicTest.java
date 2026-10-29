@@ -2,14 +2,29 @@ package de.mkalb.etpetssim.simulations.etpets.model;
 
 import de.mkalb.etpetssim.core.AppLogger;
 import de.mkalb.etpetssim.engine.GridCoordinate;
-import de.mkalb.etpetssim.simulations.etpets.model.entity.*;
-import org.junit.jupiter.api.*;
-import org.junit.jupiter.api.parallel.*;
+import de.mkalb.etpetssim.simulations.etpets.model.entity.Insect;
+import de.mkalb.etpetssim.simulations.etpets.model.entity.NoAgent;
+import de.mkalb.etpetssim.simulations.etpets.model.entity.Pet;
+import de.mkalb.etpetssim.simulations.etpets.model.entity.PetEgg;
+import de.mkalb.etpetssim.simulations.etpets.model.entity.PetGenome;
+import de.mkalb.etpetssim.simulations.etpets.model.entity.TerrainConstant;
+import de.mkalb.etpetssim.simulations.etpets.model.entity.Trail;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 
-import java.util.*;
+import java.util.List;
+import java.util.Random;
 
-import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsLogicTestSupport.*;
-import static org.junit.jupiter.api.Assertions.*;
+import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsLogicTestSupport.createGridModel;
+import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsLogicTestSupport.createPet;
+import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsLogicTestSupport.createTraits;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SuppressWarnings("MagicNumber")
 @Execution(ExecutionMode.SAME_THREAD)

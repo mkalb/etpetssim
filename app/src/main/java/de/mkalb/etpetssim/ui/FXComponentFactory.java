@@ -1,17 +1,39 @@
 package de.mkalb.etpetssim.ui;
 
 import javafx.beans.binding.Bindings;
-import javafx.beans.property.*;
-import javafx.beans.value.*;
-import javafx.event.*;
+import javafx.beans.property.ReadOnlyStringProperty;
+import javafx.beans.property.StringProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.scene.Node;
-import javafx.scene.control.*;
-import javafx.scene.layout.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.Control;
+import javafx.scene.control.Label;
+import javafx.scene.control.ListCell;
+import javafx.scene.control.RadioButton;
+import javafx.scene.control.Slider;
+import javafx.scene.control.Spinner;
+import javafx.scene.control.SpinnerValueFactory;
+import javafx.scene.control.TextField;
+import javafx.scene.control.TextFormatter;
+import javafx.scene.control.ToggleGroup;
+import javafx.scene.control.Tooltip;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.VBox;
 import org.jspecify.annotations.Nullable;
 
-import java.util.*;
-import java.util.function.*;
-import java.util.stream.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * Creates styled JavaFX controls and containers, and labeled controls bound to input properties.
@@ -95,15 +117,15 @@ public final class FXComponentFactory {
         ToggleGroup toggleGroup = new ToggleGroup();
 
         List<RadioButton> radioButtons = inputChoiceProperty.validValues()
-                                                            .stream()
-                                                            .map(value -> {
-                                                                RadioButton radioButton = new RadioButton(inputChoiceProperty.displayNameProvider().apply(value));
-                                                                radioButton.setToggleGroup(toggleGroup);
-                                                                radioButton.getStyleClass().add(styleClass);
-                                                                radioButton.setUserData(value);
-                                                                return radioButton;
-                                                            })
-                                                            .toList();
+                .stream()
+                .map(value -> {
+                    RadioButton radioButton = new RadioButton(inputChoiceProperty.displayNameProvider().apply(value));
+                    radioButton.setToggleGroup(toggleGroup);
+                    radioButton.getStyleClass().add(styleClass);
+                    radioButton.setUserData(value);
+                    return radioButton;
+                })
+                .toList();
 
         // Set the initial selection.
         for (RadioButton rb : radioButtons) {

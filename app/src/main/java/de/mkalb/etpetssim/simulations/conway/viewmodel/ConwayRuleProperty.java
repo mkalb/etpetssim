@@ -1,11 +1,15 @@
 package de.mkalb.etpetssim.simulations.conway.viewmodel;
 
-import de.mkalb.etpetssim.simulations.conway.shared.*;
-import de.mkalb.etpetssim.ui.*;
-import javafx.beans.property.*;
+import de.mkalb.etpetssim.simulations.conway.shared.ConwayRulePresetHexagon;
+import de.mkalb.etpetssim.simulations.conway.shared.ConwayRulePresetSquare;
+import de.mkalb.etpetssim.simulations.conway.shared.ConwayRulePresetTriangle;
+import de.mkalb.etpetssim.simulations.conway.shared.ConwayTransitionRules;
+import de.mkalb.etpetssim.ui.InputChoiceProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import org.jspecify.annotations.Nullable;
 
-import java.util.function.*;
+import java.util.function.Consumer;
 
 /**
  * Encapsulates the preset selection and free-text S/B input for Conway transition rules.

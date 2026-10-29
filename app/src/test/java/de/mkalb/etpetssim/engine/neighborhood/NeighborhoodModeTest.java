@@ -2,10 +2,12 @@ package de.mkalb.etpetssim.engine.neighborhood;
 
 import org.junit.jupiter.api.Test;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
 
 import static de.mkalb.etpetssim.testsupport.LocalizationTestSupport.assertKeysInAllBundles;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 final class NeighborhoodModeTest {
 

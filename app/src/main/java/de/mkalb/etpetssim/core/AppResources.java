@@ -2,10 +2,17 @@ package de.mkalb.etpetssim.core;
 
 import javafx.scene.image.Image;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.nio.charset.Charset;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+import java.util.MissingResourceException;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.ResourceBundle;
 
 /**
  * Access to the resources of the application module: resource bundles, CSS files, images, streams, text, and URLs.

@@ -3,7 +3,7 @@ package de.mkalb.etpetssim.engine.model;
 import de.mkalb.etpetssim.engine.GridCoordinate;
 import de.mkalb.etpetssim.engine.model.entity.GridEntity;
 
-import java.util.*;
+import java.util.Locale;
 
 /**
  * Read-only view of a grid cell that exposes its coordinate and associated entity.

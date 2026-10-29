@@ -1,8 +1,16 @@
 package de.mkalb.etpetssim.simulations.etpets.model;
 
-import de.mkalb.etpetssim.engine.*;
+import de.mkalb.etpetssim.engine.CellShape;
+import de.mkalb.etpetssim.engine.GridEdgeBehavior;
+import de.mkalb.etpetssim.engine.GridSize;
+import de.mkalb.etpetssim.engine.GridStructure;
+import de.mkalb.etpetssim.engine.GridTopology;
 import de.mkalb.etpetssim.engine.model.SparseGridModel;
-import de.mkalb.etpetssim.simulations.etpets.model.entity.*;
+import de.mkalb.etpetssim.simulations.etpets.model.entity.NoAgent;
+import de.mkalb.etpetssim.simulations.etpets.model.entity.NoResource;
+import de.mkalb.etpetssim.simulations.etpets.model.entity.Pet;
+import de.mkalb.etpetssim.simulations.etpets.model.entity.PetTraits;
+import de.mkalb.etpetssim.simulations.etpets.model.entity.TerrainConstant;
 
 final class EtpetsLogicTestSupport {
 

@@ -1,20 +1,36 @@
 package de.mkalb.etpetssim.simulations.core.view;
 
-import de.mkalb.etpetssim.core.*;
+import de.mkalb.etpetssim.core.AppLocalization;
+import de.mkalb.etpetssim.core.AppLocalizationKeys;
 import de.mkalb.etpetssim.engine.model.GridCellView;
-import de.mkalb.etpetssim.engine.model.entity.*;
-import de.mkalb.etpetssim.simulations.core.model.*;
+import de.mkalb.etpetssim.engine.model.entity.GridEntity;
+import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorRegistry;
+import de.mkalb.etpetssim.simulations.core.model.SimulationStatistics;
+import de.mkalb.etpetssim.simulations.core.model.StatisticsChartGroup;
+import de.mkalb.etpetssim.simulations.core.model.StatisticsExtrema;
+import de.mkalb.etpetssim.simulations.core.model.StatisticsMetric;
 import de.mkalb.etpetssim.simulations.core.viewmodel.SimulationObservationViewModel;
 import de.mkalb.etpetssim.ui.FXStyleClasses;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.value.ChangeListener;
-import javafx.geometry.*;
-import javafx.scene.control.*;
-import javafx.scene.layout.*;
+import javafx.geometry.HPos;
+import javafx.geometry.Pos;
+import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TitledPane;
+import javafx.scene.control.Tooltip;
+import javafx.scene.layout.ColumnConstraints;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.VBox;
 import org.jspecify.annotations.Nullable;
 
 import java.text.NumberFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 /**
  * Base class for simulation observation views.
@@ -286,7 +302,7 @@ public abstract class AbstractObservationView<
             if (hasSelectedCell) {
                 selectedCellCoordinateLabel.setText(gridCell.coordinate().toDisplayString());
                 entityDescriptorRegistry.findByDescriptorId(gridCell.entity().descriptorId())
-                                        .ifPresent(descriptor -> selectedCellTypeLabel.setText(descriptor.shortName()));
+                        .ifPresent(descriptor -> selectedCellTypeLabel.setText(descriptor.shortName()));
             }
         }
     }

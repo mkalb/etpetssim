@@ -2,7 +2,12 @@ package de.mkalb.etpetssim.engine.model.entity;
 
 import de.mkalb.etpetssim.core.AppLocalization;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 
 /**
  * Registry for looking up {@link GridEntityDescriptor} instances by their descriptor ID.

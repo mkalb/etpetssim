@@ -1,13 +1,18 @@
 package de.mkalb.etpetssim.simulations.core.viewmodel;
 
-import de.mkalb.etpetssim.simulations.core.shared.*;
+import de.mkalb.etpetssim.simulations.core.shared.NoUserActionContext;
+import de.mkalb.etpetssim.simulations.core.shared.SimulationUserActionScope;
 import org.junit.jupiter.api.Test;
 
-import java.util.*;
-import java.util.concurrent.atomic.*;
-import java.util.function.*;
+import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Supplier;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 final class SimulationUserActionDescriptorTest {
 

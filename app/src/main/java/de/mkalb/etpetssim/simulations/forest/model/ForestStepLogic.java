@@ -2,11 +2,15 @@ package de.mkalb.etpetssim.simulations.forest.model;
 
 import de.mkalb.etpetssim.engine.GridStructure;
 import de.mkalb.etpetssim.engine.executor.SynchronousStepLogic;
-import de.mkalb.etpetssim.engine.model.*;
-import de.mkalb.etpetssim.engine.neighborhood.*;
+import de.mkalb.etpetssim.engine.model.GridCell;
+import de.mkalb.etpetssim.engine.model.ReadableGridModel;
+import de.mkalb.etpetssim.engine.model.WritableGridModel;
+import de.mkalb.etpetssim.engine.neighborhood.CellNeighborhoods;
+import de.mkalb.etpetssim.engine.neighborhood.EdgeBehaviorAction;
+import de.mkalb.etpetssim.engine.neighborhood.EdgeBehaviorResult;
 import de.mkalb.etpetssim.simulations.forest.model.entity.ForestEntity;
 
-import java.util.*;
+import java.util.Random;
 
 public final class ForestStepLogic implements SynchronousStepLogic<ForestEntity, ForestStatistics> {
 
@@ -26,10 +30,10 @@ public final class ForestStepLogic implements SynchronousStepLogic<ForestEntity,
                                        int stepIndex,
                                        ForestStatistics statistics) {
         currentGridModel.allCells()
-                        .stream()
-                        .map(c -> computeNextCell(c, currentGridModel))
-                        .filter(c -> !c.entity().isEmpty())
-                        .forEach(nextGridModel::setEntity);
+                .stream()
+                .map(c -> computeNextCell(c, currentGridModel))
+                .filter(c -> !c.entity().isEmpty())
+                .forEach(nextGridModel::setEntity);
         int treeCells = Math.toIntExact(nextGridModel.countEntities(ForestEntity::isTree));
         int burningCells = Math.toIntExact(nextGridModel.countEntities(ForestEntity::isBurning));
 
@@ -58,11 +62,11 @@ public final class ForestStepLogic implements SynchronousStepLogic<ForestEntity,
 
     private boolean hasBurningNeighbor(GridCell<ForestEntity> cell, ReadableGridModel<ForestEntity> model) {
         return CellNeighborhoods.cellNeighborsIgnoringEdgeBehavior(cell.coordinate(), config.neighborhoodMode(), structure.cellShape())
-                                .map(neighbor -> CellNeighborhoods.applyEdgeBehaviorToCoordinate(neighbor.neighborCoordinate(), structure))
-                                .filter(r -> (r.action() == EdgeBehaviorAction.VALID) || (r.action() == EdgeBehaviorAction.WRAPPED))
-                                .map(EdgeBehaviorResult::mapped)
-                                .map(model::getEntity)
-                                .anyMatch(ForestEntity::isBurning);
+                .map(neighbor -> CellNeighborhoods.applyEdgeBehaviorToCoordinate(neighbor.neighborCoordinate(), structure))
+                .filter(r -> (r.action() == EdgeBehaviorAction.VALID) || (r.action() == EdgeBehaviorAction.WRAPPED))
+                .map(EdgeBehaviorResult::mapped)
+                .map(model::getEntity)
+                .anyMatch(ForestEntity::isBurning);
     }
 
 }

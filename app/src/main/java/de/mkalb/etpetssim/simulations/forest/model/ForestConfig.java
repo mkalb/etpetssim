@@ -1,11 +1,20 @@
 package de.mkalb.etpetssim.simulations.forest.model;
 
-import de.mkalb.etpetssim.engine.*;
+import de.mkalb.etpetssim.engine.CellShape;
+import de.mkalb.etpetssim.engine.GridEdgeBehavior;
 import de.mkalb.etpetssim.engine.neighborhood.NeighborhoodMode;
 import de.mkalb.etpetssim.simulations.core.model.SimulationConfig;
 import de.mkalb.etpetssim.simulations.core.shared.CellDisplayMode;
 
-import static de.mkalb.etpetssim.simulations.forest.model.ForestConstraints.*;
+import static de.mkalb.etpetssim.simulations.forest.model.ForestConstraints.CELL_DISPLAY_MODE_VALUES;
+import static de.mkalb.etpetssim.simulations.forest.model.ForestConstraints.CELL_SHAPE_VALUES;
+import static de.mkalb.etpetssim.simulations.forest.model.ForestConstraints.GRID_EDGE_BEHAVIOR_VALUES;
+import static de.mkalb.etpetssim.simulations.forest.model.ForestConstraints.LIGHTNING_IGNITION_PROBABILITY_MAX;
+import static de.mkalb.etpetssim.simulations.forest.model.ForestConstraints.LIGHTNING_IGNITION_PROBABILITY_MIN;
+import static de.mkalb.etpetssim.simulations.forest.model.ForestConstraints.TREE_DENSITY_MAX;
+import static de.mkalb.etpetssim.simulations.forest.model.ForestConstraints.TREE_DENSITY_MIN;
+import static de.mkalb.etpetssim.simulations.forest.model.ForestConstraints.TREE_GROWTH_PROBABILITY_MAX;
+import static de.mkalb.etpetssim.simulations.forest.model.ForestConstraints.TREE_GROWTH_PROBABILITY_MIN;
 
 /**
  * Immutable configuration of the Forest-fire model simulation.

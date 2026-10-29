@@ -4,7 +4,8 @@ import de.mkalb.etpetssim.engine.CellShape;
 import de.mkalb.etpetssim.engine.support.GridPattern;
 import de.mkalb.etpetssim.simulations.conway.model.entity.ConwayEntity;
 
-import java.util.function.*;
+import java.util.function.BiPredicate;
+import java.util.function.Supplier;
 
 /**
  * Pattern that the Conway edit toolbar offers for placement on the grid.

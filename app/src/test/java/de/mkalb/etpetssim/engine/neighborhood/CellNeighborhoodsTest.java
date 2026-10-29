@@ -1,12 +1,32 @@
 package de.mkalb.etpetssim.engine.neighborhood;
 
-import de.mkalb.etpetssim.engine.*;
+import de.mkalb.etpetssim.engine.CellShape;
+import de.mkalb.etpetssim.engine.GridCoordinate;
+import de.mkalb.etpetssim.engine.GridEdgeBehavior;
+import de.mkalb.etpetssim.engine.GridOffset;
+import de.mkalb.etpetssim.engine.GridSize;
+import de.mkalb.etpetssim.engine.GridStructure;
+import de.mkalb.etpetssim.engine.GridTopology;
 import org.junit.jupiter.api.Test;
 
-import java.util.*;
-import java.util.function.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.EnumSet;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.SortedMap;
+import java.util.SortedSet;
+import java.util.TreeMap;
+import java.util.function.Function;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SuppressWarnings({"MagicNumber", "DuplicateExpressions"})
 final class CellNeighborhoodsTest {
@@ -34,8 +54,8 @@ final class CellNeighborhoodsTest {
                                                              NeighborhoodMode neighborhoodMode,
                                                              CellShape cellShape) {
         return CellNeighborhoods.cellNeighborsIgnoringEdgeBehavior(coordinate, neighborhoodMode, cellShape)
-                                .map(CellNeighbor::direction)
-                                .toList();
+                .map(CellNeighbor::direction)
+                .toList();
     }
 
     @Test
@@ -741,11 +761,11 @@ final class CellNeighborhoodsTest {
                 () -> assertEquals(12, verticesPointingDown.size()),
                 () -> assertEquals(12, verticesPointingUp.size()),
                 () -> assertEquals(3, verticesPointingDown.stream()
-                                                          .filter(c -> c.connection() == CellConnectionType.EDGE)
-                                                          .count()),
+                        .filter(c -> c.connection() == CellConnectionType.EDGE)
+                        .count()),
                 () -> assertEquals(3, verticesPointingUp.stream()
-                                                        .filter(c -> c.connection() == CellConnectionType.EDGE)
-                                                        .count())
+                        .filter(c -> c.connection() == CellConnectionType.EDGE)
+                        .count())
         );
     }
 

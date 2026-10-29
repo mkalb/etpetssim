@@ -1,12 +1,27 @@
 package de.mkalb.etpetssim.simulations.etpets.model;
 
-import de.mkalb.etpetssim.engine.*;
-import de.mkalb.etpetssim.engine.executor.*;
+import de.mkalb.etpetssim.engine.GridCoordinate;
+import de.mkalb.etpetssim.engine.GridSize;
+import de.mkalb.etpetssim.engine.GridStructure;
+import de.mkalb.etpetssim.engine.executor.DefaultSimulationExecutor;
+import de.mkalb.etpetssim.engine.executor.TimedSimulationExecutor;
 import de.mkalb.etpetssim.engine.model.SparseGridModel;
-import de.mkalb.etpetssim.simulations.core.model.*;
-import de.mkalb.etpetssim.simulations.etpets.model.entity.*;
+import de.mkalb.etpetssim.simulations.core.model.AbstractTimedSimulationManager;
+import de.mkalb.etpetssim.simulations.core.model.SimulationInitializationCancellation;
+import de.mkalb.etpetssim.simulations.etpets.model.entity.EtpetsEntity;
+import de.mkalb.etpetssim.simulations.etpets.model.entity.Insect;
+import de.mkalb.etpetssim.simulations.etpets.model.entity.NoAgent;
+import de.mkalb.etpetssim.simulations.etpets.model.entity.NoResource;
+import de.mkalb.etpetssim.simulations.etpets.model.entity.Pet;
+import de.mkalb.etpetssim.simulations.etpets.model.entity.PetEgg;
+import de.mkalb.etpetssim.simulations.etpets.model.entity.PetTraits;
+import de.mkalb.etpetssim.simulations.etpets.model.entity.Plant;
+import de.mkalb.etpetssim.simulations.etpets.model.entity.TerrainConstant;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Random;
 
 import static de.mkalb.etpetssim.engine.support.WorkCheckpoints.isCancellationCheckpoint;
 
@@ -267,9 +282,9 @@ public final class EtpetsSimulationManager
 
     private void initializeStatistics(EtpetsGridModel model) {
         int activePetCountInitial = Math.toIntExact(model.agentModel()
-                                                         .countEntities(entity -> (entity instanceof Pet pet) && !pet.isDead()));
+                .countEntities(entity -> (entity instanceof Pet pet) && !pet.isDead()));
         int eggCountInitial = Math.toIntExact(model.agentModel()
-                                                   .countEntities(entity -> entity instanceof PetEgg));
+                .countEntities(entity -> entity instanceof PetEgg));
         statistics.initializeStartupCellCounts(activePetCountInitial, eggCountInitial);
     }
 

@@ -4,8 +4,12 @@ import de.mkalb.etpetssim.engine.GridCoordinate;
 import de.mkalb.etpetssim.engine.model.GridCellView;
 import de.mkalb.etpetssim.engine.neighborhood.CompassDirection;
 import de.mkalb.etpetssim.simulations.core.model.SimulationUserAction;
-import de.mkalb.etpetssim.simulations.langton.model.entity.*;
-import de.mkalb.etpetssim.simulations.langton.shared.*;
+import de.mkalb.etpetssim.simulations.langton.model.entity.Ant;
+import de.mkalb.etpetssim.simulations.langton.model.entity.LangtonEntity;
+import de.mkalb.etpetssim.simulations.langton.model.entity.NoAgent;
+import de.mkalb.etpetssim.simulations.langton.model.entity.TerrainConstant;
+import de.mkalb.etpetssim.simulations.langton.shared.LangtonDirectionOptions;
+import de.mkalb.etpetssim.simulations.langton.shared.LangtonUserActionContext;
 import org.jspecify.annotations.Nullable;
 
 public final class LangtonUserAction

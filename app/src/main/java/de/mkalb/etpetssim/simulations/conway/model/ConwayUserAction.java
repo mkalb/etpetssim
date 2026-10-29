@@ -1,7 +1,8 @@
 package de.mkalb.etpetssim.simulations.conway.model;
 
 import de.mkalb.etpetssim.engine.GridCoordinate;
-import de.mkalb.etpetssim.engine.model.*;
+import de.mkalb.etpetssim.engine.model.GridCellView;
+import de.mkalb.etpetssim.engine.model.WritableGridModel;
 import de.mkalb.etpetssim.engine.support.GridPattern;
 import de.mkalb.etpetssim.simulations.conway.model.entity.ConwayEntity;
 import de.mkalb.etpetssim.simulations.conway.shared.ConwayUserActionContext;

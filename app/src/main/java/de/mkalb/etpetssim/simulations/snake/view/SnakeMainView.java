@@ -1,17 +1,27 @@
 package de.mkalb.etpetssim.simulations.snake.view;
 
-import de.mkalb.etpetssim.core.*;
+import de.mkalb.etpetssim.core.AppLocalization;
+import de.mkalb.etpetssim.core.AppLogger;
 import de.mkalb.etpetssim.engine.GridCoordinate;
-import de.mkalb.etpetssim.engine.model.*;
+import de.mkalb.etpetssim.engine.model.GridCell;
+import de.mkalb.etpetssim.engine.model.WritableGridModel;
 import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorRegistry;
 import de.mkalb.etpetssim.simulations.core.shared.SimulationUserActionScope;
-import de.mkalb.etpetssim.simulations.core.view.*;
-import de.mkalb.etpetssim.simulations.core.viewmodel.*;
-import de.mkalb.etpetssim.simulations.snake.model.*;
-import de.mkalb.etpetssim.simulations.snake.model.entity.*;
+import de.mkalb.etpetssim.simulations.core.view.AbstractDefaultMainView;
+import de.mkalb.etpetssim.simulations.core.view.DefaultControlView;
+import de.mkalb.etpetssim.simulations.core.viewmodel.DefaultMainViewModel;
+import de.mkalb.etpetssim.simulations.core.viewmodel.SimulationUserActionDescriptor;
+import de.mkalb.etpetssim.simulations.snake.model.SnakeConfig;
+import de.mkalb.etpetssim.simulations.snake.model.SnakeSimulationManager;
+import de.mkalb.etpetssim.simulations.snake.model.SnakeStatistics;
+import de.mkalb.etpetssim.simulations.snake.model.entity.SnakeEntity;
+import de.mkalb.etpetssim.simulations.snake.model.entity.SnakeHead;
 import de.mkalb.etpetssim.simulations.snake.shared.SnakeUserActionContext;
 import de.mkalb.etpetssim.simulations.snake.viewmodel.SnakeEditToolBarViewModel;
-import de.mkalb.etpetssim.ui.*;
+import de.mkalb.etpetssim.ui.CellDimension;
+import de.mkalb.etpetssim.ui.FXComponentFactory;
+import de.mkalb.etpetssim.ui.FXGridCanvasPainter;
+import de.mkalb.etpetssim.ui.FXStyleClasses;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.ObjectProperty;
 import javafx.scene.Node;
@@ -21,8 +31,10 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.StrokeType;
 import org.jspecify.annotations.Nullable;
 
-import java.util.*;
-import java.util.function.*;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.function.Function;
 
 public final class SnakeMainView
         extends AbstractDefaultMainView<
@@ -171,44 +183,44 @@ public final class SnakeMainView
         Color headDeadBorderColor = toDeadBorderColor(headAliveBorderColor, DEAD_HEAD_HUE);
 
         currentGridModel.filteredCoordinates(SnakeEntity::isWall)
-                        .forEach(coordinate ->
-                                dynamicPainter.drawCell(coordinate, wallDescriptor.color(), wallDescriptor.borderColor(), WALL_STROKE_LINE_WIDTH));
+                .forEach(coordinate ->
+                        dynamicPainter.drawCell(coordinate, wallDescriptor.color(), wallDescriptor.borderColor(), WALL_STROKE_LINE_WIDTH));
         currentGridModel.filteredCoordinates(SnakeEntity::isFood)
-                        .forEach(coordinate ->
-                                dynamicPainter.drawCellInnerCircle(coordinate, growthFoodDescriptor.color(), growthFoodDescriptor.borderColor(), FOOD_STROKE_LINE_WIDTH, StrokeType.INSIDE));
+                .forEach(coordinate ->
+                        dynamicPainter.drawCellInnerCircle(coordinate, growthFoodDescriptor.color(), growthFoodDescriptor.borderColor(), FOOD_STROKE_LINE_WIDTH, StrokeType.INSIDE));
         currentGridModel.filteredCells(e -> e instanceof SnakeHead)
-                        .forEach(cell -> {
-                            if (cell.entity() instanceof SnakeHead head) {
-                                boolean isDead = head.isDead();
-                                // Check if last selected entity is not null and is the same instance as the current head
-                                boolean isSelected = isSelected(head);
-                                Color snakeHeadColor;
-                                Color snakeHeadColorBorder;
-                                Color snakeSegmentColor;
-                                Color snakeSegmentColorBorder;
-                                if (isDead) {
-                                    snakeHeadColor = headDeadColor;
-                                    snakeHeadColorBorder = headDeadBorderColor;
-                                    snakeSegmentColor = segmentDeadColor;
-                                    snakeSegmentColorBorder = segmentDeadBorderColor;
-                                } else if (isSelected) {
-                                    snakeHeadColor = headAliveSelectedColor;
-                                    snakeHeadColorBorder = headAliveSelectedBorderColor;
-                                    snakeSegmentColor = segmentAliveSelectedColor;
-                                    snakeSegmentColorBorder = segmentAliveSelectedBorderColor;
-                                } else {
-                                    snakeHeadColor = headAliveColor;
-                                    snakeHeadColorBorder = headAliveBorderColor;
-                                    snakeSegmentColor = segmentAliveColor;
-                                    snakeSegmentColorBorder = segmentAliveBorderColor;
-                                }
-                                for (GridCoordinate coordinate : head.currentSegments()) {
-                                    dynamicPainter.drawCell(coordinate, snakeSegmentColor, snakeSegmentColorBorder, SNAKE_SEGMENT_STROKE_LINE_WIDTH);
-                                }
-                                dynamicPainter.drawCellInnerCircle(cell.coordinate(), snakeHeadColor, snakeHeadColorBorder, SNAKE_HEAD_STROKE_LINE_WIDTH,
-                                        StrokeType.OUTSIDE);
-                            }
-                        });
+                .forEach(cell -> {
+                    if (cell.entity() instanceof SnakeHead head) {
+                        boolean isDead = head.isDead();
+                        // Check if last selected entity is not null and is the same instance as the current head
+                        boolean isSelected = isSelected(head);
+                        Color snakeHeadColor;
+                        Color snakeHeadColorBorder;
+                        Color snakeSegmentColor;
+                        Color snakeSegmentColorBorder;
+                        if (isDead) {
+                            snakeHeadColor = headDeadColor;
+                            snakeHeadColorBorder = headDeadBorderColor;
+                            snakeSegmentColor = segmentDeadColor;
+                            snakeSegmentColorBorder = segmentDeadBorderColor;
+                        } else if (isSelected) {
+                            snakeHeadColor = headAliveSelectedColor;
+                            snakeHeadColorBorder = headAliveSelectedBorderColor;
+                            snakeSegmentColor = segmentAliveSelectedColor;
+                            snakeSegmentColorBorder = segmentAliveSelectedBorderColor;
+                        } else {
+                            snakeHeadColor = headAliveColor;
+                            snakeHeadColorBorder = headAliveBorderColor;
+                            snakeSegmentColor = segmentAliveColor;
+                            snakeSegmentColorBorder = segmentAliveBorderColor;
+                        }
+                        for (GridCoordinate coordinate : head.currentSegments()) {
+                            dynamicPainter.drawCell(coordinate, snakeSegmentColor, snakeSegmentColorBorder, SNAKE_SEGMENT_STROKE_LINE_WIDTH);
+                        }
+                        dynamicPainter.drawCellInnerCircle(cell.coordinate(), snakeHeadColor, snakeHeadColorBorder, SNAKE_HEAD_STROKE_LINE_WIDTH,
+                                StrokeType.OUTSIDE);
+                    }
+                });
     }
 
     @Override
@@ -250,8 +262,8 @@ public final class SnakeMainView
                         SNAKE_TOOLBAR_ADD_SNAKE,
                         SNAKE_TOOLBAR_ADD_SNAKE_TOOLTIP,
                         () -> Optional.of(editToolBarViewModel.getSelectedStrategy())
-                                      .map(SnakeUserActionContext.AddSnake::new)
-                                      .map(Function.identity())));
+                                .map(SnakeUserActionContext.AddSnake::new)
+                                .map(Function.identity())));
     }
 
     @Override

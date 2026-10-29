@@ -1,16 +1,30 @@
 package de.mkalb.etpetssim.simulations.conway.model;
 
-import de.mkalb.etpetssim.engine.*;
-import de.mkalb.etpetssim.engine.neighborhood.*;
+import de.mkalb.etpetssim.engine.CellShape;
+import de.mkalb.etpetssim.engine.GridEdgeBehavior;
+import de.mkalb.etpetssim.engine.neighborhood.CellNeighborhoods;
+import de.mkalb.etpetssim.engine.neighborhood.NeighborhoodMode;
 import de.mkalb.etpetssim.simulations.conway.shared.ConwayTransitionRules;
 import de.mkalb.etpetssim.simulations.core.shared.CellDisplayMode;
 import org.junit.jupiter.api.Test;
 
-import java.util.*;
-import java.util.function.*;
+import java.util.Set;
+import java.util.function.Consumer;
 
-import static de.mkalb.etpetssim.simulations.conway.model.ConwayConstraints.*;
-import static org.junit.jupiter.api.Assertions.*;
+import static de.mkalb.etpetssim.simulations.conway.model.ConwayConstraints.ALIVE_PERCENT_DEFAULT;
+import static de.mkalb.etpetssim.simulations.conway.model.ConwayConstraints.ALIVE_PERCENT_MAX;
+import static de.mkalb.etpetssim.simulations.conway.model.ConwayConstraints.ALIVE_PERCENT_MIN;
+import static de.mkalb.etpetssim.simulations.conway.model.ConwayConstraints.CELL_DISPLAY_MODE_DEFAULT;
+import static de.mkalb.etpetssim.simulations.conway.model.ConwayConstraints.CELL_EDGE_LENGTH_DEFAULT;
+import static de.mkalb.etpetssim.simulations.conway.model.ConwayConstraints.CELL_SHAPE_DEFAULT;
+import static de.mkalb.etpetssim.simulations.conway.model.ConwayConstraints.GRID_EDGE_BEHAVIOR_DEFAULT;
+import static de.mkalb.etpetssim.simulations.conway.model.ConwayConstraints.GRID_HEIGHT_DEFAULT;
+import static de.mkalb.etpetssim.simulations.conway.model.ConwayConstraints.GRID_WIDTH_DEFAULT;
+import static de.mkalb.etpetssim.simulations.conway.model.ConwayConstraints.NEIGHBORHOOD_MODE_DEFAULT;
+import static de.mkalb.etpetssim.simulations.conway.model.ConwayConstraints.TRANSITION_RULES_DEFAULT;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 final class ConwayConfigTest {
 

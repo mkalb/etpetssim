@@ -4,8 +4,10 @@ import de.mkalb.etpetssim.engine.GridCoordinate;
 import de.mkalb.etpetssim.simulations.sugar.model.entity.Sugar;
 import org.junit.jupiter.api.Test;
 
-import static de.mkalb.etpetssim.simulations.sugar.model.SugarLogicTestSupport.*;
-import static org.junit.jupiter.api.Assertions.*;
+import static de.mkalb.etpetssim.simulations.sugar.model.SugarLogicTestSupport.createConfig;
+import static de.mkalb.etpetssim.simulations.sugar.model.SugarLogicTestSupport.createGridModel;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 final class SugarResourceLogicTest {
 

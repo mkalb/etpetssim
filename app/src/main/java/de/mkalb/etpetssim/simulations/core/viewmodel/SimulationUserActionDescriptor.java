@@ -1,9 +1,10 @@
 package de.mkalb.etpetssim.simulations.core.viewmodel;
 
-import de.mkalb.etpetssim.simulations.core.shared.*;
+import de.mkalb.etpetssim.simulations.core.shared.SimulationUserActionContext;
+import de.mkalb.etpetssim.simulations.core.shared.SimulationUserActionScope;
 
-import java.util.*;
-import java.util.function.*;
+import java.util.Optional;
+import java.util.function.Supplier;
 
 /**
  * UI-facing descriptor for a simulation user action.

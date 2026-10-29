@@ -1,7 +1,10 @@
 package de.mkalb.etpetssim.engine;
 
-import java.util.*;
-import java.util.stream.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 /**
  * Represents the logical structure of a two-dimensional simulation grid.
@@ -140,9 +143,9 @@ public record GridStructure(GridTopology topology, GridSize size) {
      */
     public Stream<GridCoordinate> coordinatesStream() {
         return IntStream.range(0, size.height())
-                        .boxed()
-                        .flatMap(y -> IntStream.range(0, size.width())
-                                               .mapToObj(x -> new GridCoordinate(x, y)));
+                .boxed()
+                .flatMap(y -> IntStream.range(0, size.width())
+                        .mapToObj(x -> new GridCoordinate(x, y)));
     }
 
     /**

@@ -1,13 +1,25 @@
 package de.mkalb.etpetssim.simulations.core;
 
-import de.mkalb.etpetssim.core.*;
-import org.junit.jupiter.api.*;
-import org.junit.jupiter.api.parallel.*;
+import de.mkalb.etpetssim.core.AppLocalization;
+import de.mkalb.etpetssim.core.AppLogger;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Locale;
+import java.util.Optional;
+import java.util.Set;
 
 import static de.mkalb.etpetssim.testsupport.LocalizationTestSupport.assertKeysInAllBundles;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Execution(ExecutionMode.SAME_THREAD)
 @SuppressWarnings("SpellCheckingInspection")
@@ -100,8 +112,8 @@ final class SimulationTypeTest {
     @Test
     void testCliArgumentsAreUniqueAndLowercase() {
         List<String> allArguments = Arrays.stream(SimulationType.values())
-                                          .flatMap(simulationType -> simulationType.cliArguments().stream())
-                                          .toList();
+                .flatMap(simulationType -> simulationType.cliArguments().stream())
+                .toList();
         assertAll(
                 () -> assertEquals(allArguments.size(), Set.copyOf(allArguments).size()),
                 () -> assertTrue(allArguments.stream().allMatch(argument -> argument.equals(argument.toLowerCase(Locale.ROOT))))

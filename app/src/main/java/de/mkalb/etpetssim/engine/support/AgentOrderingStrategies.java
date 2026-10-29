@@ -3,7 +3,7 @@ package de.mkalb.etpetssim.engine.support;
 import de.mkalb.etpetssim.engine.model.GridCell;
 import de.mkalb.etpetssim.engine.model.entity.GridEntity;
 
-import java.util.*;
+import java.util.Comparator;
 
 /**
  * Comparators that define the order in which agent grid cells are processed in a simulation step.
@@ -32,7 +32,7 @@ public final class AgentOrderingStrategies {
      */
     public static <ENT extends GridEntity> Comparator<GridCell<ENT>> byPosition() {
         return Comparator.comparingInt((GridCell<ENT> cell) -> cell.coordinate().y())
-                         .thenComparingInt(cell -> cell.coordinate().x());
+                .thenComparingInt(cell -> cell.coordinate().x());
     }
 
     /**

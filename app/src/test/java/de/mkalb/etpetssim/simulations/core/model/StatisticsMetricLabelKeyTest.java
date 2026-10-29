@@ -11,10 +11,14 @@ import de.mkalb.etpetssim.simulations.sugar.model.SugarStatistics;
 import de.mkalb.etpetssim.simulations.wator.model.WatorStatistics;
 import org.junit.jupiter.api.Test;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
-import java.util.stream.*;
+import java.util.List;
+import java.util.Properties;
+import java.util.Set;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -22,7 +26,7 @@ final class StatisticsMetricLabelKeyTest {
 
     private static Set<String> loadMainPropertyKeys(String fileName) throws IOException {
         InputStream stream = AppResources.getResourceAsStream("i18n/" + fileName)
-                                         .orElseThrow(() -> new AssertionError("Production bundle not found: " + fileName));
+                .orElseThrow(() -> new AssertionError("Production bundle not found: " + fileName));
 
         Properties props = new Properties();
         try (var reader = new InputStreamReader(stream, StandardCharsets.UTF_8)) {
@@ -33,17 +37,17 @@ final class StatisticsMetricLabelKeyTest {
 
     private static List<String> allLabelKeys() {
         return Stream.<List<? extends StatisticsMetric<?>>>of(
-                             ConwayStatistics.metrics(),
-                             EtpetsStatistics.metrics(),
-                             ForestStatistics.metrics(),
-                             LangtonStatistics.metrics(),
-                             ReboundingStatistics.metrics(),
-                             SnakeStatistics.metrics(),
-                             SugarStatistics.metrics(),
-                             WatorStatistics.metrics()
-                     ).flatMap(List::stream)
-                     .map(StatisticsMetric::labelKey)
-                     .toList();
+                        ConwayStatistics.metrics(),
+                        EtpetsStatistics.metrics(),
+                        ForestStatistics.metrics(),
+                        LangtonStatistics.metrics(),
+                        ReboundingStatistics.metrics(),
+                        SnakeStatistics.metrics(),
+                        SugarStatistics.metrics(),
+                        WatorStatistics.metrics()
+                ).flatMap(List::stream)
+                .map(StatisticsMetric::labelKey)
+                .toList();
     }
 
     @Test

@@ -1,20 +1,29 @@
 package de.mkalb.etpetssim.simulations.forest.view;
 
 import de.mkalb.etpetssim.core.AppLogger;
-import de.mkalb.etpetssim.engine.model.*;
+import de.mkalb.etpetssim.engine.model.GridCell;
+import de.mkalb.etpetssim.engine.model.WritableGridModel;
 import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorRegistry;
-import de.mkalb.etpetssim.simulations.core.shared.*;
-import de.mkalb.etpetssim.simulations.core.view.*;
-import de.mkalb.etpetssim.simulations.core.viewmodel.*;
-import de.mkalb.etpetssim.simulations.forest.model.*;
+import de.mkalb.etpetssim.simulations.core.shared.CellDisplayMode;
+import de.mkalb.etpetssim.simulations.core.shared.NoUserActionContext;
+import de.mkalb.etpetssim.simulations.core.shared.SimulationUserActionScope;
+import de.mkalb.etpetssim.simulations.core.view.AbstractDefaultMainView;
+import de.mkalb.etpetssim.simulations.core.view.CellDrawer;
+import de.mkalb.etpetssim.simulations.core.view.DefaultControlView;
+import de.mkalb.etpetssim.simulations.core.viewmodel.DefaultMainViewModel;
+import de.mkalb.etpetssim.simulations.core.viewmodel.SimulationUserActionDescriptor;
+import de.mkalb.etpetssim.simulations.forest.model.ForestConfig;
+import de.mkalb.etpetssim.simulations.forest.model.ForestSimulationManager;
+import de.mkalb.etpetssim.simulations.forest.model.ForestStatistics;
 import de.mkalb.etpetssim.simulations.forest.model.entity.ForestEntity;
-import de.mkalb.etpetssim.ui.*;
+import de.mkalb.etpetssim.ui.CellDimension;
+import de.mkalb.etpetssim.ui.FXGridCanvasPainter;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.StrokeType;
 import org.jspecify.annotations.Nullable;
 
-import java.util.*;
-import java.util.function.*;
+import java.util.List;
+import java.util.function.Consumer;
 
 public final class ForestMainView
         extends AbstractDefaultMainView<
@@ -143,11 +152,11 @@ public final class ForestMainView
 
         // draw tree cells first
         currentGridModel.filteredCells(ForestEntity::isTree)
-                        .forEach(drawCell);
+                .forEach(drawCell);
 
         // then draw burning cells on top for better visibility
         currentGridModel.filteredCells(ForestEntity::isBurning)
-                        .forEach(drawCell);
+                .forEach(drawCell);
     }
 
     @Override

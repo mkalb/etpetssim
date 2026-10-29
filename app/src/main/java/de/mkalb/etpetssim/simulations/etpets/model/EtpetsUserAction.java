@@ -3,8 +3,16 @@ package de.mkalb.etpetssim.simulations.etpets.model;
 import de.mkalb.etpetssim.engine.GridCoordinate;
 import de.mkalb.etpetssim.engine.model.GridCellView;
 import de.mkalb.etpetssim.simulations.core.model.SimulationUserAction;
-import de.mkalb.etpetssim.simulations.etpets.model.entity.*;
-import de.mkalb.etpetssim.simulations.etpets.shared.*;
+import de.mkalb.etpetssim.simulations.etpets.model.entity.EtpetsEntity;
+import de.mkalb.etpetssim.simulations.etpets.model.entity.Insect;
+import de.mkalb.etpetssim.simulations.etpets.model.entity.NoResource;
+import de.mkalb.etpetssim.simulations.etpets.model.entity.Plant;
+import de.mkalb.etpetssim.simulations.etpets.model.entity.ResourceEntity;
+import de.mkalb.etpetssim.simulations.etpets.model.entity.TerrainConstant;
+import de.mkalb.etpetssim.simulations.etpets.model.entity.TerrainEntity;
+import de.mkalb.etpetssim.simulations.etpets.shared.EtpetsResourceChoice;
+import de.mkalb.etpetssim.simulations.etpets.shared.EtpetsTerrainChoice;
+import de.mkalb.etpetssim.simulations.etpets.shared.EtpetsUserActionContext;
 import org.jspecify.annotations.Nullable;
 
 public final class EtpetsUserAction

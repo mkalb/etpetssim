@@ -5,12 +5,13 @@ import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorRegistry;
 import de.mkalb.etpetssim.simulations.core.view.AbstractObservationView;
 import de.mkalb.etpetssim.simulations.core.viewmodel.DefaultObservationViewModel;
 import de.mkalb.etpetssim.simulations.wator.model.WatorStatistics;
-import de.mkalb.etpetssim.simulations.wator.model.entity.*;
+import de.mkalb.etpetssim.simulations.wator.model.entity.CreatureBase;
+import de.mkalb.etpetssim.simulations.wator.model.entity.WatorEntity;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Region;
 import org.jspecify.annotations.Nullable;
 
-import java.util.*;
+import java.util.Optional;
 
 public final class WatorObservationView
         extends AbstractObservationView<

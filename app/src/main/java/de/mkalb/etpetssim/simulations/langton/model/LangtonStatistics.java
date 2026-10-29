@@ -1,9 +1,11 @@
 package de.mkalb.etpetssim.simulations.langton.model;
 
 import de.mkalb.etpetssim.engine.GridStructure;
-import de.mkalb.etpetssim.simulations.core.model.*;
+import de.mkalb.etpetssim.simulations.core.model.BaseTimedSimulationStatistics;
+import de.mkalb.etpetssim.simulations.core.model.StatisticsExtremaMode;
+import de.mkalb.etpetssim.simulations.core.model.StatisticsMetric;
 
-import java.util.*;
+import java.util.List;
 
 /**
  * Holds runtime statistics for a running simulation.

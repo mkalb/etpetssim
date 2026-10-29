@@ -1,8 +1,11 @@
 package de.mkalb.etpetssim.simulations.rebounding.model;
 
-import de.mkalb.etpetssim.engine.model.*;
+import de.mkalb.etpetssim.engine.model.GridCellView;
+import de.mkalb.etpetssim.engine.model.WritableGridModel;
 import de.mkalb.etpetssim.simulations.core.model.SimulationUserAction;
-import de.mkalb.etpetssim.simulations.rebounding.model.entity.*;
+import de.mkalb.etpetssim.simulations.rebounding.model.entity.Rebounder;
+import de.mkalb.etpetssim.simulations.rebounding.model.entity.ReboundingEntity;
+import de.mkalb.etpetssim.simulations.rebounding.model.entity.TerrainConstant;
 import de.mkalb.etpetssim.simulations.rebounding.shared.ReboundingUserActionContext;
 import org.jspecify.annotations.Nullable;
 

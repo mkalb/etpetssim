@@ -3,13 +3,16 @@ package de.mkalb.etpetssim.simulations.sugar.view;
 import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorRegistry;
 import de.mkalb.etpetssim.simulations.core.view.AbstractObservationView;
 import de.mkalb.etpetssim.simulations.core.viewmodel.DefaultObservationViewModel;
-import de.mkalb.etpetssim.simulations.sugar.model.*;
-import de.mkalb.etpetssim.simulations.sugar.model.entity.*;
+import de.mkalb.etpetssim.simulations.sugar.model.SugarCell;
+import de.mkalb.etpetssim.simulations.sugar.model.SugarStatistics;
+import de.mkalb.etpetssim.simulations.sugar.model.entity.Agent;
+import de.mkalb.etpetssim.simulations.sugar.model.entity.Sugar;
+import de.mkalb.etpetssim.simulations.sugar.model.entity.SugarEntity;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Region;
 import org.jspecify.annotations.Nullable;
 
-import java.util.*;
+import java.util.Optional;
 
 public final class SugarObservationView
         extends AbstractObservationView<

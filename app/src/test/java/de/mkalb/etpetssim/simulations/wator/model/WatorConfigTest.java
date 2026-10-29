@@ -1,14 +1,59 @@
 package de.mkalb.etpetssim.simulations.wator.model;
 
-import de.mkalb.etpetssim.engine.*;
+import de.mkalb.etpetssim.engine.CellShape;
+import de.mkalb.etpetssim.engine.GridEdgeBehavior;
 import de.mkalb.etpetssim.engine.neighborhood.NeighborhoodMode;
 import de.mkalb.etpetssim.simulations.core.shared.CellDisplayMode;
 import org.junit.jupiter.api.Test;
 
-import java.util.function.*;
+import java.util.function.Consumer;
 
-import static de.mkalb.etpetssim.simulations.wator.model.WatorConstraints.*;
-import static org.junit.jupiter.api.Assertions.*;
+import static de.mkalb.etpetssim.simulations.wator.model.WatorConstraints.CELL_DISPLAY_MODE_DEFAULT;
+import static de.mkalb.etpetssim.simulations.wator.model.WatorConstraints.CELL_EDGE_LENGTH_DEFAULT;
+import static de.mkalb.etpetssim.simulations.wator.model.WatorConstraints.CELL_SHAPE_DEFAULT;
+import static de.mkalb.etpetssim.simulations.wator.model.WatorConstraints.FISH_MAX_AGE_DEFAULT;
+import static de.mkalb.etpetssim.simulations.wator.model.WatorConstraints.FISH_MAX_AGE_MAX;
+import static de.mkalb.etpetssim.simulations.wator.model.WatorConstraints.FISH_MAX_AGE_MIN;
+import static de.mkalb.etpetssim.simulations.wator.model.WatorConstraints.FISH_MIN_REPRODUCTION_AGE_DEFAULT;
+import static de.mkalb.etpetssim.simulations.wator.model.WatorConstraints.FISH_MIN_REPRODUCTION_AGE_MAX;
+import static de.mkalb.etpetssim.simulations.wator.model.WatorConstraints.FISH_MIN_REPRODUCTION_AGE_MIN;
+import static de.mkalb.etpetssim.simulations.wator.model.WatorConstraints.FISH_MIN_REPRODUCTION_INTERVAL_DEFAULT;
+import static de.mkalb.etpetssim.simulations.wator.model.WatorConstraints.FISH_MIN_REPRODUCTION_INTERVAL_MAX;
+import static de.mkalb.etpetssim.simulations.wator.model.WatorConstraints.FISH_MIN_REPRODUCTION_INTERVAL_MIN;
+import static de.mkalb.etpetssim.simulations.wator.model.WatorConstraints.FISH_PERCENT_DEFAULT;
+import static de.mkalb.etpetssim.simulations.wator.model.WatorConstraints.FISH_PERCENT_MAX;
+import static de.mkalb.etpetssim.simulations.wator.model.WatorConstraints.FISH_PERCENT_MIN;
+import static de.mkalb.etpetssim.simulations.wator.model.WatorConstraints.GRID_EDGE_BEHAVIOR_DEFAULT;
+import static de.mkalb.etpetssim.simulations.wator.model.WatorConstraints.GRID_HEIGHT_DEFAULT;
+import static de.mkalb.etpetssim.simulations.wator.model.WatorConstraints.GRID_WIDTH_DEFAULT;
+import static de.mkalb.etpetssim.simulations.wator.model.WatorConstraints.NEIGHBORHOOD_MODE_DEFAULT;
+import static de.mkalb.etpetssim.simulations.wator.model.WatorConstraints.SHARK_BIRTH_ENERGY_DEFAULT;
+import static de.mkalb.etpetssim.simulations.wator.model.WatorConstraints.SHARK_BIRTH_ENERGY_MAX;
+import static de.mkalb.etpetssim.simulations.wator.model.WatorConstraints.SHARK_BIRTH_ENERGY_MIN;
+import static de.mkalb.etpetssim.simulations.wator.model.WatorConstraints.SHARK_ENERGY_GAIN_PER_FISH_DEFAULT;
+import static de.mkalb.etpetssim.simulations.wator.model.WatorConstraints.SHARK_ENERGY_GAIN_PER_FISH_MAX;
+import static de.mkalb.etpetssim.simulations.wator.model.WatorConstraints.SHARK_ENERGY_GAIN_PER_FISH_MIN;
+import static de.mkalb.etpetssim.simulations.wator.model.WatorConstraints.SHARK_ENERGY_LOSS_PER_STEP_DEFAULT;
+import static de.mkalb.etpetssim.simulations.wator.model.WatorConstraints.SHARK_ENERGY_LOSS_PER_STEP_MAX;
+import static de.mkalb.etpetssim.simulations.wator.model.WatorConstraints.SHARK_ENERGY_LOSS_PER_STEP_MIN;
+import static de.mkalb.etpetssim.simulations.wator.model.WatorConstraints.SHARK_MAX_AGE_DEFAULT;
+import static de.mkalb.etpetssim.simulations.wator.model.WatorConstraints.SHARK_MAX_AGE_MAX;
+import static de.mkalb.etpetssim.simulations.wator.model.WatorConstraints.SHARK_MAX_AGE_MIN;
+import static de.mkalb.etpetssim.simulations.wator.model.WatorConstraints.SHARK_MIN_REPRODUCTION_AGE_DEFAULT;
+import static de.mkalb.etpetssim.simulations.wator.model.WatorConstraints.SHARK_MIN_REPRODUCTION_AGE_MAX;
+import static de.mkalb.etpetssim.simulations.wator.model.WatorConstraints.SHARK_MIN_REPRODUCTION_AGE_MIN;
+import static de.mkalb.etpetssim.simulations.wator.model.WatorConstraints.SHARK_MIN_REPRODUCTION_ENERGY_DEFAULT;
+import static de.mkalb.etpetssim.simulations.wator.model.WatorConstraints.SHARK_MIN_REPRODUCTION_ENERGY_MAX;
+import static de.mkalb.etpetssim.simulations.wator.model.WatorConstraints.SHARK_MIN_REPRODUCTION_ENERGY_MIN;
+import static de.mkalb.etpetssim.simulations.wator.model.WatorConstraints.SHARK_MIN_REPRODUCTION_INTERVAL_DEFAULT;
+import static de.mkalb.etpetssim.simulations.wator.model.WatorConstraints.SHARK_MIN_REPRODUCTION_INTERVAL_MAX;
+import static de.mkalb.etpetssim.simulations.wator.model.WatorConstraints.SHARK_MIN_REPRODUCTION_INTERVAL_MIN;
+import static de.mkalb.etpetssim.simulations.wator.model.WatorConstraints.SHARK_PERCENT_DEFAULT;
+import static de.mkalb.etpetssim.simulations.wator.model.WatorConstraints.SHARK_PERCENT_MAX;
+import static de.mkalb.etpetssim.simulations.wator.model.WatorConstraints.SHARK_PERCENT_MIN;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SuppressWarnings("MagicNumber")
 final class WatorConfigTest {

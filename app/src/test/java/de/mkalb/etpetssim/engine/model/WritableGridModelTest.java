@@ -1,14 +1,26 @@
 package de.mkalb.etpetssim.engine.model;
 
 import de.mkalb.etpetssim.engine.GridCoordinate;
+import de.mkalb.etpetssim.engine.model.GridModelTestSupport.TestEntity;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 
-import java.util.*;
-import java.util.concurrent.atomic.*;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Random;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 
-import static de.mkalb.etpetssim.engine.model.GridModelTestSupport.*;
-import static org.junit.jupiter.api.Assertions.*;
+import static de.mkalb.etpetssim.engine.model.GridModelTestSupport.SQUARE_STRUCTURE_8X8;
+import static de.mkalb.etpetssim.engine.model.GridModelTestSupport.coordinate;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SuppressWarnings("MagicNumber")
 final class WritableGridModelTest {
@@ -118,7 +130,7 @@ final class WritableGridModelTest {
     @EnumSource
     void testFilteredCoordinatesIsMutableWithoutMatches(GridModelImplementation implementation) {
         List<GridCoordinate> coordinates = implementation.createModel()
-                                                         .filteredCoordinates(entity -> entity == TestEntity.WALL);
+                .filteredCoordinates(entity -> entity == TestEntity.WALL);
 
         assertAll(
                 () -> assertTrue(coordinates.isEmpty()),

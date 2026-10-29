@@ -93,12 +93,12 @@ Table format:
 - Methods: the number of declared methods per visibility, without inherited ones; nested types follow.
 - Tests: a test class named after the class; indirect coverage is listed in the notes.
 
-| #  | Category                                                 | Count        | Status |
-|----|----------------------------------------------------------|-------------:|--------|
-| 1  | Engine, core, UI, and application classes                |   12 classes | done   |
-| 2  | Member order: rules and IntelliJ                         |            - | open   |
-| 3  | Javadoc rules of all rule files                          | 5 rule files | open   |
-| 4  | Package reviews outside `simulations`                    |   9 packages | open   |
+| # | Category                                  | Count        | Status      |
+|---|-------------------------------------------|-------------:|-------------|
+| 1 | Engine, core, UI, and application classes |   12 classes | done        |
+| 2 | Member order: rules and IntelliJ          |            - | in progress |
+| 3 | Javadoc rules of all rule files           | 5 rule files | open        |
+| 4 | Package reviews outside `simulations`     |   9 packages | open        |
 
 ## 1. Engine, core, UI, and application classes
 
@@ -336,6 +336,10 @@ which of the two is the source of truth. Main and test sources of the packages o
     - Other classes keep static methods after instance methods (e.g., `AboutDialog.formatReadmeText(..)` after
       `show()`), so the arrangement is apparently not applied on every formatting.
     - `AppArgsTest` and `FXGridCanvasPainterTest` no longer follow the declaration order of their production classes.
+    - The maintainer switched to the IntelliJ scheme "Default IDE" with the new `.editorconfig` (2026-10-29). The
+      reformat of all files with "Rearrange code" moved `AppArgs.parseBooleanValue(..)`,
+      `AboutDialog.formatReadmeText(..)`, and `FXGridCanvasPainter.scalePolygonFromCenter(..)` directly after the
+      constructor again; the arrangement rules are part of the IDE scheme, not of `.editorconfig`.
 
 ### Procedure
 
@@ -352,6 +356,41 @@ which of the two is the source of truth. Main and test sources of the packages o
 3. Implementation: rule changes; reorder the deviating classes and their tests, at least `AppArgs`,
    `FXGridCanvasPainter`, `AppArgsTest`, and `FXGridCanvasPainterTest`; run `app:test`.
 4. Update the cross-category decision on member order and record the decisions here.
+
+### Decisions
+
+Formatter settings (2026-10-29):
+
+- `.editorconfig` in the repository root (`root = true`) holds the formatter settings, together with the IntelliJ
+  scheme "Default IDE". It contains only the basic EditorConfig properties (UTF-8, 4 spaces, final newline, no
+  trailing whitespace, 120 characters) and the IntelliJ settings that differ from the defaults; the 1159-line export of
+  the former scheme, which had been taken over from another project, is reduced to these.
+- Java uses single-type imports: `ij_java_class_count_to_use_import_on_demand` and
+  `ij_java_names_count_to_use_import_on_demand` are `999`, and no package is imported on demand. The reformat replaced
+  all wildcard imports; a static import of the nested type `GridModelTestSupport.TestEntity` in four tests is a
+  single-type import. Rule change: `java.md` ("Code Style") requires single-type imports, a regular import for
+  nested types, and the import groups and order of IntelliJ, instead of keeping existing wildcard imports.
+- Chained method calls are no longer aligned and use the continuation indent of 8 spaces, which `.editorconfig` sets
+  explicitly for Java (IntelliJ used 4 without it).
+- Kept from the former scheme: one blank line after the class header and before the class end, at most one blank line
+  in code and declarations, line comments as `// text` in the code column, no control statements in one line, simple
+  lambdas and classes in one line, `extends`, `implements`, and `permits` wrapped when too long, Javadoc without empty
+  tags, and simple class names in Javadoc where imported. Invalid Javadoc tags are kept (IntelliJ default), so that
+  `app:javadoc` reports them instead of the reformat deleting them with their text.
+- `.editorconfig` sets no `end_of_line`; Git normalizes line endings through `.gitattributes` and `core.autocrlf`.
+  The Java test files with LF in the working copy are converted to CRLF.
+- CSS uses 4 spaces like the other files; JSON keeps 2 spaces, because Claude Code writes `.claude/settings.json` with
+  2 spaces. `.properties` files keep aligned delimiters and their blank lines. Kotlin follows the IntelliJ default
+  "Kotlin official" (continuation indent 4).
+- Markdown is not formatted by IntelliJ: its formatter joined lines starting with `(` or `**` with the previous line,
+  independent of `ij_markdown_wrap_text_if_long` and `ij_markdown_force_one_space_between_words`. The maintainer
+  excludes `*.md` with "Do not format" in the IDE; `AGENTS.md` ("Encoding and File Conventions") describes how to
+  format Markdown by hand, and the Markdown files outside `docs/planning` follow it (`41ea4605`).
+- `app:test` and `app:skillTest` pass after the reformat.
+- `CellConnectionType.java` got the final newline that the reformat had not added; the empty `etpets.css` stays
+  empty.
+- Open for this category: the member order of the three methods moved by "Rearrange code" (see "Current state"), the
+  arrangement rules of the IDE scheme, and a reference to `.editorconfig` in `java.md`.
 
 ## 3. Javadoc rules of all rule files
 

@@ -2,7 +2,9 @@ package de.mkalb.etpetssim.simulations.langton.shared;
 
 import de.mkalb.etpetssim.engine.CellShape;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 
 /**
  * Describes the cyclic turn sequence used by Langton-style ant simulations.

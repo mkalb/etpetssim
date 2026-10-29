@@ -15,13 +15,21 @@ import de.mkalb.etpetssim.testsupport.FXTestSupport;
 import javafx.scene.control.Button;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import org.junit.jupiter.api.*;
-import org.junit.jupiter.api.parallel.*;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 
-import java.util.*;
-import java.util.concurrent.atomic.*;
+import java.util.Arrays;
+import java.util.EnumSet;
+import java.util.Locale;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 @Execution(ExecutionMode.SAME_THREAD)
 final class SimulationFactoryTest {
@@ -77,9 +85,9 @@ final class SimulationFactoryTest {
             AtomicReference<Stage> updatedStage = new AtomicReference<>();
             AtomicReference<SimulationType> updatedType = new AtomicReference<>();
             SimulationType expectedType = Arrays.stream(SimulationType.values())
-                                                .filter(type -> type.isShownOnStartScreen() && type.isImplemented())
-                                                .findFirst()
-                                                .orElseThrow();
+                    .filter(type -> type.isShownOnStartScreen() && type.isImplemented())
+                    .findFirst()
+                    .orElseThrow();
 
             SimulationInstance instance = SimulationFactory.createInstance(
                     SimulationType.STARTSCREEN,
@@ -90,12 +98,12 @@ final class SimulationFactoryTest {
                     });
             VBox startScreen = assertInstanceOf(VBox.class, instance.region());
             Button button = startScreen.getChildren()
-                                       .stream()
-                                       .filter(Button.class::isInstance)
-                                       .map(Button.class::cast)
-                                       .filter(candidate -> candidate.getText().equals(expectedType.title()))
-                                       .findFirst()
-                                       .orElseThrow();
+                    .stream()
+                    .filter(Button.class::isInstance)
+                    .map(Button.class::cast)
+                    .filter(candidate -> candidate.getText().equals(expectedType.title()))
+                    .findFirst()
+                    .orElseThrow();
 
             button.fire();
 

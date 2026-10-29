@@ -1,19 +1,34 @@
 package de.mkalb.etpetssim.simulations.lab.viewmodel;
 
 import de.mkalb.etpetssim.core.AppLogger;
-import de.mkalb.etpetssim.engine.*;
-import de.mkalb.etpetssim.engine.model.*;
-import de.mkalb.etpetssim.engine.neighborhood.*;
+import de.mkalb.etpetssim.engine.GridCoordinate;
+import de.mkalb.etpetssim.engine.GridStructure;
+import de.mkalb.etpetssim.engine.model.GridCell;
+import de.mkalb.etpetssim.engine.model.WritableGridModel;
+import de.mkalb.etpetssim.engine.neighborhood.CellNeighborWithEdgeBehavior;
+import de.mkalb.etpetssim.engine.neighborhood.CellNeighborhoods;
+import de.mkalb.etpetssim.engine.neighborhood.EdgeBehaviorResult;
+import de.mkalb.etpetssim.engine.neighborhood.NeighborhoodMode;
+import de.mkalb.etpetssim.engine.neighborhood.RadiusRingCell;
 import de.mkalb.etpetssim.simulations.core.SimulationTerminationHandle;
-import de.mkalb.etpetssim.simulations.core.shared.*;
-import de.mkalb.etpetssim.simulations.core.viewmodel.*;
-import de.mkalb.etpetssim.simulations.lab.model.*;
+import de.mkalb.etpetssim.simulations.core.shared.SimulationNotificationType;
+import de.mkalb.etpetssim.simulations.core.shared.SimulationState;
+import de.mkalb.etpetssim.simulations.core.viewmodel.AbstractMainViewModel;
+import de.mkalb.etpetssim.simulations.core.viewmodel.DefaultObservationViewModel;
+import de.mkalb.etpetssim.simulations.lab.model.LabConfig;
+import de.mkalb.etpetssim.simulations.lab.model.LabSimulationManager;
+import de.mkalb.etpetssim.simulations.lab.model.LabStatistics;
 import de.mkalb.etpetssim.simulations.lab.model.entity.LabEntity;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.value.ChangeListener;
 import org.jspecify.annotations.Nullable;
 
-import java.util.*;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.SortedMap;
 
 public final class LabMainViewModel
         extends AbstractMainViewModel<LabEntity, WritableGridModel<LabEntity>, LabConfig, LabStatistics> {
@@ -202,21 +217,21 @@ public final class LabMainViewModel
                         coordinate -> new GridCell<>(coordinate, model.getEntity(coordinate)));
 
         List<GridCoordinate> validNeighborCoordinates = CellNeighborhoods.neighborCoordinatesWithinRadius(
-                                                                                 center,
-                                                                                 neighborhoodMode,
-                                                                                 gridStructure.cellShape(),
-                                                                                 NEIGHBORHOOD_COORDINATE_RADIUS)
-                                                                         .stream()
-                                                                         .filter(gridStructure::isCoordinateValid)
-                                                                         .toList();
+                        center,
+                        neighborhoodMode,
+                        gridStructure.cellShape(),
+                        NEIGHBORHOOD_COORDINATE_RADIUS)
+                .stream()
+                .filter(gridStructure::isCoordinateValid)
+                .toList();
 
         Map<GridCoordinate, List<CellNeighborWithEdgeBehavior>> validNeighborsWithEdgeBehavior = new LinkedHashMap<>();
         CellNeighborhoods.cellNeighborsWithEdgeBehavior(center, neighborhoodMode, gridStructure)
-                         .forEach((neighborCoordinate, neighborCells) -> {
-                             if (gridStructure.isCoordinateValid(neighborCoordinate)) {
-                                 validNeighborsWithEdgeBehavior.put(neighborCoordinate, neighborCells);
-                             }
-                         });
+                .forEach((neighborCoordinate, neighborCells) -> {
+                    if (gridStructure.isCoordinateValid(neighborCoordinate)) {
+                        validNeighborsWithEdgeBehavior.put(neighborCoordinate, neighborCells);
+                    }
+                });
 
         List<EdgeBehaviorResult> neighborEdgeBehaviorResults = List.copyOf(
                 CellNeighborhoods.neighborEdgeBehaviorResults(center, neighborhoodMode, gridStructure));

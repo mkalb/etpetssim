@@ -3,8 +3,12 @@ package de.mkalb.etpetssim.engine.model;
 import de.mkalb.etpetssim.engine.GridCoordinate;
 import de.mkalb.etpetssim.engine.model.entity.GridEntity;
 
-import java.util.*;
-import java.util.function.*;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
+import java.util.Random;
+import java.util.Set;
+import java.util.function.Predicate;
 
 /**
  * Read-only access to the entities of a grid model.

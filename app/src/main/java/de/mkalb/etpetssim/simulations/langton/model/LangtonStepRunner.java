@@ -1,11 +1,19 @@
 package de.mkalb.etpetssim.simulations.langton.model;
 
-import de.mkalb.etpetssim.engine.*;
+import de.mkalb.etpetssim.engine.GridCoordinate;
+import de.mkalb.etpetssim.engine.GridStructure;
 import de.mkalb.etpetssim.engine.executor.SimulationStepRunner;
-import de.mkalb.etpetssim.engine.model.*;
-import de.mkalb.etpetssim.engine.neighborhood.*;
+import de.mkalb.etpetssim.engine.model.GridCell;
+import de.mkalb.etpetssim.engine.model.WritableGridModel;
+import de.mkalb.etpetssim.engine.neighborhood.CellNeighborWithEdgeBehavior;
+import de.mkalb.etpetssim.engine.neighborhood.CellNeighborhoods;
+import de.mkalb.etpetssim.engine.neighborhood.CompassDirection;
+import de.mkalb.etpetssim.engine.neighborhood.EdgeBehaviorAction;
 import de.mkalb.etpetssim.engine.support.AgentOrderingStrategies;
-import de.mkalb.etpetssim.simulations.langton.model.entity.*;
+import de.mkalb.etpetssim.simulations.langton.model.entity.Ant;
+import de.mkalb.etpetssim.simulations.langton.model.entity.AntEntity;
+import de.mkalb.etpetssim.simulations.langton.model.entity.LangtonEntity;
+import de.mkalb.etpetssim.simulations.langton.model.entity.TerrainConstant;
 import de.mkalb.etpetssim.simulations.langton.shared.LangtonMovementRules;
 
 public final class LangtonStepRunner

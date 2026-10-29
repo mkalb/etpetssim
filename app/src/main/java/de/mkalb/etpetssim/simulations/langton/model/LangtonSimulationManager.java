@@ -1,11 +1,18 @@
 package de.mkalb.etpetssim.simulations.langton.model;
 
-import de.mkalb.etpetssim.engine.*;
-import de.mkalb.etpetssim.engine.executor.*;
-import de.mkalb.etpetssim.engine.model.*;
+import de.mkalb.etpetssim.engine.GridCoordinate;
+import de.mkalb.etpetssim.engine.GridStructure;
+import de.mkalb.etpetssim.engine.executor.DefaultSimulationExecutor;
+import de.mkalb.etpetssim.engine.executor.TimedSimulationExecutor;
+import de.mkalb.etpetssim.engine.model.ArrayGridModel;
+import de.mkalb.etpetssim.engine.model.SparseGridModel;
 import de.mkalb.etpetssim.engine.neighborhood.CompassDirection;
-import de.mkalb.etpetssim.simulations.core.model.*;
-import de.mkalb.etpetssim.simulations.langton.model.entity.*;
+import de.mkalb.etpetssim.simulations.core.model.AbstractTimedSimulationManager;
+import de.mkalb.etpetssim.simulations.core.model.SimulationInitializationCancellation;
+import de.mkalb.etpetssim.simulations.langton.model.entity.Ant;
+import de.mkalb.etpetssim.simulations.langton.model.entity.LangtonEntity;
+import de.mkalb.etpetssim.simulations.langton.model.entity.NoAgent;
+import de.mkalb.etpetssim.simulations.langton.model.entity.TerrainConstant;
 
 public final class LangtonSimulationManager
         extends AbstractTimedSimulationManager<LangtonEntity, LangtonGridModel, LangtonConfig,

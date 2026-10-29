@@ -1,11 +1,18 @@
 package de.mkalb.etpetssim.simulations.rebounding.model;
 
-import de.mkalb.etpetssim.engine.*;
+import de.mkalb.etpetssim.engine.CellShape;
+import de.mkalb.etpetssim.engine.GridEdgeBehavior;
 import de.mkalb.etpetssim.engine.neighborhood.NeighborhoodMode;
 import de.mkalb.etpetssim.simulations.core.model.SimulationConfig;
 import de.mkalb.etpetssim.simulations.core.shared.CellDisplayMode;
 
-import static de.mkalb.etpetssim.simulations.rebounding.model.ReboundingConstraints.*;
+import static de.mkalb.etpetssim.simulations.rebounding.model.ReboundingConstraints.CELL_DISPLAY_MODE_VALUES;
+import static de.mkalb.etpetssim.simulations.rebounding.model.ReboundingConstraints.CELL_SHAPE_VALUES;
+import static de.mkalb.etpetssim.simulations.rebounding.model.ReboundingConstraints.GRID_EDGE_BEHAVIOR_VALUES;
+import static de.mkalb.etpetssim.simulations.rebounding.model.ReboundingConstraints.MOVING_ENTITY_PERCENT_MAX;
+import static de.mkalb.etpetssim.simulations.rebounding.model.ReboundingConstraints.MOVING_ENTITY_PERCENT_MIN;
+import static de.mkalb.etpetssim.simulations.rebounding.model.ReboundingConstraints.VERTICAL_WALLS_MAX;
+import static de.mkalb.etpetssim.simulations.rebounding.model.ReboundingConstraints.VERTICAL_WALLS_MIN;
 
 /**
  * Immutable configuration of the Rebounding Entities simulation.

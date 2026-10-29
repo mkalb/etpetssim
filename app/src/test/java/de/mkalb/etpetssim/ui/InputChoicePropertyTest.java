@@ -1,14 +1,24 @@
 package de.mkalb.etpetssim.ui;
 
 import de.mkalb.etpetssim.core.AppLogger;
-import javafx.beans.property.*;
-import org.junit.jupiter.api.*;
-import org.junit.jupiter.api.parallel.*;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 
-import java.util.*;
-import java.util.function.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+import java.util.function.Function;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Execution(ExecutionMode.SAME_THREAD)
 final class InputChoicePropertyTest {
@@ -148,7 +158,7 @@ final class InputChoicePropertyTest {
         assertAll(
                 () -> assertTrue(createProperty().hasMultipleValidValues()),
                 () -> assertFalse(InputChoiceProperty.ofList("alpha", List.of("alpha"), String::toUpperCase)
-                                                     .hasMultipleValidValues())
+                        .hasMultipleValidValues())
         );
     }
 

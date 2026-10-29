@@ -4,10 +4,40 @@ import de.mkalb.etpetssim.core.AppLocalization;
 import de.mkalb.etpetssim.simulations.core.shared.SimulationState;
 import de.mkalb.etpetssim.simulations.core.viewmodel.AbstractConfigViewModel;
 import de.mkalb.etpetssim.simulations.etpets.model.EtpetsConfig;
-import de.mkalb.etpetssim.ui.*;
+import de.mkalb.etpetssim.ui.InputDoubleProperty;
+import de.mkalb.etpetssim.ui.InputIntegerProperty;
 import javafx.beans.property.ReadOnlyObjectProperty;
 
-import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsConstraints.*;
+import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsConstraints.CELL_DISPLAY_MODE_DEFAULT;
+import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsConstraints.CELL_DISPLAY_MODE_VALUES;
+import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsConstraints.CELL_EDGE_LENGTH_DEFAULT;
+import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsConstraints.CELL_EDGE_LENGTH_MAX;
+import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsConstraints.CELL_EDGE_LENGTH_MIN;
+import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsConstraints.CELL_SHAPE_DEFAULT;
+import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsConstraints.CELL_SHAPE_VALUES;
+import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsConstraints.COMBINED_PERCENT_MAX;
+import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsConstraints.GRID_EDGE_BEHAVIOR_DEFAULT;
+import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsConstraints.GRID_EDGE_BEHAVIOR_VALUES;
+import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsConstraints.GRID_HEIGHT_DEFAULT;
+import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsConstraints.GRID_HEIGHT_MAX;
+import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsConstraints.GRID_HEIGHT_MIN;
+import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsConstraints.GRID_HEIGHT_STEP;
+import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsConstraints.GRID_WIDTH_DEFAULT;
+import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsConstraints.GRID_WIDTH_MAX;
+import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsConstraints.GRID_WIDTH_MIN;
+import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsConstraints.GRID_WIDTH_STEP;
+import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsConstraints.INSECT_PERCENT_DEFAULT;
+import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsConstraints.NEIGHBORHOOD_MODE_DEFAULT;
+import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsConstraints.PERCENT_MAX;
+import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsConstraints.PERCENT_MIN;
+import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsConstraints.PET_COUNT_DEFAULT;
+import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsConstraints.PET_COUNT_MAX;
+import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsConstraints.PET_COUNT_MIN;
+import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsConstraints.PET_COUNT_STEP;
+import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsConstraints.PLANT_PERCENT_DEFAULT;
+import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsConstraints.ROCK_PERCENT_DEFAULT;
+import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsConstraints.SEED_DEFAULT;
+import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsConstraints.WATER_PERCENT_DEFAULT;
 
 public final class EtpetsConfigViewModel extends AbstractConfigViewModel<EtpetsConfig> {
 
@@ -61,10 +91,10 @@ public final class EtpetsConfigViewModel extends AbstractConfigViewModel<EtpetsC
         super(simulationState, COMMON_SETTINGS);
         registerConfigValidationRule(
                 rockPercent.property()
-                           .add(waterPercent.property())
-                           .add(plantPercent.property())
-                           .add(insectPercent.property())
-                           .greaterThan(COMBINED_PERCENT_MAX),
+                        .add(waterPercent.property())
+                        .add(plantPercent.property())
+                        .add(insectPercent.property())
+                        .greaterThan(COMBINED_PERCENT_MAX),
                 () -> AppLocalization.getText(ETPETS_CONFIG_VALIDATION_COMBINED_PERCENTS)
         );
     }

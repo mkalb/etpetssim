@@ -10,8 +10,12 @@ import de.mkalb.etpetssim.simulations.sugar.model.SugarStatistics;
 import de.mkalb.etpetssim.simulations.wator.model.WatorStatistics;
 import org.junit.jupiter.api.Test;
 
-import java.util.*;
-import java.util.stream.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -22,9 +26,9 @@ final class StatisticsMetricLayoutTest {
             List<? extends StatisticsMetric<?>> metrics,
             ExpectedMetric... expectedMetrics) {
         List<ExpectedMetric> actualMetrics = metrics.stream()
-                                                    .map(metric -> new ExpectedMetric(
-                                                            metric.key(), metric.extremaMode(), metric.chartGroup()))
-                                                    .toList();
+                .map(metric -> new ExpectedMetric(
+                        metric.key(), metric.extremaMode(), metric.chartGroup()))
+                .toList();
         assertEquals(List.of(expectedMetrics), actualMetrics);
     }
 
@@ -32,8 +36,8 @@ final class StatisticsMetricLayoutTest {
             List<? extends StatisticsMetric<?>> metrics,
             int... expectedWindowSizes) {
         List<Integer> actualWindowSizes = metrics.stream()
-                                                 .map(StatisticsMetric::chartWindowSize)
-                                                 .toList();
+                .map(StatisticsMetric::chartWindowSize)
+                .toList();
         assertEquals(Arrays.stream(expectedWindowSizes).boxed().toList(), actualWindowSizes);
     }
 
@@ -165,10 +169,10 @@ final class StatisticsMetricLayoutTest {
                 WatorStatistics.metrics()
         ).forEach(metrics -> {
             Map<StatisticsChartGroup, Set<Integer>> windowSizesByGroup = metrics.stream()
-                                                                                .filter(m -> m.chartGroup() != StatisticsChartGroup.NONE)
-                                                                                .collect(Collectors.groupingBy(
-                                                                                        StatisticsMetric::chartGroup,
-                                                                                        Collectors.mapping(StatisticsMetric::chartWindowSize, Collectors.toSet())));
+                    .filter(m -> m.chartGroup() != StatisticsChartGroup.NONE)
+                    .collect(Collectors.groupingBy(
+                            StatisticsMetric::chartGroup,
+                            Collectors.mapping(StatisticsMetric::chartWindowSize, Collectors.toSet())));
             windowSizesByGroup.forEach((group, windowSizes) -> assertEquals(1, windowSizes.size(),
                     "Metrics in chartGroup " + group + " must share the same chartWindowSize, but found " + windowSizes));
         });

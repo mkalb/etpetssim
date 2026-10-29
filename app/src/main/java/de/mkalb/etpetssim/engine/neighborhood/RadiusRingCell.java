@@ -2,7 +2,9 @@ package de.mkalb.etpetssim.engine.neighborhood;
 
 import de.mkalb.etpetssim.engine.GridCoordinate;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 /**
  * Represents a cell snapshot within a specific radius ring around a start coordinate.

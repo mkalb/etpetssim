@@ -1,28 +1,52 @@
 package de.mkalb.etpetssim.simulations.sugar.view;
 
-import de.mkalb.etpetssim.core.*;
-import de.mkalb.etpetssim.engine.model.entity.*;
+import de.mkalb.etpetssim.core.AppLocalization;
+import de.mkalb.etpetssim.core.AppLogger;
+import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptor;
+import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorRegistry;
 import de.mkalb.etpetssim.simulations.core.shared.SimulationUserActionScope;
-import de.mkalb.etpetssim.simulations.core.view.*;
-import de.mkalb.etpetssim.simulations.core.viewmodel.*;
-import de.mkalb.etpetssim.simulations.sugar.model.*;
-import de.mkalb.etpetssim.simulations.sugar.model.entity.*;
-import de.mkalb.etpetssim.simulations.sugar.shared.*;
+import de.mkalb.etpetssim.simulations.core.view.AbstractDefaultMainView;
+import de.mkalb.etpetssim.simulations.core.view.CellDrawer;
+import de.mkalb.etpetssim.simulations.core.view.DefaultControlView;
+import de.mkalb.etpetssim.simulations.core.viewmodel.DefaultMainViewModel;
+import de.mkalb.etpetssim.simulations.core.viewmodel.SimulationUserActionDescriptor;
+import de.mkalb.etpetssim.simulations.sugar.model.SugarCell;
+import de.mkalb.etpetssim.simulations.sugar.model.SugarConfig;
+import de.mkalb.etpetssim.simulations.sugar.model.SugarGridModel;
+import de.mkalb.etpetssim.simulations.sugar.model.SugarSimulationManager;
+import de.mkalb.etpetssim.simulations.sugar.model.SugarStatistics;
+import de.mkalb.etpetssim.simulations.sugar.model.entity.Agent;
+import de.mkalb.etpetssim.simulations.sugar.model.entity.AgentEntity;
+import de.mkalb.etpetssim.simulations.sugar.model.entity.NoAgent;
+import de.mkalb.etpetssim.simulations.sugar.model.entity.NoResource;
+import de.mkalb.etpetssim.simulations.sugar.model.entity.ResourceEntity;
+import de.mkalb.etpetssim.simulations.sugar.model.entity.Sugar;
+import de.mkalb.etpetssim.simulations.sugar.model.entity.SugarEntity;
+import de.mkalb.etpetssim.simulations.sugar.shared.SugarAddSugarLevel;
+import de.mkalb.etpetssim.simulations.sugar.shared.SugarUserActionContext;
 import de.mkalb.etpetssim.simulations.sugar.viewmodel.SugarEditToolBarViewModel;
-import de.mkalb.etpetssim.ui.*;
+import de.mkalb.etpetssim.ui.CellDimension;
+import de.mkalb.etpetssim.ui.FXComponentFactory;
+import de.mkalb.etpetssim.ui.FXGridCanvasPainter;
+import de.mkalb.etpetssim.ui.FXStyleClasses;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
-import javafx.scene.control.*;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.ListCell;
+import javafx.scene.control.Tooltip;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.StrokeType;
 import org.jspecify.annotations.Nullable;
 
-import java.util.*;
-import java.util.function.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
 
 public final class SugarMainView
         extends AbstractDefaultMainView<
@@ -192,14 +216,14 @@ public final class SugarMainView
         var agentModel = currentGridModel.agentModel();
 
         resourceModel.nonDefaultCells()
-                     .forEach(resourceCell -> cellResourceDrawer.draw(
-                             entityDescriptorRegistry.requireByDescriptorId(resourceCell.descriptorId()),
-                             dynamicPainter, resourceCell, stepCount));
+                .forEach(resourceCell -> cellResourceDrawer.draw(
+                        entityDescriptorRegistry.requireByDescriptorId(resourceCell.descriptorId()),
+                        dynamicPainter, resourceCell, stepCount));
 
         agentModel.nonDefaultCells()
-                  .forEach(agentCell -> cellAgentDrawer.draw(
-                          entityDescriptorRegistry.requireByDescriptorId(agentCell.descriptorId()),
-                          dynamicPainter, agentCell, stepCount));
+                .forEach(agentCell -> cellAgentDrawer.draw(
+                        entityDescriptorRegistry.requireByDescriptorId(agentCell.descriptorId()),
+                        dynamicPainter, agentCell, stepCount));
     }
 
     @Override
@@ -217,7 +241,7 @@ public final class SugarMainView
                         SUGAR_TOOLBAR_ADD_SUGAR,
                         SUGAR_TOOLBAR_ADD_SUGAR_TOOLTIP,
                         () -> editToolBarViewModel.resolveSelectedAddSugarContext()
-                                                  .map(Function.identity()))
+                                .map(Function.identity()))
         );
     }
 

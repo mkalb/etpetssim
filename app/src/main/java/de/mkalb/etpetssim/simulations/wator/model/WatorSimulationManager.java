@@ -1,13 +1,24 @@
 package de.mkalb.etpetssim.simulations.wator.model;
 
 import de.mkalb.etpetssim.engine.GridStructure;
-import de.mkalb.etpetssim.engine.executor.*;
-import de.mkalb.etpetssim.engine.model.*;
-import de.mkalb.etpetssim.engine.support.*;
-import de.mkalb.etpetssim.simulations.core.model.*;
-import de.mkalb.etpetssim.simulations.wator.model.entity.*;
+import de.mkalb.etpetssim.engine.executor.AsynchronousStepRunner;
+import de.mkalb.etpetssim.engine.executor.DefaultSimulationExecutor;
+import de.mkalb.etpetssim.engine.executor.TimedSimulationExecutor;
+import de.mkalb.etpetssim.engine.model.ArrayGridModel;
+import de.mkalb.etpetssim.engine.model.ReadableGridModel;
+import de.mkalb.etpetssim.engine.model.WritableGridModel;
+import de.mkalb.etpetssim.engine.support.AgentOrderingStrategies;
+import de.mkalb.etpetssim.engine.support.GridInitializers;
+import de.mkalb.etpetssim.simulations.core.model.AbstractTimedSimulationManager;
+import de.mkalb.etpetssim.simulations.core.model.SimulationInitializationCancellation;
+import de.mkalb.etpetssim.simulations.wator.model.entity.CreatureFactory;
+import de.mkalb.etpetssim.simulations.wator.model.entity.Fish;
+import de.mkalb.etpetssim.simulations.wator.model.entity.Shark;
+import de.mkalb.etpetssim.simulations.wator.model.entity.TerrainConstant;
+import de.mkalb.etpetssim.simulations.wator.model.entity.WatorEntity;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Random;
 
 import static de.mkalb.etpetssim.engine.support.WorkCheckpoints.isCancellationCheckpoint;
 
@@ -71,9 +82,9 @@ public final class WatorSimulationManager
         }
 
         GridInitializers.placeAllAtRandomPositions(fish, WatorEntity::isWater, random, cancellation::checkCanceled)
-                        .initialize(model);
+                .initialize(model);
         GridInitializers.placeAllAtRandomPositions(sharks, WatorEntity::isWater, random, cancellation::checkCanceled)
-                        .initialize(model);
+                .initialize(model);
     }
 
     public Fish createFish(int stepIndexOfBirth) {

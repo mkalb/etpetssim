@@ -1,6 +1,6 @@
 package de.mkalb.etpetssim.simulations.snake.model.strategy;
 
-import java.util.*;
+import java.util.Optional;
 
 /**
  * Move strategy that gives an anonymous strategy a display name.

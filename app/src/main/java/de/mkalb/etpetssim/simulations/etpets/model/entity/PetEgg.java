@@ -1,6 +1,6 @@
 package de.mkalb.etpetssim.simulations.etpets.model.entity;
 
-import java.util.*;
+import java.util.Locale;
 
 public final class PetEgg implements AgentEntity {
 

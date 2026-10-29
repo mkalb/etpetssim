@@ -1,14 +1,23 @@
 package de.mkalb.etpetssim.simulations.core.viewmodel;
 
-import de.mkalb.etpetssim.simulations.core.shared.*;
+import de.mkalb.etpetssim.simulations.core.shared.SimulationMode;
+import de.mkalb.etpetssim.simulations.core.shared.SimulationStartMode;
+import de.mkalb.etpetssim.simulations.core.shared.SimulationState;
+import de.mkalb.etpetssim.simulations.core.shared.SimulationTerminationCheckMode;
 import de.mkalb.etpetssim.testsupport.FXTestSupport;
 import javafx.beans.property.SimpleObjectProperty;
-import org.junit.jupiter.api.*;
-import org.junit.jupiter.api.parallel.*;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 
-import java.util.*;
+import java.util.EnumSet;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SuppressWarnings("MagicNumber")
 @Execution(ExecutionMode.SAME_THREAD)

@@ -1,16 +1,31 @@
 package de.mkalb.etpetssim.engine.support;
 
-import de.mkalb.etpetssim.engine.*;
-import de.mkalb.etpetssim.engine.model.*;
+import de.mkalb.etpetssim.engine.CellShape;
+import de.mkalb.etpetssim.engine.GridCoordinate;
+import de.mkalb.etpetssim.engine.GridEdgeBehavior;
+import de.mkalb.etpetssim.engine.GridOffset;
+import de.mkalb.etpetssim.engine.GridSize;
+import de.mkalb.etpetssim.engine.GridStructure;
+import de.mkalb.etpetssim.engine.GridTopology;
+import de.mkalb.etpetssim.engine.model.GridCell;
+import de.mkalb.etpetssim.engine.model.SparseGridModel;
 import de.mkalb.etpetssim.engine.model.entity.GridEntity;
 import org.jspecify.annotations.NonNull;
 import org.junit.jupiter.api.Test;
 
-import java.util.*;
-import java.util.concurrent.*;
-import java.util.concurrent.atomic.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Locale;
+import java.util.Random;
+import java.util.concurrent.CancellationException;
+import java.util.concurrent.atomic.AtomicInteger;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SuppressWarnings("MagicNumber")
 final class GridInitializersTest {
@@ -52,14 +67,14 @@ final class GridInitializersTest {
     private static long countFilledAfterFillRandomPercent(double percent) {
         SparseGridModel<TestEntity> model = createModel();
         GridInitializers.fillRandomPercent(percent, () -> TestEntity.FILLED, TestEntity.EMPTY, new Random(42L), () -> {})
-                        .initialize(model);
+                .initialize(model);
         return count(model, TestEntity.FILLED);
     }
 
     private static List<TestEntity> entitiesAfterFillWithProbability(double probability) {
         SparseGridModel<TestEntity> model = createSmallModel();
         GridInitializers.fillWithProbability(probability, TestEntity.FILLED, TestEntity.EMPTY, new Random(42L))
-                        .initialize(model);
+                .initialize(model);
         return entities(model);
     }
 
@@ -162,7 +177,7 @@ final class GridInitializersTest {
         SparseGridModel<TestEntity> model = createModel(10, 11);
 
         GridInitializers.fillRandomPercent(0.95d, () -> TestEntity.FILLED, TestEntity.EMPTY, new Random(42L), () -> {})
-                        .initialize(model);
+                .initialize(model);
 
         // 110 - round((1.0 - 0.95) * 110) = 110 - 6, not round(0.95 * 110) = 105
         assertEquals(104, count(model, TestEntity.FILLED));
@@ -236,7 +251,7 @@ final class GridInitializersTest {
         model.setEntity(target, TestEntity.OTHER);
 
         GridInitializers.placePattern(GridPatterns.singleton(TestEntity.FILLED, new GridOffset(0, 0)), target)
-                        .initialize(model);
+                .initialize(model);
 
         assertEquals(TestEntity.FILLED, model.getEntity(target));
     }
@@ -272,7 +287,7 @@ final class GridInitializersTest {
         model.setEntity(new GridCoordinate(0, 0), TestEntity.OTHER);
 
         GridInitializers.placeRandomCount(10, () -> TestEntity.FILLED, TestEntity.EMPTY::equals, new Random(42L))
-                        .initialize(model);
+                .initialize(model);
 
         assertAll(
                 () -> assertEquals(10, count(model, TestEntity.FILLED)),
@@ -294,7 +309,7 @@ final class GridInitializersTest {
         model.setEntity(new GridCoordinate(0, 0), TestEntity.OTHER);
 
         GridInitializers.placeRandomPercent(0.25d, () -> TestEntity.FILLED, TestEntity.EMPTY::equals, new Random(42L))
-                        .initialize(model);
+                .initialize(model);
 
         assertAll(
                 () -> assertEquals(16, count(model, TestEntity.FILLED)),
@@ -358,7 +373,7 @@ final class GridInitializersTest {
         List<TestEntity> entities = Collections.nCopies(63, TestEntity.FILLED);
 
         GridInitializers.placeAllAtRandomPositions(entities, TestEntity.EMPTY::equals, new Random(42L), () -> {})
-                        .initialize(model);
+                .initialize(model);
 
         assertAll(
                 () -> assertEquals(63, count(model, TestEntity.FILLED)),

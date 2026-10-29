@@ -1,6 +1,9 @@
 package de.mkalb.etpetssim.simulations.wator.model.entity;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.OptionalInt;
 
 public abstract sealed class CreatureBase implements WatorEntity, Comparable<CreatureBase>
         permits Fish, Shark {

@@ -2,10 +2,13 @@ package de.mkalb.etpetssim.engine.neighborhood;
 
 import org.junit.jupiter.api.Test;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
 
 import static de.mkalb.etpetssim.testsupport.LocalizationTestSupport.assertKeysInAllBundles;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 final class CompassDirectionTest {
 
@@ -42,15 +45,15 @@ final class CompassDirectionTest {
     @Test
     void testAbbreviationResourceKey() {
         assertKeysInAllBundles(Arrays.stream(CompassDirection.values())
-                                     .map(CompassDirection::abbreviationResourceKey)
-                                     .toList());
+                .map(CompassDirection::abbreviationResourceKey)
+                .toList());
     }
 
     @Test
     void testNameResourceKey() {
         assertKeysInAllBundles(Arrays.stream(CompassDirection.values())
-                                     .map(CompassDirection::nameResourceKey)
-                                     .toList());
+                .map(CompassDirection::nameResourceKey)
+                .toList());
     }
 
     @Test

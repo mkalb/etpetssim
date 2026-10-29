@@ -8,7 +8,7 @@ import de.mkalb.etpetssim.simulations.core.view.AbstractObservationView;
 import de.mkalb.etpetssim.simulations.core.viewmodel.DefaultObservationViewModel;
 import javafx.scene.layout.Region;
 
-import java.util.*;
+import java.util.Optional;
 
 public final class ConwayObservationView
         extends AbstractObservationView<

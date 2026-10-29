@@ -1,9 +1,12 @@
 package de.mkalb.etpetssim.simulations.sugar.model;
 
-import de.mkalb.etpetssim.engine.*;
+import de.mkalb.etpetssim.engine.CellShape;
+import de.mkalb.etpetssim.engine.GridEdgeBehavior;
+import de.mkalb.etpetssim.engine.GridStructure;
 import de.mkalb.etpetssim.engine.model.SparseGridModel;
 import de.mkalb.etpetssim.engine.neighborhood.NeighborhoodMode;
-import de.mkalb.etpetssim.simulations.sugar.model.entity.*;
+import de.mkalb.etpetssim.simulations.sugar.model.entity.NoAgent;
+import de.mkalb.etpetssim.simulations.sugar.model.entity.NoResource;
 
 final class SugarLogicTestSupport {
 

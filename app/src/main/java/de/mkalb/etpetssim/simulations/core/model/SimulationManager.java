@@ -5,7 +5,7 @@ import de.mkalb.etpetssim.engine.executor.StepExecutionResult;
 import de.mkalb.etpetssim.engine.model.GridModel;
 import de.mkalb.etpetssim.engine.model.entity.GridEntity;
 
-import java.util.*;
+import java.util.List;
 
 /**
  * Defines the core lifecycle and execution contract of a simulation manager.

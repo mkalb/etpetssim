@@ -2,7 +2,7 @@ package de.mkalb.etpetssim.simulations.sugar.model;
 
 import de.mkalb.etpetssim.engine.executor.SimulationStepRunner;
 
-import java.util.*;
+import java.util.Random;
 
 public final class SugarStepRunner
         implements SimulationStepRunner<SugarStatistics> {

@@ -2,7 +2,7 @@ package de.mkalb.etpetssim.simulations.langton.model.entity;
 
 import de.mkalb.etpetssim.engine.neighborhood.CompassDirection;
 
-import java.util.*;
+import java.util.Locale;
 
 public final class Ant implements AntEntity {
 

@@ -1,11 +1,14 @@
 package de.mkalb.etpetssim;
 
-import de.mkalb.etpetssim.core.*;
+import de.mkalb.etpetssim.core.AppArgs;
+import de.mkalb.etpetssim.core.AppLocalization;
+import de.mkalb.etpetssim.core.AppLogger;
+import de.mkalb.etpetssim.core.AppStorage;
 import javafx.application.Application;
 
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.Locale;
 
 /**
  * Application launcher and bootstrap entry point.
@@ -62,8 +65,8 @@ public final class AppLauncher {
      */
     private static void initializeAppLogger(AppArgs arguments) {
         var logLevel = arguments.getValue(AppArgs.Key.LOG_LEVEL)
-                                .flatMap(AppLogger.LogLevel::fromString)
-                                .orElse(AppLogger.DEFAULT_LOG_LEVEL);
+                .flatMap(AppLogger.LogLevel::fromString)
+                .orElse(AppLogger.DEFAULT_LOG_LEVEL);
         boolean useConsole = arguments.getBoolean(AppArgs.Key.LOG_CONSOLE, false);
         try {
             boolean useFile = arguments.getBoolean(AppArgs.Key.LOG_FILE, false);

@@ -1,27 +1,50 @@
 package de.mkalb.etpetssim.simulations.core.viewmodel;
 
-import de.mkalb.etpetssim.core.*;
-import de.mkalb.etpetssim.engine.model.*;
-import de.mkalb.etpetssim.simulations.conway.model.*;
+import de.mkalb.etpetssim.core.AppLocalization;
+import de.mkalb.etpetssim.core.AppLogger;
+import de.mkalb.etpetssim.engine.model.GridCell;
+import de.mkalb.etpetssim.engine.model.ReadableGridModel;
+import de.mkalb.etpetssim.engine.model.WritableGridModel;
+import de.mkalb.etpetssim.simulations.conway.model.ConwayConfig;
+import de.mkalb.etpetssim.simulations.conway.model.ConwaySimulationManager;
+import de.mkalb.etpetssim.simulations.conway.model.ConwayStatistics;
+import de.mkalb.etpetssim.simulations.conway.model.ConwayUserAction;
 import de.mkalb.etpetssim.simulations.conway.model.entity.ConwayEntity;
 import de.mkalb.etpetssim.simulations.conway.shared.ConwayUserActionContext;
 import de.mkalb.etpetssim.simulations.conway.viewmodel.ConwayConfigViewModel;
 import de.mkalb.etpetssim.simulations.core.SimulationTerminationHandle;
-import de.mkalb.etpetssim.simulations.core.model.*;
-import de.mkalb.etpetssim.simulations.core.shared.*;
+import de.mkalb.etpetssim.simulations.core.model.SimulationInitializationCancellation;
+import de.mkalb.etpetssim.simulations.core.model.StatisticsExtrema;
+import de.mkalb.etpetssim.simulations.core.shared.SimulationMode;
+import de.mkalb.etpetssim.simulations.core.shared.SimulationNotificationType;
+import de.mkalb.etpetssim.simulations.core.shared.SimulationStartMode;
+import de.mkalb.etpetssim.simulations.core.shared.SimulationState;
+import de.mkalb.etpetssim.simulations.core.shared.SimulationTerminationCheckMode;
 import de.mkalb.etpetssim.testsupport.FXTestSupport;
 import javafx.application.Platform;
-import javafx.beans.property.*;
-import org.junit.jupiter.api.*;
-import org.junit.jupiter.api.parallel.*;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 
 import java.lang.reflect.Field;
-import java.util.*;
-import java.util.concurrent.*;
-import java.util.concurrent.atomic.*;
-import java.util.function.*;
+import java.util.List;
+import java.util.Locale;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.BiFunction;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SuppressWarnings("MagicNumber")
 @Execution(ExecutionMode.SAME_THREAD)

@@ -1,6 +1,8 @@
 package de.mkalb.etpetssim.simulations.core.model;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * Immutable minimum and maximum extrema tracked for metric keys.

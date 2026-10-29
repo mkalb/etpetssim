@@ -2,18 +2,33 @@ package de.mkalb.etpetssim.simulations.core.view;
 
 import de.mkalb.etpetssim.core.AppLocalization;
 import de.mkalb.etpetssim.engine.executor.StepTimingStatistics;
-import de.mkalb.etpetssim.simulations.core.model.*;
+import de.mkalb.etpetssim.simulations.core.model.StatisticsChartGroup;
+import de.mkalb.etpetssim.simulations.core.model.StatisticsExtremaMode;
+import de.mkalb.etpetssim.simulations.core.model.StatisticsMetric;
+import de.mkalb.etpetssim.simulations.core.model.StatisticsSample;
 import de.mkalb.etpetssim.simulations.forest.model.ForestStatistics;
 import de.mkalb.etpetssim.simulations.wator.model.WatorStatistics;
 import de.mkalb.etpetssim.testsupport.FXTestSupport;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.scene.chart.*;
-import org.junit.jupiter.api.*;
-import org.junit.jupiter.api.parallel.*;
+import javafx.scene.chart.LineChart;
+import javafx.scene.chart.ValueAxis;
+import javafx.scene.chart.XYChart;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 
-import java.util.*;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SuppressWarnings("MagicNumber")
 @Execution(ExecutionMode.SAME_THREAD)
@@ -203,8 +218,8 @@ final class StatisticsHistoryChartViewTest {
         List<Number> xValues = FXTestSupport.supplyAndWaitNonNull(() -> {
             var view = new StatisticsHistoryChartView(singleMetric(2), historyProp);
             return view.chartsForTesting().getFirst().getData().getFirst().getData().stream()
-                       .map(XYChart.Data::getXValue)
-                       .toList();
+                    .map(XYChart.Data::getXValue)
+                    .toList();
         });
 
         assertEquals(List.of(1, 2), xValues, "Only the two trailing samples must appear in the series");

@@ -192,7 +192,7 @@ abstract class GitOutputSource : ValueSource<String, GitOutputSource.Parameters>
     override fun obtain(): String {
         val description = "git ${parameters.arguments.get().joinToString(" ")}"
         val failure = "Cannot read build information from Git ('$description'). " +
-                "Building the JAR or distribution requires Git and a Git working tree."
+            "Building the JAR or distribution requires Git and a Git working tree."
         val stdout = ByteArrayOutputStream()
         val stderr = ByteArrayOutputStream()
         val exitValue = try {
@@ -212,8 +212,8 @@ abstract class GitOutputSource : ValueSource<String, GitOutputSource.Parameters>
             val hint = parameters.failureHint.get()
             throw GradleException(
                 "$failure Exit value: $exitValue." +
-                        (if (errorText.isEmpty()) "" else " Git error: $errorText") +
-                        (if (hint.isEmpty()) "" else " $hint")
+                    (if (errorText.isEmpty()) "" else " Git error: $errorText") +
+                    (if (hint.isEmpty()) "" else " $hint")
             )
         }
         return output
@@ -242,7 +242,7 @@ fun deriveVersion(describeOutput: String): String {
     val semVer = Regex("""^v$number\.$number\.$number(-$identifier(?:\.$identifier)*)?$""").matchEntire(tag)
         ?: throw GradleException(
             "Git tag '$tag' is not a valid release tag 'vMAJOR.MINOR.PATCH[-prerelease]'. " +
-                    "See docs/development/versioning-and-releases.md."
+                "See docs/development/versioning-and-releases.md."
         )
     val (major, minor, patch, preRelease) = semVer.destructured
     val version = when {
@@ -256,7 +256,7 @@ fun deriveVersion(describeOutput: String): String {
 val projectVersion: Provider<String> = gitOutput(
     "describe", "--tags", "--match", "v[0-9]*", "--long", "--dirty",
     failureHint = "No release tag 'vMAJOR.MINOR.PATCH' is reachable from HEAD " +
-            "(shallow clones may lack tags). See docs/development/versioning-and-releases.md."
+        "(shallow clones may lack tags). See docs/development/versioning-and-releases.md."
 ).map { deriveVersion(it) }
 
 // The version is applied to the archive tasks (jar, distZip, distTar) instead of project.version, because Gradle reads

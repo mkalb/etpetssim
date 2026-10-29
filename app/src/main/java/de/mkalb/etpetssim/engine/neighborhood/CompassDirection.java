@@ -2,8 +2,9 @@ package de.mkalb.etpetssim.engine.neighborhood;
 
 import de.mkalb.etpetssim.core.AppLocalizationKeys;
 
-import java.util.*;
-import java.util.stream.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Stream;
 
 /**
  * Represents the 16-point compass directions in a fixed, clockwise order.
@@ -295,7 +296,7 @@ public enum CompassDirection {
      */
     public Stream<CompassDirection> streamClockwise() {
         return Stream.iterate(this, CompassDirection::nextClockwise)
-                     .limit(VALUES.length);
+                .limit(VALUES.length);
     }
 
     /**
@@ -306,7 +307,7 @@ public enum CompassDirection {
      */
     public Stream<CompassDirection> streamCounterClockwise() {
         return Stream.iterate(this, CompassDirection::nextCounterClockwise)
-                     .limit(VALUES.length);
+                .limit(VALUES.length);
     }
 
 }

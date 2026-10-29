@@ -1,14 +1,51 @@
 package de.mkalb.etpetssim.simulations.sugar.model;
 
-import de.mkalb.etpetssim.engine.*;
+import de.mkalb.etpetssim.engine.CellShape;
+import de.mkalb.etpetssim.engine.GridEdgeBehavior;
 import de.mkalb.etpetssim.engine.neighborhood.NeighborhoodMode;
 import de.mkalb.etpetssim.simulations.core.shared.CellDisplayMode;
 import org.junit.jupiter.api.Test;
 
-import java.util.function.*;
+import java.util.function.Consumer;
 
-import static de.mkalb.etpetssim.simulations.sugar.model.SugarConstraints.*;
-import static org.junit.jupiter.api.Assertions.*;
+import static de.mkalb.etpetssim.simulations.sugar.model.SugarConstraints.AGENT_INITIAL_ENERGY_DEFAULT;
+import static de.mkalb.etpetssim.simulations.sugar.model.SugarConstraints.AGENT_INITIAL_ENERGY_MAX;
+import static de.mkalb.etpetssim.simulations.sugar.model.SugarConstraints.AGENT_INITIAL_ENERGY_MIN;
+import static de.mkalb.etpetssim.simulations.sugar.model.SugarConstraints.AGENT_MAX_AGE_DEFAULT;
+import static de.mkalb.etpetssim.simulations.sugar.model.SugarConstraints.AGENT_MAX_AGE_MAX;
+import static de.mkalb.etpetssim.simulations.sugar.model.SugarConstraints.AGENT_MAX_AGE_MIN;
+import static de.mkalb.etpetssim.simulations.sugar.model.SugarConstraints.AGENT_METABOLISM_RATE_DEFAULT;
+import static de.mkalb.etpetssim.simulations.sugar.model.SugarConstraints.AGENT_METABOLISM_RATE_MAX;
+import static de.mkalb.etpetssim.simulations.sugar.model.SugarConstraints.AGENT_METABOLISM_RATE_MIN;
+import static de.mkalb.etpetssim.simulations.sugar.model.SugarConstraints.AGENT_PERCENT_DEFAULT;
+import static de.mkalb.etpetssim.simulations.sugar.model.SugarConstraints.AGENT_PERCENT_MAX;
+import static de.mkalb.etpetssim.simulations.sugar.model.SugarConstraints.AGENT_PERCENT_MIN;
+import static de.mkalb.etpetssim.simulations.sugar.model.SugarConstraints.AGENT_VISION_RANGE_DEFAULT;
+import static de.mkalb.etpetssim.simulations.sugar.model.SugarConstraints.AGENT_VISION_RANGE_MAX;
+import static de.mkalb.etpetssim.simulations.sugar.model.SugarConstraints.AGENT_VISION_RANGE_MIN;
+import static de.mkalb.etpetssim.simulations.sugar.model.SugarConstraints.CELL_DISPLAY_MODE_DEFAULT;
+import static de.mkalb.etpetssim.simulations.sugar.model.SugarConstraints.CELL_EDGE_LENGTH_DEFAULT;
+import static de.mkalb.etpetssim.simulations.sugar.model.SugarConstraints.CELL_SHAPE_DEFAULT;
+import static de.mkalb.etpetssim.simulations.sugar.model.SugarConstraints.GRID_EDGE_BEHAVIOR_DEFAULT;
+import static de.mkalb.etpetssim.simulations.sugar.model.SugarConstraints.GRID_HEIGHT_DEFAULT;
+import static de.mkalb.etpetssim.simulations.sugar.model.SugarConstraints.GRID_WIDTH_DEFAULT;
+import static de.mkalb.etpetssim.simulations.sugar.model.SugarConstraints.MAX_SUGAR_AMOUNT_DEFAULT;
+import static de.mkalb.etpetssim.simulations.sugar.model.SugarConstraints.MAX_SUGAR_AMOUNT_MAX;
+import static de.mkalb.etpetssim.simulations.sugar.model.SugarConstraints.MAX_SUGAR_AMOUNT_MIN;
+import static de.mkalb.etpetssim.simulations.sugar.model.SugarConstraints.MIN_SUGAR_AMOUNT_DEFAULT;
+import static de.mkalb.etpetssim.simulations.sugar.model.SugarConstraints.NEIGHBORHOOD_MODE_DEFAULT;
+import static de.mkalb.etpetssim.simulations.sugar.model.SugarConstraints.SUGAR_PEAKS_DEFAULT;
+import static de.mkalb.etpetssim.simulations.sugar.model.SugarConstraints.SUGAR_PEAKS_MAX;
+import static de.mkalb.etpetssim.simulations.sugar.model.SugarConstraints.SUGAR_PEAKS_MIN;
+import static de.mkalb.etpetssim.simulations.sugar.model.SugarConstraints.SUGAR_RADIUS_LIMIT_DEFAULT;
+import static de.mkalb.etpetssim.simulations.sugar.model.SugarConstraints.SUGAR_RADIUS_LIMIT_MAX;
+import static de.mkalb.etpetssim.simulations.sugar.model.SugarConstraints.SUGAR_RADIUS_LIMIT_MIN;
+import static de.mkalb.etpetssim.simulations.sugar.model.SugarConstraints.SUGAR_REGENERATION_RATE_DEFAULT;
+import static de.mkalb.etpetssim.simulations.sugar.model.SugarConstraints.SUGAR_REGENERATION_RATE_MAX;
+import static de.mkalb.etpetssim.simulations.sugar.model.SugarConstraints.SUGAR_REGENERATION_RATE_MIN;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 final class SugarConfigTest {
 

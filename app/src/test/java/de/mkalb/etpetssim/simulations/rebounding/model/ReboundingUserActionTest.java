@@ -3,11 +3,14 @@ package de.mkalb.etpetssim.simulations.rebounding.model;
 import de.mkalb.etpetssim.engine.GridCoordinate;
 import de.mkalb.etpetssim.engine.model.GridCell;
 import de.mkalb.etpetssim.engine.neighborhood.CompassDirection;
-import de.mkalb.etpetssim.simulations.rebounding.model.entity.*;
+import de.mkalb.etpetssim.simulations.rebounding.model.entity.Rebounder;
+import de.mkalb.etpetssim.simulations.rebounding.model.entity.ReboundingEntity;
 import de.mkalb.etpetssim.simulations.rebounding.shared.ReboundingUserActionContext;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SuppressWarnings("MagicNumber")
 final class ReboundingUserActionTest {
@@ -54,10 +57,10 @@ final class ReboundingUserActionTest {
         ReboundingSimulationManager manager = new ReboundingSimulationManager(createConfig(1, 0.0d));
         ReboundingUserAction userAction = new ReboundingUserAction();
         var wallCell = manager.currentGridModel()
-                              .filteredCells(ReboundingEntity::isWall)
-                              .stream()
-                              .findFirst()
-                              .orElseThrow();
+                .filteredCells(ReboundingEntity::isWall)
+                .stream()
+                .findFirst()
+                .orElseThrow();
         int wallCellsBefore = manager.statistics().wallCells();
 
         userAction.apply(
@@ -76,10 +79,10 @@ final class ReboundingUserActionTest {
         ReboundingSimulationManager manager = new ReboundingSimulationManager(createConfig(0, 0.02d));
         ReboundingUserAction userAction = new ReboundingUserAction();
         var rebounderCell = manager.currentGridModel()
-                                   .filteredCells(ReboundingEntity::isRebounder)
-                                   .stream()
-                                   .findFirst()
-                                   .orElseThrow();
+                .filteredCells(ReboundingEntity::isRebounder)
+                .stream()
+                .findFirst()
+                .orElseThrow();
         int movingEntityCellsBefore = manager.statistics().movingEntityCells();
 
         userAction.apply(

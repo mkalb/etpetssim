@@ -1,6 +1,7 @@
 package de.mkalb.etpetssim.core;
 
-import de.mkalb.etpetssim.testsupport.*;
+import de.mkalb.etpetssim.testsupport.ConstantTestSupport;
+import de.mkalb.etpetssim.testsupport.LocalizationTestSupport;
 import org.junit.jupiter.api.Test;
 
 final class AppLocalizationKeysTest {

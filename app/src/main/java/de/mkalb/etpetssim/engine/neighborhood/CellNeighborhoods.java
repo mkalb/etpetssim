@@ -1,11 +1,31 @@
 package de.mkalb.etpetssim.engine.neighborhood;
 
-import de.mkalb.etpetssim.engine.*;
+import de.mkalb.etpetssim.engine.CellShape;
+import de.mkalb.etpetssim.engine.EdgeBehavior;
+import de.mkalb.etpetssim.engine.GridCoordinate;
+import de.mkalb.etpetssim.engine.GridOffset;
+import de.mkalb.etpetssim.engine.GridStructure;
 
-import java.util.*;
-import java.util.concurrent.*;
-import java.util.function.*;
-import java.util.stream.*;
+import java.util.ArrayDeque;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Queue;
+import java.util.Set;
+import java.util.SortedMap;
+import java.util.SortedSet;
+import java.util.TreeMap;
+import java.util.TreeSet;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Computes the neighbors of grid cells by cell shape, neighborhood mode, and cell position, and applies the edge
@@ -284,12 +304,12 @@ public final class CellNeighborhoods {
                 getOrComputeCellNeighborConnections(startCoordinate, neighborhoodMode, cellShape);
 
         return cellNeighborConnections.stream()
-                                      .map(neighborConnection -> new CellNeighbor(
-                                              startCoordinate,
-                                              neighborConnection.direction(),
-                                              neighborConnection.connection(),
-                                              startCoordinate.offset(neighborConnection.offset())
-                                      ));
+                .map(neighborConnection -> new CellNeighbor(
+                        startCoordinate,
+                        neighborConnection.direction(),
+                        neighborConnection.connection(),
+                        startCoordinate.offset(neighborConnection.offset())
+                ));
     }
 
     /**

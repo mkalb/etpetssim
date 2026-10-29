@@ -1,9 +1,10 @@
 package de.mkalb.etpetssim.simulations.snake.viewmodel;
 
-import de.mkalb.etpetssim.simulations.snake.model.strategy.*;
+import de.mkalb.etpetssim.simulations.snake.model.strategy.SnakeMoveStrategies;
+import de.mkalb.etpetssim.simulations.snake.model.strategy.SnakeMoveStrategy;
 import de.mkalb.etpetssim.ui.InputChoiceProperty;
 
-import java.util.*;
+import java.util.List;
 
 public final class SnakeEditToolBarViewModel {
 

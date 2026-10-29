@@ -1,6 +1,39 @@
 package de.mkalb.etpetssim.simulations.etpets.model;
 
-import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsBalance.*;
+import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsBalance.INSECT_ENERGY_GAIN_PER_ACT;
+import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsBalance.PET_EAT_SCORE_AGE_DECAY_STEPS;
+import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsBalance.PET_EAT_SCORE_AGE_WEIGHT;
+import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsBalance.PET_EAT_SCORE_HUNGER_EXPONENT;
+import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsBalance.PET_EAT_SCORE_HUNGER_WEIGHT;
+import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsBalance.PET_EAT_SCORE_OVERFILL_PENALTY_EXPONENT;
+import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsBalance.PET_EAT_SCORE_OVERFILL_PENALTY_WEIGHT;
+import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsBalance.PET_EAT_SCORE_PANIC_ENERGY_THRESHOLD;
+import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsBalance.PET_EAT_SCORE_PANIC_EXPONENT;
+import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsBalance.PET_EAT_SCORE_PANIC_WEIGHT;
+import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsBalance.PET_EAT_SCORE_RESOURCE_GAIN_EXPONENT;
+import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsBalance.PET_EAT_SCORE_RESOURCE_GAIN_WEIGHT;
+import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsBalance.PET_MOVE_CROWDING_PENALTY;
+import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsBalance.PET_MOVE_EXPLORATION_COST_EXPONENT;
+import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsBalance.PET_MOVE_EXPLORATION_ENERGY_EXPONENT;
+import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsBalance.PET_MOVE_EXPLORATION_WEIGHT;
+import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsBalance.PET_MOVE_LOW_MOBILITY_PENALTY;
+import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsBalance.PET_MOVE_OSCILLATION_HISTORY_MATCH_PENALTY;
+import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsBalance.PET_MOVE_PARTNER_WEIGHT;
+import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsBalance.PET_MOVE_RESOURCE_BASE_WEIGHT;
+import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsBalance.PET_MOVE_RESOURCE_SURVIVAL_PRESSURE_WEIGHT;
+import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsBalance.PET_MOVE_SCORE_BASE;
+import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsBalance.PET_MOVE_SURVIVAL_PRESSURE_EXPONENT;
+import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsBalance.PET_MOVE_SURVIVAL_PRESSURE_HIGH_THRESHOLD;
+import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsBalance.PET_MOVE_TRAIL_BONUS_CURVE_SHARPNESS;
+import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsBalance.PET_MOVE_TRAIL_BONUS_INTENSITY_SCALE;
+import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsBalance.PET_MOVE_TRAIL_BONUS_INTENSITY_THRESHOLD;
+import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsBalance.PET_MOVE_TRAIL_BONUS_MAX;
+import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsBalance.PET_REPRODUCTION_SCORE_AVERAGE_QUALITY_WEIGHT;
+import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsBalance.PET_REPRODUCTION_SCORE_MAX;
+import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsBalance.PET_REPRODUCTION_SCORE_MIN;
+import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsBalance.PET_REPRODUCTION_SCORE_MINIMUM_QUALITY_WEIGHT;
+import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsBalance.PET_TRAITS_MOVEMENT_COST_MODIFIER_MAX;
+import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsBalance.PET_TRAITS_MOVEMENT_COST_MODIFIER_MIN;
 
 /**
  * Raw score formulas of the pet actions; {@link EtpetsAgentLogic} rounds and clamps the results.

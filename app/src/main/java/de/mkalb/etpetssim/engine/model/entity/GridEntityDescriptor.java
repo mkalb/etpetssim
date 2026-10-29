@@ -3,7 +3,7 @@ package de.mkalb.etpetssim.engine.model.entity;
 import javafx.scene.paint.Color;
 import org.jspecify.annotations.Nullable;
 
-import java.util.*;
+import java.util.Optional;
 
 /**
  * Represents a fully resolved descriptor for a grid entity, containing display-ready values.

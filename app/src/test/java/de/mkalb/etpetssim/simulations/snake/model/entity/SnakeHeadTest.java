@@ -2,10 +2,12 @@ package de.mkalb.etpetssim.simulations.snake.model.entity;
 
 import de.mkalb.etpetssim.engine.GridCoordinate;
 import de.mkalb.etpetssim.engine.neighborhood.CompassDirection;
-import de.mkalb.etpetssim.simulations.snake.model.strategy.*;
+import de.mkalb.etpetssim.simulations.snake.model.strategy.SnakeMoveStrategies;
+import de.mkalb.etpetssim.simulations.snake.model.strategy.SnakeMoveStrategy;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 final class SnakeHeadTest {
 

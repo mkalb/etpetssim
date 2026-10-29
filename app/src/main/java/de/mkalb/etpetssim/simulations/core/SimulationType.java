@@ -1,9 +1,14 @@
 package de.mkalb.etpetssim.simulations.core;
 
-import de.mkalb.etpetssim.core.*;
+import de.mkalb.etpetssim.core.AppLocalization;
+import de.mkalb.etpetssim.core.AppLocalizationKeys;
+import de.mkalb.etpetssim.core.AppLogger;
+import de.mkalb.etpetssim.core.AppResources;
 
 import java.net.URI;
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * Available simulation types.
@@ -182,9 +187,9 @@ public enum SimulationType {
      */
     public static Optional<SimulationType> fromCliArgument(String arg, boolean onlyImplemented) {
         return Arrays.stream(values())
-                     .filter(sim -> !onlyImplemented || sim.implemented)
-                     .filter(sim -> sim.cliArguments.stream().anyMatch(a -> a.equalsIgnoreCase(arg)))
-                     .findFirst();
+                .filter(sim -> !onlyImplemented || sim.implemented)
+                .filter(sim -> sim.cliArguments.stream().anyMatch(a -> a.equalsIgnoreCase(arg)))
+                .findFirst();
     }
 
     /**

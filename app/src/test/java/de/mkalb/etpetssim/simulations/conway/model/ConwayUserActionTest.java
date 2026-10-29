@@ -3,10 +3,13 @@ package de.mkalb.etpetssim.simulations.conway.model;
 import de.mkalb.etpetssim.engine.GridCoordinate;
 import de.mkalb.etpetssim.engine.model.GridCell;
 import de.mkalb.etpetssim.simulations.conway.model.entity.ConwayEntity;
-import de.mkalb.etpetssim.simulations.conway.shared.*;
+import de.mkalb.etpetssim.simulations.conway.shared.ConwayPatternChoice;
+import de.mkalb.etpetssim.simulations.conway.shared.ConwayUserActionContext;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SuppressWarnings("SameParameterValue")
 final class ConwayUserActionTest {
@@ -73,13 +76,13 @@ final class ConwayUserActionTest {
         ConwaySimulationManager manager = new ConwaySimulationManager(createConfig(0.0d));
         ConwayUserAction userAction = new ConwayUserAction();
         ConwayPatternChoice patternChoice = ConwayPatterns.availableChoices(manager.config())
-                                                          .getFirst();
+                .getFirst();
         GridCoordinate anchorCoordinate = new GridCoordinate(1, 1);
         int expectedAliveCells = Math.toIntExact(patternChoice.pattern().offsetMap()
-                                                              .values()
-                                                              .stream()
-                                                              .filter(ConwayEntity::isAlive)
-                                                              .count());
+                .values()
+                .stream()
+                .filter(ConwayEntity::isAlive)
+                .count());
 
         userAction.apply(
                 manager,

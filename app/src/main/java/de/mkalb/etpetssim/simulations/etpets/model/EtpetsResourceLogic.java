@@ -17,12 +17,12 @@ public final class EtpetsResourceLogic {
      */
     public static void apply(EtpetsGridModel gridModel) {
         gridModel.resourceModel()
-                 .nonDefaultCells()
-                 .forEach(cell -> {
-                     if (cell.entity() instanceof ResourceBase resource) {
-                         resource.regenerate();
-                     }
-                 });
+                .nonDefaultCells()
+                .forEach(cell -> {
+                    if (cell.entity() instanceof ResourceBase resource) {
+                        resource.regenerate();
+                    }
+                });
     }
 
 }

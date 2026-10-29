@@ -1,6 +1,8 @@
 package de.mkalb.etpetssim.ui;
 
-import javafx.animation.*;
+import javafx.animation.Animation;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.util.Duration;
 import org.jspecify.annotations.Nullable;
 

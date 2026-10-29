@@ -2,7 +2,8 @@ package de.mkalb.etpetssim.ui;
 
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SuppressWarnings("HardcodedLineSeparator")
 final class AboutDialogTest {
@@ -13,21 +14,21 @@ final class AboutDialogTest {
                 <p align="center">
                   <img src="assets/icon/etpetssim.svg" alt="icon">
                 </p>
-                
+
                 <h1 align="center">Title</h1>
-                
+
                 ## Overview
-                
+
                 Text
-                
+
                 ## Simulations
                 """;
 
         assertEquals("""
                 ## Overview
-                
+
                 Text
-                
+
                 ## Simulations
                 """, AboutDialog.formatReadmeText(readme));
     }

@@ -1,6 +1,6 @@
 package de.mkalb.etpetssim.simulations.core;
 
-import java.util.concurrent.*;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Owns bounded termination of a simulation executor after immediate disposal.

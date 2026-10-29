@@ -8,7 +8,7 @@ import de.mkalb.etpetssim.simulations.forest.model.ForestStatistics;
 import de.mkalb.etpetssim.simulations.forest.model.entity.ForestEntity;
 import javafx.scene.layout.Region;
 
-import java.util.*;
+import java.util.Optional;
 
 public final class ForestObservationView
         extends AbstractObservationView<

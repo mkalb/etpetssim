@@ -1,13 +1,22 @@
 package de.mkalb.etpetssim.engine.model.entity;
 
-import de.mkalb.etpetssim.core.*;
+import de.mkalb.etpetssim.core.AppLocalization;
+import de.mkalb.etpetssim.core.AppLogger;
 import javafx.scene.paint.Color;
-import org.junit.jupiter.api.*;
-import org.junit.jupiter.api.parallel.*;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 
-import java.util.*;
+import java.util.List;
+import java.util.Locale;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Execution(ExecutionMode.SAME_THREAD)
 final class GridEntityDescriptorRegistryTest {
@@ -54,8 +63,8 @@ final class GridEntityDescriptorRegistryTest {
     private static void assertRegisteredDescriptor(GridEntityDescriptorRegistry registry, GridEntityDescriptorProvider provider) {
         GridEntityDescriptor descriptor = registry.requireByDescriptorId(provider.descriptorId());
         String expectedEmoji = Optional.ofNullable(provider.emojiKey())
-                                       .map(AppLocalization::getText)
-                                       .orElse(null);
+                .map(AppLocalization::getText)
+                .orElse(null);
 
         assertAll(
                 () -> assertEquals(provider.descriptorId(), descriptor.descriptorId()),

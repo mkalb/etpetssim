@@ -1,12 +1,16 @@
 package de.mkalb.etpetssim.simulations.snake.model.strategy;
 
-import de.mkalb.etpetssim.engine.*;
+import de.mkalb.etpetssim.engine.GridCoordinate;
+import de.mkalb.etpetssim.engine.GridStructure;
 import de.mkalb.etpetssim.engine.model.ReadableGridModel;
-import de.mkalb.etpetssim.engine.neighborhood.*;
+import de.mkalb.etpetssim.engine.neighborhood.CellNeighborWithEdgeBehavior;
+import de.mkalb.etpetssim.engine.neighborhood.CompassDirection;
 import de.mkalb.etpetssim.simulations.snake.model.SnakeConfig;
-import de.mkalb.etpetssim.simulations.snake.model.entity.*;
+import de.mkalb.etpetssim.simulations.snake.model.entity.SnakeEntity;
+import de.mkalb.etpetssim.simulations.snake.model.entity.SnakeHead;
 
-import java.util.*;
+import java.util.List;
+import java.util.Random;
 
 /**
  * Decision context passed to snake move strategies.

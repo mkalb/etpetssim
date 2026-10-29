@@ -2,7 +2,7 @@ package de.mkalb.etpetssim.simulations.etpets.model.entity;
 
 import de.mkalb.etpetssim.simulations.etpets.model.EtpetsBalance;
 
-import java.util.*;
+import java.util.Random;
 
 /**
  * Immutable genome wrapper for ET Pets.

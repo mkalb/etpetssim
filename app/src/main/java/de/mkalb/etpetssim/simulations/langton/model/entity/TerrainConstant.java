@@ -1,9 +1,12 @@
 package de.mkalb.etpetssim.simulations.langton.model.entity;
 
-import de.mkalb.etpetssim.engine.model.entity.*;
+import de.mkalb.etpetssim.engine.model.entity.ConstantGridEntityDescriptorProvider;
+import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorRegistry;
+import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorSpec;
 import javafx.scene.paint.Color;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Terrain cell states for the Langton's Ant simulation.

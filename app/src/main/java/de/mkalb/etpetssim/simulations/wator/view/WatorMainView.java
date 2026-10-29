@@ -1,20 +1,35 @@
 package de.mkalb.etpetssim.simulations.wator.view;
 
 import de.mkalb.etpetssim.core.AppLogger;
-import de.mkalb.etpetssim.engine.model.*;
-import de.mkalb.etpetssim.engine.model.entity.*;
-import de.mkalb.etpetssim.simulations.core.shared.*;
-import de.mkalb.etpetssim.simulations.core.view.*;
-import de.mkalb.etpetssim.simulations.core.viewmodel.*;
-import de.mkalb.etpetssim.simulations.wator.model.*;
-import de.mkalb.etpetssim.simulations.wator.model.entity.*;
+import de.mkalb.etpetssim.engine.model.GridCell;
+import de.mkalb.etpetssim.engine.model.WritableGridModel;
+import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptor;
+import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorRegistry;
+import de.mkalb.etpetssim.simulations.core.shared.CellDisplayMode;
+import de.mkalb.etpetssim.simulations.core.shared.SimulationUserActionScope;
+import de.mkalb.etpetssim.simulations.core.view.AbstractDefaultMainView;
+import de.mkalb.etpetssim.simulations.core.view.CellDrawer;
+import de.mkalb.etpetssim.simulations.core.view.DefaultControlView;
+import de.mkalb.etpetssim.simulations.core.viewmodel.DefaultMainViewModel;
+import de.mkalb.etpetssim.simulations.core.viewmodel.SimulationUserActionDescriptor;
+import de.mkalb.etpetssim.simulations.wator.model.WatorConfig;
+import de.mkalb.etpetssim.simulations.wator.model.WatorSimulationManager;
+import de.mkalb.etpetssim.simulations.wator.model.WatorStatistics;
+import de.mkalb.etpetssim.simulations.wator.model.entity.EntityDescriptors;
+import de.mkalb.etpetssim.simulations.wator.model.entity.Fish;
+import de.mkalb.etpetssim.simulations.wator.model.entity.Shark;
+import de.mkalb.etpetssim.simulations.wator.model.entity.TerrainConstant;
+import de.mkalb.etpetssim.simulations.wator.model.entity.WatorEntity;
 import de.mkalb.etpetssim.simulations.wator.shared.WatorUserActionContext;
-import de.mkalb.etpetssim.ui.*;
+import de.mkalb.etpetssim.ui.CellDimension;
+import de.mkalb.etpetssim.ui.FXGridCanvasPainter;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.StrokeType;
 import org.jspecify.annotations.Nullable;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public final class WatorMainView
         extends AbstractDefaultMainView<
@@ -184,9 +199,9 @@ public final class WatorMainView
         dynamicPainter.clearCanvasBackground();
 
         currentGridModel.nonDefaultCells()
-                        .forEach(cell -> cellDrawer.draw(
-                                entityDescriptorRegistry.requireByDescriptorId(cell.descriptorId()),
-                                dynamicPainter, cell, stepCount));
+                .forEach(cell -> cellDrawer.draw(
+                        entityDescriptorRegistry.requireByDescriptorId(cell.descriptorId()),
+                        dynamicPainter, cell, stepCount));
     }
 
     @Override

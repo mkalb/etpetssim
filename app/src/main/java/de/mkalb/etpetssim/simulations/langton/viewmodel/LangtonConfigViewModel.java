@@ -8,7 +8,25 @@ import de.mkalb.etpetssim.simulations.langton.shared.LangtonMovementRules;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.ReadOnlyObjectProperty;
 
-import static de.mkalb.etpetssim.simulations.langton.model.LangtonConstraints.*;
+import static de.mkalb.etpetssim.simulations.langton.model.LangtonConstraints.CELL_DISPLAY_MODE_DEFAULT;
+import static de.mkalb.etpetssim.simulations.langton.model.LangtonConstraints.CELL_DISPLAY_MODE_VALUES;
+import static de.mkalb.etpetssim.simulations.langton.model.LangtonConstraints.CELL_EDGE_LENGTH_DEFAULT;
+import static de.mkalb.etpetssim.simulations.langton.model.LangtonConstraints.CELL_EDGE_LENGTH_MAX;
+import static de.mkalb.etpetssim.simulations.langton.model.LangtonConstraints.CELL_EDGE_LENGTH_MIN;
+import static de.mkalb.etpetssim.simulations.langton.model.LangtonConstraints.CELL_SHAPE_DEFAULT;
+import static de.mkalb.etpetssim.simulations.langton.model.LangtonConstraints.CELL_SHAPE_VALUES;
+import static de.mkalb.etpetssim.simulations.langton.model.LangtonConstraints.GRID_EDGE_BEHAVIOR_DEFAULT;
+import static de.mkalb.etpetssim.simulations.langton.model.LangtonConstraints.GRID_EDGE_BEHAVIOR_VALUES;
+import static de.mkalb.etpetssim.simulations.langton.model.LangtonConstraints.GRID_HEIGHT_DEFAULT;
+import static de.mkalb.etpetssim.simulations.langton.model.LangtonConstraints.GRID_HEIGHT_MAX;
+import static de.mkalb.etpetssim.simulations.langton.model.LangtonConstraints.GRID_HEIGHT_MIN;
+import static de.mkalb.etpetssim.simulations.langton.model.LangtonConstraints.GRID_HEIGHT_STEP;
+import static de.mkalb.etpetssim.simulations.langton.model.LangtonConstraints.GRID_WIDTH_DEFAULT;
+import static de.mkalb.etpetssim.simulations.langton.model.LangtonConstraints.GRID_WIDTH_MAX;
+import static de.mkalb.etpetssim.simulations.langton.model.LangtonConstraints.GRID_WIDTH_MIN;
+import static de.mkalb.etpetssim.simulations.langton.model.LangtonConstraints.GRID_WIDTH_STEP;
+import static de.mkalb.etpetssim.simulations.langton.model.LangtonConstraints.NEIGHBORHOOD_MODE_DEFAULT;
+import static de.mkalb.etpetssim.simulations.langton.model.LangtonConstraints.SEED_DEFAULT;
 
 public final class LangtonConfigViewModel
         extends AbstractConfigViewModel<LangtonConfig> {

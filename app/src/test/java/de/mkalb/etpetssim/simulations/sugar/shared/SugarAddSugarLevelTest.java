@@ -2,10 +2,11 @@ package de.mkalb.etpetssim.simulations.sugar.shared;
 
 import org.junit.jupiter.api.Test;
 
-import java.util.*;
+import java.util.Arrays;
 
 import static de.mkalb.etpetssim.testsupport.LocalizationTestSupport.assertKeysInAllBundles;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 final class SugarAddSugarLevelTest {
 

@@ -1,11 +1,15 @@
 package de.mkalb.etpetssim.simulations.etpets.model;
 
 import de.mkalb.etpetssim.engine.GridCoordinate;
-import de.mkalb.etpetssim.simulations.etpets.model.entity.*;
+import de.mkalb.etpetssim.simulations.etpets.model.entity.TerrainConstant;
+import de.mkalb.etpetssim.simulations.etpets.model.entity.Trail;
 import org.junit.jupiter.api.Test;
 
-import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsLogicTestSupport.*;
-import static org.junit.jupiter.api.Assertions.*;
+import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsLogicTestSupport.createGridModel;
+import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsLogicTestSupport.createPet;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 final class EtpetsTerrainLogicTest {
 

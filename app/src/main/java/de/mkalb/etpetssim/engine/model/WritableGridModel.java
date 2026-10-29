@@ -3,7 +3,8 @@ package de.mkalb.etpetssim.engine.model;
 import de.mkalb.etpetssim.engine.GridCoordinate;
 import de.mkalb.etpetssim.engine.model.entity.GridEntity;
 
-import java.util.function.*;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 /**
  * Represents a writable grid model that stores entities at grid coordinates.

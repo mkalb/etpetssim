@@ -3,8 +3,9 @@ package de.mkalb.etpetssim.engine.support;
 import de.mkalb.etpetssim.engine.GridOffset;
 import de.mkalb.etpetssim.engine.model.entity.GridEntity;
 
-import java.util.*;
-import java.util.function.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.Function;
 
 /**
  * Functional interface representing a fixed pattern of entities on a grid.

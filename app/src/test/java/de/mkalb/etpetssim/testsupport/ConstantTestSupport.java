@@ -1,9 +1,17 @@
 package de.mkalb.etpetssim.testsupport;
 
-import java.lang.reflect.*;
-import java.util.*;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.SequencedMap;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Reads and checks the {@code public static final String} constants of a constant holder class, such as localization
@@ -70,9 +78,9 @@ public final class ConstantTestSupport {
      */
     public static void assertConstantValuesMatch(Class<?> type, String regex) {
         List<String> mismatches = stringConstants(type).values()
-                                                       .stream()
-                                                       .filter(value -> !value.matches(regex))
-                                                       .toList();
+                .stream()
+                .filter(value -> !value.matches(regex))
+                .toList();
         assertEquals(List.of(), mismatches);
     }
 

@@ -3,8 +3,10 @@ package de.mkalb.etpetssim.core;
 import org.jspecify.annotations.Nullable;
 
 import java.io.IOException;
-import java.nio.file.*;
-import java.util.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Locale;
+import java.util.Objects;
 
 /**
  * Files of the application in the per-user directories for application data, logs, and cache files.

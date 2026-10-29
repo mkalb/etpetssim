@@ -1,10 +1,19 @@
 package de.mkalb.etpetssim.simulations.core.model;
 
-import de.mkalb.etpetssim.simulations.conway.model.*;
-import de.mkalb.etpetssim.simulations.forest.model.*;
-import de.mkalb.etpetssim.simulations.wator.model.*;
+import de.mkalb.etpetssim.simulations.conway.model.ConwayConfig;
+import de.mkalb.etpetssim.simulations.conway.model.ConwayConstraints;
+import de.mkalb.etpetssim.simulations.conway.model.ConwaySimulationManager;
+import de.mkalb.etpetssim.simulations.conway.model.ConwayStatistics;
+import de.mkalb.etpetssim.simulations.forest.model.ForestConfig;
+import de.mkalb.etpetssim.simulations.forest.model.ForestConstraints;
+import de.mkalb.etpetssim.simulations.forest.model.ForestSimulationManager;
+import de.mkalb.etpetssim.simulations.forest.model.ForestStatistics;
+import de.mkalb.etpetssim.simulations.wator.model.WatorConfig;
+import de.mkalb.etpetssim.simulations.wator.model.WatorConstraints;
+import de.mkalb.etpetssim.simulations.wator.model.WatorSimulationManager;
+import de.mkalb.etpetssim.simulations.wator.model.WatorStatistics;
 
-import java.util.*;
+import java.util.Locale;
 
 /**
  * Manual utility to re-capture extrema golden values for Conway, Forest, and Wator

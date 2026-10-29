@@ -3,9 +3,12 @@ package de.mkalb.etpetssim.simulations.langton.model.entity;
 import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorProvider;
 import org.junit.jupiter.api.Test;
 
-import java.util.*;
+import java.util.List;
+import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 final class LangtonEntityTest {
 

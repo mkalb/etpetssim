@@ -1,17 +1,32 @@
 package de.mkalb.etpetssim.simulations.snake.model.strategy;
 
-import de.mkalb.etpetssim.engine.*;
+import de.mkalb.etpetssim.engine.CellShape;
+import de.mkalb.etpetssim.engine.GridCoordinate;
+import de.mkalb.etpetssim.engine.GridStructure;
 import de.mkalb.etpetssim.engine.model.SparseGridModel;
-import de.mkalb.etpetssim.engine.neighborhood.*;
-import de.mkalb.etpetssim.simulations.snake.model.*;
-import de.mkalb.etpetssim.simulations.snake.model.entity.*;
+import de.mkalb.etpetssim.engine.neighborhood.CellNeighborWithEdgeBehavior;
+import de.mkalb.etpetssim.engine.neighborhood.CellNeighborhoods;
+import de.mkalb.etpetssim.engine.neighborhood.CompassDirection;
+import de.mkalb.etpetssim.engine.neighborhood.NeighborhoodMode;
+import de.mkalb.etpetssim.simulations.snake.model.SnakeConfig;
+import de.mkalb.etpetssim.simulations.snake.model.SnakeConstraints;
+import de.mkalb.etpetssim.simulations.snake.model.entity.SnakeHead;
+import de.mkalb.etpetssim.simulations.snake.model.entity.TerrainConstant;
 import de.mkalb.etpetssim.simulations.snake.shared.SnakeDeathMode;
 import org.junit.jupiter.api.Test;
 
-import java.util.*;
-import java.util.stream.*;
+import java.util.List;
+import java.util.Random;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.LongStream;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SuppressWarnings("MagicNumber")
 final class SnakeMoveStrategiesTest {
@@ -39,10 +54,10 @@ final class SnakeMoveStrategiesTest {
 
     private static SnakeMoveStrategy strategy(String displayName) {
         return SnakeMoveStrategies.strategies()
-                                  .stream()
-                                  .filter(strategy -> strategy.displayName().equals(displayName))
-                                  .findFirst()
-                                  .orElseThrow();
+                .stream()
+                .filter(strategy -> strategy.displayName().equals(displayName))
+                .findFirst()
+                .orElseThrow();
     }
 
     private static SnakeHead createSnakeHead(SnakeMoveStrategy strategy) {
@@ -51,12 +66,12 @@ final class SnakeMoveStrategiesTest {
 
     private static CellNeighborWithEdgeBehavior neighbor(CompassDirection direction) {
         return CellNeighborhoods.cellNeighborsWithEdgeBehavior(HEAD_COORDINATE, CONFIG.neighborhoodMode(), STRUCTURE)
-                                .values()
-                                .stream()
-                                .flatMap(List::stream)
-                                .filter(neighbor -> neighbor.direction() == direction)
-                                .findFirst()
-                                .orElseThrow();
+                .values()
+                .stream()
+                .flatMap(List::stream)
+                .filter(neighbor -> neighbor.direction() == direction)
+                .findFirst()
+                .orElseThrow();
     }
 
     private static MoveContext createContext(SnakeHead snakeHead,
@@ -80,7 +95,7 @@ final class SnakeMoveStrategiesTest {
                                            List<CompassDirection> foodDirections) {
         SnakeMoveStrategy strategy = strategy(displayName);
         return strategy.decideMove(createContext(createSnakeHead(strategy), groundDirections, foodDirections, 1L))
-                       .orElseThrow();
+                .orElseThrow();
     }
 
     private static MoveDecision decideMoveHeadingNorthWithTwoSegments(String displayName) {
@@ -188,11 +203,11 @@ final class SnakeMoveStrategiesTest {
         List<CompassDirection> foodDirections = List.of(CompassDirection.N, CompassDirection.E, CompassDirection.S);
 
         Set<CompassDirection> chosenDirections = LongStream.range(0, 50)
-                                                           .mapToObj(seed -> createContext(createSnakeHead(strategy),
-                                                                   List.of(CompassDirection.W), foodDirections, seed))
-                                                           .map(context -> strategy.decideMove(context).orElseThrow())
-                                                           .map(MoveDecision::direction)
-                                                           .collect(Collectors.toSet());
+                .mapToObj(seed -> createContext(createSnakeHead(strategy),
+                        List.of(CompassDirection.W), foodDirections, seed))
+                .map(context -> strategy.decideMove(context).orElseThrow())
+                .map(MoveDecision::direction)
+                .collect(Collectors.toSet());
 
         assertEquals(Set.copyOf(foodDirections), chosenDirections);
     }

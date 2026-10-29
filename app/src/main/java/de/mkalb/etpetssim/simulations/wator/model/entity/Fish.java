@@ -1,6 +1,6 @@
 package de.mkalb.etpetssim.simulations.wator.model.entity;
 
-import java.util.*;
+import java.util.Locale;
 
 public final class Fish extends CreatureBase {
 

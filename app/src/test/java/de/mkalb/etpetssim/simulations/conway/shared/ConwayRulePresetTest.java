@@ -4,10 +4,15 @@ import org.junit.jupiter.api.function.Executable;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 
-import java.util.*;
-import java.util.stream.*;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 final class ConwayRulePresetTest {
 
@@ -27,8 +32,8 @@ final class ConwayRulePresetTest {
     void testRuleStringIsParsableAndUnique(PresetFamily family) {
         List<String> ruleStrings = family.selectablePresets().stream().map(ConwayRulePreset::ruleString).toList();
         Stream<Executable> parseChecks = ruleStrings.stream()
-                                                    .map(ruleString -> () -> assertDoesNotThrow(
-                                                            () -> ConwayTransitionRules.parse(ruleString), ruleString));
+                .map(ruleString -> () -> assertDoesNotThrow(
+                        () -> ConwayTransitionRules.parse(ruleString), ruleString));
         assertEquals(ruleStrings.size(), Set.copyOf(ruleStrings).size());
         assertAll(parseChecks);
     }
@@ -37,13 +42,13 @@ final class ConwayRulePresetTest {
     @EnumSource(PresetFamily.class)
     void testRuleStringRespectsMaxNeighborCount(PresetFamily family) {
         Stream<Executable> checks = family.selectablePresets().stream()
-                                          .map(preset -> () -> {
-                                              ConwayTransitionRules rules = ConwayTransitionRules.parse(preset.ruleString());
-                                              assertTrue(
-                                                      rules.surviveCounts().stream().allMatch(n -> n <= family.maxNeighborCount())
-                                                              && rules.birthCounts().stream().allMatch(n -> n <= family.maxNeighborCount()),
-                                                      preset.displayName());
-                                          });
+                .map(preset -> () -> {
+                    ConwayTransitionRules rules = ConwayTransitionRules.parse(preset.ruleString());
+                    assertTrue(
+                            rules.surviveCounts().stream().allMatch(n -> n <= family.maxNeighborCount())
+                                    && rules.birthCounts().stream().allMatch(n -> n <= family.maxNeighborCount()),
+                            preset.displayName());
+                });
         assertAll(checks);
     }
 
@@ -61,10 +66,10 @@ final class ConwayRulePresetTest {
     @EnumSource(PresetFamily.class)
     void testRecommendedDensityPercent(PresetFamily family) {
         Stream<Executable> checks = family.selectablePresets().stream()
-                                          .map(preset -> () -> assertTrue(
-                                                  (preset.recommendedDensityPercent() >= 1)
-                                                          && (preset.recommendedDensityPercent() <= 100),
-                                                  preset.displayName()));
+                .map(preset -> () -> assertTrue(
+                        (preset.recommendedDensityPercent() >= 1)
+                                && (preset.recommendedDensityPercent() <= 100),
+                        preset.displayName()));
         assertAll(checks);
     }
 

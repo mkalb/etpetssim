@@ -3,12 +3,18 @@ package de.mkalb.etpetssim.simulations.snake.model;
 import de.mkalb.etpetssim.engine.GridCoordinate;
 import de.mkalb.etpetssim.engine.model.GridCell;
 import de.mkalb.etpetssim.engine.neighborhood.CompassDirection;
-import de.mkalb.etpetssim.simulations.snake.model.entity.*;
+import de.mkalb.etpetssim.simulations.snake.model.entity.SnakeEntity;
+import de.mkalb.etpetssim.simulations.snake.model.entity.SnakeHead;
+import de.mkalb.etpetssim.simulations.snake.model.entity.TerrainConstant;
 import de.mkalb.etpetssim.simulations.snake.model.strategy.SnakeMoveStrategies;
-import de.mkalb.etpetssim.simulations.snake.shared.*;
+import de.mkalb.etpetssim.simulations.snake.shared.SnakeDeathMode;
+import de.mkalb.etpetssim.simulations.snake.shared.SnakeUserActionContext;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SuppressWarnings("MagicNumber")
 final class SnakeUserActionTest {

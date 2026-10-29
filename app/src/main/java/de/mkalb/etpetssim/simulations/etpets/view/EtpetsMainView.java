@@ -1,29 +1,60 @@
 package de.mkalb.etpetssim.simulations.etpets.view;
 
-import de.mkalb.etpetssim.core.*;
-import de.mkalb.etpetssim.engine.model.entity.*;
+import de.mkalb.etpetssim.core.AppLocalization;
+import de.mkalb.etpetssim.core.AppLogger;
+import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptor;
+import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorRegistry;
 import de.mkalb.etpetssim.simulations.core.shared.SimulationUserActionScope;
-import de.mkalb.etpetssim.simulations.core.view.*;
-import de.mkalb.etpetssim.simulations.core.viewmodel.*;
-import de.mkalb.etpetssim.simulations.etpets.model.*;
-import de.mkalb.etpetssim.simulations.etpets.model.entity.*;
-import de.mkalb.etpetssim.simulations.etpets.shared.*;
+import de.mkalb.etpetssim.simulations.core.view.AbstractDefaultMainView;
+import de.mkalb.etpetssim.simulations.core.view.CellDrawer;
+import de.mkalb.etpetssim.simulations.core.view.DefaultControlView;
+import de.mkalb.etpetssim.simulations.core.viewmodel.DefaultMainViewModel;
+import de.mkalb.etpetssim.simulations.core.viewmodel.SimulationUserActionDescriptor;
+import de.mkalb.etpetssim.simulations.etpets.model.EtpetsBalance;
+import de.mkalb.etpetssim.simulations.etpets.model.EtpetsCell;
+import de.mkalb.etpetssim.simulations.etpets.model.EtpetsConfig;
+import de.mkalb.etpetssim.simulations.etpets.model.EtpetsGridModel;
+import de.mkalb.etpetssim.simulations.etpets.model.EtpetsSimulationManager;
+import de.mkalb.etpetssim.simulations.etpets.model.EtpetsStatistics;
+import de.mkalb.etpetssim.simulations.etpets.model.entity.AgentEntity;
+import de.mkalb.etpetssim.simulations.etpets.model.entity.EtpetsEntity;
+import de.mkalb.etpetssim.simulations.etpets.model.entity.NoAgent;
+import de.mkalb.etpetssim.simulations.etpets.model.entity.NoResource;
+import de.mkalb.etpetssim.simulations.etpets.model.entity.Pet;
+import de.mkalb.etpetssim.simulations.etpets.model.entity.PetEgg;
+import de.mkalb.etpetssim.simulations.etpets.model.entity.ResourceBase;
+import de.mkalb.etpetssim.simulations.etpets.model.entity.ResourceEntity;
+import de.mkalb.etpetssim.simulations.etpets.model.entity.TerrainConstant;
+import de.mkalb.etpetssim.simulations.etpets.model.entity.TerrainEntity;
+import de.mkalb.etpetssim.simulations.etpets.model.entity.Trail;
+import de.mkalb.etpetssim.simulations.etpets.shared.EtpetsResourceChoice;
+import de.mkalb.etpetssim.simulations.etpets.shared.EtpetsTerrainChoice;
+import de.mkalb.etpetssim.simulations.etpets.shared.EtpetsUserActionContext;
 import de.mkalb.etpetssim.simulations.etpets.viewmodel.EtpetsEditToolBarViewModel;
-import de.mkalb.etpetssim.ui.*;
+import de.mkalb.etpetssim.ui.CellDimension;
+import de.mkalb.etpetssim.ui.FXComponentFactory;
+import de.mkalb.etpetssim.ui.FXGridCanvasPainter;
+import de.mkalb.etpetssim.ui.FXPaintFactory;
+import de.mkalb.etpetssim.ui.FXStyleClasses;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.control.*;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.ListCell;
+import javafx.scene.control.Tooltip;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.StrokeType;
 import org.jspecify.annotations.Nullable;
 
-import java.util.*;
-import java.util.function.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
 
 public final class EtpetsMainView extends AbstractDefaultMainView<
         EtpetsEntity,
@@ -311,34 +342,34 @@ public final class EtpetsMainView extends AbstractDefaultMainView<
 
         var rockDescriptor = entityDescriptorRegistry.requireByDescriptorId(EtpetsEntity.DESCRIPTOR_ID_ROCK);
         terrainModel.filteredCoordinates(e -> EtpetsEntity.DESCRIPTOR_ID_ROCK.equals(e.descriptorId()))
-                    .forEach(coordinate ->
-                            dynamicPainter.drawCell(coordinate, rockDescriptor.color(), rockDescriptor.borderColor(), NO_STROKE_LINE_WIDTH));
+                .forEach(coordinate ->
+                        dynamicPainter.drawCell(coordinate, rockDescriptor.color(), rockDescriptor.borderColor(), NO_STROKE_LINE_WIDTH));
 
         var waterDescriptor = entityDescriptorRegistry.requireByDescriptorId(EtpetsEntity.DESCRIPTOR_ID_WATER);
         terrainModel.filteredCoordinates(e -> EtpetsEntity.DESCRIPTOR_ID_WATER.equals(e.descriptorId()))
-                    .forEach(coordinate ->
-                            dynamicPainter.drawCell(coordinate, waterDescriptor.color(), waterDescriptor.borderColor(), NO_STROKE_LINE_WIDTH));
+                .forEach(coordinate ->
+                        dynamicPainter.drawCell(coordinate, waterDescriptor.color(), waterDescriptor.borderColor(), NO_STROKE_LINE_WIDTH));
 
         terrainModel.filteredCells(e -> e instanceof Trail)
-                    .forEach(cell -> cellTerrainDrawer.draw(
-                            entityDescriptorRegistry.requireByDescriptorId(cell.descriptorId()),
-                            dynamicPainter,
-                            cell,
-                            stepCount));
+                .forEach(cell -> cellTerrainDrawer.draw(
+                        entityDescriptorRegistry.requireByDescriptorId(cell.descriptorId()),
+                        dynamicPainter,
+                        cell,
+                        stepCount));
 
         resourceModel.nonDefaultCells()
-                     .forEach(cell -> cellResourceDrawer.draw(
-                             entityDescriptorRegistry.requireByDescriptorId(cell.descriptorId()),
-                             dynamicPainter,
-                             cell,
-                             stepCount));
+                .forEach(cell -> cellResourceDrawer.draw(
+                        entityDescriptorRegistry.requireByDescriptorId(cell.descriptorId()),
+                        dynamicPainter,
+                        cell,
+                        stepCount));
 
         agentModel.nonDefaultCells()
-                  .forEach(cell -> cellAgentDrawer.draw(
-                          entityDescriptorRegistry.requireByDescriptorId(cell.descriptorId()),
-                          dynamicPainter,
-                          cell,
-                          stepCount));
+                .forEach(cell -> cellAgentDrawer.draw(
+                        entityDescriptorRegistry.requireByDescriptorId(cell.descriptorId()),
+                        dynamicPainter,
+                        cell,
+                        stepCount));
     }
 
     @Override
@@ -350,14 +381,14 @@ public final class EtpetsMainView extends AbstractDefaultMainView<
                         ETPETS_TOOLBAR_SET_TERRAIN,
                         ETPETS_TOOLBAR_SET_TERRAIN_TOOLTIP,
                         () -> editToolBarViewModel.resolveSelectedTerrainContext()
-                                                  .map(Function.identity())),
+                                .map(Function.identity())),
                 new SimulationUserActionDescriptor<>(
                         ETPETS_TOOL_ID_SET_RESOURCE,
                         SimulationUserActionScope.CELL_SELECTED,
                         ETPETS_TOOLBAR_SET_RESOURCE,
                         ETPETS_TOOLBAR_SET_RESOURCE_TOOLTIP,
                         () -> editToolBarViewModel.resolveSelectedResourceContext()
-                                                  .map(Function.identity()))
+                                .map(Function.identity()))
         );
     }
 

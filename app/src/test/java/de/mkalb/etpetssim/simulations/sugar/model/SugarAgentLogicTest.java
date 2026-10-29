@@ -2,13 +2,24 @@ package de.mkalb.etpetssim.simulations.sugar.model;
 
 import de.mkalb.etpetssim.engine.GridCoordinate;
 import de.mkalb.etpetssim.engine.model.GridCell;
-import de.mkalb.etpetssim.simulations.sugar.model.entity.*;
+import de.mkalb.etpetssim.simulations.sugar.model.entity.Agent;
+import de.mkalb.etpetssim.simulations.sugar.model.entity.AgentEntity;
+import de.mkalb.etpetssim.simulations.sugar.model.entity.Sugar;
 import org.junit.jupiter.api.Test;
 
-import java.util.*;
+import java.util.List;
+import java.util.Random;
 
-import static de.mkalb.etpetssim.simulations.sugar.model.SugarLogicTestSupport.*;
-import static org.junit.jupiter.api.Assertions.*;
+import static de.mkalb.etpetssim.simulations.sugar.model.SugarLogicTestSupport.INITIAL_ENERGY;
+import static de.mkalb.etpetssim.simulations.sugar.model.SugarLogicTestSupport.MAX_AGE;
+import static de.mkalb.etpetssim.simulations.sugar.model.SugarLogicTestSupport.METABOLISM_RATE;
+import static de.mkalb.etpetssim.simulations.sugar.model.SugarLogicTestSupport.createConfig;
+import static de.mkalb.etpetssim.simulations.sugar.model.SugarLogicTestSupport.createGridModel;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 final class SugarAgentLogicTest {
 

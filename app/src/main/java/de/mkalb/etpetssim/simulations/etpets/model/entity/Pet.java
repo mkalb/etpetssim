@@ -4,7 +4,9 @@ import de.mkalb.etpetssim.engine.GridCoordinate;
 import de.mkalb.etpetssim.simulations.etpets.model.EtpetsBalance;
 import org.jspecify.annotations.Nullable;
 
-import java.util.*;
+import java.util.Deque;
+import java.util.LinkedList;
+import java.util.Locale;
 
 public final class Pet implements AgentEntity {
 

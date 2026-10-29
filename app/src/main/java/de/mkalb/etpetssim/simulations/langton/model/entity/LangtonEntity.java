@@ -1,9 +1,12 @@
 package de.mkalb.etpetssim.simulations.langton.model.entity;
 
-import de.mkalb.etpetssim.engine.model.entity.*;
+import de.mkalb.etpetssim.engine.model.entity.GridEntity;
+import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorProvider;
 
-import java.util.*;
-import java.util.stream.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Common contract for all entities in the Langton simulation.
@@ -21,7 +24,7 @@ public sealed interface LangtonEntity extends GridEntity
      */
     static List<GridEntityDescriptorProvider> allEntityDescriptorProviders() {
         return Stream.concat(Arrays.stream(EntityDescriptors.values()), Arrays.stream(TerrainConstant.values()))
-                     .collect(Collectors.toUnmodifiableList());
+                .collect(Collectors.toUnmodifiableList());
     }
 
     boolean isAgent();

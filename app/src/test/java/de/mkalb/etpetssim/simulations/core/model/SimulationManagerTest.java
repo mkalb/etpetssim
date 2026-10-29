@@ -1,22 +1,55 @@
 package de.mkalb.etpetssim.simulations.core.model;
 
-import de.mkalb.etpetssim.simulations.conway.model.*;
-import de.mkalb.etpetssim.simulations.etpets.model.*;
-import de.mkalb.etpetssim.simulations.forest.model.*;
-import de.mkalb.etpetssim.simulations.lab.model.*;
-import de.mkalb.etpetssim.simulations.langton.model.*;
+import de.mkalb.etpetssim.simulations.conway.model.ConwayConfig;
+import de.mkalb.etpetssim.simulations.conway.model.ConwayConstraints;
+import de.mkalb.etpetssim.simulations.conway.model.ConwaySimulationManager;
+import de.mkalb.etpetssim.simulations.conway.model.ConwayStatistics;
+import de.mkalb.etpetssim.simulations.etpets.model.EtpetsConfig;
+import de.mkalb.etpetssim.simulations.etpets.model.EtpetsConstraints;
+import de.mkalb.etpetssim.simulations.etpets.model.EtpetsSimulationManager;
+import de.mkalb.etpetssim.simulations.etpets.model.EtpetsStatistics;
+import de.mkalb.etpetssim.simulations.forest.model.ForestConfig;
+import de.mkalb.etpetssim.simulations.forest.model.ForestConstraints;
+import de.mkalb.etpetssim.simulations.forest.model.ForestSimulationManager;
+import de.mkalb.etpetssim.simulations.forest.model.ForestStatistics;
+import de.mkalb.etpetssim.simulations.lab.model.LabConfig;
+import de.mkalb.etpetssim.simulations.lab.model.LabConstraints;
+import de.mkalb.etpetssim.simulations.lab.model.LabSimulationManager;
+import de.mkalb.etpetssim.simulations.langton.model.LangtonConfig;
+import de.mkalb.etpetssim.simulations.langton.model.LangtonConstraints;
+import de.mkalb.etpetssim.simulations.langton.model.LangtonSimulationManager;
+import de.mkalb.etpetssim.simulations.langton.model.LangtonStatistics;
 import de.mkalb.etpetssim.simulations.langton.shared.LangtonMovementRules;
-import de.mkalb.etpetssim.simulations.rebounding.model.*;
-import de.mkalb.etpetssim.simulations.snake.model.*;
+import de.mkalb.etpetssim.simulations.rebounding.model.ReboundingConfig;
+import de.mkalb.etpetssim.simulations.rebounding.model.ReboundingConstraints;
+import de.mkalb.etpetssim.simulations.rebounding.model.ReboundingSimulationManager;
+import de.mkalb.etpetssim.simulations.rebounding.model.ReboundingStatistics;
+import de.mkalb.etpetssim.simulations.snake.model.SnakeConfig;
+import de.mkalb.etpetssim.simulations.snake.model.SnakeConstraints;
+import de.mkalb.etpetssim.simulations.snake.model.SnakeSimulationManager;
+import de.mkalb.etpetssim.simulations.snake.model.SnakeStatistics;
 import de.mkalb.etpetssim.simulations.snake.shared.SnakeDeathMode;
-import de.mkalb.etpetssim.simulations.sugar.model.*;
-import de.mkalb.etpetssim.simulations.wator.model.*;
+import de.mkalb.etpetssim.simulations.sugar.model.SugarConfig;
+import de.mkalb.etpetssim.simulations.sugar.model.SugarConstraints;
+import de.mkalb.etpetssim.simulations.sugar.model.SugarSimulationManager;
+import de.mkalb.etpetssim.simulations.sugar.model.SugarStatistics;
+import de.mkalb.etpetssim.simulations.wator.model.WatorConfig;
+import de.mkalb.etpetssim.simulations.wator.model.WatorConstraints;
+import de.mkalb.etpetssim.simulations.wator.model.WatorSimulationManager;
+import de.mkalb.etpetssim.simulations.wator.model.WatorStatistics;
 import org.junit.jupiter.api.Test;
 
-import java.util.*;
-import java.util.concurrent.atomic.*;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 @SuppressWarnings("MagicNumber")
 final class SimulationManagerTest {
@@ -314,8 +347,8 @@ final class SimulationManagerTest {
 
         var history = manager.statisticsHistory();
         long finalStepSamples = history.stream()
-                                       .filter(sample -> sample.stepCount() == executeCount)
-                                       .count();
+                .filter(sample -> sample.stepCount() == executeCount)
+                .count();
         assertAll(
                 () -> assertEquals(executeCount + 1, history.size()),
                 () -> assertEquals(executeCount, history.getLast().stepCount()),

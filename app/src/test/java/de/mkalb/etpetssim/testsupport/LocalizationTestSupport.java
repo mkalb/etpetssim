@@ -1,12 +1,18 @@
 package de.mkalb.etpetssim.testsupport;
 
-import de.mkalb.etpetssim.core.*;
+import de.mkalb.etpetssim.core.AppLocalization;
+import de.mkalb.etpetssim.core.AppResources;
 import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorProvider;
 import org.junit.jupiter.api.function.Executable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.ResourceBundle;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Utility class for checking resource keys against the main resource bundles.

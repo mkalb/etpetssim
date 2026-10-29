@@ -1,6 +1,7 @@
 package de.mkalb.etpetssim.simulations.core.model;
 
-import java.util.*;
+import java.util.ArrayDeque;
+import java.util.List;
 
 /**
  * Bounded in-memory history of statistic samples.

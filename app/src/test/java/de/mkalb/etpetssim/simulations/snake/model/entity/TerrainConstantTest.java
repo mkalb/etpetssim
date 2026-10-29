@@ -3,10 +3,14 @@ package de.mkalb.etpetssim.simulations.snake.model.entity;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 
-import java.util.*;
-import java.util.stream.*;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 final class TerrainConstantTest {
 
@@ -17,8 +21,8 @@ final class TerrainConstantTest {
             registeredIds.add(descriptor.descriptorId());
         }
         Stream<Executable> checks = Arrays.stream(TerrainConstant.values())
-                                          .map(constant -> () -> assertTrue(
-                                                  registeredIds.contains(constant.descriptorId()), constant.name()));
+                .map(constant -> () -> assertTrue(
+                        registeredIds.contains(constant.descriptorId()), constant.name()));
         assertAll(checks);
     }
 

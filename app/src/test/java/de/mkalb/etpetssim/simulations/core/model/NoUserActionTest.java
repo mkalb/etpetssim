@@ -1,13 +1,20 @@
 package de.mkalb.etpetssim.simulations.core.model;
 
 import de.mkalb.etpetssim.engine.GridCoordinate;
-import de.mkalb.etpetssim.engine.model.*;
+import de.mkalb.etpetssim.engine.model.GridCell;
+import de.mkalb.etpetssim.engine.model.WritableGridModel;
 import de.mkalb.etpetssim.simulations.core.shared.NoUserActionContext;
-import de.mkalb.etpetssim.simulations.forest.model.*;
+import de.mkalb.etpetssim.simulations.forest.model.ForestConfig;
+import de.mkalb.etpetssim.simulations.forest.model.ForestConstraints;
+import de.mkalb.etpetssim.simulations.forest.model.ForestSimulationManager;
+import de.mkalb.etpetssim.simulations.forest.model.ForestStatistics;
 import de.mkalb.etpetssim.simulations.forest.model.entity.ForestEntity;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 final class NoUserActionTest {
 

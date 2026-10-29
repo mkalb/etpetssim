@@ -2,8 +2,51 @@ package de.mkalb.etpetssim.simulations.etpets.model;
 
 import org.junit.jupiter.api.Test;
 
-import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsBalance.*;
-import static org.junit.jupiter.api.Assertions.*;
+import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsBalance.INSECT_CURRENT_AMOUNT_MAX;
+import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsBalance.INSECT_CURRENT_AMOUNT_MIN;
+import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsBalance.INSECT_MAX_AMOUNT_MAX;
+import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsBalance.INSECT_MAX_AMOUNT_MIN;
+import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsBalance.INSECT_REGENERATION_PER_STEP_BASE;
+import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsBalance.INSECT_REGENERATION_PER_STEP_DELTA;
+import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsBalance.PET_CURRENT_ENERGY_MAX;
+import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsBalance.PET_CURRENT_ENERGY_MIN;
+import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsBalance.PET_EAT_SCORE_MAX;
+import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsBalance.PET_EAT_SCORE_MIN;
+import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsBalance.PET_EGG_INCUBATION_REMAINING_DEFAULT;
+import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsBalance.PET_EGG_INCUBATION_REMAINING_MAX;
+import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsBalance.PET_EGG_INCUBATION_REMAINING_MIN;
+import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsBalance.PET_INITIAL_AGE_MAX;
+import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsBalance.PET_INITIAL_AGE_MIN;
+import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsBalance.PET_INITIAL_CURRENT_ENERGY_REDUCTION_DELTA;
+import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsBalance.PET_MOVE_SCORE_MAX;
+import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsBalance.PET_MOVE_SCORE_MIN;
+import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsBalance.PET_REPRODUCTION_SCORE_AVERAGE_QUALITY_WEIGHT;
+import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsBalance.PET_REPRODUCTION_SCORE_MAX;
+import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsBalance.PET_REPRODUCTION_SCORE_MIN;
+import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsBalance.PET_REPRODUCTION_SCORE_MINIMUM_QUALITY_WEIGHT;
+import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsBalance.PET_TRAITS_MAX_ENERGY_MAX;
+import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsBalance.PET_TRAITS_MAX_ENERGY_MIN;
+import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsBalance.PET_TRAITS_MOVEMENT_COST_MODIFIER_DEFAULT;
+import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsBalance.PET_TRAITS_MOVEMENT_COST_MODIFIER_MAX;
+import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsBalance.PET_TRAITS_MOVEMENT_COST_MODIFIER_MIN;
+import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsBalance.PET_TRAITS_REPRODUCTION_COOLDOWN_DEFAULT;
+import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsBalance.PET_TRAITS_REPRODUCTION_COOLDOWN_MAX;
+import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsBalance.PET_TRAITS_REPRODUCTION_COOLDOWN_MIN;
+import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsBalance.PET_TRAITS_REPRODUCTION_MIN_ENERGY_DEFAULT;
+import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsBalance.PET_TRAITS_REPRODUCTION_MIN_ENERGY_MAX;
+import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsBalance.PET_TRAITS_REPRODUCTION_MIN_ENERGY_MIN;
+import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsBalance.PLANT_CURRENT_AMOUNT_MAX;
+import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsBalance.PLANT_CURRENT_AMOUNT_MIN;
+import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsBalance.PLANT_MAX_AMOUNT_MAX;
+import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsBalance.PLANT_MAX_AMOUNT_MIN;
+import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsBalance.PLANT_REGENERATION_PER_STEP_BASE;
+import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsBalance.PLANT_REGENERATION_PER_STEP_DELTA;
+import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsBalance.TRAIL_INTENSITY_DEFAULT;
+import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsBalance.TRAIL_INTENSITY_MAX;
+import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsBalance.TRAIL_INTENSITY_MIN;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 final class EtpetsBalanceTest {
 

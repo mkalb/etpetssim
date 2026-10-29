@@ -1,18 +1,26 @@
 package de.mkalb.etpetssim.simulations.conway.model;
 
-import de.mkalb.etpetssim.engine.*;
+import de.mkalb.etpetssim.engine.CellShape;
+import de.mkalb.etpetssim.engine.GridOffset;
 import de.mkalb.etpetssim.engine.support.GridPattern;
 import de.mkalb.etpetssim.simulations.conway.model.entity.ConwayEntity;
-import de.mkalb.etpetssim.simulations.conway.shared.*;
+import de.mkalb.etpetssim.simulations.conway.shared.ConwayPatternChoice;
+import de.mkalb.etpetssim.simulations.conway.shared.ConwayRulePresetSquare;
+import de.mkalb.etpetssim.simulations.conway.shared.ConwayTransitionRules;
 import de.mkalb.etpetssim.testsupport.LocalizationTestSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 
-import java.util.*;
-import java.util.stream.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.IntStream;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 final class ConwayPatternsTest {
 
@@ -112,17 +120,17 @@ final class ConwayPatternsTest {
 
         assertEquals(EXPECTED_PATTERNS.size(), choices.size());
         assertAll(IntStream.range(0, choices.size())
-                           .mapToObj(index -> () -> assertPattern(
-                                   choices.get(index).pattern(),
-                                   EXPECTED_PATTERNS.get(index))));
+                .mapToObj(index -> () -> assertPattern(
+                        choices.get(index).pattern(),
+                        EXPECTED_PATTERNS.get(index))));
     }
 
     @Test
     void testAvailableChoices() {
         List<String> expectedChoiceIds = EXPECTED_PATTERNS.stream()
-                                                          .map(PatternExpectation::choiceId)
-                                                          .filter(choiceId -> !choiceId.equals(HIGHLIFE_REPLICATOR_ID))
-                                                          .toList();
+                .map(PatternExpectation::choiceId)
+                .filter(choiceId -> !choiceId.equals(HIGHLIFE_REPLICATOR_ID))
+                .toList();
 
         assertEquals(expectedChoiceIds, choiceIds(ConwayPatterns.availableChoices(createConfig(CellShape.SQUARE))));
     }

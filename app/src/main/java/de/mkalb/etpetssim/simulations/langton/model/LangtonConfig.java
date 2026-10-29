@@ -1,12 +1,16 @@
 package de.mkalb.etpetssim.simulations.langton.model;
 
-import de.mkalb.etpetssim.engine.*;
+import de.mkalb.etpetssim.engine.CellShape;
+import de.mkalb.etpetssim.engine.GridEdgeBehavior;
 import de.mkalb.etpetssim.engine.neighborhood.NeighborhoodMode;
 import de.mkalb.etpetssim.simulations.core.model.SimulationConfig;
 import de.mkalb.etpetssim.simulations.core.shared.CellDisplayMode;
 import de.mkalb.etpetssim.simulations.langton.shared.LangtonMovementRules;
 
-import static de.mkalb.etpetssim.simulations.langton.model.LangtonConstraints.*;
+import static de.mkalb.etpetssim.simulations.langton.model.LangtonConstraints.CELL_DISPLAY_MODE_VALUES;
+import static de.mkalb.etpetssim.simulations.langton.model.LangtonConstraints.CELL_SHAPE_VALUES;
+import static de.mkalb.etpetssim.simulations.langton.model.LangtonConstraints.GRID_EDGE_BEHAVIOR_VALUES;
+import static de.mkalb.etpetssim.simulations.langton.model.LangtonConstraints.NEIGHBORHOOD_MODE_DEFAULT;
 
 /**
  * Immutable configuration of the Langton's Ant simulation.

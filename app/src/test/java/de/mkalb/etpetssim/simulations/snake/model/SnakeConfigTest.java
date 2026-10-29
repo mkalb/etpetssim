@@ -1,15 +1,46 @@
 package de.mkalb.etpetssim.simulations.snake.model;
 
-import de.mkalb.etpetssim.engine.*;
+import de.mkalb.etpetssim.engine.CellShape;
+import de.mkalb.etpetssim.engine.GridEdgeBehavior;
 import de.mkalb.etpetssim.engine.neighborhood.NeighborhoodMode;
 import de.mkalb.etpetssim.simulations.core.shared.CellDisplayMode;
 import de.mkalb.etpetssim.simulations.snake.shared.SnakeDeathMode;
 import org.junit.jupiter.api.Test;
 
-import java.util.function.*;
+import java.util.function.Consumer;
 
-import static de.mkalb.etpetssim.simulations.snake.model.SnakeConstraints.*;
-import static org.junit.jupiter.api.Assertions.*;
+import static de.mkalb.etpetssim.simulations.snake.model.SnakeConstraints.BASE_POINTS_PER_FOOD_DEFAULT;
+import static de.mkalb.etpetssim.simulations.snake.model.SnakeConstraints.BASE_POINTS_PER_FOOD_MAX;
+import static de.mkalb.etpetssim.simulations.snake.model.SnakeConstraints.BASE_POINTS_PER_FOOD_MIN;
+import static de.mkalb.etpetssim.simulations.snake.model.SnakeConstraints.CELL_DISPLAY_MODE_DEFAULT;
+import static de.mkalb.etpetssim.simulations.snake.model.SnakeConstraints.CELL_EDGE_LENGTH_DEFAULT;
+import static de.mkalb.etpetssim.simulations.snake.model.SnakeConstraints.CELL_SHAPE_DEFAULT;
+import static de.mkalb.etpetssim.simulations.snake.model.SnakeConstraints.DEATH_MODE_DEFAULT;
+import static de.mkalb.etpetssim.simulations.snake.model.SnakeConstraints.FOOD_CELLS_DEFAULT;
+import static de.mkalb.etpetssim.simulations.snake.model.SnakeConstraints.FOOD_CELLS_MAX;
+import static de.mkalb.etpetssim.simulations.snake.model.SnakeConstraints.FOOD_CELLS_MIN;
+import static de.mkalb.etpetssim.simulations.snake.model.SnakeConstraints.GRID_EDGE_BEHAVIOR_DEFAULT;
+import static de.mkalb.etpetssim.simulations.snake.model.SnakeConstraints.GRID_HEIGHT_DEFAULT;
+import static de.mkalb.etpetssim.simulations.snake.model.SnakeConstraints.GRID_WIDTH_DEFAULT;
+import static de.mkalb.etpetssim.simulations.snake.model.SnakeConstraints.GROWTH_PER_FOOD_DEFAULT;
+import static de.mkalb.etpetssim.simulations.snake.model.SnakeConstraints.GROWTH_PER_FOOD_MAX;
+import static de.mkalb.etpetssim.simulations.snake.model.SnakeConstraints.GROWTH_PER_FOOD_MIN;
+import static de.mkalb.etpetssim.simulations.snake.model.SnakeConstraints.INITIAL_PENDING_GROWTH_DEFAULT;
+import static de.mkalb.etpetssim.simulations.snake.model.SnakeConstraints.INITIAL_PENDING_GROWTH_MAX;
+import static de.mkalb.etpetssim.simulations.snake.model.SnakeConstraints.INITIAL_PENDING_GROWTH_MIN;
+import static de.mkalb.etpetssim.simulations.snake.model.SnakeConstraints.NEIGHBORHOOD_MODE_DEFAULT;
+import static de.mkalb.etpetssim.simulations.snake.model.SnakeConstraints.SEGMENT_LENGTH_MULTIPLIER_DEFAULT;
+import static de.mkalb.etpetssim.simulations.snake.model.SnakeConstraints.SEGMENT_LENGTH_MULTIPLIER_MAX;
+import static de.mkalb.etpetssim.simulations.snake.model.SnakeConstraints.SEGMENT_LENGTH_MULTIPLIER_MIN;
+import static de.mkalb.etpetssim.simulations.snake.model.SnakeConstraints.SNAKES_DEFAULT;
+import static de.mkalb.etpetssim.simulations.snake.model.SnakeConstraints.SNAKES_MAX;
+import static de.mkalb.etpetssim.simulations.snake.model.SnakeConstraints.SNAKES_MIN;
+import static de.mkalb.etpetssim.simulations.snake.model.SnakeConstraints.VERTICAL_WALLS_DEFAULT;
+import static de.mkalb.etpetssim.simulations.snake.model.SnakeConstraints.VERTICAL_WALLS_MAX;
+import static de.mkalb.etpetssim.simulations.snake.model.SnakeConstraints.VERTICAL_WALLS_MIN;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 final class SnakeConfigTest {
 

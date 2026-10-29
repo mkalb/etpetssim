@@ -1,8 +1,14 @@
 package de.mkalb.etpetssim.ui;
 
-import javafx.scene.paint.*;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.CycleMethod;
+import javafx.scene.paint.LinearGradient;
+import javafx.scene.paint.Paint;
+import javafx.scene.paint.RadialGradient;
+import javafx.scene.paint.Stop;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Creates and adjusts JavaFX {@link Paint} objects: colors with adjusted brightness or opacity, brightness variant

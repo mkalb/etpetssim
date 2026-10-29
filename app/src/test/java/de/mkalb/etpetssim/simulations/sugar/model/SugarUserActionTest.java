@@ -1,11 +1,17 @@
 package de.mkalb.etpetssim.simulations.sugar.model;
 
 import de.mkalb.etpetssim.engine.GridCoordinate;
-import de.mkalb.etpetssim.simulations.sugar.model.entity.*;
-import de.mkalb.etpetssim.simulations.sugar.shared.*;
+import de.mkalb.etpetssim.simulations.sugar.model.entity.NoResource;
+import de.mkalb.etpetssim.simulations.sugar.model.entity.ResourceEntity;
+import de.mkalb.etpetssim.simulations.sugar.model.entity.Sugar;
+import de.mkalb.etpetssim.simulations.sugar.shared.SugarAddSugarLevel;
+import de.mkalb.etpetssim.simulations.sugar.shared.SugarUserActionContext;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 final class SugarUserActionTest {
 
@@ -37,11 +43,11 @@ final class SugarUserActionTest {
         SugarSimulationManager manager = new SugarSimulationManager(createConfig());
         SugarUserAction userAction = new SugarUserAction();
         GridCoordinate coordinate = manager.currentGridModel()
-                                           .resourceModel()
-                                           .filteredCoordinates(ResourceEntity::isEmpty)
-                                           .stream()
-                                           .findFirst()
-                                           .orElseThrow();
+                .resourceModel()
+                .filteredCoordinates(ResourceEntity::isEmpty)
+                .stream()
+                .findFirst()
+                .orElseThrow();
         int resourceCellsBefore = manager.statistics().resourceCells();
 
         userAction.apply(
@@ -64,11 +70,11 @@ final class SugarUserActionTest {
         SugarSimulationManager manager = new SugarSimulationManager(createConfig());
         SugarUserAction userAction = new SugarUserAction();
         GridCoordinate coordinate = manager.currentGridModel()
-                                           .resourceModel()
-                                           .filteredCoordinates(ResourceEntity::isNotEmpty)
-                                           .stream()
-                                           .findFirst()
-                                           .orElseThrow();
+                .resourceModel()
+                .filteredCoordinates(ResourceEntity::isNotEmpty)
+                .stream()
+                .findFirst()
+                .orElseThrow();
         int resourceCellsBefore = manager.statistics().resourceCells();
 
         userAction.apply(

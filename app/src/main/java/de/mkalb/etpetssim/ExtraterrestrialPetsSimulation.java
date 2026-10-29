@@ -1,19 +1,39 @@
 package de.mkalb.etpetssim;
 
-import de.mkalb.etpetssim.core.*;
-import de.mkalb.etpetssim.simulations.core.*;
-import de.mkalb.etpetssim.ui.*;
-import javafx.application.*;
-import javafx.geometry.*;
-import javafx.scene.*;
-import javafx.scene.control.*;
+import de.mkalb.etpetssim.core.AppArgs;
+import de.mkalb.etpetssim.core.AppLocalization;
+import de.mkalb.etpetssim.core.AppLocalizationKeys;
+import de.mkalb.etpetssim.core.AppLogger;
+import de.mkalb.etpetssim.core.AppResources;
+import de.mkalb.etpetssim.simulations.core.SimulationFactory;
+import de.mkalb.etpetssim.simulations.core.SimulationInstance;
+import de.mkalb.etpetssim.simulations.core.SimulationTerminationHandle;
+import de.mkalb.etpetssim.simulations.core.SimulationType;
+import de.mkalb.etpetssim.ui.AboutDialog;
+import de.mkalb.etpetssim.ui.FXComponentFactory;
+import de.mkalb.etpetssim.ui.FXDialogStyler;
+import de.mkalb.etpetssim.ui.FXStyleClasses;
+import javafx.application.Application;
+import javafx.application.Platform;
+import javafx.geometry.Pos;
+import javafx.geometry.Rectangle2D;
+import javafx.scene.Node;
+import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Hyperlink;
 import javafx.scene.image.Image;
-import javafx.scene.layout.*;
-import javafx.stage.*;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.VBox;
+import javafx.stage.Screen;
+import javafx.stage.Stage;
 import org.jspecify.annotations.Nullable;
 
-import java.util.*;
-import java.util.concurrent.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Main JavaFX {@link Application} implementation.
@@ -97,7 +117,7 @@ public final class ExtraterrestrialPetsSimulation extends Application {
      */
     private Optional<SimulationType> resolveSimulationType(AppArgs arguments) {
         return arguments.getValue(AppArgs.Key.SIMULATION)
-                        .flatMap(arg -> SimulationType.fromCliArgument(arg, true));
+                .flatMap(arg -> SimulationType.fromCliArgument(arg, true));
     }
 
     /**
@@ -378,8 +398,8 @@ public final class ExtraterrestrialPetsSimulation extends Application {
         titleBox.getStyleClass().add(FXStyleClasses.HEADER_TITLE_VBOX);
 
         simulationType.subtitle()
-                      .ifPresent(subtitle ->
-                              titleBox.getChildren().add(FXComponentFactory.createLabel(subtitle, FXStyleClasses.HEADER_SUBTITLE_LABEL)));
+                .ifPresent(subtitle ->
+                        titleBox.getChildren().add(FXComponentFactory.createLabel(subtitle, FXStyleClasses.HEADER_SUBTITLE_LABEL)));
 
         VBox linkBox = new VBox();
         linkBox.setAlignment(Pos.TOP_RIGHT);

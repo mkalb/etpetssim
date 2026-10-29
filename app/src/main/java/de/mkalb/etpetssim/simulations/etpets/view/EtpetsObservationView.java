@@ -3,12 +3,13 @@ package de.mkalb.etpetssim.simulations.etpets.view;
 import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorRegistry;
 import de.mkalb.etpetssim.simulations.core.view.AbstractObservationView;
 import de.mkalb.etpetssim.simulations.core.viewmodel.DefaultObservationViewModel;
-import de.mkalb.etpetssim.simulations.etpets.model.*;
+import de.mkalb.etpetssim.simulations.etpets.model.EtpetsCell;
+import de.mkalb.etpetssim.simulations.etpets.model.EtpetsStatistics;
 import de.mkalb.etpetssim.simulations.etpets.model.entity.EtpetsEntity;
 import javafx.scene.layout.Region;
 import org.jspecify.annotations.Nullable;
 
-import java.util.*;
+import java.util.Optional;
 
 public final class EtpetsObservationView
         extends AbstractObservationView<

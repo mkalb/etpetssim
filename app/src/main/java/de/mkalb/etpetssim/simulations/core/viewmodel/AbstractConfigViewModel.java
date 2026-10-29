@@ -1,15 +1,24 @@
 package de.mkalb.etpetssim.simulations.core.viewmodel;
 
 import de.mkalb.etpetssim.core.AppLocalization;
-import de.mkalb.etpetssim.engine.*;
+import de.mkalb.etpetssim.engine.CellShape;
+import de.mkalb.etpetssim.engine.GridEdgeBehavior;
 import de.mkalb.etpetssim.simulations.core.model.SimulationConfig;
-import de.mkalb.etpetssim.simulations.core.shared.*;
-import de.mkalb.etpetssim.ui.*;
-import javafx.beans.property.*;
+import de.mkalb.etpetssim.simulations.core.shared.CellDisplayMode;
+import de.mkalb.etpetssim.simulations.core.shared.SimulationState;
+import de.mkalb.etpetssim.ui.InputChoiceProperty;
+import de.mkalb.etpetssim.ui.InputDoubleIntRangeProperty;
+import de.mkalb.etpetssim.ui.InputIntegerProperty;
+import javafx.beans.property.ReadOnlyBooleanProperty;
+import javafx.beans.property.ReadOnlyBooleanWrapper;
+import javafx.beans.property.ReadOnlyObjectProperty;
+import javafx.beans.property.ReadOnlyStringProperty;
+import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.beans.value.ObservableBooleanValue;
 
-import java.util.*;
-import java.util.function.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Supplier;
 
 /**
  * Base implementation for configuration view models.
@@ -132,9 +141,9 @@ public abstract class AbstractConfigViewModel<CON extends SimulationConfig>
 
     private void updateConfigValidationState() {
         List<String> messages = configValidationRules.stream()
-                                                     .filter(rule -> rule.violatedCondition().get())
-                                                     .map(rule -> rule.messageProvider().get())
-                                                     .toList();
+                .filter(rule -> rule.violatedCondition().get())
+                .map(rule -> rule.messageProvider().get())
+                .toList();
         hasConfigValidationIssues.set(!messages.isEmpty());
         configValidationMessage.set(String.join(System.lineSeparator(), messages));
     }

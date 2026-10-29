@@ -2,7 +2,7 @@ package de.mkalb.etpetssim.simulations.core.shared;
 
 import org.junit.jupiter.api.Test;
 
-import java.util.*;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 

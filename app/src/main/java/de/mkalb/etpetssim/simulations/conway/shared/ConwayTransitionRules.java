@@ -1,7 +1,10 @@
 package de.mkalb.etpetssim.simulations.conway.shared;
 
-import java.util.*;
-import java.util.stream.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.SortedSet;
+import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 /**
  * Represents the transition rule set for Conway-style cellular automata.
@@ -150,11 +153,11 @@ public record ConwayTransitionRules(
      */
     public String toDisplayString() {
         String survive = surviveCounts.stream()
-                                      .map(String::valueOf)
-                                      .collect(Collectors.joining());
+                .map(String::valueOf)
+                .collect(Collectors.joining());
         String birth = birthCounts.stream()
-                                  .map(String::valueOf)
-                                  .collect(Collectors.joining());
+                .map(String::valueOf)
+                .collect(Collectors.joining());
         return survive + "/" + birth;
     }
 

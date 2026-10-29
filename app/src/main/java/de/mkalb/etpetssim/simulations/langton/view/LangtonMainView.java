@@ -1,31 +1,50 @@
 package de.mkalb.etpetssim.simulations.langton.view;
 
-import de.mkalb.etpetssim.core.*;
+import de.mkalb.etpetssim.core.AppLocalization;
+import de.mkalb.etpetssim.core.AppLogger;
 import de.mkalb.etpetssim.engine.GridCoordinate;
 import de.mkalb.etpetssim.engine.model.GridCell;
 import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorRegistry;
 import de.mkalb.etpetssim.engine.neighborhood.CompassDirection;
-import de.mkalb.etpetssim.simulations.core.shared.*;
-import de.mkalb.etpetssim.simulations.core.view.*;
-import de.mkalb.etpetssim.simulations.core.viewmodel.*;
-import de.mkalb.etpetssim.simulations.langton.model.*;
-import de.mkalb.etpetssim.simulations.langton.model.entity.*;
+import de.mkalb.etpetssim.simulations.core.shared.CellDisplayMode;
+import de.mkalb.etpetssim.simulations.core.shared.SimulationUserActionScope;
+import de.mkalb.etpetssim.simulations.core.view.AbstractDefaultMainView;
+import de.mkalb.etpetssim.simulations.core.view.CellDrawer;
+import de.mkalb.etpetssim.simulations.core.view.DefaultControlView;
+import de.mkalb.etpetssim.simulations.core.viewmodel.DefaultMainViewModel;
+import de.mkalb.etpetssim.simulations.core.viewmodel.SimulationUserActionDescriptor;
+import de.mkalb.etpetssim.simulations.langton.model.LangtonCell;
+import de.mkalb.etpetssim.simulations.langton.model.LangtonConfig;
+import de.mkalb.etpetssim.simulations.langton.model.LangtonGridModel;
+import de.mkalb.etpetssim.simulations.langton.model.LangtonSimulationManager;
+import de.mkalb.etpetssim.simulations.langton.model.LangtonStatistics;
+import de.mkalb.etpetssim.simulations.langton.model.entity.Ant;
+import de.mkalb.etpetssim.simulations.langton.model.entity.AntEntity;
+import de.mkalb.etpetssim.simulations.langton.model.entity.LangtonEntity;
+import de.mkalb.etpetssim.simulations.langton.model.entity.TerrainConstant;
 import de.mkalb.etpetssim.simulations.langton.shared.LangtonUserActionContext;
 import de.mkalb.etpetssim.simulations.langton.viewmodel.LangtonEditToolBarViewModel;
-import de.mkalb.etpetssim.ui.*;
+import de.mkalb.etpetssim.ui.CellDimension;
+import de.mkalb.etpetssim.ui.FXComponentFactory;
+import de.mkalb.etpetssim.ui.FXGridCanvasPainter;
+import de.mkalb.etpetssim.ui.FXStyleClasses;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
-import javafx.scene.control.*;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.ListCell;
+import javafx.scene.control.Tooltip;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.StrokeType;
 import org.jspecify.annotations.Nullable;
 
-import java.util.*;
-import java.util.function.*;
+import java.util.List;
+import java.util.Optional;
+import java.util.function.Function;
 
 public final class LangtonMainView
         extends AbstractDefaultMainView<
@@ -151,9 +170,9 @@ public final class LangtonMainView
         if ((lastDrawnStepCount + 1) < stepCount) {
             // draw terrain
             terrainModel.nonDefaultCells()
-                        .forEach(terrainCell -> cellTerrainDrawer.draw(
-                                entityDescriptorRegistry.requireByDescriptorId(terrainCell.descriptorId()),
-                                basePainter, terrainCell, stepCount));
+                    .forEach(terrainCell -> cellTerrainDrawer.draw(
+                            entityDescriptorRegistry.requireByDescriptorId(terrainCell.descriptorId()),
+                            basePainter, terrainCell, stepCount));
             // draw ant
             antModel.nonDefaultCells()
                     .forEach(antCell -> cellAntDrawer.draw(

@@ -3,7 +3,14 @@ package de.mkalb.etpetssim.engine.support;
 import de.mkalb.etpetssim.engine.GridOffset;
 import de.mkalb.etpetssim.engine.model.entity.GridEntity;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Static factories for {@link GridPattern} instances: basic patterns from given offsets, the combination of

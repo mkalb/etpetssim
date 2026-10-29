@@ -1,12 +1,20 @@
 package de.mkalb.etpetssim.ui;
 
-import de.mkalb.etpetssim.engine.*;
-import javafx.geometry.*;
-import javafx.scene.canvas.*;
+import de.mkalb.etpetssim.engine.CellShape;
+import de.mkalb.etpetssim.engine.GridCoordinate;
+import de.mkalb.etpetssim.engine.GridSize;
+import de.mkalb.etpetssim.engine.GridStructure;
+import javafx.geometry.Dimension2D;
+import javafx.geometry.Point2D;
+import javafx.geometry.Rectangle2D;
+import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.PixelWriter;
-import javafx.scene.paint.*;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import javafx.scene.shape.StrokeType;
-import javafx.scene.text.*;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -49,6 +57,30 @@ public final class FXGridCanvasPainter {
         gridDimension2D = GridGeometry.computeGridDimension(structure.size(), cellDimension, structure.cellShape());
         // Reusable Text instance for measuring text.
         textHelper = new Text();
+    }
+
+    /**
+     * Scales the vertices of a polygon outward or inward from a given center point by the specified scale factor.
+     *
+     * @param xPoints the x-coordinates of the polygon's vertices
+     * @param yPoints the y-coordinates of the polygon's vertices
+     * @param centerX the x-coordinate of the center point
+     * @param centerY the y-coordinate of the center point
+     * @param scale   the scale factor (greater than 1 enlarges, less than 1 shrinks)
+     * @return a two-dimensional array containing the scaled x and y coordinates
+     */
+    private static double[][] scalePolygonFromCenter(double[] xPoints, double[] yPoints,
+                                                     double centerX, double centerY,
+                                                     double scale) {
+        double[] newX = new double[xPoints.length];
+        double[] newY = new double[yPoints.length];
+        for (int i = 0; i < xPoints.length; i++) {
+            double dx = xPoints[i] - centerX;
+            double dy = yPoints[i] - centerY;
+            newX[i] = centerX + (dx * scale);
+            newY[i] = centerY + (dy * scale);
+        }
+        return new double[][]{newX, newY};
     }
 
     public Canvas canvas() {
@@ -323,30 +355,6 @@ public final class FXGridCanvasPainter {
                                              double strokeLineWidth) {
         double convertedEdgeLength = GridGeometry.computeEdgeLengthToMatchWidth(cellDimension.edgeLength(), structure.cellShape(), CellShape.HEXAGON);
         drawHexagon(coordinate, convertedEdgeLength, fillColor, strokeColor, strokeLineWidth);
-    }
-
-    /**
-     * Scales the vertices of a polygon outward or inward from a given center point by the specified scale factor.
-     *
-     * @param xPoints the x-coordinates of the polygon's vertices
-     * @param yPoints the y-coordinates of the polygon's vertices
-     * @param centerX the x-coordinate of the center point
-     * @param centerY the y-coordinate of the center point
-     * @param scale   the scale factor (greater than 1 enlarges, less than 1 shrinks)
-     * @return a two-dimensional array containing the scaled x and y coordinates
-     */
-    private static double[][] scalePolygonFromCenter(double[] xPoints, double[] yPoints,
-                                                     double centerX, double centerY,
-                                                     double scale) {
-        double[] newX = new double[xPoints.length];
-        double[] newY = new double[yPoints.length];
-        for (int i = 0; i < xPoints.length; i++) {
-            double dx = xPoints[i] - centerX;
-            double dy = yPoints[i] - centerY;
-            newX[i] = centerX + (dx * scale);
-            newY[i] = centerY + (dy * scale);
-        }
-        return new double[][]{newX, newY};
     }
 
     /**

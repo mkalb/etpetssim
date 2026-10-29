@@ -1,10 +1,14 @@
 package de.mkalb.etpetssim.simulations.sugar.model;
 
-import de.mkalb.etpetssim.engine.*;
-import de.mkalb.etpetssim.engine.model.*;
-import de.mkalb.etpetssim.simulations.sugar.model.entity.*;
+import de.mkalb.etpetssim.engine.GridCoordinate;
+import de.mkalb.etpetssim.engine.GridStructure;
+import de.mkalb.etpetssim.engine.model.CompositeGridModel;
+import de.mkalb.etpetssim.engine.model.WritableGridModel;
+import de.mkalb.etpetssim.simulations.sugar.model.entity.AgentEntity;
+import de.mkalb.etpetssim.simulations.sugar.model.entity.ResourceEntity;
+import de.mkalb.etpetssim.simulations.sugar.model.entity.SugarEntity;
 
-import java.util.*;
+import java.util.List;
 
 /**
  * Composite grid model for Sugarscape with resource and agent layers.

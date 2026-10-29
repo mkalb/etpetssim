@@ -5,10 +5,15 @@ import org.junit.jupiter.api.function.Executable;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 
-import java.util.*;
-import java.util.stream.*;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 final class LangtonRulePresetTest {
 
@@ -27,8 +32,8 @@ final class LangtonRulePresetTest {
     void testRuleStringIsParsableAndUnique(PresetFamily family) {
         List<String> ruleStrings = family.selectablePresets().stream().map(LangtonRulePreset::ruleString).toList();
         Stream<Executable> parseChecks = ruleStrings.stream()
-                                                    .map(ruleString -> () -> assertDoesNotThrow(
-                                                            () -> LangtonMovementRules.parse(ruleString), ruleString));
+                .map(ruleString -> () -> assertDoesNotThrow(
+                        () -> LangtonMovementRules.parse(ruleString), ruleString));
         assertEquals(ruleStrings.size(), Set.copyOf(ruleStrings).size());
         assertAll(parseChecks);
     }
@@ -37,10 +42,10 @@ final class LangtonRulePresetTest {
     @EnumSource(PresetFamily.class)
     void testRuleStringIsValidForCellShape(PresetFamily family) {
         Stream<Executable> checks = family.selectablePresets().stream()
-                                          .map(preset -> () -> assertTrue(
-                                                  LangtonMovementRules.parse(preset.ruleString())
-                                                                      .isValidForCellShape(family.cellShape()),
-                                                  preset.ruleString()));
+                .map(preset -> () -> assertTrue(
+                        LangtonMovementRules.parse(preset.ruleString())
+                                .isValidForCellShape(family.cellShape()),
+                        preset.ruleString()));
         assertAll(checks);
     }
 
@@ -48,7 +53,7 @@ final class LangtonRulePresetTest {
     @EnumSource(PresetFamily.class)
     void testDisplayName(PresetFamily family) {
         Stream<Executable> checks = family.presets().stream()
-                                          .map(preset -> () -> assertEquals(preset.ruleString(), preset.displayName()));
+                .map(preset -> () -> assertEquals(preset.ruleString(), preset.displayName()));
         assertAll(checks);
     }
 
@@ -57,8 +62,8 @@ final class LangtonRulePresetTest {
     void testConstantsAreSortedByLengthThenAlphabetically(PresetFamily family) {
         List<String> ruleStrings = family.selectablePresets().stream().map(LangtonRulePreset::ruleString).toList();
         assertEquals(ruleStrings.stream()
-                                .sorted(Comparator.comparingInt(String::length).thenComparing(Comparator.naturalOrder()))
-                                .toList(),
+                        .sorted(Comparator.comparingInt(String::length).thenComparing(Comparator.naturalOrder()))
+                        .toList(),
                 ruleStrings);
     }
 

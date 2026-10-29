@@ -12,7 +12,7 @@ import de.mkalb.etpetssim.simulations.sugar.SugarFactory;
 import de.mkalb.etpetssim.simulations.wator.WatorFactory;
 import javafx.stage.Stage;
 
-import java.util.function.*;
+import java.util.function.BiConsumer;
 
 /**
  * Factory for creating simulation main views and wrapping them in {@link SimulationInstance} objects.

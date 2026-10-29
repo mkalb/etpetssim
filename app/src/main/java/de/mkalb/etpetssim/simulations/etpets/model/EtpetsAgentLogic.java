@@ -1,13 +1,43 @@
 package de.mkalb.etpetssim.simulations.etpets.model;
 
 import de.mkalb.etpetssim.core.AppLogger;
-import de.mkalb.etpetssim.engine.*;
-import de.mkalb.etpetssim.engine.model.*;
-import de.mkalb.etpetssim.engine.neighborhood.*;
-import de.mkalb.etpetssim.simulations.etpets.model.entity.*;
+import de.mkalb.etpetssim.engine.GridCoordinate;
+import de.mkalb.etpetssim.engine.GridStructure;
+import de.mkalb.etpetssim.engine.model.GridCell;
+import de.mkalb.etpetssim.engine.model.WritableGridModel;
+import de.mkalb.etpetssim.engine.neighborhood.CellNeighborhoods;
+import de.mkalb.etpetssim.engine.neighborhood.EdgeBehaviorAction;
+import de.mkalb.etpetssim.engine.neighborhood.EdgeBehaviorResult;
+import de.mkalb.etpetssim.engine.neighborhood.NeighborhoodMode;
+import de.mkalb.etpetssim.engine.neighborhood.RadiusRingCell;
+import de.mkalb.etpetssim.simulations.etpets.model.entity.AgentEntity;
+import de.mkalb.etpetssim.simulations.etpets.model.entity.Pet;
+import de.mkalb.etpetssim.simulations.etpets.model.entity.PetActionType;
+import de.mkalb.etpetssim.simulations.etpets.model.entity.PetEgg;
+import de.mkalb.etpetssim.simulations.etpets.model.entity.PetGenome;
+import de.mkalb.etpetssim.simulations.etpets.model.entity.PetTraits;
+import de.mkalb.etpetssim.simulations.etpets.model.entity.ResourceBase;
+import de.mkalb.etpetssim.simulations.etpets.model.entity.ResourceEntity;
+import de.mkalb.etpetssim.simulations.etpets.model.entity.TerrainConstant;
+import de.mkalb.etpetssim.simulations.etpets.model.entity.TerrainEntity;
+import de.mkalb.etpetssim.simulations.etpets.model.entity.Trail;
 import org.jspecify.annotations.Nullable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Random;
+import java.util.SequencedMap;
+import java.util.Set;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 /**
  * Agent phase of an ET Pets step: the life cycle of eggs and pets and the selection and execution of pet actions.
@@ -273,12 +303,12 @@ public final class EtpetsAgentLogic {
     private static ActionCandidate pickBestCandidate(Collection<ActionCandidate> actionCandidates,
                                                      Random random) {
         int maxScore = actionCandidates.stream()
-                                       .mapToInt(ActionCandidate::score)
-                                       .max()
-                                       .orElseThrow();
+                .mapToInt(ActionCandidate::score)
+                .max()
+                .orElseThrow();
         List<ActionCandidate> topCandidates = actionCandidates.stream()
-                                                              .filter(candidate -> candidate.score() == maxScore)
-                                                              .toList();
+                .filter(candidate -> candidate.score() == maxScore)
+                .toList();
 
         // The early return without a tie consumes no random value and keeps the random sequence of a seed stable.
         if (topCandidates.size() == 1) {

@@ -1,9 +1,14 @@
 package de.mkalb.etpetssim.ui;
 
-import de.mkalb.etpetssim.engine.*;
-import javafx.geometry.*;
+import de.mkalb.etpetssim.engine.CellShape;
+import de.mkalb.etpetssim.engine.GridCoordinate;
+import de.mkalb.etpetssim.engine.GridSize;
+import de.mkalb.etpetssim.engine.GridStructure;
+import javafx.geometry.Dimension2D;
+import javafx.geometry.Point2D;
+import javafx.geometry.Rectangle2D;
 
-import java.util.*;
+import java.util.List;
 
 /**
  * Computes cell and grid dimensions, canvas positions, polygons, and frame segments of grid cells, and converts
@@ -264,11 +269,11 @@ public final class GridGeometry {
 
         return switch (structure.cellShape()) {
             case TRIANGLE -> TRIANGLE_NEIGHBOR_OFFSETS.stream()
-                                                      .map(offset -> new GridCoordinate(estimatedCoordinate.x() + offset[0], estimatedCoordinate.y() + offset[1]))
-                                                      .filter(structure::isCoordinateValid)
-                                                      .filter(c -> isPointInTriangleCell(point, c, cellDimension))
-                                                      .findFirst()
-                                                      .orElse(GridCoordinate.ILLEGAL);
+                    .map(offset -> new GridCoordinate(estimatedCoordinate.x() + offset[0], estimatedCoordinate.y() + offset[1]))
+                    .filter(structure::isCoordinateValid)
+                    .filter(c -> isPointInTriangleCell(point, c, cellDimension))
+                    .findFirst()
+                    .orElse(GridCoordinate.ILLEGAL);
             case SQUARE -> estimatedCoordinate;
             case HEXAGON -> {
                 GridCoordinate closestHexCell = GridCoordinate.ILLEGAL;

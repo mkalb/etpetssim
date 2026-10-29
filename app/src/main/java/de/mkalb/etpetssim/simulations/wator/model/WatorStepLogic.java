@@ -2,11 +2,18 @@ package de.mkalb.etpetssim.simulations.wator.model;
 
 import de.mkalb.etpetssim.engine.GridCoordinate;
 import de.mkalb.etpetssim.engine.executor.AgentStepLogic;
-import de.mkalb.etpetssim.engine.model.*;
-import de.mkalb.etpetssim.engine.neighborhood.*;
-import de.mkalb.etpetssim.simulations.wator.model.entity.*;
+import de.mkalb.etpetssim.engine.model.GridCell;
+import de.mkalb.etpetssim.engine.model.WritableGridModel;
+import de.mkalb.etpetssim.engine.neighborhood.CellNeighborhoods;
+import de.mkalb.etpetssim.engine.neighborhood.EdgeBehaviorAction;
+import de.mkalb.etpetssim.simulations.wator.model.entity.CreatureFactory;
+import de.mkalb.etpetssim.simulations.wator.model.entity.Fish;
+import de.mkalb.etpetssim.simulations.wator.model.entity.Shark;
+import de.mkalb.etpetssim.simulations.wator.model.entity.WatorEntity;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 
 public final class WatorStepLogic implements AgentStepLogic<WatorEntity, WatorStatistics> {
 

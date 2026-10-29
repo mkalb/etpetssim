@@ -2,9 +2,13 @@ package de.mkalb.etpetssim.simulations.etpets.model;
 
 import de.mkalb.etpetssim.engine.GridCoordinate;
 import de.mkalb.etpetssim.engine.model.GridCellView;
-import de.mkalb.etpetssim.simulations.etpets.model.entity.*;
+import de.mkalb.etpetssim.simulations.etpets.model.entity.AgentEntity;
+import de.mkalb.etpetssim.simulations.etpets.model.entity.EtpetsEntity;
+import de.mkalb.etpetssim.simulations.etpets.model.entity.Pet;
+import de.mkalb.etpetssim.simulations.etpets.model.entity.ResourceEntity;
+import de.mkalb.etpetssim.simulations.etpets.model.entity.TerrainEntity;
 
-import java.util.*;
+import java.util.Locale;
 
 /**
  * Snapshot of all ET Pets layers for a single grid coordinate.
