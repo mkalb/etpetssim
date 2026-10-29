@@ -98,7 +98,7 @@ Table format:
 | 1 | Engine, core, UI, and application classes |   12 classes | done        |
 | 2 | Member order: rules and IntelliJ          |            - | done        |
 | 3 | Javadoc rules of all rule files           | 5 rule files | done        |
-| 4 | Package reviews outside `simulations`     |   9 packages | open        |
+| 4 | Package reviews outside `simulations`     |   9 packages | in progress |
 
 ## 1. Engine, core, UI, and application classes
 
@@ -684,6 +684,7 @@ Notes:
   `NullPointerException` for them (41 tags); the rules no longer allow either.
 - Proposal: Remove the checks of non-null parameters and their `@throws NullPointerException` tags in group 1, and
   the tests of these exceptions; keep `requireNonNull(..)` only where it asserts a `@Nullable` value.
+- Status: done (2026-10-29); no `requireNonNull(..)` remains in `core`.
 
 #### Javadoc rules of category 3
 
@@ -693,6 +694,53 @@ Notes:
   (`GridStructure`, `GridCoordinate`), the link from `SimulationUserActionContext` to `simulations.core.model`, the
   Javadoc of `AppArgs.toString()`, and Javadoc that only restates accessors.
 - Proposal: Check and adapt the Javadoc of each package in its group.
+- Status: group 1 done (2026-10-29)
+
+#### Lookup name of the log levels
+
+- Origin: analysis of group 1
+- Types: `AppLogger.LogLevel`, `AppLauncher`
+- Problem: `fromString(String)` does not follow the `from<Code>(String)` pattern of `java.md`, unlike
+  `AppArgs.Key.fromKeyName(..)`.
+- Proposal: Rename it to `fromLevelName(String)`. An API change.
+- Status: done (2026-10-29)
+
+#### Duplication and formatting in `core`
+
+- Origin: analysis of group 1
+- Types: `AppLocalization`, `AppResources`, `AppStorage`, `AppLogger`, all `core` sources
+- Problem: `AppLocalization` repeats four lookup loops over `CountryLocale`; `AppResources.getResourceAsString(..)`
+  repeats the lookup and log of `getResourceAsStream(..)`; `AppStorage` repeats `System.getProperty("user.home")`
+  seven times; the formatter of `AppLogger` is created through reflection in its test and formats without a locale;
+  18 lines in main and test sources exceed 120 characters.
+- Proposal: Private helpers, a package-private formatter, and manual line wraps.
+- Status: done (2026-10-29)
+
+### Decisions
+
+Group 1, `core` (2026-10-29):
+
+- All 49 `requireNonNull(..)` checks of non-null parameters, their `@throws NullPointerException` tags, and the tests
+  of these exceptions (with their `@SuppressWarnings("DataFlowIssue")`) are removed.
+- API change: `AppLogger.LogLevel.fromString(..)` is renamed to `fromLevelName(..)`.
+- Rule change: `java.md` ("Logging with AppLogger") names `AppLogger.error(throwable, message)`, the actual parameter
+  order.
+- `AppLocalization.CountryLocale`: the constructor no longer validates the two hard-coded constants and has no
+  Javadoc; the type Javadoc is rewrapped. `DEFAULT_LOCALE` drops the sentence that restated its value.
+- `AppLocalization.resolveLocaleFromArgument(..)` and `resolveLocaleFromDefault(..)` use a private
+  `findSupportedLocale(Predicate)`; `AppResources.getResourceAsString(..)` delegates to `getResourceAsStream(..)`;
+  `AppStorage` reads the home directory through a private `userHome()`.
+- `AppLogger`: the redundant `initialized = false` and the restating Javadoc of `initializeLogger(..)` are removed;
+  `AppLogFormatter` is a package-private `static final` class with a fixed header format and `Locale.ROOT`, without
+  restating comments and without `@SuppressWarnings("StringConcatenationMissingWhitespace")`.
+- `AppArgs`: no Javadoc on `toString()`; `<p>` directly before the first word.
+- All lines in `core` and its tests fit 120 characters.
+- Tests: `AppResourcesTest` and `AppStorageTest` name their main tests `test<Subject>` (`testGetBundleWithBaseName`
+  for the overload), group checks with `assertAll(..)`, check concrete values instead of presence, and drop the
+  assertion messages; `AppStorageTest` drops its `setUpBeforeEach()` and cleans up through one field;
+  `AppLoggerTest` creates the formatter directly and adds `testFormatAppendsStackTrace`.
+- `OperatingSystem.detect()` stays without a test, because it would need to change the global property `os.name`.
+- `app:test` and `app:javadoc` pass.
 
 ### Procedure
 

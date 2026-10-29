@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
@@ -15,9 +16,8 @@ import java.util.Locale;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Execution(ExecutionMode.SAME_THREAD)
@@ -32,125 +32,103 @@ final class AppResourcesTest {
         FXTestSupport.ensureStarted();
     }
 
-    @SuppressWarnings("DataFlowIssue")
     @Test
     void testGetBundle() {
-        Optional<ResourceBundle> bundleOpt = AppResources.getBundle(TEST_LOCALE);
-        assertTrue(bundleOpt.isPresent(), "Default resource bundle should be present for locale");
-        assertTrue(bundleOpt.get().containsKey(MAIN_BUNDLE_KEY), "Bundle should contain key " + MAIN_BUNDLE_KEY);
+        ResourceBundle bundle = AppResources.getBundle(TEST_LOCALE).orElseThrow();
 
-        assertThrows(NullPointerException.class, () -> AppResources.getBundle(null));
+        assertAll(
+                () -> assertEquals(TEST_LOCALE, bundle.getLocale()),
+                () -> assertTrue(bundle.containsKey(MAIN_BUNDLE_KEY))
+        );
     }
 
-    @SuppressWarnings("DataFlowIssue")
     @Test
-    void testGetBundleWithBaseNameReturnsBundle() {
-        Optional<ResourceBundle> bundleOpt = AppResources.getBundle(AppResources.BUNDLE_BASE_NAME, TEST_LOCALE);
-        assertTrue(bundleOpt.isPresent(), "Resource bundle should be present for base name and locale");
-        assertTrue(bundleOpt.get().containsKey(MAIN_BUNDLE_KEY), "Bundle should contain key " + MAIN_BUNDLE_KEY);
+    void testGetBundleWithBaseName() {
+        ResourceBundle bundle = AppResources.getBundle(AppResources.BUNDLE_BASE_NAME, TEST_LOCALE).orElseThrow();
 
-        assertThrows(NullPointerException.class, () -> AppResources.getBundle(null, TEST_LOCALE));
-        assertThrows(NullPointerException.class, () -> AppResources.getBundle(AppResources.BUNDLE_BASE_NAME, null));
+        assertAll(
+                () -> assertEquals(TEST_LOCALE, bundle.getLocale()),
+                () -> assertTrue(bundle.containsKey(MAIN_BUNDLE_KEY))
+        );
     }
 
     @Test
     void testGetBundleWithBaseNameReturnsEmptyForMissingBundle() {
-        Optional<ResourceBundle> bundleOpt = AppResources.getBundle("invalid.bundle", Locale.ENGLISH);
-        assertFalse(bundleOpt.isPresent(), "Missing bundle should not be present");
+        assertTrue(AppResources.getBundle("invalid.bundle", Locale.ENGLISH).isEmpty());
     }
 
-    @SuppressWarnings("DataFlowIssue")
     @Test
-    void testGetCssUrlReturnsUrl() {
-        Optional<String> cssUrlOpt = AppResources.getCssUrl("test_style.css");
-        assertTrue(cssUrlOpt.isPresent(), "CSS URL should be present");
-        assertTrue(cssUrlOpt.get().endsWith("test_style.css"), "CSS URL should end with 'test_style.css'");
+    void testGetCssUrl() {
+        Optional<String> cssUrl = AppResources.getCssUrl("test_style.css");
 
-        assertThrows(NullPointerException.class, () -> AppResources.getCssUrl(null));
+        assertTrue(cssUrl.orElseThrow().endsWith("css/test_style.css"));
     }
 
     @Test
     void testGetCssUrlReturnsEmptyForMissingFile() {
-        Optional<String> cssUrlOpt = AppResources.getCssUrl("missing.css");
-        assertFalse(cssUrlOpt.isPresent(), "Missing CSS should not be present");
+        assertTrue(AppResources.getCssUrl("missing.css").isEmpty());
     }
 
-    @SuppressWarnings("DataFlowIssue")
+    @SuppressWarnings("MagicNumber")
     @Test
-    void testGetImageReturnsImage() {
-        Optional<Image> imageOpt = AppResources.getImage("etpetssim16.png");
-        assertTrue(imageOpt.isPresent(), "Image should be present");
+    void testGetImage() {
+        Optional<Image> image = AppResources.getImage("etpetssim16.png");
 
-        assertThrows(NullPointerException.class, () -> AppResources.getImage(null));
+        assertEquals(16.0, image.orElseThrow().getWidth(), 0.0);
     }
 
     @Test
     void testGetImageReturnsEmptyForMissingImage() {
-        Optional<Image> imageOpt = AppResources.getImage("unknown.png");
-        assertFalse(imageOpt.isPresent(), "Missing image should not be present");
+        assertTrue(AppResources.getImage("unknown.png").isEmpty());
     }
 
     @Test
     void testGetImageReturnsEmptyForIllegalImage() {
-        Optional<Image> imageOpt = AppResources.getImage("illegal_image.png");
-        assertFalse(imageOpt.isPresent(), "Illegal image should not be present");
+        assertTrue(AppResources.getImage("illegal_image.png").isEmpty());
     }
 
-    @SuppressWarnings("DataFlowIssue")
     @Test
     void testGetImages() {
         List<Image> images = AppResources.getImages("etpetssim16.png", "etpetssim16.png", "unknown.png",
                 "etpetssim32.png");
-        assertEquals(3, images.size(), "Number of images should be 3");
 
-        assertThrows(NullPointerException.class, () -> AppResources.getImages((String[]) null));
+        assertEquals(3, images.size());
     }
 
-    @SuppressWarnings("DataFlowIssue")
     @Test
-    void testGetResourceAsStreamReturnsStream() throws Exception {
+    void testGetResourceAsStream() throws IOException {
         try (InputStream stream = AppResources.getResourceAsStream("css/test_style.css").orElseThrow()) {
-            assertTrue(stream.read() >= 0, "InputStream should provide the resource content");
+            assertTrue(stream.read() >= 0);
         }
-
-        assertThrows(NullPointerException.class, () -> AppResources.getResourceAsStream(null));
     }
 
     @Test
     void testGetResourceAsStreamReturnsEmptyForMissingResource() {
-        Optional<InputStream> streamOpt = AppResources.getResourceAsStream("missing/file.txt");
-        assertFalse(streamOpt.isPresent(), "Missing resource stream should not be present");
+        assertTrue(AppResources.getResourceAsStream("missing/file.txt").isEmpty());
     }
 
-    @SuppressWarnings("DataFlowIssue")
     @Test
-    void testGetResourceAsStringReturnsString() {
-        Optional<String> resOpt = AppResources.getResourceAsString("LICENSE", StandardCharsets.UTF_8);
-        assertTrue(resOpt.isPresent(), "Resource string should be present");
+    void testGetResourceAsString() {
+        Optional<String> text = AppResources.getResourceAsString("LICENSE", StandardCharsets.UTF_8);
 
-        assertThrows(NullPointerException.class, () -> AppResources.getResourceAsString(null, StandardCharsets.UTF_8));
-        assertThrows(NullPointerException.class, () -> AppResources.getResourceAsString("", null));
+        assertTrue(text.orElseThrow().contains("License"));
     }
 
     @Test
     void testGetResourceAsStringReturnsEmptyForMissingResource() {
-        Optional<String> resOpt = AppResources.getResourceAsString("missing/file.txt", StandardCharsets.UTF_8);
-        assertFalse(resOpt.isPresent(), "Missing string should not be present");
+        assertTrue(AppResources.getResourceAsString("missing/file.txt", StandardCharsets.UTF_8).isEmpty());
     }
 
-    @SuppressWarnings("DataFlowIssue")
     @Test
-    void testGetResourceAsUrlReturnsUrl() {
-        Optional<URL> urlOpt = AppResources.getResourceAsUrl("css/test_style.css");
-        assertTrue(urlOpt.isPresent(), "URL should be present");
+    void testGetResourceAsUrl() {
+        Optional<URL> url = AppResources.getResourceAsUrl("css/test_style.css");
 
-        assertThrows(NullPointerException.class, () -> AppResources.getResourceAsUrl(null));
+        assertTrue(url.orElseThrow().toExternalForm().endsWith("css/test_style.css"));
     }
 
     @Test
     void testGetResourceAsUrlReturnsEmptyForMissingResource() {
-        Optional<URL> urlOpt = AppResources.getResourceAsUrl("missing/file.txt");
-        assertFalse(urlOpt.isPresent(), "Missing resource URL should not be present");
+        assertTrue(AppResources.getResourceAsUrl("missing/file.txt").isEmpty());
     }
 
 }

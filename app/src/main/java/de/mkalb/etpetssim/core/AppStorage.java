@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Locale;
-import java.util.Objects;
 
 /**
  * Files of the application in the per-user directories for application data, logs, and cache files.
@@ -29,14 +28,11 @@ public final class AppStorage {
      * @param fileName file name relative to the data directory
      * @param os       operating system
      * @return resolved file path
-     * @throws NullPointerException     if {@code fileName} or {@code os} is {@code null}
      * @throws IllegalArgumentException if {@code fileName} is empty or blank
      * @throws IOException              if the data directory cannot be created/validated or {@code fileName} escapes
      *                                  that directory
      */
     public static Path getAppDataFile(String fileName, OperatingSystem os) throws IOException {
-        Objects.requireNonNull(fileName, "File name must not be null");
-        Objects.requireNonNull(os, "Operating system must not be null");
         return resolveFileInDirectory(getOrCreateAppDataDir(os), fileName);
     }
 
@@ -46,13 +42,10 @@ public final class AppStorage {
      * @param fileName file name relative to the data directory
      * @param os       operating system
      * @return path to the created file
-     * @throws NullPointerException     if {@code fileName} or {@code os} is {@code null}
      * @throws IllegalArgumentException if {@code fileName} is empty or blank
      * @throws IOException              if directory validation fails, file creation fails, or the file already exists
      */
     public static Path createAppDataFile(String fileName, OperatingSystem os) throws IOException {
-        Objects.requireNonNull(fileName, "File name must not be null");
-        Objects.requireNonNull(os, "Operating system must not be null");
         return Files.createFile(getAppDataFile(fileName, os));
     }
 
@@ -62,13 +55,10 @@ public final class AppStorage {
      * @param fileName file name relative to the data directory
      * @param os       operating system
      * @return {@code true} if a regular file existed and was deleted; otherwise {@code false}
-     * @throws NullPointerException     if {@code fileName} or {@code os} is {@code null}
      * @throws IllegalArgumentException if {@code fileName} is empty or blank
      * @throws IOException              if directory validation fails or deletion fails
      */
     public static boolean deleteAppDataFile(String fileName, OperatingSystem os) throws IOException {
-        Objects.requireNonNull(fileName, "File name must not be null");
-        Objects.requireNonNull(os, "Operating system must not be null");
         Path path = getAppDataFile(fileName, os);
         return Files.isRegularFile(path) && Files.deleteIfExists(path);
     }
@@ -79,14 +69,11 @@ public final class AppStorage {
      * @param fileName file name relative to the log directory
      * @param os       operating system
      * @return resolved log file path
-     * @throws NullPointerException     if {@code fileName} or {@code os} is {@code null}
      * @throws IllegalArgumentException if {@code fileName} is empty or blank
      * @throws IOException              if the log directory cannot be created/validated or {@code fileName} escapes
      *                                  that directory
      */
     public static Path getLogFile(String fileName, OperatingSystem os) throws IOException {
-        Objects.requireNonNull(fileName, "File name must not be null");
-        Objects.requireNonNull(os, "Operating system must not be null");
         return resolveFileInDirectory(getOrCreateLogDir(os), fileName);
     }
 
@@ -97,12 +84,10 @@ public final class AppStorage {
      * @param suffix optional suffix string, may be {@code null}
      * @param os     operating system
      * @return path to the created temporary file
-     * @throws NullPointerException if {@code prefix} or {@code os} is {@code null}
-     * @throws IOException          if cache directory validation or temp-file creation fails
+     * @throws IOException if cache directory validation or temp-file creation fails
      */
-    public static Path createTempCacheFile(String prefix, @Nullable String suffix, OperatingSystem os) throws IOException {
-        Objects.requireNonNull(prefix, "Prefix must not be null");
-        Objects.requireNonNull(os, "Operating system must not be null");
+    public static Path createTempCacheFile(String prefix, @Nullable String suffix, OperatingSystem os)
+            throws IOException {
         return Files.createTempFile(getOrCreateCacheDir(os), prefix, suffix);
     }
 
@@ -135,9 +120,9 @@ public final class AppStorage {
      */
     private static Path getOrCreateAppDataDir(OperatingSystem os) throws IOException {
         Path path = switch (os) {
-            case WINDOWS -> Path.of(System.getProperty("user.home"), "AppData", "Local", APP_NAME);
-            case MAC -> Path.of(System.getProperty("user.home"), "Library", "Application Support", APP_NAME);
-            case LINUX -> Path.of(System.getProperty("user.home"), ".config", APP_NAME);
+            case WINDOWS -> Path.of(userHome(), "AppData", "Local", APP_NAME);
+            case MAC -> Path.of(userHome(), "Library", "Application Support", APP_NAME);
+            case LINUX -> Path.of(userHome(), ".config", APP_NAME);
         };
         return createAndCheckDirectory(path);
     }
@@ -152,7 +137,7 @@ public final class AppStorage {
     private static Path getOrCreateLogDir(OperatingSystem os) throws IOException {
         Path path = switch (os) {
             case WINDOWS, LINUX -> getOrCreateAppDataDir(os).resolve("logs");
-            case MAC -> Path.of(System.getProperty("user.home"), "Library", "Logs", APP_NAME);
+            case MAC -> Path.of(userHome(), "Library", "Logs", APP_NAME);
         };
         return createAndCheckDirectory(path);
     }
@@ -166,9 +151,9 @@ public final class AppStorage {
      */
     private static Path getOrCreateCacheDir(OperatingSystem os) throws IOException {
         Path path = switch (os) {
-            case WINDOWS -> Path.of(System.getProperty("user.home"), "AppData", "Local", APP_NAME, "cache");
-            case MAC -> Path.of(System.getProperty("user.home"), "Library", "Caches", APP_NAME);
-            case LINUX -> Path.of(System.getProperty("user.home"), ".cache", APP_NAME);
+            case WINDOWS -> Path.of(userHome(), "AppData", "Local", APP_NAME, "cache");
+            case MAC -> Path.of(userHome(), "Library", "Caches", APP_NAME);
+            case LINUX -> Path.of(userHome(), ".cache", APP_NAME);
         };
         return createAndCheckDirectory(path);
     }
@@ -193,6 +178,10 @@ public final class AppStorage {
             throw new IOException("File name resolves outside of target directory: " + fileName);
         }
         return resolvedPath;
+    }
+
+    private static String userHome() {
+        return System.getProperty("user.home");
     }
 
     /**

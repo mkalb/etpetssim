@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.MissingResourceException;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
@@ -42,10 +41,8 @@ public final class AppResources {
      *
      * @param locale bundle locale
      * @return an {@link Optional} containing the bundle, or empty if unavailable
-     * @throws NullPointerException if {@code locale} is {@code null}
      */
     public static Optional<ResourceBundle> getBundle(Locale locale) {
-        Objects.requireNonNull(locale, "Locale must not be null");
         return getBundle(BUNDLE_BASE_NAME, locale);
     }
 
@@ -55,11 +52,8 @@ public final class AppResources {
      * @param baseName bundle base name
      * @param locale   bundle locale
      * @return an {@link Optional} containing the bundle, or empty if unavailable
-     * @throws NullPointerException if {@code baseName} or {@code locale} is {@code null}
      */
     public static Optional<ResourceBundle> getBundle(String baseName, Locale locale) {
-        Objects.requireNonNull(baseName, "Base name must not be null");
-        Objects.requireNonNull(locale, "Locale must not be null");
         try {
             return Optional.of(ResourceBundle.getBundle(baseName, locale));
         } catch (MissingResourceException e) {
@@ -73,11 +67,9 @@ public final class AppResources {
      *
      * @param relativePath path below {@code /css/} without a leading slash
      * @return an {@link Optional} containing the external URL string, or empty if missing
-     * @throws NullPointerException if {@code relativePath} is {@code null}
      * @see #FOLDER_CSS
      */
     public static Optional<String> getCssUrl(String relativePath) {
-        Objects.requireNonNull(relativePath, "Relative path must not be null");
         return getResourceAsUrl(FOLDER_CSS + relativePath).map(URL::toExternalForm);
     }
 
@@ -86,11 +78,9 @@ public final class AppResources {
      *
      * @param relativePath path below {@code /images/} without a leading slash
      * @return an {@link Optional} containing the decoded image, or empty on lookup/decode errors
-     * @throws NullPointerException if {@code relativePath} is {@code null}
      * @see #FOLDER_IMAGES
      */
     public static Optional<Image> getImage(String relativePath) {
-        Objects.requireNonNull(relativePath, "Relative path must not be null");
         Optional<URL> url = getResourceAsUrl(FOLDER_IMAGES + relativePath);
         if (url.isEmpty()) {
             return Optional.empty();
@@ -100,7 +90,8 @@ public final class AppResources {
                 true, true,
                 false);
         if (image.isError()) {
-            AppLogger.error(image.getException(), "AppResources: Failed to decode image: /" + FOLDER_IMAGES + relativePath);
+            AppLogger.error(image.getException(),
+                    "AppResources: Failed to decode image: /" + FOLDER_IMAGES + relativePath);
             return Optional.empty();
         }
         return Optional.of(image);
@@ -111,11 +102,9 @@ public final class AppResources {
      *
      * @param relativePaths image paths without leading slashes
      * @return list of successfully loaded images; missing or undecodable resources are skipped
-     * @throws NullPointerException if {@code relativePaths} is {@code null} or contains {@code null} elements
      * @see #FOLDER_IMAGES
      */
     public static List<Image> getImages(String... relativePaths) {
-        Objects.requireNonNull(relativePaths, "Relative paths must not be null");
         List<Image> images = new ArrayList<>(relativePaths.length);
         for (String relativePath : relativePaths) {
             getImage(relativePath).ifPresent(images::add);
@@ -130,10 +119,8 @@ public final class AppResources {
      *
      * @param relativePath resource path without leading slash
      * @return an {@link Optional} containing the stream, or empty if missing
-     * @throws NullPointerException if {@code relativePath} is {@code null}
      */
     public static Optional<InputStream> getResourceAsStream(String relativePath) {
-        Objects.requireNonNull(relativePath, "Relative path must not be null");
         InputStream stream = AppResources.class.getResourceAsStream("/" + relativePath);
         if (stream == null) {
             AppLogger.error("AppResources: Resource not found: /" + relativePath);
@@ -148,21 +135,16 @@ public final class AppResources {
      * @param relativePath resource path without leading slash
      * @param charset      charset used to decode bytes
      * @return an {@link Optional} containing resource text, or empty on lookup/read errors
-     * @throws NullPointerException if {@code relativePath} or {@code charset} is {@code null}
      */
     public static Optional<String> getResourceAsString(String relativePath, Charset charset) {
-        Objects.requireNonNull(relativePath, "Relative path must not be null");
-        Objects.requireNonNull(charset, "Charset must not be null");
-        try (InputStream stream = AppResources.class.getResourceAsStream("/" + relativePath)) {
-            if (stream == null) {
-                AppLogger.error("AppResources: Resource not found: /" + relativePath);
+        return getResourceAsStream(relativePath).flatMap(stream -> {
+            try (stream) {
+                return Optional.of(new String(stream.readAllBytes(), charset));
+            } catch (IOException e) {
+                AppLogger.error(e, "AppResources: Failed to read resource as string: /" + relativePath);
                 return Optional.empty();
             }
-            return Optional.of(new String(stream.readAllBytes(), charset));
-        } catch (IOException e) {
-            AppLogger.error(e, "AppResources: Failed to read resource as string: /" + relativePath);
-            return Optional.empty();
-        }
+        });
     }
 
     /**
@@ -170,10 +152,8 @@ public final class AppResources {
      *
      * @param relativePath resource path without leading slash
      * @return an {@link Optional} containing the URL, or empty if missing
-     * @throws NullPointerException if {@code relativePath} is {@code null}
      */
     public static Optional<URL> getResourceAsUrl(String relativePath) {
-        Objects.requireNonNull(relativePath, "Relative path must not be null");
         URL url = AppResources.class.getResource("/" + relativePath);
         if (url == null) {
             AppLogger.error("AppResources: Resource not found: /" + relativePath);

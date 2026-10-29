@@ -7,9 +7,9 @@ import java.util.IllegalFormatException;
 import java.util.List;
 import java.util.Locale;
 import java.util.MissingResourceException;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.ResourceBundle;
+import java.util.function.Predicate;
 
 /**
  * Provides application-wide localization services.
@@ -21,7 +21,6 @@ public final class AppLocalization {
 
     /**
      * Default locale used by the application if no specific locale is provided.
-     * This is set to "English (US)".
      */
     public static final Locale DEFAULT_LOCALE = Locale.US;
     /**
@@ -72,20 +71,18 @@ public final class AppLocalization {
      *
      * @param localeArgument optional user-provided locale code (for example {@code en_US} or {@code en})
      * @param defaultLocale  fallback locale used when {@code localeArgument} does not resolve
-     * @throws NullPointerException  if {@code defaultLocale} is {@code null}
      * @throws IllegalStateException if already initialized or no bundle can be loaded for the resolved locale
      */
     public static synchronized void initialize(@Nullable String localeArgument, Locale defaultLocale) {
         if (isInitialized()) {
             throw new IllegalStateException("AppLocalization is already initialized.");
         }
-        Objects.requireNonNull(defaultLocale, "Default locale must not be null");
 
         Locale resolvedLocale = resolveLocaleFromArgument(localeArgument)
                 .or(() -> resolveLocaleFromDefault(defaultLocale))
                 .orElse(DEFAULT_LOCALE);
         ResourceBundle resolvedBundle = AppResources.getBundle(resolvedLocale).orElseThrow(() ->
-                new IllegalStateException("ResourceBundle for locale " + resolvedLocale + " could not be loaded.")); // This should never happen.
+                new IllegalStateException("ResourceBundle for locale " + resolvedLocale + " could not be loaded."));
         state = new LocalizationState(resolvedLocale, resolvedBundle);
         AppLogger.info("AppLocalization: Initialized with locale: " + resolvedLocale + " and loaded ResourceBundle");
     }
@@ -115,11 +112,9 @@ public final class AppLocalization {
      *
      * @param key the resource key
      * @return the localized text, or {@link #PLACEHOLDER_FOR_EXCEPTIONS} if the key is missing
-     * @throws NullPointerException  if {@code key} is {@code null}
      * @throws IllegalStateException if localization has not been initialized
      */
     public static String getText(String key) {
-        Objects.requireNonNull(key, "Key must not be null");
         ResourceBundle activeBundle = bundle();
         try {
             return activeBundle.getString(key);
@@ -134,11 +129,9 @@ public final class AppLocalization {
      *
      * @param key the resource key
      * @return an {@link Optional} containing non-blank localized text, or empty otherwise
-     * @throws NullPointerException  if {@code key} is {@code null}
      * @throws IllegalStateException if localization has not been initialized
      */
     public static Optional<String> getOptionalText(String key) {
-        Objects.requireNonNull(key, "Key must not be null");
         ResourceBundle activeBundle = bundle();
         try {
             String text = activeBundle.getString(key);
@@ -159,11 +152,9 @@ public final class AppLocalization {
      * @param key  the resource key
      * @param args formatting arguments passed to {@link String#format(Locale, String, Object...)}
      * @return the formatted localized text, or {@link #PLACEHOLDER_FOR_EXCEPTIONS} on lookup/format errors
-     * @throws NullPointerException  if {@code key} is {@code null}
      * @throws IllegalStateException if localization has not been initialized
      */
     public static String getFormattedText(String key, Object... args) {
-        Objects.requireNonNull(key, "Key must not be null");
         LocalizationState activeState = requireState();
         try {
             return String.format(activeState.locale(), activeState.bundle().getString(key), args);
@@ -171,7 +162,8 @@ public final class AppLocalization {
             AppLogger.error(e, "AppLocalization: Key not found in ResourceBundle: " + key);
             return PLACEHOLDER_FOR_EXCEPTIONS;
         } catch (IllegalFormatException e) {
-            AppLogger.error(e, "AppLocalization: Formatting failed for key: " + key + " with arguments: " + Arrays.toString(args));
+            AppLogger.error(e, "AppLocalization: Formatting failed for key: " + key
+                    + " with arguments: " + Arrays.toString(args));
             return PLACEHOLDER_FOR_EXCEPTIONS;
         }
     }
@@ -179,33 +171,18 @@ public final class AppLocalization {
     /**
      * Resolves a supported locale from a locale argument.
      *
-     * <p>Matching is attempted first by full locale code ({@code language_COUNTRY}), then by language code only.
+     * <p>Matching is attempted first by the exact locale code ({@code language_COUNTRY}, e.g., {@code en_US}), then by
+     * the exact language code only (e.g., {@code en}).
      *
      * @param localeArgument optional locale argument
      * @return an {@link Optional} containing the resolved locale, or empty if unmatched
      */
     static Optional<Locale> resolveLocaleFromArgument(@Nullable String localeArgument) {
-        Locale resolvedLocale = null;
-        if ((localeArgument != null) && !localeArgument.isBlank()) {
-            for (CountryLocale supportedLocale : CountryLocale.values()) {
-                // It must match exactly the locale code (e.g., "en_US" or "de_DE").
-                if (supportedLocale.localeCode().equals(localeArgument)) {
-                    resolvedLocale = supportedLocale.countryLocale();
-                    break;
-                }
-            }
-            if (resolvedLocale == null) {
-                for (CountryLocale supportedLocale : CountryLocale.values()) {
-                    // It must match exactly the language code (e.g., "en" or "de").
-                    // Locale argument must not contain country code.
-                    if (supportedLocale.languageCode().equals(localeArgument)) {
-                        resolvedLocale = supportedLocale.countryLocale();
-                        break;
-                    }
-                }
-            }
+        if ((localeArgument == null) || localeArgument.isBlank()) {
+            return Optional.empty();
         }
-        return Optional.ofNullable(resolvedLocale);
+        return findSupportedLocale(supported -> supported.localeCode().equals(localeArgument))
+                .or(() -> findSupportedLocale(supported -> supported.languageCode().equals(localeArgument)));
     }
 
     /**
@@ -215,29 +192,11 @@ public final class AppLocalization {
      *
      * @param defaultLocale the default locale to evaluate
      * @return an {@link Optional} containing the resolved locale, or empty if unmatched
-     * @throws NullPointerException if {@code defaultLocale} is {@code null}
      */
     static Optional<Locale> resolveLocaleFromDefault(Locale defaultLocale) {
-        Objects.requireNonNull(defaultLocale, "Default locale must not be null");
-        Locale resolvedLocale = null;
-        for (CountryLocale supportedLocale : CountryLocale.values()) {
-            // It must match exactly the country locale (e.g., Locale.US or Locale.GERMANY).
-            if (supportedLocale.countryLocale().equals(defaultLocale)) {
-                resolvedLocale = supportedLocale.countryLocale();
-                break;
-            }
-        }
-        if (resolvedLocale == null) {
-            for (CountryLocale supportedLocale : CountryLocale.values()) {
-                // It must match the language code (e.g., "en" or "de").
-                // Default locale can contain country code, but we only check the language code.
-                if (supportedLocale.languageCode().equals(defaultLocale.getLanguage())) {
-                    resolvedLocale = supportedLocale.countryLocale();
-                    break;
-                }
-            }
-        }
-        return Optional.ofNullable(resolvedLocale);
+        return findSupportedLocale(supported -> supported.countryLocale().equals(defaultLocale))
+                .or(() -> findSupportedLocale(
+                        supported -> supported.languageCode().equals(defaultLocale.getLanguage())));
     }
 
     /**
@@ -262,6 +221,13 @@ public final class AppLocalization {
         state = null;
     }
 
+    private static Optional<Locale> findSupportedLocale(Predicate<CountryLocale> matcher) {
+        return Arrays.stream(CountryLocale.values())
+                .filter(matcher)
+                .findFirst()
+                .map(CountryLocale::countryLocale);
+    }
+
     private static LocalizationState requireState() {
         LocalizationState activeState = state;
         if (activeState == null) {
@@ -273,10 +239,8 @@ public final class AppLocalization {
     /**
      * Supported locales with display labels.
      *
-     * <p>Declaration order defines matching precedence.
-     * Display labels are intentionally hardcoded here because this enum is
-     * bootstrap localization metadata and must not depend on already-loaded
-     * i18n resource bundles.
+     * <p>Declaration order defines matching precedence. Display labels are intentionally hardcoded here because this
+     * enum is bootstrap localization metadata and must not depend on already-loaded i18n resource bundles.
      */
     public enum CountryLocale {
         EN_US(Locale.US, "English (US)"),
@@ -285,23 +249,7 @@ public final class AppLocalization {
         private final Locale countryLocale;
         private final String displayName;
 
-        /**
-         * Creates a locale descriptor.
-         *
-         * @param countryLocale locale with non-empty language and country codes
-         * @param displayName   human-readable display name
-         * @throws NullPointerException     if {@code countryLocale} or {@code displayName} is {@code null}
-         * @throws IllegalArgumentException if {@code countryLocale} has an empty language or country code
-         */
         CountryLocale(Locale countryLocale, String displayName) {
-            Objects.requireNonNull(countryLocale, "Country locale must not be null");
-            Objects.requireNonNull(displayName, "Display name must not be null");
-            if (countryLocale.getLanguage().isEmpty()) {
-                throw new IllegalArgumentException("Country locale must have a valid language code.");
-            }
-            if (countryLocale.getCountry().isEmpty()) {
-                throw new IllegalArgumentException("Country locale must have a valid country code.");
-            }
             this.countryLocale = countryLocale;
             this.displayName = displayName;
         }

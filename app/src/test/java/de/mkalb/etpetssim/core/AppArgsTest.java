@@ -28,12 +28,6 @@ final class AppArgsTest {
         return new AppArgs(args);
     }
 
-    @SuppressWarnings("DataFlowIssue")
-    @Test
-    void testConstructorRejectsNullArguments() {
-        assertThrows(NullPointerException.class, () -> new AppArgs(null));
-    }
-
     @Test
     void testConstructorAcceptsEmptyArguments() {
         AppArgs cli = parse();
@@ -162,7 +156,6 @@ final class AppArgsTest {
         );
     }
 
-    @SuppressWarnings("DataFlowIssue")
     @Test
     void testParseBooleanValue() {
         assertAll(
@@ -179,8 +172,7 @@ final class AppArgsTest {
                 () -> assertTrue(AppArgs.parseBooleanValue("maybe", true)),
                 () -> assertTrue(AppArgs.parseBooleanValue("", true)),
                 () -> assertFalse(AppArgs.parseBooleanValue("maybe", false)),
-                () -> assertFalse(AppArgs.parseBooleanValue("", false)),
-                () -> assertThrows(NullPointerException.class, () -> AppArgs.parseBooleanValue(null, false))
+                () -> assertFalse(AppArgs.parseBooleanValue("", false))
         );
     }
 
@@ -278,10 +270,13 @@ final class AppArgsTest {
     @Test
     void testToArgumentString() {
         assertAll(
-                () -> assertEquals("--help --simulation=testSim", parse("--help", "--simulation=testSim").toArgumentString()),
+                () -> assertEquals("--help --simulation=testSim",
+                        parse("--help", "--simulation=testSim").toArgumentString()),
                 () -> assertEquals("--simulation=testSim", parse("--help=", "--simulation=testSim").toArgumentString()),
-                () -> assertEquals("--help --simulation=testSim", parse("--help=true", "--simulation=testSim").toArgumentString()),
-                () -> assertEquals("--help=false --simulation=testSim", parse("--help=false", "--simulation=testSim").toArgumentString()),
+                () -> assertEquals("--help --simulation=testSim",
+                        parse("--help=true", "--simulation=testSim").toArgumentString()),
+                () -> assertEquals("--help=false --simulation=testSim",
+                        parse("--help=false", "--simulation=testSim").toArgumentString()),
                 () -> assertEquals("", parse("--simulation").toArgumentString()),
                 () -> assertEquals("", parse("--simulation=").toArgumentString()),
                 () -> assertEquals("--simulation=1", parse("--simulation=1").toArgumentString()),

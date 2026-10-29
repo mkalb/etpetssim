@@ -14,7 +14,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Supplier;
 import java.util.logging.ConsoleHandler;
@@ -48,7 +47,6 @@ public final class AppLogger {
     private boolean initialized;
 
     private AppLogger() {
-        initialized = false;
         // Root logger for the application.
         logger = Logger.getLogger("");
         logger.setLevel(DEFAULT_LOG_LEVEL.toJavaLogLevel());
@@ -60,7 +58,6 @@ public final class AppLogger {
      * @param logLevel   the minimum enabled log level
      * @param useConsole whether to attach a console handler
      * @param logPath    optional file path for file logging; {@code null} disables file logging
-     * @throws NullPointerException  if {@code logLevel} is {@code null}
      * @throws IllegalStateException if logging is already initialized
      */
     public static synchronized void initialize(LogLevel logLevel, boolean useConsole, @Nullable Path logPath) {
@@ -113,10 +110,8 @@ public final class AppLogger {
      * Logs a lazily-evaluated debug message.
      *
      * @param messageSupplier supplier producing the message text
-     * @throws NullPointerException if {@code messageSupplier} is {@code null}
      */
     public static void debug(Supplier<String> messageSupplier) {
-        Objects.requireNonNull(messageSupplier, "Message supplier must not be null");
         APP_LOGGER.logger.fine(messageSupplier);
     }
 
@@ -125,10 +120,8 @@ public final class AppLogger {
      *
      * @param format format string compatible with {@link String#format(String, Object...)}
      * @param args   format arguments
-     * @throws NullPointerException if {@code format} is {@code null}
      */
     public static void debugf(String format, Object... args) {
-        Objects.requireNonNull(format, "Format string must not be null");
         APP_LOGGER.logger.log(Level.FINE, () -> String.format(Locale.ROOT, format, args));
     }
 
@@ -145,10 +138,8 @@ public final class AppLogger {
      * Logs a lazily-evaluated informational message.
      *
      * @param messageSupplier supplier producing the message text
-     * @throws NullPointerException if {@code messageSupplier} is {@code null}
      */
     public static void info(Supplier<String> messageSupplier) {
-        Objects.requireNonNull(messageSupplier, "Message supplier must not be null");
         APP_LOGGER.logger.info(messageSupplier);
     }
 
@@ -157,10 +148,8 @@ public final class AppLogger {
      *
      * @param format format string compatible with {@link String#format(String, Object...)}
      * @param args   format arguments
-     * @throws NullPointerException if {@code format} is {@code null}
      */
     public static void infof(String format, Object... args) {
-        Objects.requireNonNull(format, "Format string must not be null");
         APP_LOGGER.logger.log(Level.INFO, () -> String.format(Locale.ROOT, format, args));
     }
 
@@ -177,10 +166,8 @@ public final class AppLogger {
      * Logs a lazily-evaluated warning message.
      *
      * @param messageSupplier supplier producing the message text
-     * @throws NullPointerException if {@code messageSupplier} is {@code null}
      */
     public static void warn(Supplier<String> messageSupplier) {
-        Objects.requireNonNull(messageSupplier, "Message supplier must not be null");
         APP_LOGGER.logger.warning(messageSupplier);
     }
 
@@ -189,10 +176,8 @@ public final class AppLogger {
      *
      * @param format format string compatible with {@link String#format(String, Object...)}
      * @param args   format arguments
-     * @throws NullPointerException if {@code format} is {@code null}
      */
     public static void warnf(String format, Object... args) {
-        Objects.requireNonNull(format, "Format string must not be null");
         APP_LOGGER.logger.log(Level.WARNING, () -> String.format(Locale.ROOT, format, args));
     }
 
@@ -209,10 +194,8 @@ public final class AppLogger {
      * Logs a lazily-evaluated error message.
      *
      * @param messageSupplier supplier producing the message text
-     * @throws NullPointerException if {@code messageSupplier} is {@code null}
      */
     public static void error(Supplier<String> messageSupplier) {
-        Objects.requireNonNull(messageSupplier, "Message supplier must not be null");
         APP_LOGGER.logger.severe(messageSupplier);
     }
 
@@ -221,10 +204,8 @@ public final class AppLogger {
      *
      * @param throwable exception to attach
      * @param message   message text, may be {@code null}
-     * @throws NullPointerException if {@code throwable} is {@code null}
      */
     public static void error(Throwable throwable, @Nullable String message) {
-        Objects.requireNonNull(throwable, "Throwable must not be null");
         APP_LOGGER.logger.log(Level.SEVERE, message, throwable);
     }
 
@@ -233,10 +214,8 @@ public final class AppLogger {
      *
      * @param format format string compatible with {@link String#format(String, Object...)}
      * @param args   format arguments
-     * @throws NullPointerException if {@code format} is {@code null}
      */
     public static void errorf(String format, Object... args) {
-        Objects.requireNonNull(format, "Format string must not be null");
         APP_LOGGER.logger.log(Level.SEVERE, () -> String.format(Locale.ROOT, format, args));
     }
 
@@ -246,11 +225,8 @@ public final class AppLogger {
      * @param throwable exception to attach
      * @param format    format string compatible with {@link String#format(String, Object...)}
      * @param args      format arguments
-     * @throws NullPointerException if {@code throwable} or {@code format} is {@code null}
      */
     public static void errorf(Throwable throwable, String format, Object... args) {
-        Objects.requireNonNull(throwable, "Throwable must not be null");
-        Objects.requireNonNull(format, "Format string must not be null");
         APP_LOGGER.logger.log(Level.SEVERE, throwable, () -> String.format(Locale.ROOT, format, args));
     }
 
@@ -276,20 +252,10 @@ public final class AppLogger {
         return APP_LOGGER.logger.getHandlers().length;
     }
 
-    /**
-     * Internal initialization implementation.
-     *
-     * @param logLevel   the minimum enabled log level
-     * @param useConsole whether to attach a console handler
-     * @param logPath    optional file path for file logging
-     * @throws NullPointerException  if {@code logLevel} is {@code null}
-     * @throws IllegalStateException if logging is already initialized
-     */
     private synchronized void initializeLogger(LogLevel logLevel, boolean useConsole, @Nullable Path logPath) {
         if (initialized) {
             throw new IllegalStateException("AppLogger is already initialized.");
         }
-        Objects.requireNonNull(logLevel, "Log level must not be null");
 
         logger.setUseParentHandlers(false);
         Level level = logLevel.toJavaLogLevel();
@@ -317,7 +283,8 @@ public final class AppLogger {
                     fileHandler.setLevel(level);
                     logHandlers.add(fileHandler);
                 } else {
-                    logger.severe("AppLogger: Parent directory for log file does not exist or is not writable: " + logPath);
+                    logger.severe("AppLogger: Parent directory for log file does not exist or is not writable: "
+                            + logPath);
                 }
             } catch (IOException e) {
                 logger.log(Level.SEVERE, "AppLogger: Failed to create log file handler: " + logPath, e);
@@ -358,14 +325,12 @@ public final class AppLogger {
         ERROR;
 
         /**
-         * Parses a log level name.
+         * Resolves a log level name to an enum constant.
          *
-         * @param levelName level name (case-insensitive)
-         * @return an {@link Optional} with the parsed level, or empty if invalid
-         * @throws NullPointerException if {@code levelName} is {@code null}
+         * @param levelName the level name to resolve (case-insensitive)
+         * @return an {@link Optional} containing the matching level, or empty if unknown
          */
-        public static Optional<LogLevel> fromString(String levelName) {
-            Objects.requireNonNull(levelName, "Level name must not be null");
+        public static Optional<LogLevel> fromLevelName(String levelName) {
             try {
                 return Optional.of(LogLevel.valueOf(levelName.toUpperCase(Locale.ROOT)));
             } catch (IllegalArgumentException e) {
@@ -390,42 +355,31 @@ public final class AppLogger {
     }
 
     /**
-     * Formatter for log records in the AppLogger.
-     * This formatter formats log records with a timestamp, log level, thread name, message, and exception stack trace (if any).
+     * Formatter for the log records of {@link AppLogger}: time, log level, thread name, message, and the stack trace of
+     * an attached exception.
      */
-    private static class AppLogFormatter extends Formatter {
+    static final class AppLogFormatter extends Formatter {
 
         private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm:ss");
-        private static final int INITIAL_BUILDER_CAPACITY = 128; // Initial capacity for the StringBuilder used in formatting.
-        private static final int LOG_LEVEL_PADDING_WIDTH = 7; // Padding for log level alignment.
+        private static final String HEADER_FORMAT = "[%s] [%-7s] [%s] ";
+        private static final int INITIAL_BUILDER_CAPACITY = 128;
 
         private static String displayThreadName() {
             String threadName = Thread.currentThread().getName();
             return "JavaFX Application Thread".equals(threadName) ? "FX" : threadName;
         }
 
-        @SuppressWarnings("StringConcatenationMissingWhitespace")
         @Override
         public String format(LogRecord record) {
             StringBuilder sb = new StringBuilder(INITIAL_BUILDER_CAPACITY);
-
-            // Time.
-            String time = TIME_FORMATTER.format(LocalTime.ofInstant(Instant.ofEpochMilli(record.getMillis()), ZoneId.systemDefault()));
-            sb.append("[").append(time).append("] ");
-
-            // Log level.
-            sb.append("[").append(String.format("%-" + LOG_LEVEL_PADDING_WIDTH + "s", record.getLevel().getName())).append("] ");
-
-            // Thread.
-            sb.append("[").append(displayThreadName()).append("] ");
-
-            // Message.
+            String time = TIME_FORMATTER.format(
+                    LocalTime.ofInstant(Instant.ofEpochMilli(record.getMillis()), ZoneId.systemDefault()));
+            sb.append(String.format(Locale.ROOT, HEADER_FORMAT, time, record.getLevel().getName(), displayThreadName()));
             sb.append(formatMessage(record)).append(System.lineSeparator());
 
-            // Exception (if any).
-            if (record.getThrown() != null) {
-                var throwable = record.getThrown();
-                sb.append(throwable.toString()).append(System.lineSeparator());
+            Throwable throwable = record.getThrown();
+            if (throwable != null) {
+                sb.append(throwable).append(System.lineSeparator());
                 for (StackTraceElement element : throwable.getStackTrace()) {
                     sb.append("\tat ").append(element).append(System.lineSeparator());
                 }

@@ -8,15 +8,12 @@ import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 
 import java.io.IOException;
-import java.lang.reflect.Constructor;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.function.Supplier;
-import java.util.logging.Formatter;
 import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
@@ -46,18 +43,6 @@ final class AppLoggerTest {
         Logger.getLogger("").addHandler(handler);
         handler.records.clear();
         return handler;
-    }
-
-    private static String formatRecord(LogRecord record) {
-        try {
-            Class<?> formatterClass = Class.forName("de.mkalb.etpetssim.core.AppLogger$AppLogFormatter");
-            Constructor<?> constructor = formatterClass.getDeclaredConstructor();
-            constructor.setAccessible(true);
-            Formatter formatter = (Formatter) constructor.newInstance();
-            return formatter.format(record);
-        } catch (ReflectiveOperationException e) {
-            throw new AssertionError("Failed to format log record", e);
-        }
     }
 
     private static void assertSingleRecord(RecordingHandler handler, Level level, String message,
@@ -119,12 +104,6 @@ final class AppLoggerTest {
         assertThrows(IllegalStateException.class, () -> AppLogger.initialize(AppLogger.LogLevel.DEBUG, true, null));
     }
 
-    @SuppressWarnings("DataFlowIssue")
-    @Test
-    void testInitializeRejectsNullLogLevel() {
-        assertThrows(NullPointerException.class, () -> AppLogger.initialize(null, true, null));
-    }
-
     @Test
     void testIsInitialized() {
         assertFalse(AppLogger.isInitialized());
@@ -175,30 +154,22 @@ final class AppLoggerTest {
         assertTrue(handler.records.isEmpty());
     }
 
-    @SuppressWarnings("DataFlowIssue")
     @Test
     void testDebugWithSupplier() {
         RecordingHandler handler = initializeWithRecordingHandler(AppLogger.LogLevel.DEBUG);
 
         AppLogger.debug(() -> MESSAGE);
 
-        assertAll(
-                () -> assertSingleRecord(handler, Level.FINE, MESSAGE, null),
-                () -> assertThrows(NullPointerException.class, () -> AppLogger.debug((Supplier<String>) null))
-        );
+        assertSingleRecord(handler, Level.FINE, MESSAGE, null);
     }
 
-    @SuppressWarnings("DataFlowIssue")
     @Test
     void testDebugf() {
         RecordingHandler handler = initializeWithRecordingHandler(AppLogger.LogLevel.DEBUG);
 
         AppLogger.debugf("Test %s %d", "message", 1);
 
-        assertAll(
-                () -> assertSingleRecord(handler, Level.FINE, "Test message 1", null),
-                () -> assertThrows(NullPointerException.class, () -> AppLogger.debugf(null, "x"))
-        );
+        assertSingleRecord(handler, Level.FINE, "Test message 1", null);
     }
 
     @Test
@@ -210,30 +181,22 @@ final class AppLoggerTest {
         assertSingleRecord(handler, Level.INFO, MESSAGE, null);
     }
 
-    @SuppressWarnings("DataFlowIssue")
     @Test
     void testInfoWithSupplier() {
         RecordingHandler handler = initializeWithRecordingHandler(AppLogger.LogLevel.INFO);
 
         AppLogger.info(() -> MESSAGE);
 
-        assertAll(
-                () -> assertSingleRecord(handler, Level.INFO, MESSAGE, null),
-                () -> assertThrows(NullPointerException.class, () -> AppLogger.info((Supplier<String>) null))
-        );
+        assertSingleRecord(handler, Level.INFO, MESSAGE, null);
     }
 
-    @SuppressWarnings("DataFlowIssue")
     @Test
     void testInfof() {
         RecordingHandler handler = initializeWithRecordingHandler(AppLogger.LogLevel.INFO);
 
         AppLogger.infof("Test %s %d", "message", 2);
 
-        assertAll(
-                () -> assertSingleRecord(handler, Level.INFO, "Test message 2", null),
-                () -> assertThrows(NullPointerException.class, () -> AppLogger.infof(null, "x"))
-        );
+        assertSingleRecord(handler, Level.INFO, "Test message 2", null);
     }
 
     @Test
@@ -245,30 +208,22 @@ final class AppLoggerTest {
         assertSingleRecord(handler, Level.WARNING, MESSAGE, null);
     }
 
-    @SuppressWarnings("DataFlowIssue")
     @Test
     void testWarnWithSupplier() {
         RecordingHandler handler = initializeWithRecordingHandler(AppLogger.LogLevel.WARN);
 
         AppLogger.warn(() -> MESSAGE);
 
-        assertAll(
-                () -> assertSingleRecord(handler, Level.WARNING, MESSAGE, null),
-                () -> assertThrows(NullPointerException.class, () -> AppLogger.warn((Supplier<String>) null))
-        );
+        assertSingleRecord(handler, Level.WARNING, MESSAGE, null);
     }
 
-    @SuppressWarnings("DataFlowIssue")
     @Test
     void testWarnf() {
         RecordingHandler handler = initializeWithRecordingHandler(AppLogger.LogLevel.WARN);
 
         AppLogger.warnf("Test %s %d", "message", 3);
 
-        assertAll(
-                () -> assertSingleRecord(handler, Level.WARNING, "Test message 3", null),
-                () -> assertThrows(NullPointerException.class, () -> AppLogger.warnf(null, "x"))
-        );
+        assertSingleRecord(handler, Level.WARNING, "Test message 3", null);
     }
 
     @Test
@@ -280,57 +235,40 @@ final class AppLoggerTest {
         assertSingleRecord(handler, Level.SEVERE, MESSAGE, null);
     }
 
-    @SuppressWarnings("DataFlowIssue")
     @Test
     void testErrorWithSupplier() {
         RecordingHandler handler = initializeWithRecordingHandler(AppLogger.LogLevel.ERROR);
 
         AppLogger.error(() -> MESSAGE);
 
-        assertAll(
-                () -> assertSingleRecord(handler, Level.SEVERE, MESSAGE, null),
-                () -> assertThrows(NullPointerException.class, () -> AppLogger.error((Supplier<String>) null))
-        );
+        assertSingleRecord(handler, Level.SEVERE, MESSAGE, null);
     }
 
-    @SuppressWarnings("DataFlowIssue")
     @Test
     void testErrorWithThrowable() {
         RecordingHandler handler = initializeWithRecordingHandler(AppLogger.LogLevel.ERROR);
 
         AppLogger.error(THROWABLE, MESSAGE);
 
-        assertAll(
-                () -> assertSingleRecord(handler, Level.SEVERE, MESSAGE, THROWABLE),
-                () -> assertThrows(NullPointerException.class, () -> AppLogger.error(null, MESSAGE))
-        );
+        assertSingleRecord(handler, Level.SEVERE, MESSAGE, THROWABLE);
     }
 
-    @SuppressWarnings("DataFlowIssue")
     @Test
     void testErrorf() {
         RecordingHandler handler = initializeWithRecordingHandler(AppLogger.LogLevel.ERROR);
 
         AppLogger.errorf("Test %s %d", "message", 4);
 
-        assertAll(
-                () -> assertSingleRecord(handler, Level.SEVERE, "Test message 4", null),
-                () -> assertThrows(NullPointerException.class, () -> AppLogger.errorf((String) null, "x"))
-        );
+        assertSingleRecord(handler, Level.SEVERE, "Test message 4", null);
     }
 
-    @SuppressWarnings("DataFlowIssue")
     @Test
     void testErrorfWithThrowable() {
         RecordingHandler handler = initializeWithRecordingHandler(AppLogger.LogLevel.ERROR);
 
         AppLogger.errorf(THROWABLE, "Test %s %d", "message", 5);
 
-        assertAll(
-                () -> assertSingleRecord(handler, Level.SEVERE, "Test message 5", THROWABLE),
-                () -> assertThrows(NullPointerException.class, () -> AppLogger.errorf(THROWABLE, null, "x")),
-                () -> assertThrows(NullPointerException.class, () -> AppLogger.errorf((Throwable) null, "msg %s", "x"))
-        );
+        assertSingleRecord(handler, Level.SEVERE, "Test message 5", THROWABLE);
     }
 
     @Test
@@ -347,20 +285,14 @@ final class AppLoggerTest {
     }
 
     @Test
-    void testLogLevelFromString() {
+    void testLogLevelFromLevelName() {
         assertAll(
-                () -> assertEquals(Optional.of(AppLogger.LogLevel.DEBUG), AppLogger.LogLevel.fromString("debug")),
-                () -> assertEquals(Optional.of(AppLogger.LogLevel.INFO), AppLogger.LogLevel.fromString("INFO")),
-                () -> assertEquals(Optional.of(AppLogger.LogLevel.WARN), AppLogger.LogLevel.fromString("Warn")),
-                () -> assertEquals(Optional.of(AppLogger.LogLevel.ERROR), AppLogger.LogLevel.fromString("error")),
-                () -> assertEquals(Optional.empty(), AppLogger.LogLevel.fromString("verbose"))
+                () -> assertEquals(Optional.of(AppLogger.LogLevel.DEBUG), AppLogger.LogLevel.fromLevelName("debug")),
+                () -> assertEquals(Optional.of(AppLogger.LogLevel.INFO), AppLogger.LogLevel.fromLevelName("INFO")),
+                () -> assertEquals(Optional.of(AppLogger.LogLevel.WARN), AppLogger.LogLevel.fromLevelName("Warn")),
+                () -> assertEquals(Optional.of(AppLogger.LogLevel.ERROR), AppLogger.LogLevel.fromLevelName("error")),
+                () -> assertEquals(Optional.empty(), AppLogger.LogLevel.fromLevelName("verbose"))
         );
-    }
-
-    @SuppressWarnings("DataFlowIssue")
-    @Test
-    void testLogLevelFromStringRejectsNull() {
-        assertThrows(NullPointerException.class, () -> AppLogger.LogLevel.fromString(null));
     }
 
     @Test
@@ -377,7 +309,7 @@ final class AppLoggerTest {
     void testFormatIncludesCurrentThreadNameAfterLogLevel() {
         LogRecord record = new LogRecord(Level.INFO, "Info message");
 
-        String formatted = formatRecord(record);
+        String formatted = new AppLogger.AppLogFormatter().format(record);
 
         assertTrue(formatted.contains("[INFO   ] [" + Thread.currentThread().getName() + "] Info message"));
     }
@@ -386,12 +318,27 @@ final class AppLoggerTest {
     void testFormatAbbreviatesJavaFxApplicationThreadName() throws InterruptedException {
         AtomicReference<String> formattedReference = new AtomicReference<>();
         Thread thread = Thread.ofPlatform().name("JavaFX Application Thread").start(
-                () -> formattedReference.set(formatRecord(new LogRecord(Level.INFO, "Info message")))
+                () -> formattedReference.set(
+                        new AppLogger.AppLogFormatter().format(new LogRecord(Level.INFO, "Info message")))
         );
 
         thread.join();
 
         assertTrue(formattedReference.get().contains("[INFO   ] [FX] Info message"));
+    }
+
+    @Test
+    void testFormatAppendsStackTrace() {
+        LogRecord record = new LogRecord(Level.SEVERE, "Error message");
+        record.setThrown(THROWABLE);
+
+        String formatted = new AppLogger.AppLogFormatter().format(record);
+
+        assertAll(
+                () -> assertTrue(formatted.contains("[SEVERE ] [")),
+                () -> assertTrue(formatted.contains(THROWABLE.toString())),
+                () -> assertTrue(formatted.contains("\tat "))
+        );
     }
 
     private static final class RecordingHandler extends Handler {

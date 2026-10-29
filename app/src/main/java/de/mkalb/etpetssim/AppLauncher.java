@@ -65,7 +65,7 @@ public final class AppLauncher {
      */
     private static void initializeAppLogger(AppArgs arguments) {
         var logLevel = arguments.getValue(AppArgs.Key.LOG_LEVEL)
-                .flatMap(AppLogger.LogLevel::fromString)
+                .flatMap(AppLogger.LogLevel::fromLevelName)
                 .orElse(AppLogger.DEFAULT_LOG_LEVEL);
         boolean useConsole = arguments.getBoolean(AppArgs.Key.LOG_CONSOLE, false);
         try {
