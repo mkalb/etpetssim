@@ -20,9 +20,6 @@ import java.util.Optional;
  * @param emoji        optional resolved emoji representation, or {@code null} if not set
  * @param color        optional fill color for rendering, or {@code null} if not set
  * @param borderColor  optional border color for rendering, or {@code null} if not set
- * @see GridEntityDescriptorProvider
- * @see GridEntityDescriptorRegistry
- * @see GridEntityDescriptorSpec
  */
 public record GridEntityDescriptor(
         String descriptorId,

@@ -633,8 +633,8 @@ of categories 2 and 3.
 |------:|-------------------------|-----------:|-----------:|------------------|
 | 1     | `core`                  |          6 |          6 | `core.md`        |
 | 2     | `engine`                |          8 |          8 | `engine.md`      |
-| 3     | `engine.model`          |          8 |          5 | -                |
-| 3     | `engine.model.entity`   |          8 |          5 | -                |
+| 3     | `engine.model`          |          8 |          5 | `engine.md`      |
+| 3     | `engine.model.entity`   |          8 |          5 | `engine.md`      |
 | 4     | `engine.neighborhood`   |          9 |          8 | -                |
 | 5     | `engine.support`        |          6 |          6 | -                |
 | 6     | `engine.executor`       |         11 |          8 | -                |
@@ -647,8 +647,8 @@ Notes:
 - Test files are the `.java` files in the same test package, including `*TestSupport` classes.
 - The groups follow the package dependencies: `core` first, then `engine` from its base types to the executors, then
   `ui` and the root package (`AppLauncher`, `ExtraterrestrialPetsSimulation`).
-- `engine.md` applies only to the package `engine` itself (group 2); groups 3 to 6 check whether their sub-packages
-  need it too.
+- `engine.md` applies to `engine`, `engine.model`, and `engine.model.entity` (groups 2 and 3); groups 4 to 6 check
+  whether their sub-packages need it too.
 
 ### Checks per package
 
@@ -695,7 +695,7 @@ Notes:
   (`GridStructure`, `GridCoordinate`), the link from `SimulationUserActionContext` to `simulations.core.model`, the
   Javadoc of `AppArgs.toString()`, and Javadoc that only restates accessors.
 - Proposal: Check and adapt the Javadoc of each package in its group.
-- Status: groups 1 and 2 done (2026-10-29)
+- Status: groups 1 to 3 done (2026-10-29)
 
 #### Lookup name of the log levels
 
@@ -736,6 +736,18 @@ Notes:
   and the helper method that lowercase values need make the rule harder to apply.
 - Proposal: Show enum values with `name()` everywhere, unless the enum provides its own display text.
 - Status: done (2026-10-29); a first change to lowercase in `GridTopology` was reverted.
+
+#### Base types of the grid models and entities
+
+- Origin: analysis of group 3
+- Types: `ReadableGridModel`, `ArrayGridModel`, `SparseGridModel`, `GridEntity`, `GridEntityDescriptor`, and the
+  descriptor providers
+- Problem: `isSparse()`, `colorAsOptional()`, and `GridEntity.isConstant(..)` have no caller in main sources;
+  `engine.model.entity` uses the JavaFX `Color`, which `engine.md` did not cover; `filteredCellsSortedBy(..)` is
+  identical in both grid models, which compare with the default entity in two different ways.
+- Proposal: Extend `engine.md` to both packages and allow `Color` for rendering hints; move
+  `filteredCellsSortedBy(..)` into `ReadableGridModel`; compare with `equals(..)` in both models.
+- Status: done (2026-10-29)
 
 ### Decisions
 
@@ -787,6 +799,29 @@ Group 2, `engine` (2026-10-29):
   `MAX_REQUIRED_*` is a multiple of every required multiple.
 - `app:test` and `app:javadoc` pass.
 
+Group 3, `engine.model` and `engine.model.entity` (2026-10-29):
+
+- Rule change: `engine.md` (and its Copilot reference file) also applies to `engine.model` and
+  `engine.model.entity`: their base types keep their complete public API (e.g., `isSparse()`, `colorAsOptional()`,
+  and `GridEntity.isConstant(..)`), and `engine` uses no JavaFX except `javafx.scene.paint.Color` for the rendering
+  hints of entity descriptors.
+- `filteredCellsSortedBy(..)` is a default method of `ReadableGridModel` instead of two identical overrides;
+  `ArrayGridModel` compares with the default entity through `equals(..)` like `SparseGridModel`, without `Objects`.
+- Javadoc: the `@see` tags of `GridEntity` (including two fully qualified links to `engine.model`),
+  `GridEntityDescriptor`, `GridEntityDescriptorProvider`, `GridEntityDescriptorSpec`,
+  `SpecBackedGridEntityDescriptorProvider`, `ConstantGridEntityDescriptorProvider`, and `GridEntity.descriptorId()`
+  are removed; `ConstantGridEntity` keeps its link to `GridEntity.isConstant(..)`; `isConstant(..)` writes
+  `{@code true}` and `{@code false}`.
+- Lines in main and test sources fit 120 characters.
+- Tests: `WritableGridModelTest` names the main tests `test<Subject>` (`testNonDefaultCoordinates`, `testAllCells`,
+  `testNonDefaultCells`, `testGetGridCell`, `testSetEntity`, `testSetEntityWithGridCell`, `testSetSwappedEntities`)
+  and checks in `testFilteredCellsSortedBy` that non-matching entities are filtered and the result is mutable;
+  `ArrayGridModelTest` and `SparseGridModelTest` drop their line comments before actions, name the checked order or
+  content (`testFilteredCoordinatesIsInRowMajorOrder`, `testFilteredCellsReturnsOnlyMatchingNonDefaultCells`), and
+  use `assertAll(..)`; `GridEntityTest` merges its two `isConstant(..)` tests; three test files lose a blank line at
+  their end.
+- `app:test` and `app:javadoc` pass.
+
 ### Procedure
 
 - One group at a time, in the order of the inventory; each group is presented and decided on its own in the chat
@@ -804,8 +839,9 @@ Group 2, `engine` (2026-10-29):
 - (1, all) Javadoc writes the literals `true`, `false`, and `null` as `{@code ...}` (rule change: `java.md`,
   "Javadoc").
 - (1, all) Public methods and constructors without a caller in main sources are removed (API change with approval)
-  unless the maintainer keeps them for a planned use; core classes, the base types of the package `engine`, and
-  `FXGridCanvasPainter` keep their complete API (rule change: `core.md`, `engine.md`, and `ui.md`).
+  unless the maintainer keeps them for a planned use; core classes, the base types of `engine`, `engine.model`, and
+  `engine.model.entity`, and `FXGridCanvasPainter` keep their complete API (rule change: `core.md`, `engine.md`, and
+  `ui.md`).
 - (1, 2, all) Member order (rule change: `java.md`, "Code Style"): static fields, instance fields, constructors,
   static methods, instance methods, then nested types; within the static and within the instance methods public,
   protected, package-private, then private, with overrides (e.g., lifecycle methods such as `start(..)`) as public

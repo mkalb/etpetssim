@@ -139,7 +139,12 @@ public sealed interface ReadableGridModel<ENT extends GridEntity> extends GridMo
      * @param cellOrdering    the comparator to define the order of the resulting grid cells
      * @return a mutable list of filtered and sorted {@link GridCell} instances
      */
-    List<GridCell<ENT>> filteredCellsSortedBy(Predicate<ENT> entityPredicate, Comparator<GridCell<ENT>> cellOrdering);
+    default List<GridCell<ENT>> filteredCellsSortedBy(Predicate<ENT> entityPredicate,
+                                                      Comparator<GridCell<ENT>> cellOrdering) {
+        List<GridCell<ENT>> result = filteredCells(entityPredicate);
+        result.sort(cellOrdering);
+        return result;
+    }
 
     /**
      * Returns a {@link GridCell} containing the specified coordinate and its associated entity.

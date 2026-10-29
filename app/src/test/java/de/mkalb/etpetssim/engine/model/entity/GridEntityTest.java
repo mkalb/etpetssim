@@ -3,6 +3,7 @@ package de.mkalb.etpetssim.engine.model.entity;
 import org.jspecify.annotations.NonNull;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -10,21 +11,16 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 final class GridEntityTest {
 
     @Test
-    void testIsConstantReturnsTrueForConstantEntity() {
-        GridEntity entity = new TestConstantEntity("const");
-        assertTrue(GridEntity.isConstant(entity));
+    void testIsConstant() {
+        assertAll(
+                () -> assertTrue(GridEntity.isConstant(new TestConstantEntity("const"))),
+                () -> assertFalse(GridEntity.isConstant(new TestEntity("dynamic")))
+        );
     }
 
     @Test
-    void testIsConstantReturnsFalseForNonConstantEntity() {
-        GridEntity entity = new TestEntity("dynamic");
-        assertFalse(GridEntity.isConstant(entity));
-    }
-
-    @Test
-    void testToDisplayStringWrapsToString() {
-        GridEntity entity = new TestEntity("dynamic");
-        assertEquals("[DYNAMIC]", entity.toDisplayString());
+    void testToDisplayString() {
+        assertEquals("[DYNAMIC]", new TestEntity("dynamic").toDisplayString());
     }
 
     @SuppressWarnings("SameParameterValue")
@@ -40,14 +36,6 @@ final class GridEntityTest {
 
     @SuppressWarnings("SameParameterValue")
     private record TestConstantEntity(String descriptorId) implements ConstantGridEntity {
-
-        @NonNull
-        @Override
-        public String toString() {
-            return "CONSTANT";
-        }
-
     }
 
 }
-

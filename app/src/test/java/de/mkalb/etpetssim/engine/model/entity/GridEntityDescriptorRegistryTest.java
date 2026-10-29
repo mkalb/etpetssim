@@ -60,7 +60,8 @@ final class GridEntityDescriptorRegistryTest {
         }
     }
 
-    private static void assertRegisteredDescriptor(GridEntityDescriptorRegistry registry, GridEntityDescriptorProvider provider) {
+    private static void assertRegisteredDescriptor(GridEntityDescriptorRegistry registry,
+                                                   GridEntityDescriptorProvider provider) {
         GridEntityDescriptor descriptor = registry.requireByDescriptorId(provider.descriptorId());
         String expectedEmoji = Optional.ofNullable(provider.emojiKey())
                 .map(AppLocalization::getText)
@@ -95,7 +96,8 @@ final class GridEntityDescriptorRegistryTest {
 
     @Test
     void testOfCollection() {
-        GridEntityDescriptorRegistry registry = GridEntityDescriptorRegistry.ofCollection(List.of(PROVIDER_A, PROVIDER_B));
+        GridEntityDescriptorRegistry registry =
+                GridEntityDescriptorRegistry.ofCollection(List.of(PROVIDER_A, PROVIDER_B));
 
         assertRegisteredDescriptor(registry, PROVIDER_A);
         assertRegisteredDescriptor(registry, PROVIDER_B);

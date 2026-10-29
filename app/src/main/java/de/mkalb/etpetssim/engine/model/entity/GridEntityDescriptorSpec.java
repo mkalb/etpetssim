@@ -17,9 +17,6 @@ import org.jspecify.annotations.Nullable;
  * @param emojiKey       optional localization key for the emoji
  * @param color          optional fill color
  * @param borderColor    optional border color
- * @see GridEntityDescriptorProvider
- * @see GridEntityDescriptorRegistry
- * @see GridEntityDescriptor
  */
 public record GridEntityDescriptorSpec(
         String descriptorId,

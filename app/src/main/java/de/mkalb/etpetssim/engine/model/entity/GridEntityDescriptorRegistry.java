@@ -42,7 +42,8 @@ public final class GridEntityDescriptorRegistry {
      * @param providers the descriptor providers to register
      * @return a populated registry instance
      */
-    public static GridEntityDescriptorRegistry ofCollection(Collection<? extends GridEntityDescriptorProvider> providers) {
+    public static GridEntityDescriptorRegistry ofCollection(
+            Collection<? extends GridEntityDescriptorProvider> providers) {
         GridEntityDescriptorRegistry registry = new GridEntityDescriptorRegistry(providers.size());
         for (GridEntityDescriptorProvider provider : providers) {
             registry.register(provider);

@@ -5,7 +5,6 @@ import de.mkalb.etpetssim.engine.GridStructure;
 import de.mkalb.etpetssim.engine.model.entity.GridEntity;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -233,13 +232,6 @@ public final class SparseGridModel<ENT extends GridEntity> implements WritableGr
     }
 
     @Override
-    public List<GridCell<ENT>> filteredCellsSortedBy(Predicate<ENT> entityPredicate, Comparator<GridCell<ENT>> cellOrdering) {
-        List<GridCell<ENT>> result = filteredCells(entityPredicate);
-        result.sort(cellOrdering);
-        return result;
-    }
-
-    @Override
     public SparseGridModel<ENT> copy() {
         SparseGridModel<ENT> clone = new SparseGridModel<>(structure, defaultEntity);
         clone.data.putAll(data);
@@ -346,7 +338,8 @@ public final class SparseGridModel<ENT extends GridEntity> implements WritableGr
 
     private void checkCoordinate(GridCoordinate coordinate) {
         if (!structure.isCoordinateValid(coordinate)) {
-            throw new IndexOutOfBoundsException("Coordinate out of bounds: " + coordinate + " for structure: " + structure);
+            throw new IndexOutOfBoundsException(
+                    "Coordinate out of bounds: " + coordinate + " for structure: " + structure);
         }
     }
 

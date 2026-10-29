@@ -6,10 +6,8 @@ import de.mkalb.etpetssim.engine.model.entity.GridEntity;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
@@ -64,7 +62,7 @@ public final class ArrayGridModel<ENT extends GridEntity> implements WritableGri
     @Override
     public boolean isDefaultEntity(GridCoordinate coordinate) {
         checkCoordinate(coordinate);
-        return Objects.equals(data[coordinate.y()][coordinate.x()], defaultEntity);
+        return defaultEntity.equals(data[coordinate.y()][coordinate.x()]);
     }
 
     @Override
@@ -98,7 +96,7 @@ public final class ArrayGridModel<ENT extends GridEntity> implements WritableGri
             for (int x = 0; x < width; x++) {
                 @SuppressWarnings("unchecked")
                 ENT entity = (ENT) data[y][x];
-                if (!Objects.equals(entity, defaultEntity)) {
+                if (!entity.equals(defaultEntity)) {
                     result.add(new GridCoordinate(x, y));
                 }
             }
@@ -137,7 +135,7 @@ public final class ArrayGridModel<ENT extends GridEntity> implements WritableGri
             for (int x = 0; x < width; x++) {
                 @SuppressWarnings("unchecked")
                 ENT entity = (ENT) data[y][x];
-                if (Objects.equals(entity, defaultEntity)) {
+                if (entity.equals(defaultEntity)) {
                     count++;
                     // Replace current candidate with probability 1/count.
                     if (random.nextInt(count) == 0) {
@@ -178,7 +176,7 @@ public final class ArrayGridModel<ENT extends GridEntity> implements WritableGri
             for (int x = 0; x < width; x++) {
                 @SuppressWarnings("unchecked")
                 ENT entity = (ENT) data[y][x];
-                if (!Objects.equals(entity, defaultEntity)) {
+                if (!entity.equals(defaultEntity)) {
                     result.add(new GridCell<>(new GridCoordinate(x, y), entity));
                 }
             }
@@ -202,13 +200,6 @@ public final class ArrayGridModel<ENT extends GridEntity> implements WritableGri
                 }
             }
         }
-        return result;
-    }
-
-    @Override
-    public List<GridCell<ENT>> filteredCellsSortedBy(Predicate<ENT> entityPredicate, Comparator<GridCell<ENT>> cellOrdering) {
-        List<GridCell<ENT>> result = filteredCells(entityPredicate);
-        result.sort(cellOrdering);
         return result;
     }
 
@@ -295,7 +286,8 @@ public final class ArrayGridModel<ENT extends GridEntity> implements WritableGri
 
     private void checkCoordinate(GridCoordinate coordinate) {
         if (!structure.isCoordinateValid(coordinate)) {
-            throw new IndexOutOfBoundsException("Coordinate out of bounds: " + coordinate + " for structure: " + structure);
+            throw new IndexOutOfBoundsException(
+                    "Coordinate out of bounds: " + coordinate + " for structure: " + structure);
         }
     }
 

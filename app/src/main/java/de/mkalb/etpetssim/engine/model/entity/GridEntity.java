@@ -5,10 +5,6 @@ package de.mkalb.etpetssim.engine.model.entity;
  *
  * <p>Every entity exposes a {@linkplain #descriptorId() descriptor ID} that resolves its
  * {@link GridEntityDescriptor}. Entities whose state does not change implement {@link ConstantGridEntity}.
- *
- * @see ConstantGridEntity
- * @see de.mkalb.etpetssim.engine.model.GridModel
- * @see de.mkalb.etpetssim.engine.model.GridCell
  */
 @SuppressWarnings("InterfaceMayBeAnnotatedFunctional")
 public interface GridEntity {
@@ -17,7 +13,7 @@ public interface GridEntity {
      * Checks if the given grid entity is a constant entity.
      *
      * @param entity the grid entity to check
-     * @return true if the entity is a constant entity, false otherwise
+     * @return {@code true} if the entity is a constant entity, {@code false} otherwise
      */
     @SuppressWarnings("ClassReferencesSubclass")
     static boolean isConstant(GridEntity entity) {
@@ -31,7 +27,6 @@ public interface GridEntity {
      * {@link GridEntityDescriptor} in the {@link GridEntityDescriptorRegistry}.
      *
      * @return the descriptor ID
-     * @see GridEntityDescriptorRegistry
      */
     String descriptorId();
 
