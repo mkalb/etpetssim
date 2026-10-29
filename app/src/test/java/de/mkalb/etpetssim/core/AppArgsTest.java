@@ -162,6 +162,28 @@ final class AppArgsTest {
         );
     }
 
+    @SuppressWarnings("DataFlowIssue")
+    @Test
+    void testParseBooleanValue() {
+        assertAll(
+                () -> assertTrue(AppArgs.parseBooleanValue("true", false)),
+                () -> assertTrue(AppArgs.parseBooleanValue("TRUE", false)),
+                () -> assertTrue(AppArgs.parseBooleanValue("1", false)),
+                () -> assertTrue(AppArgs.parseBooleanValue("yes", false)),
+                () -> assertTrue(AppArgs.parseBooleanValue("on", false)),
+                () -> assertFalse(AppArgs.parseBooleanValue("false", true)),
+                () -> assertFalse(AppArgs.parseBooleanValue("FALSE", true)),
+                () -> assertFalse(AppArgs.parseBooleanValue("0", true)),
+                () -> assertFalse(AppArgs.parseBooleanValue("no", true)),
+                () -> assertFalse(AppArgs.parseBooleanValue("off", true)),
+                () -> assertTrue(AppArgs.parseBooleanValue("maybe", true)),
+                () -> assertTrue(AppArgs.parseBooleanValue("", true)),
+                () -> assertFalse(AppArgs.parseBooleanValue("maybe", false)),
+                () -> assertFalse(AppArgs.parseBooleanValue("", false)),
+                () -> assertThrows(NullPointerException.class, () -> AppArgs.parseBooleanValue(null, false))
+        );
+    }
+
     @Test
     void testGetValue() {
         AppArgs cli = parse("--simulation=testSim");
@@ -278,28 +300,6 @@ final class AppArgsTest {
                 () -> assertEquals("AppArgs{arguments={HELP=false, SIMULATION=testSim}}",
                         parse("--help=false", "--simulation=testSim").toString()),
                 () -> assertEquals("AppArgs{arguments={}}", parse("--simulation").toString())
-        );
-    }
-
-    @SuppressWarnings("DataFlowIssue")
-    @Test
-    void testParseBooleanValue() {
-        assertAll(
-                () -> assertTrue(AppArgs.parseBooleanValue("true", false)),
-                () -> assertTrue(AppArgs.parseBooleanValue("TRUE", false)),
-                () -> assertTrue(AppArgs.parseBooleanValue("1", false)),
-                () -> assertTrue(AppArgs.parseBooleanValue("yes", false)),
-                () -> assertTrue(AppArgs.parseBooleanValue("on", false)),
-                () -> assertFalse(AppArgs.parseBooleanValue("false", true)),
-                () -> assertFalse(AppArgs.parseBooleanValue("FALSE", true)),
-                () -> assertFalse(AppArgs.parseBooleanValue("0", true)),
-                () -> assertFalse(AppArgs.parseBooleanValue("no", true)),
-                () -> assertFalse(AppArgs.parseBooleanValue("off", true)),
-                () -> assertTrue(AppArgs.parseBooleanValue("maybe", true)),
-                () -> assertTrue(AppArgs.parseBooleanValue("", true)),
-                () -> assertFalse(AppArgs.parseBooleanValue("maybe", false)),
-                () -> assertFalse(AppArgs.parseBooleanValue("", false)),
-                () -> assertThrows(NullPointerException.class, () -> AppArgs.parseBooleanValue(null, false))
         );
     }
 

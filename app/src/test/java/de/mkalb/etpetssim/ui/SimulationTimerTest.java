@@ -41,6 +41,28 @@ final class SimulationTimerTest {
     }
 
     @Test
+    void testStartExecutesSimulationStep() throws InterruptedException {
+        CountDownLatch stepLatch = new CountDownLatch(2);
+        AtomicInteger stepCount = new AtomicInteger();
+        SimulationTimer timer = new SimulationTimer(() -> {
+            stepCount.incrementAndGet();
+            stepLatch.countDown();
+        });
+
+        try {
+            FXTestSupport.runAndWait(() -> timer.start(Duration.millis(STEP_INTERVAL_MILLIS)));
+            assertTrue(stepLatch.await(FXTestSupport.DEFAULT_TIMEOUT_SECONDS, TimeUnit.SECONDS));
+        } finally {
+            FXTestSupport.runAndWait(timer::stop);
+        }
+
+        assertAll(
+                () -> assertTrue(stepCount.get() >= 2),
+                () -> assertFalse(timer.isRunning())
+        );
+    }
+
+    @Test
     void testStopWithoutStartKeepsStoppedState() {
         SimulationTimer timer = new SimulationTimer(() -> {
         });
@@ -67,28 +89,6 @@ final class SimulationTimerTest {
         assertAll(
                 () -> assertTrue(runningAfterStart.get()),
                 () -> assertFalse(runningAfterStop.get())
-        );
-    }
-
-    @Test
-    void testStartExecutesSimulationStep() throws InterruptedException {
-        CountDownLatch stepLatch = new CountDownLatch(2);
-        AtomicInteger stepCount = new AtomicInteger();
-        SimulationTimer timer = new SimulationTimer(() -> {
-            stepCount.incrementAndGet();
-            stepLatch.countDown();
-        });
-
-        try {
-            FXTestSupport.runAndWait(() -> timer.start(Duration.millis(STEP_INTERVAL_MILLIS)));
-            assertTrue(stepLatch.await(FXTestSupport.DEFAULT_TIMEOUT_SECONDS, TimeUnit.SECONDS));
-        } finally {
-            FXTestSupport.runAndWait(timer::stop);
-        }
-
-        assertAll(
-                () -> assertTrue(stepCount.get() >= 2),
-                () -> assertFalse(timer.isRunning())
         );
     }
 

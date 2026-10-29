@@ -177,6 +177,6 @@ Rules for test sources only; repository-wide and Java instructions still apply.
 ## Organization
 
 - Preserve nearby test ordering and naming conventions when editing existing tests.
-- Recommended order of test methods: constructor and factories first, then the production methods in their declaration
-  order, with all tests of a method and its overloads next to each other. Enum tests keep the order given in "Common
-  Contract Patterns"; topic tests are free in their order.
+- Recommended order of test methods: constructor tests (including `testRecord`) first, then the tests of the
+  production methods in their declaration order (see `java.md`, "Code Style"), with all tests of a method next to each
+  other. Enum tests keep the order given in "Common Contract Patterns"; topic tests are free in their order.

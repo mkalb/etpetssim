@@ -576,22 +576,6 @@ public final class FXGridCanvasPainter {
     }
 
     /**
-     * Computes the width and height of the given text when rendered with the specified font.
-     * It is not thread-safe and should not be called from multiple threads simultaneously.
-     *
-     * @param text the text to measure
-     * @param font the font used for rendering the text
-     * @return the width and height of the text as a Dimension2D object
-     */
-    Dimension2D computeTextDimension(String text, Font font) {
-        textHelper.setText(text);
-        textHelper.setFont(font);
-        double textWidth = textHelper.getLayoutBounds().getWidth();
-        double textHeight = textHelper.getLayoutBounds().getHeight();
-        return new Dimension2D(textWidth, textHeight);
-    }
-
-    /**
      * Draws text centered at the specified canvas position with a background rectangle.
      * The background rectangle is sized to fit the text plus the given padding and is centered at the provided point.
      *
@@ -616,6 +600,22 @@ public final class FXGridCanvasPainter {
 
         // Draw centered text.
         drawCenteredTextAt(center, text, textColor, font);
+    }
+
+    /**
+     * Computes the width and height of the given text when rendered with the specified font.
+     * It is not thread-safe and should not be called from multiple threads simultaneously.
+     *
+     * @param text the text to measure
+     * @param font the font used for rendering the text
+     * @return the width and height of the text as a Dimension2D object
+     */
+    Dimension2D computeTextDimension(String text, Font font) {
+        textHelper.setText(text);
+        textHelper.setFont(font);
+        double textWidth = textHelper.getLayoutBounds().getWidth();
+        double textHeight = textHelper.getLayoutBounds().getHeight();
+        return new Dimension2D(textWidth, textHeight);
     }
 
     /**

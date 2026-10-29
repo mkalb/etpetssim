@@ -94,15 +94,6 @@ final class FXGridCanvasPainterTest {
     }
 
     @Test
-    void testToString() {
-        FXTestSupport.runAndWait(() -> {
-            FXGridCanvasPainter painter = createPainter(new Canvas(CANVAS_SIZE, CANVAS_SIZE));
-
-            assertTrue(painter.toString().contains("FXGridCanvasPainter"));
-        });
-    }
-
-    @Test
     void testIsInsideGrid() {
         FXTestSupport.runAndWait(() -> {
             FXGridCanvasPainter painter = createPainter(new Canvas(CANVAS_SIZE, CANVAS_SIZE));
@@ -321,19 +312,6 @@ final class FXGridCanvasPainterTest {
 
     @SuppressWarnings("TestMethodWithoutAssertion")
     @Test
-    void testDrawCircle() {
-        FXTestSupport.runAndWait(() -> {
-            Canvas canvas = new Canvas(CANVAS_SIZE, CANVAS_SIZE);
-            FXGridCanvasPainter painter = createPainter(canvas);
-
-            painter.drawCircle(new Point2D(25, 25), 5, Color.GREEN, null, 0.0d, StrokeType.CENTERED);
-
-            assertColorEquals(Color.GREEN, snapshotColorAt(canvas, 25, 25));
-        });
-    }
-
-    @SuppressWarnings("TestMethodWithoutAssertion")
-    @Test
     void testDrawPolygon() {
         FXTestSupport.runAndWait(() -> {
             Canvas canvas = new Canvas(CANVAS_SIZE, CANVAS_SIZE);
@@ -390,6 +368,19 @@ final class FXGridCanvasPainterTest {
         });
     }
 
+    @SuppressWarnings("TestMethodWithoutAssertion")
+    @Test
+    void testDrawCircle() {
+        FXTestSupport.runAndWait(() -> {
+            Canvas canvas = new Canvas(CANVAS_SIZE, CANVAS_SIZE);
+            FXGridCanvasPainter painter = createPainter(canvas);
+
+            painter.drawCircle(new Point2D(25, 25), 5, Color.GREEN, null, 0.0d, StrokeType.CENTERED);
+
+            assertColorEquals(Color.GREEN, snapshotColorAt(canvas, 25, 25));
+        });
+    }
+
     @Test
     void testDrawCenteredTextWithBackgroundAt() {
         FXTestSupport.runAndWait(() -> {
@@ -424,6 +415,15 @@ final class FXGridCanvasPainterTest {
             Point2D offset = painter.computeCenteredTextOffset("A", Font.font("System", 12.0d));
 
             assertTrue(offset.getX() < 0.0d);
+        });
+    }
+
+    @Test
+    void testToString() {
+        FXTestSupport.runAndWait(() -> {
+            FXGridCanvasPainter painter = createPainter(new Canvas(CANVAS_SIZE, CANVAS_SIZE));
+
+            assertTrue(painter.toString().contains("FXGridCanvasPainter"));
         });
     }
 

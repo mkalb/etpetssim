@@ -123,14 +123,6 @@ public record GridCoordinate(int x, int y) implements Comparable<GridCoordinate>
         return !isXWithinOriginBounds(exclusiveCorner) && !isYWithinOriginBounds(exclusiveCorner);
     }
 
-    private boolean isXWithinOriginBounds(GridCoordinate exclusiveCorner) {
-        return (x >= MIN_VALID_COORDINATE) && (x < exclusiveCorner.x);
-    }
-
-    private boolean isYWithinOriginBounds(GridCoordinate exclusiveCorner) {
-        return (y >= MIN_VALID_COORDINATE) && (y < exclusiveCorner.y);
-    }
-
     /**
      * Checks if this coordinate is in an even-numbered column.
      *
@@ -318,6 +310,14 @@ public record GridCoordinate(int x, int y) implements Comparable<GridCoordinate>
             return "(illegal)";
         }
         return String.format(Locale.ROOT, "(%d, %d)", x, y);
+    }
+
+    private boolean isXWithinOriginBounds(GridCoordinate exclusiveCorner) {
+        return (x >= MIN_VALID_COORDINATE) && (x < exclusiveCorner.x);
+    }
+
+    private boolean isYWithinOriginBounds(GridCoordinate exclusiveCorner) {
+        return (y >= MIN_VALID_COORDINATE) && (y < exclusiveCorner.y);
     }
 
 }

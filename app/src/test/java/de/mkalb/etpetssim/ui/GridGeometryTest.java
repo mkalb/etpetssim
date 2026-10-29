@@ -182,49 +182,6 @@ final class GridGeometryTest {
     }
 
     @Test
-    void testIsPointInTriangleReturnsTrueForPointInside() {
-        Point2D a = new Point2D(0, 0);
-        Point2D b = new Point2D(10, 0);
-        Point2D c = new Point2D(5, 10);
-        Point2D p = new Point2D(5, 5);
-
-        assertTrue(GridGeometry.isPointInTriangle(p, a, b, c));
-    }
-
-    @Test
-    void testIsPointInTriangleReturnsFalseForPointOutside() {
-        Point2D a = new Point2D(0, 0);
-        Point2D b = new Point2D(10, 0);
-        Point2D c = new Point2D(5, 10);
-        Point2D p = new Point2D(15, 5);
-
-        assertFalse(GridGeometry.isPointInTriangle(p, a, b, c));
-    }
-
-    @Test
-    void testIsPointInTriangleReturnsTrueForPointOnVertex() {
-        Point2D a = new Point2D(0, 0);
-        Point2D b = new Point2D(10, 0);
-        Point2D c = new Point2D(5, 10);
-
-        assertAll(
-                () -> assertTrue(GridGeometry.isPointInTriangle(a, a, b, c)),
-                () -> assertTrue(GridGeometry.isPointInTriangle(b, a, b, c)),
-                () -> assertTrue(GridGeometry.isPointInTriangle(c, a, b, c))
-        );
-    }
-
-    @Test
-    void testIsPointInTriangleReturnsTrueForPointOnEdge() {
-        Point2D a = new Point2D(0, 0);
-        Point2D b = new Point2D(10, 0);
-        Point2D c = new Point2D(5, 10);
-        Point2D p = new Point2D(5, 0);
-
-        assertTrue(GridGeometry.isPointInTriangle(p, a, b, c));
-    }
-
-    @Test
     void testToCanvasPositionReturnsPositionForSquare() {
         CellDimension cellDimension = GridGeometry.computeCellDimension(EDGE_LENGTH, CellShape.SQUARE);
         Point2D position = GridGeometry.toCanvasPosition(TEST_COORDINATE, cellDimension, CellShape.SQUARE);
@@ -581,6 +538,49 @@ final class GridGeometryTest {
                     assertEquals(3, rightSegment[1].length);
                 }
         );
+    }
+
+    @Test
+    void testIsPointInTriangleReturnsTrueForPointInside() {
+        Point2D a = new Point2D(0, 0);
+        Point2D b = new Point2D(10, 0);
+        Point2D c = new Point2D(5, 10);
+        Point2D p = new Point2D(5, 5);
+
+        assertTrue(GridGeometry.isPointInTriangle(p, a, b, c));
+    }
+
+    @Test
+    void testIsPointInTriangleReturnsFalseForPointOutside() {
+        Point2D a = new Point2D(0, 0);
+        Point2D b = new Point2D(10, 0);
+        Point2D c = new Point2D(5, 10);
+        Point2D p = new Point2D(15, 5);
+
+        assertFalse(GridGeometry.isPointInTriangle(p, a, b, c));
+    }
+
+    @Test
+    void testIsPointInTriangleReturnsTrueForPointOnVertex() {
+        Point2D a = new Point2D(0, 0);
+        Point2D b = new Point2D(10, 0);
+        Point2D c = new Point2D(5, 10);
+
+        assertAll(
+                () -> assertTrue(GridGeometry.isPointInTriangle(a, a, b, c)),
+                () -> assertTrue(GridGeometry.isPointInTriangle(b, a, b, c)),
+                () -> assertTrue(GridGeometry.isPointInTriangle(c, a, b, c))
+        );
+    }
+
+    @Test
+    void testIsPointInTriangleReturnsTrueForPointOnEdge() {
+        Point2D a = new Point2D(0, 0);
+        Point2D b = new Point2D(10, 0);
+        Point2D c = new Point2D(5, 10);
+        Point2D p = new Point2D(5, 0);
+
+        assertTrue(GridGeometry.isPointInTriangle(p, a, b, c));
     }
 
     @Test

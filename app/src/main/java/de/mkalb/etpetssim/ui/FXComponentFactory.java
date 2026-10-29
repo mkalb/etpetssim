@@ -307,33 +307,6 @@ public final class FXComponentFactory {
     }
 
     /**
-     * Creates a ListCell for displaying values using their display names.
-     *
-     * <p>The cell uses the provided map to look up display names for each value.
-     * If a display name is not found, the value's toString() value is used as a fallback.
-     *
-     * @param displayNames a map from values to their display names
-     * @param <T>          the value type
-     * @return a ListCell that displays the display name for each value
-     */
-    private static <T> ListCell<T> createDisplayNameListCell(Map<T, String> displayNames) {
-        return new ListCell<>() {
-            @SuppressWarnings({"ConstantValue", "DataFlowIssue"})
-            @Override
-            protected void updateItem(@Nullable T item, boolean empty) {
-                // Follow the JavaFX Cell#updateItem(...) contract: call super first and clear the cell for empty or null items.
-                super.updateItem(item, empty);
-                if (empty || (item == null)) {
-                    setText(null);
-                    setGraphic(null);
-                } else {
-                    setText(displayNames.getOrDefault(item, item.toString()));
-                }
-            }
-        };
-    }
-
-    /**
      * Creates a labeled integer slider with a bound double value, formatted label, tooltip, and custom style class.
      *
      * <p>The slider is configured for integer values in the range defined by the given InputDoubleIntRangeProperty.
@@ -438,49 +411,6 @@ public final class FXComponentFactory {
     }
 
     /**
-     * Normalizes and synchronizes the value of a Spinner's editor with its value factory and the associated InputIntegerProperty.
-     *
-     * <p>Attempts to parse the editor text as an integer, clamps and snaps it to the valid range and step
-     * defined by the given InputIntegerProperty, and updates both the spinner and the property with the normalized value.
-     * If parsing fails, resets the editor text and spinner value to the current property value.
-     *
-     * @param spinner              the Spinner whose editor input is to be normalized and synchronized
-     * @param inputIntegerProperty the InputIntegerProperty providing range and step constraints
-     */
-    private static void normalizeAndSyncSpinnerValue(
-            Spinner<Integer> spinner,
-            InputIntegerProperty inputIntegerProperty) {
-        SpinnerValueFactory<Integer> valueFactory = spinner.getValueFactory();
-        if (valueFactory != null) {
-            String text = spinner.getEditor().getText();
-            try {
-                int parsedValue = Integer.parseInt(text);
-                int normalizedValue = inputIntegerProperty.adjustValue(parsedValue);
-
-                // 1. Update the editor text if normalization changed the value.
-                if (parsedValue != normalizedValue) {
-                    spinner.getEditor().setText(String.valueOf(normalizedValue));
-                }
-
-                // 2. Update the property if needed.
-                if (inputIntegerProperty.getValue() != normalizedValue) {
-                    inputIntegerProperty.setValue(normalizedValue);
-                }
-
-                // 3. Update the spinner if needed.
-                if (!valueFactory.getValue().equals(normalizedValue)) {
-                    valueFactory.setValue(normalizedValue);
-                }
-            } catch (NumberFormatException e) {
-                // Reset to the current property value if parsing fails.
-                int currentValue = inputIntegerProperty.getValue();
-                spinner.getEditor().setText(String.valueOf(currentValue));
-                valueFactory.setValue(currentValue);
-            }
-        }
-    }
-
-    /**
      * Creates a labeled percent slider with a bound value, formatted label, tooltip, and custom style class.
      *
      * <p>The slider is configured for percent values in the range defined by the given InputDoubleProperty.
@@ -533,31 +463,6 @@ public final class FXComponentFactory {
         Label label = createBoundLabel(inputDoubleProperty.property().multiply(100).asString(labelFormatString), slider,
                 tooltip, slider);
         return new LabeledControl<>(label, slider);
-    }
-
-    /**
-     * Computes the number of minor tick marks for a percent slider based on the given range.
-     *
-     * <p>Determines the number of minor ticks by checking if the range is divisible
-     * by specific divisors. If a divisor matches, the method returns the divisor minus one.
-     * If no divisor matches, it returns 0.
-     *
-     * <p>The range is expected to be between 2 and 100 (inclusive). If the range is outside this
-     * interval, the method will return 0 without performing any calculations.
-     *
-     * @param range the range of the slider (difference between max and min values multiplied by 100)
-     * @return the number of minor ticks (divisor - 1) if a matching divisor is found, or 0 otherwise
-     */
-    private static int computeMinorTickCountForPercentSlider(int range) {
-        if ((range >= 2) && (range <= 100)) {
-            int[] divisors = {10, 8, 6, 4, 9, 7, 5, 11, 13, 17, 19, 3, 2};
-            for (int divisor : divisors) {
-                if ((range % divisor) == 0) {
-                    return divisor - 1;
-                }
-            }
-        }
-        return 0;
     }
 
     /**
@@ -698,6 +603,101 @@ public final class FXComponentFactory {
 
         Label label = createBoundLabel(Bindings.format(labelFormatString, labelProperty), textField, tooltip, textField);
         return new LabeledControl<>(label, hBox);
+    }
+
+    /**
+     * Creates a ListCell for displaying values using their display names.
+     *
+     * <p>The cell uses the provided map to look up display names for each value.
+     * If a display name is not found, the value's toString() value is used as a fallback.
+     *
+     * @param displayNames a map from values to their display names
+     * @param <T>          the value type
+     * @return a ListCell that displays the display name for each value
+     */
+    private static <T> ListCell<T> createDisplayNameListCell(Map<T, String> displayNames) {
+        return new ListCell<>() {
+            @SuppressWarnings({"ConstantValue", "DataFlowIssue"})
+            @Override
+            protected void updateItem(@Nullable T item, boolean empty) {
+                // Follow the JavaFX Cell#updateItem(...) contract: call super first and clear the cell for empty or null items.
+                super.updateItem(item, empty);
+                if (empty || (item == null)) {
+                    setText(null);
+                    setGraphic(null);
+                } else {
+                    setText(displayNames.getOrDefault(item, item.toString()));
+                }
+            }
+        };
+    }
+
+    /**
+     * Normalizes and synchronizes the value of a Spinner's editor with its value factory and the associated InputIntegerProperty.
+     *
+     * <p>Attempts to parse the editor text as an integer, clamps and snaps it to the valid range and step
+     * defined by the given InputIntegerProperty, and updates both the spinner and the property with the normalized value.
+     * If parsing fails, resets the editor text and spinner value to the current property value.
+     *
+     * @param spinner              the Spinner whose editor input is to be normalized and synchronized
+     * @param inputIntegerProperty the InputIntegerProperty providing range and step constraints
+     */
+    private static void normalizeAndSyncSpinnerValue(
+            Spinner<Integer> spinner,
+            InputIntegerProperty inputIntegerProperty) {
+        SpinnerValueFactory<Integer> valueFactory = spinner.getValueFactory();
+        if (valueFactory != null) {
+            String text = spinner.getEditor().getText();
+            try {
+                int parsedValue = Integer.parseInt(text);
+                int normalizedValue = inputIntegerProperty.adjustValue(parsedValue);
+
+                // 1. Update the editor text if normalization changed the value.
+                if (parsedValue != normalizedValue) {
+                    spinner.getEditor().setText(String.valueOf(normalizedValue));
+                }
+
+                // 2. Update the property if needed.
+                if (inputIntegerProperty.getValue() != normalizedValue) {
+                    inputIntegerProperty.setValue(normalizedValue);
+                }
+
+                // 3. Update the spinner if needed.
+                if (!valueFactory.getValue().equals(normalizedValue)) {
+                    valueFactory.setValue(normalizedValue);
+                }
+            } catch (NumberFormatException e) {
+                // Reset to the current property value if parsing fails.
+                int currentValue = inputIntegerProperty.getValue();
+                spinner.getEditor().setText(String.valueOf(currentValue));
+                valueFactory.setValue(currentValue);
+            }
+        }
+    }
+
+    /**
+     * Computes the number of minor tick marks for a percent slider based on the given range.
+     *
+     * <p>Determines the number of minor ticks by checking if the range is divisible
+     * by specific divisors. If a divisor matches, the method returns the divisor minus one.
+     * If no divisor matches, it returns 0.
+     *
+     * <p>The range is expected to be between 2 and 100 (inclusive). If the range is outside this
+     * interval, the method will return 0 without performing any calculations.
+     *
+     * @param range the range of the slider (difference between max and min values multiplied by 100)
+     * @return the number of minor ticks (divisor - 1) if a matching divisor is found, or 0 otherwise
+     */
+    private static int computeMinorTickCountForPercentSlider(int range) {
+        if ((range >= 2) && (range <= 100)) {
+            int[] divisors = {10, 8, 6, 4, 9, 7, 5, 11, 13, 17, 19, 3, 2};
+            for (int divisor : divisors) {
+                if ((range % divisor) == 0) {
+                    return divisor - 1;
+                }
+            }
+        }
+        return 0;
     }
 
     private static Label createBoundLabel(ObservableValue<String> text, Node labelFor, String tooltip,

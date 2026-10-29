@@ -47,6 +47,44 @@ final class CellDimensionTest {
         Locale.setDefault(defaultLocale);
     }
 
+    private CellDimension createValidCellDimension() {
+        return createCellDimension(
+                EDGE_LENGTH,
+                WIDTH,
+                HEIGHT,
+                HALF_EDGE_LENGTH,
+                HALF_WIDTH,
+                HALF_HEIGHT,
+                INNER_RADIUS,
+                OUTER_RADIUS,
+                COLUMN_WIDTH,
+                ROW_HEIGHT);
+    }
+
+    private CellDimension createCellDimension(
+            double edgeLength,
+            double width,
+            double height,
+            double halfEdgeLength,
+            double halfWidth,
+            double halfHeight,
+            double innerRadius,
+            double outerRadius,
+            double columnWidth,
+            double rowHeight) {
+        return new CellDimension(
+                edgeLength,
+                width,
+                height,
+                halfEdgeLength,
+                halfWidth,
+                halfHeight,
+                innerRadius,
+                outerRadius,
+                columnWidth,
+                rowHeight);
+    }
+
     @Test
     void testRecord() {
         CellDimension dimension = createValidCellDimension();
@@ -219,44 +257,6 @@ final class CellDimensionTest {
                 ROW_HEIGHT);
 
         assertEquals("[1234.5, 2345.6 × 3456.7]", dimension.toDisplayString());
-    }
-
-    private CellDimension createValidCellDimension() {
-        return createCellDimension(
-                EDGE_LENGTH,
-                WIDTH,
-                HEIGHT,
-                HALF_EDGE_LENGTH,
-                HALF_WIDTH,
-                HALF_HEIGHT,
-                INNER_RADIUS,
-                OUTER_RADIUS,
-                COLUMN_WIDTH,
-                ROW_HEIGHT);
-    }
-
-    private CellDimension createCellDimension(
-            double edgeLength,
-            double width,
-            double height,
-            double halfEdgeLength,
-            double halfWidth,
-            double halfHeight,
-            double innerRadius,
-            double outerRadius,
-            double columnWidth,
-            double rowHeight) {
-        return new CellDimension(
-                edgeLength,
-                width,
-                height,
-                halfEdgeLength,
-                halfWidth,
-                halfHeight,
-                innerRadius,
-                outerRadius,
-                columnWidth,
-                rowHeight);
     }
 
 }

@@ -84,16 +84,6 @@ final class AppResourcesTest {
         assertThrows(NullPointerException.class, () -> AppResources.getImage(null));
     }
 
-    @SuppressWarnings("DataFlowIssue")
-    @Test
-    void testGetImages() {
-        List<Image> images = AppResources.getImages("etpetssim16.png", "etpetssim16.png", "unknown.png",
-                "etpetssim32.png");
-        assertEquals(3, images.size(), "Number of images should be 3");
-
-        assertThrows(NullPointerException.class, () -> AppResources.getImages((String[]) null));
-    }
-
     @Test
     void testGetImageReturnsEmptyForMissingImage() {
         Optional<Image> imageOpt = AppResources.getImage("unknown.png");
@@ -104,6 +94,16 @@ final class AppResourcesTest {
     void testGetImageReturnsEmptyForIllegalImage() {
         Optional<Image> imageOpt = AppResources.getImage("illegal_image.png");
         assertFalse(imageOpt.isPresent(), "Illegal image should not be present");
+    }
+
+    @SuppressWarnings("DataFlowIssue")
+    @Test
+    void testGetImages() {
+        List<Image> images = AppResources.getImages("etpetssim16.png", "etpetssim16.png", "unknown.png",
+                "etpetssim32.png");
+        assertEquals(3, images.size(), "Number of images should be 3");
+
+        assertThrows(NullPointerException.class, () -> AppResources.getImages((String[]) null));
     }
 
     @SuppressWarnings("DataFlowIssue")

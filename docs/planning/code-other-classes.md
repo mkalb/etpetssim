@@ -44,7 +44,7 @@ settled before `code-simulation-classes.md` starts, which took over the classes 
 - The sibling plans `code-interface-types.md`, `code-record-types.md`, `code-private-constructor-classes.md`, and
   `code-enum-types.md` are done; their decisions apply here. They stay in `docs/planning` as reference until
   `code-simulation-classes.md` is done.
-- Category 1 is done and committed (`fc3cff53`).
+- Category 1 is done and committed (`fc3cff53`); category 2 is done and committed.
 - Categories 2 and 3 settle the rules before category 4 applies them; category 2 comes first, because it also
   changes code. Category 4 reviews the packages one group at a time.
 - `code-simulation-classes.md` starts only after all categories of this plan are done.
@@ -96,7 +96,7 @@ Table format:
 | # | Category                                  | Count        | Status      |
 |---|-------------------------------------------|-------------:|-------------|
 | 1 | Engine, core, UI, and application classes |   12 classes | done        |
-| 2 | Member order: rules and IntelliJ          |            - | in progress |
+| 2 | Member order: rules and IntelliJ          |            - | done        |
 | 3 | Javadoc rules of all rule files           | 5 rule files | open        |
 | 4 | Package reviews outside `simulations`     |   9 packages | open        |
 
@@ -273,15 +273,15 @@ Group `core`, `ui`, and the root package (2026-10-29):
 - `AppArgs`: the constructor delegates each argument to a private `parseArgument(..)` with early returns; a non-flag
   key without a value is now reported through `AppLogger` like the other ignored arguments; `printHelp(..)` formats
   with `Locale.ROOT` and catches `IOException` instead of `Exception`; the type Javadoc states that a flag with an
-  unrecognized value is active; `parseBooleanValue(..)` follows the public methods (moved again by the formatting,
-  see category 2).
+  unrecognized value is active; the static `parseBooleanValue(..)` precedes the instance methods (category 2).
 - `FXGridCanvasPainter`: the type Javadoc describes the stateful painter instead of a "utility class"; the
   class-level `@SuppressWarnings("MagicNumber")` is narrowed to `drawRectangle(..)`, `drawCircle(..)`, and
-  `computeCenteredTextOffset(..)`, as confirmed by the IntelliJ inspection; `toString()` and the private helper
-  follow the other methods (the helper was moved again by the formatting, see category 2); comments that restated
-  the constructor are removed.
+  `computeCenteredTextOffset(..)`, as confirmed by the IntelliJ inspection; `toString()` follows the other methods,
+  and the private static helper precedes the instance methods (category 2); comments that restated the constructor
+  are removed.
 - `SimulationTimer`: Javadoc without `</p>` and `<p>` before `<pre>`, no constructor Javadoc, `{@code true}`.
-- `AboutDialog`: `formatReadmeText(..)` follows the public methods; `Map.of()` instead of `Collections.emptyMap()`;
+- `AboutDialog`: the static `formatReadmeText(..)` precedes the instance methods (category 2); `Map.of()` instead of
+  `Collections.emptyMap()`;
   `value` instead of `v`.
 - `ExtraterrestrialPetsSimulation`: `start(..)` and `stop()` precede the private methods; the routine
   `Objects.requireNonNull(..)` checks of private methods and the fully qualified `Priority` are removed;
@@ -302,9 +302,9 @@ Review of category 1 (2026-10-29):
   caller.
 - Rule change: `ui.md` ("Grid Geometry and Rendering"): `FXGridCanvasPainter` keeps its public accessors and drawing
   methods, also without a current caller.
-- Open, moved to category 2: the member order of classes. The IntelliJ formatting moved helpers next to their callers
-  in `AppArgs` and `FXGridCanvasPainter`, which contradicts the member order decision below and the declaration order
-  of their tests.
+- Moved to category 2 and decided there: the member order of classes. The IntelliJ formatting had moved helpers in
+  `AppArgs` and `FXGridCanvasPainter`, which contradicted the then proposed member order and the declaration order of
+  their tests.
 
 ## 2. Member order: rules and IntelliJ
 
@@ -322,10 +322,12 @@ which of the two is the source of truth. Main and test sources of the packages o
       helpers before tests, test methods in the declaration order of the production methods, test-only nested types
       at the bottom.
     - No rule for the methods of other classes; the open cross-category decision below proposes one.
-- IntelliJ arrangement of the maintainer (2026-10-29, not part of the repository):
-    - Matching rules: fields (`static final` before `static` before instance fields, each by visibility public,
-      protected, package-private, private), static initializer, initializer, constructor, static methods, methods,
-      then enums, interfaces, static classes, and classes; records have no rule of their own.
+- IntelliJ arrangement of the scheme "Default IDE" (the IntelliJ default, shown by the maintainer on 2026-10-29, not
+  part of the repository):
+    - Matching rules: static fields (`static final` before `static`, each by visibility public, protected,
+      package-private, private), static initializer, instance fields (`final` before the others, each by visibility),
+      initializer, constructor, static methods (rule 21), methods, then enums, interfaces, static classes, and classes;
+      records have no rule of their own. Methods within a rule keep their order.
     - Grouping rules: "Keep getters and setters together" on; "Keep overridden methods together" and "Keep dependent
       methods together" off.
 - Observations:
@@ -389,8 +391,42 @@ Formatter settings (2026-10-29):
 - `app:test` and `app:skillTest` pass after the reformat.
 - `CellConnectionType.java` got the final newline that the reformat had not added; the empty `etpets.css` stays
   empty.
-- Open for this category: the member order of the three methods moved by "Rearrange code" (see "Current state"), the
-  arrangement rules of the IDE scheme, and a reference to `.editorconfig` in `java.md`.
+- The member order of the three methods moved by "Rearrange code", the arrangement rules of the IDE scheme, and the
+  reference to `.editorconfig` in `java.md` are decided below.
+
+Member order (2026-10-29):
+
+- Analysis (scan of the main sources with a script in the scratchpad): all 50 classes, enums, and records with both
+  static and instance methods (23 outside `simulations`, 27 inside) declare the static methods first, as rule 21 of
+  the arrangement does. The member order proposed in category 1 (by visibility regardless of `static`) contradicted
+  11 types outside `simulations`; the order decided here contradicted 4 (`AppArgs`, `FXGridCanvasPainter`,
+  `GridCoordinate`, `FXComponentFactory`). In `simulations`, 49 of 232 types deviate, almost only in the visibility
+  order of the methods (private helpers next to their callers, protected before public).
+- Rule change: `java.md` ("Code Style") is the source of truth for the member order of classes, enums, and records and
+  follows the IntelliJ default arrangement: static fields, static initializers, instance fields, instance
+  initializers, constructors, static methods, instance methods, then nested types; within the static and within the
+  instance methods public, protected, package-private, then private; overrides count as public, `toString()` directly
+  precedes the private instance methods, and overloads and a getter with its setter stay together. Test classes order
+  their methods as `junit.md` describes. The arrangement of "Default IDE" stays unchanged and is not documented in the
+  repository; "Rearrange code" keeps the order but does not sort the methods by visibility.
+- Rule change: `java.md` ("Utility Classes") no longer repeats the method order, which the general rule covers.
+- Rule change: `java.md` ("Code Style") refers to `.editorconfig` and the IntelliJ defaults for formatting.
+- Rule change: `junit.md` ("Organization") keeps the test order tied to the declaration order: constructor tests
+  (including `testRecord`) first, then the tests of the production methods in their declaration order, with all tests
+  of a method next to each other; "factories first" is dropped, because static factories follow the constructor
+  anyway. Static and instance overloads (e.g., `GridTopology.requiredWidthMultiple(..)`) are declared apart, so their
+  tests are too.
+- `AppArgs.parseBooleanValue(..)`, `AboutDialog.formatReadmeText(..)`, and
+  `FXGridCanvasPainter.scalePolygonFromCenter(..)` stay directly after the constructor as static methods.
+- Reordered main sources: `AppArgs` (`getInt(..)` after `getBoolean(..)` again, `toArgumentString()` before
+  `toString()`), `FXGridCanvasPainter` (`drawCenteredTextWithBackgroundAt(..)` before the package-private methods),
+  `GridCoordinate` (private helpers at the end), and `FXComponentFactory` (private static helpers after the public
+  methods).
+- Reordered tests: `AppArgsTest`, `AppResourcesTest`, `CellDimensionTest` (helpers before the tests),
+  `CompassDirectionTest`, `FXGridCanvasPainterTest`, `GridGeometryTest`, and `SimulationTimerTest`.
+- No automated check of the member order: it would need a new build dependency or a hand-written Java parser in a
+  test; "Rearrange code" and reviews are enough.
+- `app:test` and `app:javadoc` pass.
 
 ## 3. Javadoc rules of all rule files
 
@@ -508,9 +544,10 @@ Notes:
 - (1, all) Public methods and constructors without a caller in main sources are removed (API change with approval)
   unless the maintainer keeps them for a planned use; core classes and `FXGridCanvasPainter` keep their complete API
   (rule change: `core.md` and `ui.md`).
-- (1, 2, all) Open, decided in category 2: members are ordered as constants, fields, constructors, public methods
-  (including overridden lifecycle methods such as `start(..)`), package-private methods, `toString()`, then private
-  helpers, followed by nested types.
+- (1, 2, all) Member order (rule change: `java.md`, "Code Style"): static fields, instance fields, constructors,
+  static methods, instance methods, then nested types; within the static and within the instance methods public,
+  protected, package-private, then private, with overrides (e.g., lifecycle methods such as `start(..)`) as public
+  and `toString()` directly before the private instance methods. Tests follow the declaration order (`junit.md`).
 - (1, all) Class-level `@SuppressWarnings` are narrowed to the members that need them, with the maintainer's
   approval per case (`java.md`, "Suppressions Policy").
 

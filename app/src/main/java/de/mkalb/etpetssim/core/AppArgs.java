@@ -98,6 +98,28 @@ public final class AppArgs {
     }
 
     /**
+     * Returns the value for a key as an integer.
+     *
+     * @param key          the key to resolve
+     * @param defaultValue the fallback value when the key is missing or its value is not an integer
+     * @return the parsed value, or {@code defaultValue}
+     * @throws NullPointerException if {@code key} is {@code null}
+     */
+    public int getInt(Key key, int defaultValue) {
+        Objects.requireNonNull(key, "Key must not be null");
+        String value = arguments.get(key);
+        if (value == null) {
+            return defaultValue;
+        }
+        try {
+            return Integer.parseInt(value);
+        } catch (NumberFormatException e) {
+            AppLogger.warn("AppArgs: Invalid integer value for key '" + key.key() + "': '" + value + "'. Using default value " + defaultValue);
+            return defaultValue;
+        }
+    }
+
+    /**
      * Returns whether a flag key is active.
      *
      * @param key the key to inspect
@@ -135,40 +157,6 @@ public final class AppArgs {
     }
 
     /**
-     * Returns the value for a key as an integer.
-     *
-     * @param key          the key to resolve
-     * @param defaultValue the fallback value when the key is missing or its value is not an integer
-     * @return the parsed value, or {@code defaultValue}
-     * @throws NullPointerException if {@code key} is {@code null}
-     */
-    public int getInt(Key key, int defaultValue) {
-        Objects.requireNonNull(key, "Key must not be null");
-        String value = arguments.get(key);
-        if (value == null) {
-            return defaultValue;
-        }
-        try {
-            return Integer.parseInt(value);
-        } catch (NumberFormatException e) {
-            AppLogger.warn("AppArgs: Invalid integer value for key '" + key.key() + "': '" + value + "'. Using default value " + defaultValue);
-            return defaultValue;
-        }
-    }
-
-    /**
-     * Returns a debug-oriented string representation of this argument container.
-     *
-     * @return string containing the currently parsed argument map
-     */
-    @Override
-    public String toString() {
-        return "AppArgs{" +
-                "arguments=" + arguments +
-                '}';
-    }
-
-    /**
      * Serializes parsed arguments back into command-line form as a readable representation for logging.
      *
      * <p>Active flags are written without a value. Values that contain whitespace are enclosed in double quotes
@@ -196,6 +184,18 @@ public final class AppArgs {
             }
         }
         return sb.toString();
+    }
+
+    /**
+     * Returns a debug-oriented string representation of this argument container.
+     *
+     * @return string containing the currently parsed argument map
+     */
+    @Override
+    public String toString() {
+        return "AppArgs{" +
+                "arguments=" + arguments +
+                '}';
     }
 
     private void parseArgument(String arg) {

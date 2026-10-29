@@ -11,6 +11,8 @@ Rules for all `.java` files; repository-wide instructions still apply.
 
 - Do not add comments that only restate obvious code.
 - Avoid formatting-only changes unless required by the task.
+- Format code as `.editorconfig` in the repository root and the IntelliJ defaults specify (e.g., 4 spaces, a
+  continuation indent of 8, at most 120 characters per line, and chained method calls without alignment).
 - Use single-type imports, also for static members; do not use on-demand imports (`.*`). Import a nested type with
   a regular import, not with `import static`.
 - Group imports as IntelliJ does, with one blank line between the groups: all other packages, `javax.*`, `java.*`,
@@ -21,6 +23,13 @@ Rules for all `.java` files; repository-wide instructions still apply.
 - Use locale-stable normalization for technical text (e.g., `toLowerCase(Locale.ROOT)`).
 - Do not initialize fields explicitly to their default value (`0`, `false`, `null`); an explicit initializer is for a
   different value, such as the sentinel `Long.MAX_VALUE` of a minimum.
+- Order the members of classes, enums, and records as the IntelliJ default arrangement does: static fields
+  (`static final` first, each group from public to private), static initializers, instance fields (`final` first,
+  each group from public to private), instance initializers, constructors, static methods, instance methods, then
+  nested types. Within the static and within the instance methods, order public, protected, package-private, then
+  private methods; overrides (e.g., lifecycle methods) count as public, `toString()` directly precedes the private
+  instance methods, and overloads as well as a getter and its setter stay together. "Rearrange code" keeps this order
+  but does not sort the methods by visibility. Test classes order their methods as `junit.md` describes.
 - Order interface members as constants, static methods (including private static helpers), abstract methods, then
   default methods.
 
@@ -151,8 +160,7 @@ Rules for classes with only static members (constants, static methods, or both).
   `CellNeighborhoods`, `<Simulation>Constraints`).
 - Start the type Javadoc with what the class provides (e.g., "Defaults, limits, and allowed values of ..."), not with
   "Utility class ...".
-- Make helper methods `private`, or package-private when tests call them directly; order the methods as public,
-  package-private, then private, followed by nested types.
+- Make helper methods `private`, or package-private when tests call them directly.
 
 ## Nullability (JSpecify)
 
