@@ -29,8 +29,8 @@ final class PetTest {
 
         assertAll(
                 () -> assertEquals("[PET #7 *3 E=20 C=5 A=-]", newPet.toDisplayString()),
-                () -> assertEquals("[PET #7 *3 E=20 C=5 A=eat@12]", activePet.toDisplayString()),
-                () -> assertEquals("[PET #7 *3 E=20 C=5 A=move@-4 †]", deadPet.toDisplayString())
+                () -> assertEquals("[PET #7 *3 E=20 C=5 A=EAT@12]", activePet.toDisplayString()),
+                () -> assertEquals("[PET #7 *3 E=20 C=5 A=MOVE@-4 †]", deadPet.toDisplayString())
         );
     }
 

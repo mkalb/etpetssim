@@ -49,9 +49,9 @@ Use these method naming patterns when they match the method's primary behavior; 
 - `to...`: convert a value to a target type or representation, typically as a new independent value or copy
 - `toDisplayString()`: short human-readable representation of the receiver (a value or entity); keep it separate from
   `toString()`, which stays a technical diagnostic representation. It is locale-independent: format numbers with
-  `Locale.ROOT`; localized UI text uses `AppLocalization` or `NumberFormat` instead. Show enum values in lowercase
-  (`name().toLowerCase(Locale.ROOT)`) unless the enum provides its own display text (e.g., `CompassDirection.arrow()`
-  or an entity's `toDisplayString()`)
+  `Locale.ROOT`; localized UI text uses `AppLocalization` or `NumberFormat` instead. Show enum values with `name()`
+  unless the enum provides its own display text (e.g., `CompassDirection.arrow()` or an entity's
+  `toDisplayString()`)
 - `parse...`: convert text with a format or grammar to a value, as in `Integer.parseInt`; throw on invalid input or
   return a supplied default
 - `format...`: produce display or log text from values, usually localized

@@ -17,8 +17,8 @@ final class EdgeBehaviorResultTest {
                 new GridCoordinate(-1, 0), new GridCoordinate(15, 0), EdgeBehaviorAction.WRAPPED);
 
         assertAll(
-                () -> assertEquals("[valid] mapped: (5, 6)", validResult.toDisplayString()),
-                () -> assertEquals("[wrapped] mapped: (15, 0)", wrappedResult.toDisplayString())
+                () -> assertEquals("[VALID] mapped: (5, 6)", validResult.toDisplayString()),
+                () -> assertEquals("[WRAPPED] mapped: (15, 0)", wrappedResult.toDisplayString())
         );
     }
 

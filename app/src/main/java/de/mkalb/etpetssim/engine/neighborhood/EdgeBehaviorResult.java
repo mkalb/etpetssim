@@ -26,13 +26,13 @@ public record EdgeBehaviorResult(
     /**
      * Returns a short, human-readable string representation of this edge behavior result.
      *
-     * <p>Format: {@code [action] mapped: (x, y)}, e.g., {@code [wrapped] mapped: (15, 0)}
+     * <p>Format: {@code [action] mapped: (x, y)}, e.g., {@code [WRAPPED] mapped: (15, 0)}
      *
      * @return a concise display string for this edge behavior result
      */
     public String toDisplayString() {
         return String.format(Locale.ROOT, "[%s] mapped: %s",
-                action.name().toLowerCase(Locale.ROOT),
+                action.name(),
                 mapped.toDisplayString());
     }
 

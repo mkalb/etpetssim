@@ -20,11 +20,6 @@ import java.util.stream.Stream;
  *
  * @param topology the grid topology (cell shape and edge behavior)
  * @param size     the grid size (number of columns and rows)
- * @see GridTopology
- * @see GridSize
- * @see CellShape
- * @see EdgeBehavior
- * @see GridCoordinate
  */
 public record GridStructure(GridTopology topology, GridSize size) {
 
@@ -79,7 +74,6 @@ public record GridStructure(GridTopology topology, GridSize size) {
      * Returns the total number of cells in the grid (width × height).
      *
      * @return the total number of cells in the grid
-     * @see GridSize#area()
      */
     public int cellCount() {
         return size.area();
@@ -127,7 +121,6 @@ public record GridStructure(GridTopology topology, GridSize size) {
      *
      * @param coordinate the coordinate to check
      * @return {@code true} if the coordinate is within the grid bounds, {@code false} otherwise
-     * @see GridCoordinate#isWithinBounds(GridCoordinate, GridCoordinate)
      */
     public boolean isCoordinateValid(GridCoordinate coordinate) {
         return coordinate.isWithinBounds(minCoordinateInclusive(), maxCoordinateExclusive());

@@ -75,7 +75,7 @@ public record GridTopology(CellShape cellShape, GridEdgeBehavior gridEdgeBehavio
      * @return the required width multiple for the specified configuration
      */
     public static int requiredWidthMultiple(CellShape cellShape, EdgeBehavior edgeBehaviorX) {
-        if ((edgeBehaviorX == EdgeBehavior.BLOCK) || (edgeBehaviorX == EdgeBehavior.ABSORB)) {
+        if (edgeBehaviorX != EdgeBehavior.WRAP) {
             return 1;
         }
         return switch (cellShape) {
@@ -93,7 +93,7 @@ public record GridTopology(CellShape cellShape, GridEdgeBehavior gridEdgeBehavio
      * @return the required height multiple for the specified configuration
      */
     public static int requiredHeightMultiple(CellShape cellShape, EdgeBehavior edgeBehaviorY) {
-        if ((edgeBehaviorY == EdgeBehavior.BLOCK) || (edgeBehaviorY == EdgeBehavior.ABSORB)) {
+        if (edgeBehaviorY != EdgeBehavior.WRAP) {
             return 1;
         }
         return switch (cellShape) {
@@ -148,8 +148,8 @@ public record GridTopology(CellShape cellShape, GridEdgeBehavior gridEdgeBehavio
     /**
      * Returns a short, human-readable string representation of this grid topology.
      *
-     * <p>Format: {@code [SHAPE EDGE_BEHAVIOR]} if both edge behaviors are identical,
-     * or {@code [SHAPE EDGE_BEHAVIOR_X/EDGE_BEHAVIOR_Y]} if they differ, e.g., {@code [SQUARE ABSORB]} or
+     * <p>Format: {@code [SHAPE EDGE_BEHAVIOR]} if both edge behaviors are identical, or
+     * {@code [SHAPE EDGE_BEHAVIOR_X/EDGE_BEHAVIOR_Y]} if they differ, e.g., {@code [SQUARE ABSORB]} or
      * {@code [HEXAGON BLOCK/WRAP]}.
      *
      * @return a concise display string for this grid topology
@@ -158,12 +158,12 @@ public record GridTopology(CellShape cellShape, GridEdgeBehavior gridEdgeBehavio
         if (gridEdgeBehavior.hasEqualEdgeBehaviors()) {
             return String.format(Locale.ROOT, "[%s %s]",
                     cellShape.name(),
-                    gridEdgeBehavior.edgeBehaviorX().name());
+                    edgeBehaviorX().name());
         }
         return String.format(Locale.ROOT, "[%s %s/%s]",
                 cellShape.name(),
-                gridEdgeBehavior.edgeBehaviorX().name(),
-                gridEdgeBehavior.edgeBehaviorY().name());
+                edgeBehaviorX().name(),
+                edgeBehaviorY().name());
     }
 
 }

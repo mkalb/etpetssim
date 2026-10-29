@@ -27,94 +27,110 @@ final class GridSizeTest {
 
     @Test
     void testConstructorRejectsNegativeSize() {
-        assertThrows(IllegalArgumentException.class, () -> new GridSize(-1, 8));
-        assertThrows(IllegalArgumentException.class, () -> new GridSize(8, -1));
-        assertThrows(IllegalArgumentException.class, () -> new GridSize(-1, -1));
+        assertAll(
+                () -> assertThrows(IllegalArgumentException.class, () -> new GridSize(-1, 8)),
+                () -> assertThrows(IllegalArgumentException.class, () -> new GridSize(8, -1)),
+                () -> assertThrows(IllegalArgumentException.class, () -> new GridSize(-1, -1))
+        );
     }
 
     @Test
     void testConstructorRejectsTooSmallSize() {
-        assertThrows(IllegalArgumentException.class, () -> new GridSize(7, 8));
-        assertThrows(IllegalArgumentException.class, () -> new GridSize(8, 7));
-        assertThrows(IllegalArgumentException.class, () -> new GridSize(7, 7));
+        assertAll(
+                () -> assertThrows(IllegalArgumentException.class, () -> new GridSize(7, 8)),
+                () -> assertThrows(IllegalArgumentException.class, () -> new GridSize(8, 7)),
+                () -> assertThrows(IllegalArgumentException.class, () -> new GridSize(7, 7))
+        );
     }
 
     @Test
     void testConstructorRejectsTooLargeSize() {
-        assertThrows(IllegalArgumentException.class, () -> new GridSize(20_000, 16));
-        assertThrows(IllegalArgumentException.class, () -> new GridSize(16, 20_000));
-        assertThrows(IllegalArgumentException.class, () -> new GridSize(20_000, 20_000));
+        assertAll(
+                () -> assertThrows(IllegalArgumentException.class, () -> new GridSize(16_385, 16)),
+                () -> assertThrows(IllegalArgumentException.class, () -> new GridSize(16, 16_385)),
+                () -> assertThrows(IllegalArgumentException.class, () -> new GridSize(20_000, 20_000))
+        );
     }
 
     @Test
     void testIsInvalidSize() {
-        assertFalse(GridSize.isInvalidSize(8));
-        assertFalse(GridSize.isInvalidSize(15));
-        assertFalse(GridSize.isInvalidSize(32));
-        assertFalse(GridSize.isInvalidSize(1_000));
-
-        assertTrue(GridSize.isInvalidSize(-1));
-        assertTrue(GridSize.isInvalidSize(0));
-        assertTrue(GridSize.isInvalidSize(7));
-        assertTrue(GridSize.isInvalidSize(20_000));
+        assertAll(
+                () -> assertFalse(GridSize.isInvalidSize(GridSize.MIN_SIZE)),
+                () -> assertFalse(GridSize.isInvalidSize(15)),
+                () -> assertFalse(GridSize.isInvalidSize(1_000)),
+                () -> assertFalse(GridSize.isInvalidSize(GridSize.MAX_SIZE)),
+                () -> assertTrue(GridSize.isInvalidSize(-1)),
+                () -> assertTrue(GridSize.isInvalidSize(0)),
+                () -> assertTrue(GridSize.isInvalidSize(GridSize.MIN_SIZE - 1)),
+                () -> assertTrue(GridSize.isInvalidSize(GridSize.MAX_SIZE + 1))
+        );
     }
 
     @Test
     void testSquare() {
         GridSize square = GridSize.square(64);
-        assertEquals(64, square.width());
-        assertEquals(64, square.height());
-        assertTrue(square.isSquare());
+        assertAll(
+                () -> assertEquals(64, square.width()),
+                () -> assertEquals(64, square.height()),
+                () -> assertThrows(IllegalArgumentException.class, () -> GridSize.square(GridSize.MIN_SIZE - 1))
+        );
     }
 
     @Test
     void testPerimeter() {
-        GridSize size = new GridSize(20, 30);
-        assertEquals(2 * (20 + 30), size.perimeter());
+        assertEquals(2 * (20 + 30), new GridSize(20, 30).perimeter());
     }
 
     @Test
     void testArea() {
-        GridSize size = new GridSize(20, 30);
-        assertEquals(20 * 30, size.area());
+        assertEquals(20 * 30, new GridSize(20, 30).area());
     }
 
     @Test
     void testIsSquare() {
-        assertTrue(GridSize.square(32).isSquare());
-        assertFalse(new GridSize(32, 64).isSquare());
+        assertAll(
+                () -> assertTrue(GridSize.square(32).isSquare()),
+                () -> assertFalse(new GridSize(32, 64).isSquare())
+        );
     }
 
     @Test
     void testIsLandscape() {
-        assertTrue(new GridSize(64, 32).isLandscape());
-        assertFalse(new GridSize(32, 64).isLandscape());
+        assertAll(
+                () -> assertTrue(new GridSize(64, 32).isLandscape()),
+                () -> assertFalse(new GridSize(32, 64).isLandscape()),
+                () -> assertFalse(GridSize.square(32).isLandscape())
+        );
     }
 
     @Test
     void testIsPortrait() {
-        assertTrue(new GridSize(32, 64).isPortrait());
-        assertFalse(new GridSize(64, 32).isPortrait());
+        assertAll(
+                () -> assertTrue(new GridSize(32, 64).isPortrait()),
+                () -> assertFalse(new GridSize(64, 32).isPortrait()),
+                () -> assertFalse(GridSize.square(32).isPortrait())
+        );
     }
 
     @SuppressWarnings("InsertLiteralUnderscores")
     @Test
     void testAspectRatio() {
-        assertEquals(1.0d, new GridSize(32, 32).aspectRatio(), 0.00001d);
-        assertEquals(1.0d, new GridSize(64, 64).aspectRatio(), 0.00001d);
-        assertEquals(2.0d, new GridSize(64, 32).aspectRatio(), 0.00001d);
-        assertEquals(0.5d, new GridSize(32, 64).aspectRatio(), 0.00001d);
+        assertAll(
+                () -> assertEquals(1.0d, new GridSize(32, 32).aspectRatio(), 0.00001d),
+                () -> assertEquals(2.0d, new GridSize(64, 32).aspectRatio(), 0.00001d),
+                () -> assertEquals(0.5d, new GridSize(32, 64).aspectRatio(), 0.00001d)
+        );
     }
 
     @Test
     void testToDisplayString() {
-        assertEquals("32 × 64", new GridSize(32, 64).toDisplayString());
-        assertEquals("1024 × 2048", new GridSize(1_024, 2_048).toDisplayString());
-        assertEquals("8 × 8", new GridSize(GridSize.MIN_SIZE, GridSize.MIN_SIZE).toDisplayString());
-        assertEquals("16384 × 16384", new GridSize(GridSize.MAX_SIZE, GridSize.MAX_SIZE).toDisplayString());
-        assertEquals("16 × 16", GridSize.square(16).toDisplayString());
-        assertEquals("16 × 8", new GridSize(16, 8).toDisplayString());
-        assertEquals("8 × 16", new GridSize(8, 16).toDisplayString());
+        assertAll(
+                () -> assertEquals("32 × 64", new GridSize(32, 64).toDisplayString()),
+                () -> assertEquals("1024 × 2048", new GridSize(1_024, 2_048).toDisplayString()),
+                () -> assertEquals("8 × 8", new GridSize(GridSize.MIN_SIZE, GridSize.MIN_SIZE).toDisplayString()),
+                () -> assertEquals("16384 × 16384",
+                        new GridSize(GridSize.MAX_SIZE, GridSize.MAX_SIZE).toDisplayString())
+        );
     }
 
 }

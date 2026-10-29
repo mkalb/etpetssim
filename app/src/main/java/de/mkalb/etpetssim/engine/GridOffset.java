@@ -13,7 +13,6 @@ import java.util.Locale;
  *
  * @param dx the change in the x-coordinate (horizontal direction)
  * @param dy the change in the y-coordinate (vertical direction)
- * @see CellShape
  * @see GridCoordinate#offset(GridOffset)
  */
 public record GridOffset(int dx, int dy) {

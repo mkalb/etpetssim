@@ -4,7 +4,6 @@ import org.junit.jupiter.api.Test;
 
 import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
@@ -16,6 +15,24 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @SuppressWarnings("MagicNumber")
 final class GridStructureTest {
 
+    private static GridStructure createStructure(CellShape cellShape, GridEdgeBehavior gridEdgeBehavior,
+                                                 int width, int height) {
+        return new GridStructure(new GridTopology(cellShape, gridEdgeBehavior), new GridSize(width, height));
+    }
+
+    private static void assertRowMajorCoordinates(GridStructure structure, List<GridCoordinate> coordinates) {
+        assertAll(
+                () -> assertEquals(20 * 30, coordinates.size()),
+                () -> assertEquals(new GridCoordinate(0, 0), coordinates.getFirst()),
+                () -> assertEquals(new GridCoordinate(1, 0), coordinates.get(1)),
+                () -> assertEquals(new GridCoordinate(19, 0), coordinates.get(19)),
+                () -> assertEquals(new GridCoordinate(0, 1), coordinates.get(20)),
+                () -> assertEquals(new GridCoordinate(19, 29), coordinates.getLast()),
+                () -> assertEquals(coordinates.size(), new HashSet<>(coordinates).size()),
+                () -> assertTrue(coordinates.stream().allMatch(structure::isCoordinateValid))
+        );
+    }
+
     @Test
     void testRecord() {
         GridTopology topology = new GridTopology(CellShape.SQUARE, GridEdgeBehavior.WRAP_X_BLOCK_Y);
@@ -25,185 +42,137 @@ final class GridStructureTest {
         assertAll(
                 () -> assertEquals(topology, structure.topology()),
                 () -> assertEquals(size, structure.size()),
-                () -> assertDoesNotThrow(() -> new GridStructure(
-                        new GridTopology(CellShape.TRIANGLE, GridEdgeBehavior.BLOCK_XY), new GridSize(9, 11))),
-                () -> assertDoesNotThrow(() -> new GridStructure(
-                        new GridTopology(CellShape.SQUARE, GridEdgeBehavior.BLOCK_XY), new GridSize(9, 11))),
-                () -> assertDoesNotThrow(() -> new GridStructure(
-                        new GridTopology(CellShape.HEXAGON, GridEdgeBehavior.BLOCK_XY), new GridSize(9, 11))),
-                () -> assertDoesNotThrow(() -> new GridStructure(
-                        new GridTopology(CellShape.SQUARE, GridEdgeBehavior.WRAP_XY), new GridSize(8, 8))),
-                () -> assertDoesNotThrow(() -> new GridStructure(
-                        new GridTopology(CellShape.SQUARE, GridEdgeBehavior.WRAP_XY), new GridSize(9, 11))),
-                () -> assertDoesNotThrow(() -> new GridStructure(
-                        new GridTopology(CellShape.TRIANGLE, GridEdgeBehavior.WRAP_XY), new GridSize(8, 8))),
-                () -> assertDoesNotThrow(() -> new GridStructure(
-                        new GridTopology(CellShape.TRIANGLE, GridEdgeBehavior.WRAP_XY), new GridSize(10, 12))),
-                () -> assertDoesNotThrow(() -> new GridStructure(
-                        new GridTopology(CellShape.HEXAGON, GridEdgeBehavior.WRAP_XY), new GridSize(8, 8))),
-                () -> assertDoesNotThrow(() -> new GridStructure(
-                        new GridTopology(CellShape.HEXAGON, GridEdgeBehavior.WRAP_XY), new GridSize(10, 9)))
+                () -> assertDoesNotThrow(() -> createStructure(CellShape.TRIANGLE, GridEdgeBehavior.BLOCK_XY, 9, 11)),
+                () -> assertDoesNotThrow(() -> createStructure(CellShape.SQUARE, GridEdgeBehavior.BLOCK_XY, 9, 11)),
+                () -> assertDoesNotThrow(() -> createStructure(CellShape.HEXAGON, GridEdgeBehavior.BLOCK_XY, 9, 11)),
+                () -> assertDoesNotThrow(() -> createStructure(CellShape.SQUARE, GridEdgeBehavior.WRAP_XY, 8, 8)),
+                () -> assertDoesNotThrow(() -> createStructure(CellShape.SQUARE, GridEdgeBehavior.WRAP_XY, 9, 11)),
+                () -> assertDoesNotThrow(() -> createStructure(CellShape.TRIANGLE, GridEdgeBehavior.WRAP_XY, 8, 8)),
+                () -> assertDoesNotThrow(() -> createStructure(CellShape.TRIANGLE, GridEdgeBehavior.WRAP_XY, 10, 12)),
+                () -> assertDoesNotThrow(() -> createStructure(CellShape.HEXAGON, GridEdgeBehavior.WRAP_XY, 8, 8)),
+                () -> assertDoesNotThrow(() -> createStructure(CellShape.HEXAGON, GridEdgeBehavior.WRAP_XY, 10, 9))
         );
     }
 
     @Test
     void testConstructorRejectsInvalidWidthMultiple() {
-        GridTopology hexTopology = new GridTopology(CellShape.HEXAGON, GridEdgeBehavior.WRAP_XY);
-        assertThrows(IllegalArgumentException.class, () ->
-                new GridStructure(hexTopology, new GridSize(9, 8)));
+        assertThrows(IllegalArgumentException.class,
+                () -> createStructure(CellShape.HEXAGON, GridEdgeBehavior.WRAP_XY, 9, 8));
     }
 
     @Test
     void testConstructorRejectsInvalidHeightMultiple() {
-        GridTopology triTopology = new GridTopology(CellShape.TRIANGLE, GridEdgeBehavior.WRAP_XY);
-        assertThrows(IllegalArgumentException.class, () ->
-                new GridStructure(triTopology, new GridSize(8, 9)));
+        assertThrows(IllegalArgumentException.class,
+                () -> createStructure(CellShape.TRIANGLE, GridEdgeBehavior.WRAP_XY, 8, 9));
     }
 
     @Test
     void testIsValid() {
-        assertTrue(GridStructure.isValid(new GridTopology(CellShape.TRIANGLE, GridEdgeBehavior.BLOCK_XY), new GridSize(9, 11)));
-        assertTrue(GridStructure.isValid(new GridTopology(CellShape.SQUARE, GridEdgeBehavior.BLOCK_XY), new GridSize(9, 11)));
-        assertTrue(GridStructure.isValid(new GridTopology(CellShape.HEXAGON, GridEdgeBehavior.BLOCK_XY), new GridSize(9, 11)));
-
         GridTopology squareTopology = new GridTopology(CellShape.SQUARE, GridEdgeBehavior.WRAP_XY);
-        assertTrue(GridStructure.isValid(squareTopology, new GridSize(8, 8)));
-        assertTrue(GridStructure.isValid(squareTopology, new GridSize(9, 11)));
+        GridTopology triangleTopology = new GridTopology(CellShape.TRIANGLE, GridEdgeBehavior.WRAP_XY);
+        GridTopology hexagonTopology = new GridTopology(CellShape.HEXAGON, GridEdgeBehavior.WRAP_XY);
 
-        GridTopology triTopology = new GridTopology(CellShape.TRIANGLE, GridEdgeBehavior.WRAP_XY);
-        assertTrue(GridStructure.isValid(triTopology, new GridSize(8, 8)));
-        assertTrue(GridStructure.isValid(triTopology, new GridSize(10, 12)));
-        assertFalse(GridStructure.isValid(triTopology, new GridSize(8, 9)));
-
-        GridTopology hexTopology = new GridTopology(CellShape.HEXAGON, GridEdgeBehavior.WRAP_XY);
-        assertTrue(GridStructure.isValid(hexTopology, new GridSize(8, 8)));
-        assertTrue(GridStructure.isValid(hexTopology, new GridSize(10, 9)));
-        assertFalse(GridStructure.isValid(hexTopology, new GridSize(9, 8)));
+        assertAll(
+                () -> assertTrue(GridStructure.isValid(
+                        new GridTopology(CellShape.TRIANGLE, GridEdgeBehavior.BLOCK_XY), new GridSize(9, 11))),
+                () -> assertTrue(GridStructure.isValid(
+                        new GridTopology(CellShape.HEXAGON, GridEdgeBehavior.BLOCK_XY), new GridSize(9, 11))),
+                () -> assertTrue(GridStructure.isValid(squareTopology, new GridSize(9, 11))),
+                () -> assertTrue(GridStructure.isValid(triangleTopology, new GridSize(10, 12))),
+                () -> assertFalse(GridStructure.isValid(triangleTopology, new GridSize(9, 8))),
+                () -> assertFalse(GridStructure.isValid(triangleTopology, new GridSize(8, 9))),
+                () -> assertTrue(GridStructure.isValid(hexagonTopology, new GridSize(10, 9))),
+                () -> assertFalse(GridStructure.isValid(hexagonTopology, new GridSize(9, 8)))
+        );
     }
 
     @Test
     void testCellShape() {
-        assertEquals(CellShape.TRIANGLE, new GridStructure(new GridTopology(CellShape.TRIANGLE, GridEdgeBehavior.WRAP_X_BLOCK_Y),
-                new GridSize(20, 30)).cellShape());
+        assertEquals(CellShape.TRIANGLE,
+                createStructure(CellShape.TRIANGLE, GridEdgeBehavior.WRAP_X_BLOCK_Y, 20, 30).cellShape());
     }
 
     @Test
     void testCellCount() {
-        assertEquals(20 * 30, new GridStructure(new GridTopology(CellShape.HEXAGON, GridEdgeBehavior.WRAP_XY), new GridSize(20, 30)).cellCount());
-        assertEquals(30 * 20, new GridStructure(new GridTopology(CellShape.HEXAGON, GridEdgeBehavior.WRAP_XY), new GridSize(30, 20)).cellCount());
-        assertEquals(12 * 16, new GridStructure(new GridTopology(CellShape.TRIANGLE, GridEdgeBehavior.ABSORB_XY), new GridSize(12, 16)).cellCount());
+        assertAll(
+                () -> assertEquals(20 * 30,
+                        createStructure(CellShape.HEXAGON, GridEdgeBehavior.WRAP_XY, 20, 30).cellCount()),
+                () -> assertEquals(12 * 16,
+                        createStructure(CellShape.TRIANGLE, GridEdgeBehavior.ABSORB_XY, 12, 16).cellCount())
+        );
     }
 
     @Test
     void testEdgeBehaviorX() {
-        assertEquals(EdgeBehavior.WRAP, new GridStructure(new GridTopology(CellShape.TRIANGLE, GridEdgeBehavior.WRAP_X_BLOCK_Y),
-                new GridSize(20, 30)).edgeBehaviorX());
+        assertEquals(EdgeBehavior.WRAP,
+                createStructure(CellShape.TRIANGLE, GridEdgeBehavior.WRAP_X_BLOCK_Y, 20, 30).edgeBehaviorX());
     }
 
     @Test
     void testEdgeBehaviorY() {
-        assertEquals(EdgeBehavior.BLOCK, new GridStructure(new GridTopology(CellShape.TRIANGLE, GridEdgeBehavior.WRAP_X_BLOCK_Y),
-                new GridSize(20, 30)).edgeBehaviorY());
+        assertEquals(EdgeBehavior.BLOCK,
+                createStructure(CellShape.TRIANGLE, GridEdgeBehavior.WRAP_X_BLOCK_Y, 20, 30).edgeBehaviorY());
     }
 
     @Test
     void testMinCoordinateInclusive() {
-        GridStructure structure = new GridStructure(new GridTopology(CellShape.TRIANGLE, GridEdgeBehavior.ABSORB_XY),
-                new GridSize(20, 30));
-
-        assertEquals(new GridCoordinate(0, 0), structure.minCoordinateInclusive());
+        assertEquals(new GridCoordinate(0, 0),
+                createStructure(CellShape.TRIANGLE, GridEdgeBehavior.ABSORB_XY, 20, 30).minCoordinateInclusive());
     }
 
     @Test
     void testMaxCoordinateExclusive() {
-        GridStructure structure = new GridStructure(new GridTopology(CellShape.TRIANGLE, GridEdgeBehavior.ABSORB_XY),
-                new GridSize(20, 30));
-
-        assertEquals(new GridCoordinate(20, 30), structure.maxCoordinateExclusive());
+        assertEquals(new GridCoordinate(20, 30),
+                createStructure(CellShape.TRIANGLE, GridEdgeBehavior.ABSORB_XY, 20, 30).maxCoordinateExclusive());
     }
 
     @Test
     void testMaxCoordinateInclusive() {
-        GridStructure structure = new GridStructure(new GridTopology(CellShape.TRIANGLE, GridEdgeBehavior.ABSORB_XY),
-                new GridSize(20, 30));
-
-        assertEquals(new GridCoordinate(19, 29), structure.maxCoordinateInclusive());
+        assertEquals(new GridCoordinate(19, 29),
+                createStructure(CellShape.TRIANGLE, GridEdgeBehavior.ABSORB_XY, 20, 30).maxCoordinateInclusive());
     }
 
     @Test
     void testIsCoordinateValid() {
-        GridStructure structure = new GridStructure(new GridTopology(CellShape.SQUARE, GridEdgeBehavior.BLOCK_XY),
-                new GridSize(20, 30));
+        GridStructure structure = createStructure(CellShape.SQUARE, GridEdgeBehavior.BLOCK_XY, 20, 30);
 
-        assertTrue(structure.isCoordinateValid(new GridCoordinate(0, 0)));
-        assertTrue(structure.isCoordinateValid(new GridCoordinate(0, 29)));
-        assertTrue(structure.isCoordinateValid(new GridCoordinate(19, 29)));
-        assertTrue(structure.isCoordinateValid(new GridCoordinate(19, 0)));
-        assertTrue(structure.isCoordinateValid(new GridCoordinate(10, 15)));
-
-        assertFalse(structure.isCoordinateValid(new GridCoordinate(-1, -1)));
-        assertFalse(structure.isCoordinateValid(new GridCoordinate(-1, 0)));
-        assertFalse(structure.isCoordinateValid(new GridCoordinate(0, -1)));
-
-        assertFalse(structure.isCoordinateValid(new GridCoordinate(20, 0)));
-        assertFalse(structure.isCoordinateValid(new GridCoordinate(0, 30)));
-        assertFalse(structure.isCoordinateValid(new GridCoordinate(20, 30)));
+        assertAll(
+                () -> assertTrue(structure.isCoordinateValid(new GridCoordinate(0, 0))),
+                () -> assertTrue(structure.isCoordinateValid(new GridCoordinate(0, 29))),
+                () -> assertTrue(structure.isCoordinateValid(new GridCoordinate(19, 29))),
+                () -> assertTrue(structure.isCoordinateValid(new GridCoordinate(19, 0))),
+                () -> assertTrue(structure.isCoordinateValid(new GridCoordinate(10, 15))),
+                () -> assertFalse(structure.isCoordinateValid(new GridCoordinate(-1, -1))),
+                () -> assertFalse(structure.isCoordinateValid(new GridCoordinate(-1, 0))),
+                () -> assertFalse(structure.isCoordinateValid(new GridCoordinate(0, -1))),
+                () -> assertFalse(structure.isCoordinateValid(new GridCoordinate(20, 0))),
+                () -> assertFalse(structure.isCoordinateValid(new GridCoordinate(0, 30))),
+                () -> assertFalse(structure.isCoordinateValid(new GridCoordinate(20, 30)))
+        );
     }
 
     @Test
     void testCoordinatesStream() {
-        GridStructure structure = new GridStructure(new GridTopology(CellShape.SQUARE, GridEdgeBehavior.BLOCK_XY),
-                new GridSize(20, 30));
+        GridStructure structure = createStructure(CellShape.SQUARE, GridEdgeBehavior.BLOCK_XY, 20, 30);
 
-        List<GridCoordinate> coordinates = structure.coordinatesStream().toList();
-        assertEquals(20 * 30, coordinates.size());
-        assertTrue(coordinates.contains(new GridCoordinate(10, 15)));
-        assertEquals(new GridCoordinate(0, 0), coordinates.getFirst());
-        assertEquals(new GridCoordinate(1, 0), coordinates.get(1));
-        assertEquals(new GridCoordinate(19, 0), coordinates.get(19));
-        assertEquals(new GridCoordinate(0, 1), coordinates.get(20));
-        assertEquals(new GridCoordinate(19, 29), coordinates.getLast());
-
-        Set<GridCoordinate> unique = new HashSet<>(coordinates);
-        assertEquals(coordinates.size(), unique.size());
-        for (GridCoordinate c : coordinates) {
-            assertTrue(structure.isCoordinateValid(c));
-        }
+        assertRowMajorCoordinates(structure, structure.coordinatesStream().toList());
     }
 
     @Test
     void testCoordinatesList() {
-        GridStructure structure = new GridStructure(
-                new GridTopology(CellShape.SQUARE, GridEdgeBehavior.BLOCK_XY),
-                new GridSize(20, 30));
+        GridStructure structure = createStructure(CellShape.SQUARE, GridEdgeBehavior.BLOCK_XY, 20, 30);
 
-        List<GridCoordinate> coordinates = structure.coordinatesList();
-        assertEquals(20 * 30, coordinates.size());
-        assertTrue(coordinates.contains(new GridCoordinate(10, 15)));
-        assertEquals(new GridCoordinate(0, 0), coordinates.getFirst());
-        assertEquals(new GridCoordinate(1, 0), coordinates.get(1));
-        assertEquals(new GridCoordinate(19, 0), coordinates.get(19));
-        assertEquals(new GridCoordinate(0, 1), coordinates.get(20));
-        assertEquals(new GridCoordinate(19, 29), coordinates.getLast());
-
-        Set<GridCoordinate> unique = new HashSet<>(coordinates);
-        assertEquals(coordinates.size(), unique.size());
-        for (GridCoordinate c : coordinates) {
-            assertTrue(structure.isCoordinateValid(c));
-        }
+        assertRowMajorCoordinates(structure, structure.coordinatesList());
     }
 
     @Test
     void testToDisplayString() {
-        assertEquals("[HEXAGON WRAP] 20 × 30", new GridStructure(
-                new GridTopology(CellShape.HEXAGON, GridEdgeBehavior.WRAP_XY),
-                new GridSize(20, 30)).toDisplayString());
-        assertEquals("[TRIANGLE BLOCK] 12 × 16", new GridStructure(
-                new GridTopology(CellShape.TRIANGLE, GridEdgeBehavior.BLOCK_XY),
-                new GridSize(12, 16)).toDisplayString());
-        assertEquals("[SQUARE BLOCK/WRAP] 32 × 32", new GridStructure(
-                new GridTopology(CellShape.SQUARE, GridEdgeBehavior.BLOCK_X_WRAP_Y),
-                new GridSize(32, 32)).toDisplayString());
+        assertAll(
+                () -> assertEquals("[HEXAGON WRAP] 20 × 30",
+                        createStructure(CellShape.HEXAGON, GridEdgeBehavior.WRAP_XY, 20, 30).toDisplayString()),
+                () -> assertEquals("[SQUARE BLOCK/WRAP] 32 × 32",
+                        createStructure(CellShape.SQUARE, GridEdgeBehavior.BLOCK_X_WRAP_Y, 32, 32).toDisplayString())
+        );
     }
 
 }

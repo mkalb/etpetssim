@@ -632,7 +632,7 @@ of categories 2 and 3.
 | Group | Package                 | Main types | Test files | Path-scoped rule |
 |------:|-------------------------|-----------:|-----------:|------------------|
 | 1     | `core`                  |          6 |          6 | `core.md`        |
-| 2     | `engine`                |          8 |          8 | -                |
+| 2     | `engine`                |          8 |          8 | `engine.md`      |
 | 3     | `engine.model`          |          8 |          5 | -                |
 | 3     | `engine.model.entity`   |          8 |          5 | -                |
 | 4     | `engine.neighborhood`   |          9 |          8 | -                |
@@ -647,7 +647,8 @@ Notes:
 - Test files are the `.java` files in the same test package, including `*TestSupport` classes.
 - The groups follow the package dependencies: `core` first, then `engine` from its base types to the executors, then
   `ui` and the root package (`AppLauncher`, `ExtraterrestrialPetsSimulation`).
-- `engine` has no path-scoped rule; check whether its recurring decisions need an `engine.md`.
+- `engine.md` applies only to the package `engine` itself (group 2); groups 3 to 6 check whether their sub-packages
+  need it too.
 
 ### Checks per package
 
@@ -694,7 +695,7 @@ Notes:
   (`GridStructure`, `GridCoordinate`), the link from `SimulationUserActionContext` to `simulations.core.model`, the
   Javadoc of `AppArgs.toString()`, and Javadoc that only restates accessors.
 - Proposal: Check and adapt the Javadoc of each package in its group.
-- Status: group 1 done (2026-10-29)
+- Status: groups 1 and 2 done (2026-10-29)
 
 #### Lookup name of the log levels
 
@@ -715,6 +716,26 @@ Notes:
   18 lines in main and test sources exceed 120 characters.
 - Proposal: Private helpers, a package-private formatter, and manual line wraps.
 - Status: done (2026-10-29)
+
+#### Unused API of the grid base types
+
+- Origin: analysis of group 2
+- Types: `GridCoordinate`, `GridOffset`, `GridSize`, `GridStructure`, `GridTopology`
+- Problem: Many public members have no caller in main sources, e.g., the arithmetic of `GridOffset`, the orientation
+  checks of `GridSize`, `GridCoordinate.clampToBounds(..)`, and `GridTopology.cellVertexCount()`.
+- Proposal: Remove them (cross-category decision), or keep them as the vocabulary of the base types.
+- Status: rejected (2026-10-29); the base types keep their complete API, ruled in the new `engine.md`.
+
+#### Enum values in display strings
+
+- Origin: analysis of group 2
+- Types: `GridTopology`, `GridStructure`, `CellNeighbor`, `CellNeighborWithEdgeBehavior`, `EdgeBehaviorResult`, `Pet`
+- Problem: `java.md` required lowercase enum values in `toDisplayString()`, except for enums with their own display
+  text, including entities. `GridTopology` showed its enum values in uppercase (`[SQUARE BLOCK/WRAP]`); all entities
+  show their type in uppercase (`[WALL]`, `[PET ...]`), and only four types used lowercase. The exception for entities
+  and the helper method that lowercase values need make the rule harder to apply.
+- Proposal: Show enum values with `name()` everywhere, unless the enum provides its own display text.
+- Status: done (2026-10-29); a first change to lowercase in `GridTopology` was reverted.
 
 ### Decisions
 
@@ -742,6 +763,30 @@ Group 1, `core` (2026-10-29):
 - `OperatingSystem.detect()` stays without a test, because it would need to change the global property `os.name`.
 - `app:test` and `app:javadoc` pass.
 
+Group 2, `engine` (2026-10-29):
+
+- Rule change: the new `engine.md` (with `.github/instructions/engine.instructions.md`) applies only to the package
+  `engine`: its base types keep their complete public API, also members without a current caller, and depend only on
+  the JDK, JSpecify, and `core`. The description of `core.instructions.md` no longer names the removed null
+  validation.
+- Rule change: `java.md` ("Naming Conventions", `toDisplayString()`) shows enum values with `name()` unless the enum
+  provides its own display text, instead of in lowercase. `CellNeighbor`, `CellNeighborWithEdgeBehavior`,
+  `EdgeBehaviorResult`, and `Pet` drop `toLowerCase(..)` (e.g., `(EDGE, WRAPPED)`, `A=EAT@12`); `GridTopology` keeps
+  its uppercase output.
+- `GridTopology.requiredWidthMultiple(..)` and `requiredHeightMultiple(..)` test `!= EdgeBehavior.WRAP`.
+- Javadoc: the type Javadoc of `GridCoordinate`, `GridSize`, `GridStructure`, `GridEdgeBehavior`, and `GridOffset`
+  drops the `@see` tags of own members and component types; `@see #ORIGIN` (five times), `@see GridSize#area()`,
+  `@see GridCoordinate#isWithinBounds(..)`, and `@see CellShape#TRIANGLE` (now a link in the text) are removed; the
+  counterparts `GridOffset` → `GridCoordinate#offset(..)`, `EdgeBehavior` → `GridEdgeBehavior`, and the overloads
+  keep theirs.
+- The exception messages of the `GridSize` constructor are wrapped at 120 characters.
+- Tests: all tests group several checks with `assertAll(..)`; `CellShapeTest` drops its assertion messages;
+  `GridCoordinateTest` drops `testOrigin` and `testIllegal`; `GridStructureTest` creates structures through
+  `createStructure(..)` and checks both coordinate methods through `assertRowMajorCoordinates(..)`; `GridSizeTest`
+  checks the exact range limits; `GridTopologyTest` adds `testRequiredMultiplesAreWithinMaximum`, which checks that
+  `MAX_REQUIRED_*` is a multiple of every required multiple.
+- `app:test` and `app:javadoc` pass.
+
 ### Procedure
 
 - One group at a time, in the order of the inventory; each group is presented and decided on its own in the chat
@@ -759,8 +804,8 @@ Group 1, `core` (2026-10-29):
 - (1, all) Javadoc writes the literals `true`, `false`, and `null` as `{@code ...}` (rule change: `java.md`,
   "Javadoc").
 - (1, all) Public methods and constructors without a caller in main sources are removed (API change with approval)
-  unless the maintainer keeps them for a planned use; core classes and `FXGridCanvasPainter` keep their complete API
-  (rule change: `core.md` and `ui.md`).
+  unless the maintainer keeps them for a planned use; core classes, the base types of the package `engine`, and
+  `FXGridCanvasPainter` keep their complete API (rule change: `core.md`, `engine.md`, and `ui.md`).
 - (1, 2, all) Member order (rule change: `java.md`, "Code Style"): static fields, instance fields, constructors,
   static methods, instance methods, then nested types; within the static and within the instance methods public,
   protected, package-private, then private, with overrides (e.g., lifecycle methods such as `start(..)`) as public
@@ -771,6 +816,8 @@ Group 1, `core` (2026-10-29):
 - (3, all) Javadoc follows the rules of category 3 (`java.md`, "Javadoc"): `@see` rarely, `@return` instead of
   `{@return ...}`, no imports only for Javadoc and no links across forbidden package dependencies, noun phrases
   allowed for types, fields, and constants, and no Javadoc that only restates the name and signature.
+- (4, all) `toDisplayString()` shows enum values with `name()` unless the enum provides its own display text (e.g.,
+  `arrow()`); no `toLowerCase(..)` and no helper methods for it (rule change: `java.md`, "Naming Conventions").
 - (1, all) Class-level `@SuppressWarnings` are narrowed to the members that need them, with the maintainer's
   approval per case (`java.md`, "Suppressions Policy").
 

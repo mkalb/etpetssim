@@ -90,8 +90,8 @@ public record CellNeighborWithEdgeBehavior(
                 direction.arrow(),
                 originalNeighborCoordinate.toDisplayString(),
                 mappedNeighborCoordinate.toDisplayString(),
-                connection.name().toLowerCase(Locale.ROOT),
-                edgeBehaviorAction.name().toLowerCase(Locale.ROOT)
+                connection.name(),
+                edgeBehaviorAction.name()
         );
     }
 

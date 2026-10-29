@@ -13,14 +13,6 @@ import java.util.Locale;
  *
  * @param width  the number of columns (horizontal cells), must be within valid range
  * @param height the number of rows (vertical cells), must be within valid range
- * @see #isInvalidSize(int)
- * @see #square(int)
- * @see #area()
- * @see #perimeter()
- * @see #aspectRatio()
- * @see #isSquare()
- * @see #isLandscape()
- * @see #isPortrait()
  */
 public record GridSize(int width, int height) {
 
@@ -41,10 +33,12 @@ public record GridSize(int width, int height) {
      */
     public GridSize {
         if (isInvalidSize(width)) {
-            throw new IllegalArgumentException(String.format(Locale.ROOT, "Width must be between %d and %d, but was: %d", MIN_SIZE, MAX_SIZE, width));
+            throw new IllegalArgumentException(String.format(Locale.ROOT,
+                    "Width must be between %d and %d, but was: %d", MIN_SIZE, MAX_SIZE, width));
         }
         if (isInvalidSize(height)) {
-            throw new IllegalArgumentException(String.format(Locale.ROOT, "Height must be between %d and %d, but was: %d", MIN_SIZE, MAX_SIZE, height));
+            throw new IllegalArgumentException(String.format(Locale.ROOT,
+                    "Height must be between %d and %d, but was: %d", MIN_SIZE, MAX_SIZE, height));
         }
     }
 

@@ -57,7 +57,7 @@ public record CellNeighbor(
                 startCoordinate.toDisplayString(),
                 direction.arrow(),
                 neighborCoordinate.toDisplayString(),
-                connection.name().toLowerCase(Locale.ROOT)
+                connection.name()
         );
     }
 

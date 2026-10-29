@@ -15,11 +15,6 @@ import java.util.Locale;
  *
  * @param x the x-coordinate (horizontal position, must be non-negative for valid coordinates)
  * @param y the y-coordinate (vertical position, must be non-negative for valid coordinates)
- * @see #isIllegal()
- * @see #isWithinBounds(int, int, int, int)
- * @see #clampToBounds(int, int, int, int)
- * @see #compareTo(GridCoordinate)
- * @see CellShape
  */
 public record GridCoordinate(int x, int y) implements Comparable<GridCoordinate> {
 
@@ -81,7 +76,6 @@ public record GridCoordinate(int x, int y) implements Comparable<GridCoordinate>
      *
      * @param exclusiveCorner the exclusive corner coordinate defining the bounds
      * @return {@code true} if this coordinate lies within the defined bounds, {@code false} otherwise
-     * @see #ORIGIN
      */
     public boolean isWithinOriginBounds(GridCoordinate exclusiveCorner) {
         return isWithinBounds(ORIGIN, exclusiveCorner);
@@ -93,7 +87,6 @@ public record GridCoordinate(int x, int y) implements Comparable<GridCoordinate>
      *
      * @param exclusiveCorner the exclusive corner coordinate defining the bounds
      * @return {@code true} if x is within origin bounds and y is out of origin bounds, {@code false} otherwise
-     * @see #ORIGIN
      */
     public boolean isXWithinAndYOutOfOriginBounds(GridCoordinate exclusiveCorner) {
         return isXWithinOriginBounds(exclusiveCorner) && !isYWithinOriginBounds(exclusiveCorner);
@@ -105,7 +98,6 @@ public record GridCoordinate(int x, int y) implements Comparable<GridCoordinate>
      *
      * @param exclusiveCorner the exclusive corner coordinate defining the bounds
      * @return {@code true} if x is out of origin bounds and y is within origin bounds, {@code false} otherwise
-     * @see #ORIGIN
      */
     public boolean isYWithinAndXOutOfOriginBounds(GridCoordinate exclusiveCorner) {
         return !isXWithinOriginBounds(exclusiveCorner) && isYWithinOriginBounds(exclusiveCorner);
@@ -117,7 +109,6 @@ public record GridCoordinate(int x, int y) implements Comparable<GridCoordinate>
      *
      * @param exclusiveCorner the exclusive corner coordinate defining the bounds
      * @return {@code true} if both x and y are out of origin bounds, {@code false} otherwise
-     * @see #ORIGIN
      */
     public boolean isXAndYOutOfOriginBounds(GridCoordinate exclusiveCorner) {
         return !isXWithinOriginBounds(exclusiveCorner) && !isYWithinOriginBounds(exclusiveCorner);
@@ -161,10 +152,9 @@ public record GridCoordinate(int x, int y) implements Comparable<GridCoordinate>
 
     /**
      * Returns whether a triangle cell at this coordinate would be oriented with its tip downwards.
-     * Only meaningful if the cell shape is {@code TRIANGLE}.
+     * Only meaningful if the cell shape is {@link CellShape#TRIANGLE}.
      *
      * @return {@code true} if the triangle would point down, {@code false} if up
-     * @see CellShape#TRIANGLE
      */
     public boolean isTriangleCellPointingDown() {
         return isOddColumn() == isOddRow();
@@ -217,7 +207,6 @@ public record GridCoordinate(int x, int y) implements Comparable<GridCoordinate>
      *
      * @param exclusiveCorner the exclusive corner coordinate defining the bounds
      * @return a new GridCoordinate clamped to the specified bounds
-     * @see #ORIGIN
      */
     public GridCoordinate clampToOriginBounds(GridCoordinate exclusiveCorner) {
         return clampToBounds(ORIGIN, exclusiveCorner);

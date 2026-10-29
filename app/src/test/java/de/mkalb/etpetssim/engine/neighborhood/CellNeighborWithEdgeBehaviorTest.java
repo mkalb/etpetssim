@@ -66,8 +66,8 @@ final class CellNeighborWithEdgeBehaviorTest {
                 EdgeBehaviorAction.WRAPPED);
 
         assertAll(
-                () -> assertEquals("(2, 3) ↑ (2, 2) → (2, 2) (edge, valid)", validNeighbor.toDisplayString()),
-                () -> assertEquals("(0, 0) ↑ (0, -1) → (0, 9) (edge, wrapped)", wrappedNeighbor.toDisplayString())
+                () -> assertEquals("(2, 3) ↑ (2, 2) → (2, 2) (EDGE, VALID)", validNeighbor.toDisplayString()),
+                () -> assertEquals("(0, 0) ↑ (0, -1) → (0, 9) (EDGE, WRAPPED)", wrappedNeighbor.toDisplayString())
         );
     }
 

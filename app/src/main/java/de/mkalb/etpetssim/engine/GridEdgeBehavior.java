@@ -6,8 +6,6 @@ import de.mkalb.etpetssim.core.AppLocalizationKeys;
  * Defines a combination of edge behaviors for the X and Y boundaries of a simulation grid.
  * Each constant specifies how entities interact with both the horizontal (X) and vertical (Y) edges,
  * enabling flexible configuration of grid boundary handling in various simulation scenarios.
- *
- * @see EdgeBehavior
  */
 public enum GridEdgeBehavior {
 

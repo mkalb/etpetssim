@@ -40,8 +40,8 @@ final class CellNeighborTest {
                 new GridCoordinate(2, 3), CompassDirection.SE, CellConnectionType.VERTEX, new GridCoordinate(3, 4));
 
         assertAll(
-                () -> assertEquals("(2, 3) ↑ (2, 2) (edge)", edgeNeighbor.toDisplayString()),
-                () -> assertEquals("(2, 3) ↘ (3, 4) (vertex)", vertexNeighbor.toDisplayString())
+                () -> assertEquals("(2, 3) ↑ (2, 2) (EDGE)", edgeNeighbor.toDisplayString()),
+                () -> assertEquals("(2, 3) ↘ (3, 4) (VERTEX)", vertexNeighbor.toDisplayString())
         );
     }
 
