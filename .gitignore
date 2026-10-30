@@ -10,6 +10,7 @@ bin/
 .kotlin
 
 # Ignore IntelliJ IDEA, except shared inspection profiles and dictionaries
+# (shared run configurations are in /.run; see docs/development/intellij-setup.md)
 /.idea/*
 !/.idea/dictionaries/
 !/.idea/inspectionProfiles/
