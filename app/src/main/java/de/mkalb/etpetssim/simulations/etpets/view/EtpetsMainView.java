@@ -6,6 +6,7 @@ import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptor;
 import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorRegistry;
 import de.mkalb.etpetssim.simulations.core.shared.SimulationUserActionScope;
 import de.mkalb.etpetssim.simulations.core.view.AbstractDefaultMainView;
+import de.mkalb.etpetssim.simulations.core.view.CanvasPainters;
 import de.mkalb.etpetssim.simulations.core.view.CellDrawer;
 import de.mkalb.etpetssim.simulations.core.view.DefaultControlView;
 import de.mkalb.etpetssim.simulations.core.viewmodel.DefaultMainViewModel;
@@ -122,15 +123,11 @@ public final class EtpetsMainView extends AbstractDefaultMainView<
     }
 
     @Override
-    protected void initializeSimulation(EtpetsConfig config, CellDimension cellDimension, EtpetsGridModel model) {
-        if (basePainter == null) {
-            AppLogger.warn("Painter is not initialized, cannot draw canvas.");
-            return;
-        }
+    protected void initializeSimulation(CanvasPainters painters, EtpetsConfig config, CellDimension cellDimension, EtpetsGridModel model) {
         Color backgroundColor = entityDescriptorRegistry
                 .requireByDescriptorId(EtpetsEntity.DESCRIPTOR_ID_GROUND)
                 .colorOrFallback();
-        basePainter.fillCanvasBackground(backgroundColor);
+        painters.base().fillCanvasBackground(backgroundColor);
 
         entityColors.put(EtpetsEntity.DESCRIPTOR_ID_TRAIL,
                 computeBrightnessVariantsMap(
@@ -326,17 +323,13 @@ public final class EtpetsMainView extends AbstractDefaultMainView<
     }
 
     @Override
-    protected void drawSimulation(EtpetsGridModel currentGridModel, int stepCount, int lastDrawnStepCount) {
-        if ((basePainter == null) || (dynamicPainter == null) || (overlayPainter == null)) {
-            AppLogger.warn("Painter is not initialized, cannot draw canvas.");
-            return;
-        }
+    protected void drawSimulation(CanvasPainters painters, EtpetsGridModel currentGridModel, int stepCount, int lastDrawnStepCount) {
         if ((cellTerrainDrawer == null) || (cellResourceDrawer == null) || (cellAgentDrawer == null)) {
             AppLogger.warn("CellDrawer is not initialized, cannot draw canvas.");
             return;
         }
 
-        dynamicPainter.clearCanvasBackground();
+        painters.dynamic().clearCanvasBackground();
 
         var terrainModel = currentGridModel.terrainModel();
         var resourceModel = currentGridModel.resourceModel();
@@ -345,31 +338,31 @@ public final class EtpetsMainView extends AbstractDefaultMainView<
         var rockDescriptor = entityDescriptorRegistry.requireByDescriptorId(EtpetsEntity.DESCRIPTOR_ID_ROCK);
         terrainModel.filteredCoordinates(e -> EtpetsEntity.DESCRIPTOR_ID_ROCK.equals(e.descriptorId()))
                 .forEach(coordinate ->
-                        dynamicPainter.drawCell(coordinate, rockDescriptor.color(), rockDescriptor.borderColor(), NO_STROKE_LINE_WIDTH));
+                        painters.dynamic().drawCell(coordinate, rockDescriptor.color(), rockDescriptor.borderColor(), NO_STROKE_LINE_WIDTH));
 
         var waterDescriptor = entityDescriptorRegistry.requireByDescriptorId(EtpetsEntity.DESCRIPTOR_ID_WATER);
         terrainModel.filteredCoordinates(e -> EtpetsEntity.DESCRIPTOR_ID_WATER.equals(e.descriptorId()))
                 .forEach(coordinate ->
-                        dynamicPainter.drawCell(coordinate, waterDescriptor.color(), waterDescriptor.borderColor(), NO_STROKE_LINE_WIDTH));
+                        painters.dynamic().drawCell(coordinate, waterDescriptor.color(), waterDescriptor.borderColor(), NO_STROKE_LINE_WIDTH));
 
         terrainModel.filteredCells(e -> e instanceof Trail)
                 .forEach(cell -> cellTerrainDrawer.draw(
                         entityDescriptorRegistry.requireByDescriptorId(cell.descriptorId()),
-                        dynamicPainter,
+                        painters.dynamic(),
                         cell,
                         stepCount));
 
         resourceModel.nonDefaultCells()
                 .forEach(cell -> cellResourceDrawer.draw(
                         entityDescriptorRegistry.requireByDescriptorId(cell.descriptorId()),
-                        dynamicPainter,
+                        painters.dynamic(),
                         cell,
                         stepCount));
 
         agentModel.nonDefaultCells()
                 .forEach(cell -> cellAgentDrawer.draw(
                         entityDescriptorRegistry.requireByDescriptorId(cell.descriptorId()),
-                        dynamicPainter,
+                        painters.dynamic(),
                         cell,
                         stepCount));
     }

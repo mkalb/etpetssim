@@ -9,6 +9,7 @@ import de.mkalb.etpetssim.engine.neighborhood.CompassDirection;
 import de.mkalb.etpetssim.simulations.core.shared.CellDisplayMode;
 import de.mkalb.etpetssim.simulations.core.shared.SimulationUserActionScope;
 import de.mkalb.etpetssim.simulations.core.view.AbstractDefaultMainView;
+import de.mkalb.etpetssim.simulations.core.view.CanvasPainters;
 import de.mkalb.etpetssim.simulations.core.view.CellDrawer;
 import de.mkalb.etpetssim.simulations.core.view.DefaultControlView;
 import de.mkalb.etpetssim.simulations.core.viewmodel.DefaultMainViewModel;
@@ -92,17 +93,13 @@ public final class LangtonMainView
 
     @SuppressWarnings("MagicNumber")
     @Override
-    protected void initializeSimulation(LangtonConfig config, CellDimension cellDimension, LangtonGridModel model) {
-        if (basePainter == null) {
-            AppLogger.warn("Painter is not initialized, cannot draw canvas.");
-            return;
-        }
+    protected void initializeSimulation(CanvasPainters painters, LangtonConfig config, CellDimension cellDimension, LangtonGridModel model) {
         currentConfig = config;
         Color backgroundColor = entityDescriptorRegistry
                 .requireByDescriptorId(TerrainConstant.UNVISITED.descriptorId())
                 .colorOrFallback();
         editToolBarViewModel.updateAvailableDirections(config);
-        basePainter.fillCanvasBackground(backgroundColor);
+        painters.base().fillCanvasBackground(backgroundColor);
 
         double strokeLineWidth = computeStrokeLineWidth(cellDimension);
 
@@ -152,17 +149,13 @@ public final class LangtonMainView
     }
 
     @Override
-    protected void drawSimulation(LangtonGridModel currentGridModel, int stepCount, int lastDrawnStepCount) {
-        if ((basePainter == null) || (dynamicPainter == null) || (overlayPainter == null)) {
-            AppLogger.warn("Painter is not initialized, cannot draw canvas.");
-            return;
-        }
+    protected void drawSimulation(CanvasPainters painters, LangtonGridModel currentGridModel, int stepCount, int lastDrawnStepCount) {
         if ((cellTerrainDrawer == null) || (cellAntDrawer == null)) {
             AppLogger.warn("CellDrawer is not initialized, cannot draw canvas.");
             return;
         }
 
-        dynamicPainter.clearCanvasBackground();
+        painters.dynamic().clearCanvasBackground();
 
         var terrainModel = currentGridModel.terrainModel();
         var antModel = currentGridModel.antModel();
@@ -172,12 +165,12 @@ public final class LangtonMainView
             terrainModel.nonDefaultCells()
                     .forEach(terrainCell -> cellTerrainDrawer.draw(
                             entityDescriptorRegistry.requireByDescriptorId(terrainCell.descriptorId()),
-                            basePainter, terrainCell, stepCount));
+                            painters.base(), terrainCell, stepCount));
             // draw ant
             antModel.nonDefaultCells()
                     .forEach(antCell -> cellAntDrawer.draw(
                             entityDescriptorRegistry.requireByDescriptorId(antCell.descriptorId()),
-                            dynamicPainter, antCell, stepCount));
+                            painters.dynamic(), antCell, stepCount));
         } else {
             antModel.nonDefaultCells()
                     .forEach(antCell -> {
@@ -185,11 +178,11 @@ public final class LangtonMainView
                         // draw terrain
                         cellTerrainDrawer.draw(
                                 entityDescriptorRegistry.requireByDescriptorId(terrainCell.descriptorId()),
-                                basePainter, terrainCell, stepCount);
+                                painters.base(), terrainCell, stepCount);
                         // draw ant
                         cellAntDrawer.draw(
                                 entityDescriptorRegistry.requireByDescriptorId(antCell.descriptorId()),
-                                dynamicPainter, antCell, stepCount);
+                                painters.dynamic(), antCell, stepCount);
                     });
         }
     }

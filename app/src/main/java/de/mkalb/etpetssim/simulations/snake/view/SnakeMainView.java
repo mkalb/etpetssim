@@ -1,13 +1,13 @@
 package de.mkalb.etpetssim.simulations.snake.view;
 
 import de.mkalb.etpetssim.core.AppLocalization;
-import de.mkalb.etpetssim.core.AppLogger;
 import de.mkalb.etpetssim.engine.GridCoordinate;
 import de.mkalb.etpetssim.engine.model.GridCell;
 import de.mkalb.etpetssim.engine.model.WritableGridModel;
 import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorRegistry;
 import de.mkalb.etpetssim.simulations.core.shared.SimulationUserActionScope;
 import de.mkalb.etpetssim.simulations.core.view.AbstractDefaultMainView;
+import de.mkalb.etpetssim.simulations.core.view.CanvasPainters;
 import de.mkalb.etpetssim.simulations.core.view.DefaultControlView;
 import de.mkalb.etpetssim.simulations.core.viewmodel.DefaultMainViewModel;
 import de.mkalb.etpetssim.simulations.core.viewmodel.SimulationUserActionDescriptor;
@@ -120,15 +120,11 @@ public final class SnakeMainView
     }
 
     @Override
-    protected void initializeSimulation(SnakeConfig config, CellDimension cellDimension, WritableGridModel<SnakeEntity> model) {
-        if (basePainter == null) {
-            AppLogger.warn("Painter is not initialized, cannot draw canvas.");
-            return;
-        }
+    protected void initializeSimulation(CanvasPainters painters, SnakeConfig config, CellDimension cellDimension, WritableGridModel<SnakeEntity> model) {
         Color backgroundColor = entityDescriptorRegistry
                 .requireByDescriptorId(SnakeEntity.DESCRIPTOR_ID_GROUND)
                 .colorOrFallback();
-        basePainter.fillCanvasBackground(backgroundColor);
+        painters.base().fillCanvasBackground(backgroundColor);
     }
 
     @Override
@@ -152,13 +148,8 @@ public final class SnakeMainView
     }
 
     @Override
-    protected void drawSimulation(WritableGridModel<SnakeEntity> currentGridModel, int stepCount, int lastDrawnStepCount) {
-        if ((basePainter == null) || (dynamicPainter == null) || (overlayPainter == null)) {
-            AppLogger.warn("Painter is not initialized, cannot draw canvas.");
-            return;
-        }
-
-        dynamicPainter.clearCanvasBackground();
+    protected void drawSimulation(CanvasPainters painters, WritableGridModel<SnakeEntity> currentGridModel, int stepCount, int lastDrawnStepCount) {
+        painters.dynamic().clearCanvasBackground();
 
         var wallDescriptor = entityDescriptorRegistry.requireByDescriptorId(SnakeEntity.DESCRIPTOR_ID_WALL);
         var growthFoodDescriptor = entityDescriptorRegistry.requireByDescriptorId(SnakeEntity.DESCRIPTOR_ID_GROWTH_FOOD);
@@ -184,10 +175,10 @@ public final class SnakeMainView
 
         currentGridModel.filteredCoordinates(SnakeEntity::isWall)
                 .forEach(coordinate ->
-                        dynamicPainter.drawCell(coordinate, wallDescriptor.color(), wallDescriptor.borderColor(), WALL_STROKE_LINE_WIDTH));
+                        painters.dynamic().drawCell(coordinate, wallDescriptor.color(), wallDescriptor.borderColor(), WALL_STROKE_LINE_WIDTH));
         currentGridModel.filteredCoordinates(SnakeEntity::isFood)
                 .forEach(coordinate ->
-                        dynamicPainter.drawCellInnerCircle(coordinate, growthFoodDescriptor.color(), growthFoodDescriptor.borderColor(), FOOD_STROKE_LINE_WIDTH, StrokeType.INSIDE));
+                        painters.dynamic().drawCellInnerCircle(coordinate, growthFoodDescriptor.color(), growthFoodDescriptor.borderColor(), FOOD_STROKE_LINE_WIDTH, StrokeType.INSIDE));
         currentGridModel.filteredCells(e -> e instanceof SnakeHead)
                 .forEach(cell -> {
                     if (cell.entity() instanceof SnakeHead head) {
@@ -215,9 +206,9 @@ public final class SnakeMainView
                             snakeSegmentColorBorder = segmentAliveBorderColor;
                         }
                         for (GridCoordinate coordinate : head.currentSegments()) {
-                            dynamicPainter.drawCell(coordinate, snakeSegmentColor, snakeSegmentColorBorder, SNAKE_SEGMENT_STROKE_LINE_WIDTH);
+                            painters.dynamic().drawCell(coordinate, snakeSegmentColor, snakeSegmentColorBorder, SNAKE_SEGMENT_STROKE_LINE_WIDTH);
                         }
-                        dynamicPainter.drawCellInnerCircle(cell.coordinate(), snakeHeadColor, snakeHeadColorBorder, SNAKE_HEAD_STROKE_LINE_WIDTH,
+                        painters.dynamic().drawCellInnerCircle(cell.coordinate(), snakeHeadColor, snakeHeadColorBorder, SNAKE_HEAD_STROKE_LINE_WIDTH,
                                 StrokeType.OUTSIDE);
                     }
                 });

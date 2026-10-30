@@ -12,6 +12,7 @@ import de.mkalb.etpetssim.engine.neighborhood.RadiusRingCell;
 import de.mkalb.etpetssim.simulations.core.shared.CellDisplayMode;
 import de.mkalb.etpetssim.simulations.core.shared.NoUserActionContext;
 import de.mkalb.etpetssim.simulations.core.view.AbstractMainView;
+import de.mkalb.etpetssim.simulations.core.view.CanvasPainters;
 import de.mkalb.etpetssim.simulations.core.viewmodel.SimulationUserActionDescriptor;
 import de.mkalb.etpetssim.simulations.lab.model.LabConfig;
 import de.mkalb.etpetssim.simulations.lab.model.entity.LabEntity;
@@ -213,10 +214,10 @@ public final class LabMainView
     private void registerOverlayCanvasEvents() {
         // Exited
         overlayCanvas.setOnMouseExited(_ -> {
-            if (overlayPainter == null) {
-                return;
+            CanvasPainters currentPainters = painters();
+            if (currentPainters != null) {
+                currentPainters.overlay().clearCanvasBackground();
             }
-            overlayPainter.clearCanvasBackground();
         });
 
         // Moved
@@ -227,11 +228,12 @@ public final class LabMainView
     }
 
     private void drawMouseHover(Point2D mousePoint) {
-        FXGridCanvasPainter localBasePainter = basePainter;
-        FXGridCanvasPainter localOverlayPainter = overlayPainter;
-        if ((localBasePainter == null) || (localOverlayPainter == null)) {
+        CanvasPainters currentPainters = painters();
+        if (currentPainters == null) {
             return;
         }
+        FXGridCanvasPainter localBasePainter = currentPainters.base();
+        FXGridCanvasPainter localOverlayPainter = currentPainters.overlay();
 
         localOverlayPainter.clearCanvasBackground();
         drawEstimatedHoverCoordinate(mousePoint, localBasePainter, localOverlayPainter);
@@ -299,29 +301,24 @@ public final class LabMainView
         viewModel.resetClickedCoordinateProperties();
         viewModel.resetSelectedGridCell();
 
-        if ((basePainter != null) && (dynamicPainter != null) && (overlayPainter != null)) {
-            basePainter.clearCanvasBackground();
-            dynamicPainter.clearCanvasBackground();
-            overlayPainter.clearCanvasBackground();
-            basePainter = null;
-            dynamicPainter = null;
-            overlayPainter = null;
-        }
+        clearPainters();
     }
 
-    private void initializeCanvasAndPainters() {
+    private CanvasPainters initializeCanvasAndPainters() {
         resetSelection();
 
         double cellEdgeLength = viewModel.getCellEdgeLength();
         GridStructure structure = viewModel.getStructure();
 
-        recreatePaintersAndResizeCanvases(structure, cellEdgeLength);
+        CanvasPainters newPainters = recreatePaintersAndResizeCanvases(structure, cellEdgeLength);
 
         updateCanvasBorderPane(structure);
 
         rebuildEditToolBar();
 
         registerOverlayCanvasEvents();
+
+        return newPainters;
     }
 
     private void drawBaseCanvas() {
@@ -333,31 +330,26 @@ public final class LabMainView
 
         LabConfig config = viewModel.getCurrentConfig();
 
-        initializeCanvasAndPainters();
+        FXGridCanvasPainter basePainter = initializeCanvasAndPainters().base();
 
         boolean colorModeGrayscale = (config.colorMode() == LabColorMode.GRAYSCALE);
         boolean renderingModeCircle = (config.cellDisplayMode() == CellDisplayMode.CIRCLE) || (config.cellDisplayMode() == CellDisplayMode.CIRCLE_BORDERED);
         Color textColor = colorModeGrayscale ? TEXT_COLOR_GRAYSCALE : TEXT_COLOR;
         Color strokeColor = config.cellDisplayMode().hasBorder() ? STROKE_COLOR : null;
 
-        drawBaseCanvasBackground(colorModeGrayscale);
+        drawBaseCanvasBackground(basePainter, colorModeGrayscale);
 
         viewModel.getStructure()
                 .coordinatesStream()
                 .forEachOrdered(coordinate ->
-                        drawBaseCanvasCoordinate(coordinate, colorModeGrayscale, renderingModeCircle,
+                        drawBaseCanvasCoordinate(basePainter, coordinate, colorModeGrayscale, renderingModeCircle,
                                 strokeColor, SHAPE_LINE_WIDTH,
                                 textColor));
 
         observationView.initializeForDraw();
     }
 
-    private void drawBaseCanvasBackground(boolean colorModeGrayscale) {
-        if ((basePainter == null) || (dynamicPainter == null) || (overlayPainter == null)) {
-            AppLogger.warn("Painter is not initialized, cannot draw canvas.");
-            return;
-        }
-
+    private void drawBaseCanvasBackground(FXGridCanvasPainter basePainter, boolean colorModeGrayscale) {
         basePainter.fillCanvasBackground(CANVAS_COLOR);
         if (colorModeGrayscale) {
             basePainter.fillGridBackground(Color.WHITE);
@@ -367,17 +359,13 @@ public final class LabMainView
     }
 
     @SuppressWarnings("SameParameterValue")
-    private void drawBaseCanvasCoordinate(GridCoordinate coordinate,
+    private void drawBaseCanvasCoordinate(FXGridCanvasPainter basePainter,
+                                          GridCoordinate coordinate,
                                           boolean colorModeGrayscale,
                                           boolean renderingModeCircle,
                                           @Nullable Color strokeColor,
                                           double strokeLineWidth,
                                           Color textColor) {
-        if ((basePainter == null) || (dynamicPainter == null) || (overlayPainter == null)) {
-            AppLogger.warn("Painter is not initialized, cannot draw canvas.");
-            return;
-        }
-
         Color color = colorModeGrayscale ? computeCheckerGrayscaleColor(coordinate) : computeCheckerColor(coordinate);
         if (renderingModeCircle) {
             basePainter.drawCellInnerCircle(coordinate, color, strokeColor, strokeLineWidth, StrokeType.CENTERED);
@@ -390,10 +378,12 @@ public final class LabMainView
     }
 
     private void drawModel() {
-        if ((basePainter == null) || (dynamicPainter == null) || (overlayPainter == null)) {
+        CanvasPainters currentPainters = painters();
+        if (currentPainters == null) {
             AppLogger.warn("Painter is not initialized, cannot draw canvas.");
             return;
         }
+        FXGridCanvasPainter basePainter = currentPainters.base();
 
         Color fillColor = FXPaintFactory.adjustColorAlpha(Color.RED, MODEL_FILL_ALPHA);
         viewModel.getCurrentGridModel()
@@ -402,10 +392,12 @@ public final class LabMainView
     }
 
     private void drawTest() {
-        if ((basePainter == null) || (dynamicPainter == null) || (overlayPainter == null)) {
+        CanvasPainters currentPainters = painters();
+        if (currentPainters == null) {
             AppLogger.warn("Painter is not initialized, cannot draw canvas.");
             return;
         }
+        FXGridCanvasPainter basePainter = currentPainters.base();
 
         Color t1 = FXPaintFactory.adjustColorAlpha(Color.RED, TEST_FILL_ALPHA);
         Color t2 = FXPaintFactory.adjustColorAlpha(Color.YELLOW, TEST_FILL_ALPHA);

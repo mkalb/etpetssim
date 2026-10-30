@@ -74,7 +74,7 @@ public final class DefaultMainViewModel<
     private final ChangeListener<Boolean> actionButtonRequestedListener;
     private final ChangeListener<Boolean> cancelButtonRequestedListener;
     private final ChangeListener<SimulationState> simulationStateListener;
-    private final @Nullable ChangeListener<@Nullable GridCoordinate> lastClickedCoordinateListener;
+    private final ChangeListener<@Nullable GridCoordinate> lastClickedCoordinateListener;
     private final ObjectProperty<@Nullable GC> selectedGridCell = new SimpleObjectProperty<>();
     private final ObjectProperty<@Nullable GridCoordinate> lastSelectedCoordinate = new SimpleObjectProperty<>();
     private final ObjectProperty<@Nullable ENT> lastSelectedEntity = new SimpleObjectProperty<>();
@@ -302,9 +302,7 @@ public final class DefaultMainViewModel<
 
         controlViewModel.actionButtonRequestedProperty().removeListener(actionButtonRequestedListener);
         controlViewModel.cancelButtonRequestedProperty().removeListener(cancelButtonRequestedListener);
-        if (lastClickedCoordinateListener != null) {
-            lastClickedCoordinateProperty().removeListener(lastClickedCoordinateListener);
-        }
+        lastClickedCoordinateProperty().removeListener(lastClickedCoordinateListener);
         simulationStateProperty().removeListener(simulationStateListener);
         unbindObservationBindings();
         observationStateViewModel.selectedGridCellProperty().unbind();

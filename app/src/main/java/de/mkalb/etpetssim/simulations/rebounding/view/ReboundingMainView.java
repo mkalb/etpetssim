@@ -9,6 +9,7 @@ import de.mkalb.etpetssim.engine.neighborhood.CompassDirection;
 import de.mkalb.etpetssim.simulations.core.shared.CellDisplayMode;
 import de.mkalb.etpetssim.simulations.core.shared.SimulationUserActionScope;
 import de.mkalb.etpetssim.simulations.core.view.AbstractDefaultMainView;
+import de.mkalb.etpetssim.simulations.core.view.CanvasPainters;
 import de.mkalb.etpetssim.simulations.core.view.CellDrawer;
 import de.mkalb.etpetssim.simulations.core.view.DefaultControlView;
 import de.mkalb.etpetssim.simulations.core.viewmodel.DefaultMainViewModel;
@@ -91,16 +92,12 @@ public final class ReboundingMainView
     }
 
     @Override
-    protected void initializeSimulation(ReboundingConfig config, CellDimension cellDimension, WritableGridModel<ReboundingEntity> model) {
-        if (basePainter == null) {
-            AppLogger.warn("Painter is not initialized, cannot draw canvas.");
-            return;
-        }
+    protected void initializeSimulation(CanvasPainters painters, ReboundingConfig config, CellDimension cellDimension, WritableGridModel<ReboundingEntity> model) {
         Color backgroundColor = entityDescriptorRegistry
                 .requireByDescriptorId(ReboundingEntity.DESCRIPTOR_ID_GROUND)
                 .colorOrFallback();
         editToolBarViewModel.updateAvailableDirections(config);
-        basePainter.fillCanvasBackground(backgroundColor);
+        painters.base().fillCanvasBackground(backgroundColor);
 
         double strokeLineWidth = computeStrokeLineWidth(cellDimension);
 
@@ -137,22 +134,18 @@ public final class ReboundingMainView
     }
 
     @Override
-    protected void drawSimulation(WritableGridModel<ReboundingEntity> currentGridModel, int stepCount, int lastDrawnStepCount) {
-        if ((basePainter == null) || (dynamicPainter == null) || (overlayPainter == null)) {
-            AppLogger.warn("Painter is not initialized, cannot draw canvas.");
-            return;
-        }
+    protected void drawSimulation(CanvasPainters painters, WritableGridModel<ReboundingEntity> currentGridModel, int stepCount, int lastDrawnStepCount) {
         if (cellDrawer == null) {
             AppLogger.warn("CellDrawer is not initialized, cannot draw canvas.");
             return;
         }
 
-        dynamicPainter.clearCanvasBackground();
+        painters.dynamic().clearCanvasBackground();
 
         currentGridModel.nonDefaultCells()
                 .forEach(cell -> cellDrawer.draw(
                         entityDescriptorRegistry.requireByDescriptorId(cell.descriptorId()),
-                        dynamicPainter, cell, stepCount));
+                        painters.dynamic(), cell, stepCount));
     }
 
     @Override

@@ -8,6 +8,7 @@ import de.mkalb.etpetssim.simulations.core.shared.CellDisplayMode;
 import de.mkalb.etpetssim.simulations.core.shared.NoUserActionContext;
 import de.mkalb.etpetssim.simulations.core.shared.SimulationUserActionScope;
 import de.mkalb.etpetssim.simulations.core.view.AbstractDefaultMainView;
+import de.mkalb.etpetssim.simulations.core.view.CanvasPainters;
 import de.mkalb.etpetssim.simulations.core.view.CellDrawer;
 import de.mkalb.etpetssim.simulations.core.view.DefaultControlView;
 import de.mkalb.etpetssim.simulations.core.viewmodel.DefaultMainViewModel;
@@ -59,15 +60,11 @@ public final class ForestMainView
     }
 
     @Override
-    protected void initializeSimulation(ForestConfig config, CellDimension cellDimension, WritableGridModel<ForestEntity> model) {
-        if (basePainter == null) {
-            AppLogger.warn("Painter is not initialized, cannot draw canvas.");
-            return;
-        }
+    protected void initializeSimulation(CanvasPainters painters, ForestConfig config, CellDimension cellDimension, WritableGridModel<ForestEntity> model) {
         Color backgroundColor = entityDescriptorRegistry
                 .requireByDescriptorId(ForestEntity.EMPTY.descriptorId())
                 .colorOrFallback();
-        basePainter.fillCanvasBackground(backgroundColor);
+        painters.base().fillCanvasBackground(backgroundColor);
 
         double strokeLineWidth = computeStrokeLineWidth(cellDimension);
 
@@ -133,22 +130,18 @@ public final class ForestMainView
     }
 
     @Override
-    protected void drawSimulation(WritableGridModel<ForestEntity> currentGridModel, int stepCount, int lastDrawnStepCount) {
-        if ((basePainter == null) || (dynamicPainter == null) || (overlayPainter == null)) {
-            AppLogger.warn("Painter is not initialized, cannot draw canvas.");
-            return;
-        }
+    protected void drawSimulation(CanvasPainters painters, WritableGridModel<ForestEntity> currentGridModel, int stepCount, int lastDrawnStepCount) {
         if (cellDrawer == null) {
             AppLogger.warn("CellDrawer is not initialized, cannot draw canvas.");
             return;
         }
 
-        dynamicPainter.clearCanvasBackground();
+        painters.dynamic().clearCanvasBackground();
 
         // small helper lambda to avoid code duplication when drawing different entity types
         Consumer<GridCell<ForestEntity>> drawCell = cell -> cellDrawer.draw(
                 entityDescriptorRegistry.requireByDescriptorId(cell.descriptorId()),
-                dynamicPainter, cell, stepCount);
+                painters.dynamic(), cell, stepCount);
 
         // draw tree cells first
         currentGridModel.filteredCells(ForestEntity::isTree)

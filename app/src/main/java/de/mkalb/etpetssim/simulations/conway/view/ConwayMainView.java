@@ -14,6 +14,7 @@ import de.mkalb.etpetssim.simulations.conway.shared.ConwayUserActionContext;
 import de.mkalb.etpetssim.simulations.conway.viewmodel.ConwayEditToolBarViewModel;
 import de.mkalb.etpetssim.simulations.core.shared.SimulationUserActionScope;
 import de.mkalb.etpetssim.simulations.core.view.AbstractDefaultMainView;
+import de.mkalb.etpetssim.simulations.core.view.CanvasPainters;
 import de.mkalb.etpetssim.simulations.core.view.CoordinateDrawer;
 import de.mkalb.etpetssim.simulations.core.view.DefaultControlView;
 import de.mkalb.etpetssim.simulations.core.viewmodel.DefaultMainViewModel;
@@ -86,16 +87,12 @@ public final class ConwayMainView
     }
 
     @Override
-    protected void initializeSimulation(ConwayConfig config, CellDimension cellDimension, WritableGridModel<ConwayEntity> model) {
-        if (basePainter == null) {
-            AppLogger.warn("Painter is not initialized, cannot draw canvas.");
-            return;
-        }
+    protected void initializeSimulation(CanvasPainters painters, ConwayConfig config, CellDimension cellDimension, WritableGridModel<ConwayEntity> model) {
         editToolBarViewModel.updateAvailablePatternChoices(config);
         Color backgroundColor = entityDescriptorRegistry
                 .requireByDescriptorId(ConwayEntity.DEAD.descriptorId())
                 .colorOrFallback();
-        basePainter.fillCanvasBackground(backgroundColor);
+        painters.base().fillCanvasBackground(backgroundColor);
 
         var descriptor = entityDescriptorRegistry.requireByDescriptorId(ConwayEntity.ALIVE.descriptorId());
         var aliveColor = descriptor.colorOrFallback();
@@ -149,21 +146,17 @@ public final class ConwayMainView
     }
 
     @Override
-    protected void drawSimulation(WritableGridModel<ConwayEntity> currentGridModel, int stepCount, int lastDrawnStepCount) {
-        if ((basePainter == null) || (dynamicPainter == null) || (overlayPainter == null)) {
-            AppLogger.warn("Painter is not initialized, cannot draw canvas.");
-            return;
-        }
+    protected void drawSimulation(CanvasPainters painters, WritableGridModel<ConwayEntity> currentGridModel, int stepCount, int lastDrawnStepCount) {
         if (coordinateDrawer == null) {
             AppLogger.warn("CoordinateDrawer is not initialized, cannot draw canvas.");
             return;
         }
 
-        dynamicPainter.clearCanvasBackground();
+        painters.dynamic().clearCanvasBackground();
 
         currentGridModel.nonDefaultCoordinates()
                 .forEach(coordinate -> coordinateDrawer.draw(
-                        dynamicPainter, coordinate, stepCount));
+                        painters.dynamic(), coordinate, stepCount));
     }
 
     @Override

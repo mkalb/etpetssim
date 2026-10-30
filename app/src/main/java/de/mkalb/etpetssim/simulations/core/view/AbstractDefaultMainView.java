@@ -99,8 +99,9 @@ public abstract class AbstractDefaultMainView<
         viewModel.setSimulationResetListener(this::handleSimulationReset);
         viewModel.setSimulationStepListener(this::handleSimulationStep);
         selectedGridCellListener = (_, oldGridCell, newGridCell) -> {
-            if (overlayPainter != null) {
-                handleSelectedGridCellChanged(overlayPainter, oldGridCell, newGridCell);
+            CanvasPainters currentPainters = painters();
+            if (currentPainters != null) {
+                handleSelectedGridCellChanged(currentPainters.overlay(), oldGridCell, newGridCell);
             }
         };
         viewModel.selectedGridCellProperty().addListener(selectedGridCellListener);
@@ -179,7 +180,12 @@ public abstract class AbstractDefaultMainView<
 
     private void redrawAfterUserAction() {
         observationView.updateObservationLabels();
-        drawSimulation(viewModel.getCurrentGridModel(), viewModel.getStepCount(), viewModel.getStepCount());
+        CanvasPainters currentPainters = painters();
+        if (currentPainters == null) {
+            AppLogger.warnf("%s: Painters are not initialized, cannot redraw canvas.", LOG_COMPONENT);
+            return;
+        }
+        drawSimulation(currentPainters, viewModel.getCurrentGridModel(), viewModel.getStepCount(), viewModel.getStepCount());
     }
 
     private void handleSimulationInitialized() {
@@ -187,7 +193,7 @@ public abstract class AbstractDefaultMainView<
 
         AppLogger.infof("%s: Starting simulation view initialization. step=%d", LOG_COMPONENT, stepCount);
 
-        var cellDimension = recreatePaintersAndResizeCanvases(viewModel.getStructure(), viewModel.getCellEdgeLength());
+        CanvasPainters newPainters = recreatePaintersAndResizeCanvases(viewModel.getStructure(), viewModel.getCellEdgeLength());
 
         updateCanvasBorderPane(viewModel.getStructure());
 
@@ -196,11 +202,11 @@ public abstract class AbstractDefaultMainView<
         controlView.setStepCount(stepCount);
         observationView.initializeObservationLabels();
 
-        initializeSimulation(viewModel.getCurrentConfig(), cellDimension, viewModel.getCurrentGridModel());
+        initializeSimulation(newPainters, viewModel.getCurrentConfig(), newPainters.base().cellDimension(), viewModel.getCurrentGridModel());
 
         AppLogger.infof("%s: Simulation initialized in the view. step=%d", LOG_COMPONENT, stepCount);
 
-        drawAndMeasureSimulationStep(stepCount);
+        drawAndMeasureSimulationStep(newPainters, stepCount);
 
         AppLogger.infof("%s: Initial simulation view draw completed. step=%d", LOG_COMPONENT, stepCount);
     }
@@ -213,14 +219,11 @@ public abstract class AbstractDefaultMainView<
     }
 
     private void clearCanvasLayers() {
-        if (basePainter != null) {
-            basePainter.clearCanvasBackground();
-        }
-        if (dynamicPainter != null) {
-            dynamicPainter.clearCanvasBackground();
-        }
-        if (overlayPainter != null) {
-            overlayPainter.clearCanvasBackground();
+        CanvasPainters currentPainters = painters();
+        if (currentPainters != null) {
+            currentPainters.base().clearCanvasBackground();
+            currentPainters.dynamic().clearCanvasBackground();
+            currentPainters.overlay().clearCanvasBackground();
         }
         skipOverlayActive = false;
     }
@@ -242,9 +245,15 @@ public abstract class AbstractDefaultMainView<
 
             observationView.updateObservationLabels();
 
+            CanvasPainters currentPainters = painters();
+            if (currentPainters == null) {
+                AppLogger.warnf("%s: Painters are not initialized, cannot draw step. event=%s", LOG_COMPONENT, simulationStepEvent);
+                return;
+            }
+
             // Never draw the same step twice
             if (lastDrawnStepCount != stepCount) {
-                throttleAndDrawSimulationStep(stepCount, simulationStepEvent.finalStep(), viewModel.getThrottleDrawMillis());
+                throttleAndDrawSimulationStep(currentPainters, stepCount, simulationStepEvent.finalStep(), viewModel.getThrottleDrawMillis());
             } else if (DEBUG_MODE) {
                 AppLogger.infof("%s: Skipping draw because step was already drawn. event=%s", LOG_COMPONENT, simulationStepEvent);
             }
@@ -255,9 +264,9 @@ public abstract class AbstractDefaultMainView<
                                                           @Nullable GC oldGridCell,
                                                           @Nullable GC newGridCell);
 
-    private void drawAndMeasureSimulationStep(int stepCount) {
+    private void drawAndMeasureSimulationStep(CanvasPainters currentPainters, int stepCount) {
         long startNanos = System.nanoTime();
-        drawSimulation(viewModel.getCurrentGridModel(), stepCount, lastDrawnStepCount);
+        drawSimulation(currentPainters, viewModel.getCurrentGridModel(), stepCount, lastDrawnStepCount);
         long durationMillis = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startNanos);
         drawThrottler.recordDurationMillis(durationMillis);
 
@@ -272,12 +281,12 @@ public abstract class AbstractDefaultMainView<
         }
     }
 
-    private void throttleAndDrawSimulationStep(int stepCount, boolean finalStep, long throttleDrawMillis) {
+    private void throttleAndDrawSimulationStep(CanvasPainters currentPainters, int stepCount, boolean finalStep, long throttleDrawMillis) {
         if (finalStep || !drawThrottler.shouldSkip(throttleDrawMillis)) {
-            clearSkipOverlay();
-            drawAndMeasureSimulationStep(stepCount);
+            clearSkipOverlay(currentPainters.overlay());
+            drawAndMeasureSimulationStep(currentPainters, stepCount);
         } else {
-            showSkipOverlay();
+            showSkipOverlay(currentPainters.overlay());
             if (DEBUG_MODE) {
                 AppLogger.infof("%s: Skipping draw for step %d due to high average draw time. averageMillis=%d, thresholdMillis=%d",
                         LOG_COMPONENT,
@@ -288,8 +297,8 @@ public abstract class AbstractDefaultMainView<
         }
     }
 
-    private void showSkipOverlay() {
-        if ((overlayPainter != null) && !skipOverlayActive) {
+    private void showSkipOverlay(FXGridCanvasPainter overlayPainter) {
+        if (!skipOverlayActive) {
             overlayPainter.clearCanvasBackground();
 
             Point2D center = computeVisibleCanvasCenter(overlayCanvas);
@@ -306,18 +315,19 @@ public abstract class AbstractDefaultMainView<
         }
     }
 
-    private void clearSkipOverlay() {
-        if (skipOverlayActive && (overlayPainter != null)) {
+    private void clearSkipOverlay(FXGridCanvasPainter overlayPainter) {
+        if (skipOverlayActive) {
             overlayPainter.clearCanvasBackground();
         }
         skipOverlayActive = false;
     }
 
-    protected abstract void initializeSimulation(CON config, CellDimension cellDimension, GM model);
+    protected abstract void initializeSimulation(CanvasPainters painters, CON config, CellDimension cellDimension, GM model);
 
     /**
      * Draws the current simulation state.
      *
+     * @param painters           the painters of the canvas layers
      * @param currentGridModel   the grid model to draw
      * @param stepCount          the step count of the grid model
      * @param lastDrawnStepCount the step count of the previous draw, {@link Integer#MIN_VALUE} before the first draw,
@@ -325,6 +335,6 @@ public abstract class AbstractDefaultMainView<
      *                           than {@code 1} means that intermediate steps were not drawn
      */
     @SuppressWarnings("ParameterHidesMemberVariable")
-    protected abstract void drawSimulation(GM currentGridModel, int stepCount, int lastDrawnStepCount);
+    protected abstract void drawSimulation(CanvasPainters painters, GM currentGridModel, int stepCount, int lastDrawnStepCount);
 
 }

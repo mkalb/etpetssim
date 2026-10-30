@@ -8,6 +8,7 @@ import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorRegistry;
 import de.mkalb.etpetssim.simulations.core.shared.CellDisplayMode;
 import de.mkalb.etpetssim.simulations.core.shared.SimulationUserActionScope;
 import de.mkalb.etpetssim.simulations.core.view.AbstractDefaultMainView;
+import de.mkalb.etpetssim.simulations.core.view.CanvasPainters;
 import de.mkalb.etpetssim.simulations.core.view.CellDrawer;
 import de.mkalb.etpetssim.simulations.core.view.DefaultControlView;
 import de.mkalb.etpetssim.simulations.core.viewmodel.DefaultMainViewModel;
@@ -87,15 +88,11 @@ public final class WatorMainView
     }
 
     @Override
-    protected void initializeSimulation(WatorConfig config, CellDimension cellDimension, WritableGridModel<WatorEntity> model) {
-        if (basePainter == null) {
-            AppLogger.warn("Painter is not initialized, cannot draw canvas.");
-            return;
-        }
+    protected void initializeSimulation(CanvasPainters painters, WatorConfig config, CellDimension cellDimension, WritableGridModel<WatorEntity> model) {
         Color backgroundColor = entityDescriptorRegistry
                 .requireByDescriptorId(WatorEntity.DESCRIPTOR_ID_WATER)
                 .colorOrFallback();
-        basePainter.fillCanvasBackground(backgroundColor);
+        painters.base().fillCanvasBackground(backgroundColor);
 
         maxColorSharkEnergy = computeMaxColorSharkEnergy(config);
         entityColors.put(EntityDescriptors.FISH.descriptorId(),
@@ -186,22 +183,18 @@ public final class WatorMainView
     }
 
     @Override
-    protected void drawSimulation(WritableGridModel<WatorEntity> currentGridModel, int stepCount, int lastDrawnStepCount) {
-        if ((basePainter == null) || (dynamicPainter == null) || (overlayPainter == null)) {
-            AppLogger.warn("Painter is not initialized, cannot draw canvas.");
-            return;
-        }
+    protected void drawSimulation(CanvasPainters painters, WritableGridModel<WatorEntity> currentGridModel, int stepCount, int lastDrawnStepCount) {
         if (cellDrawer == null) {
             AppLogger.warn("CellDrawer is not initialized, cannot draw canvas.");
             return;
         }
 
-        dynamicPainter.clearCanvasBackground();
+        painters.dynamic().clearCanvasBackground();
 
         currentGridModel.nonDefaultCells()
                 .forEach(cell -> cellDrawer.draw(
                         entityDescriptorRegistry.requireByDescriptorId(cell.descriptorId()),
-                        dynamicPainter, cell, stepCount));
+                        painters.dynamic(), cell, stepCount));
     }
 
     @Override

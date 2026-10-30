@@ -84,7 +84,7 @@ public abstract class AbstractMainViewModel<
      *
      * @return current immutable config
      */
-    protected abstract CON getCurrentConfig();
+    public abstract CON getCurrentConfig();
 
     /**
      * Checks whether a simulation manager is currently available.

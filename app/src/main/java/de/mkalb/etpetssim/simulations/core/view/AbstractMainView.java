@@ -84,11 +84,9 @@ public abstract class AbstractMainView<
     private final Label notificationLabel;
     private final EditToolBarView<CTX> editToolBar = new EditToolBarView<>();
     private final Map<Double, Font> fontCache;
-    protected @Nullable FXGridCanvasPainter basePainter;
-    protected @Nullable FXGridCanvasPainter dynamicPainter;
-    protected @Nullable FXGridCanvasPainter overlayPainter;
     protected @Nullable Font cellFont;
     protected @Nullable Font cellEmojiFont;
+    private @Nullable CanvasPainters painters;
     private @Nullable ChangeListener<SimulationNotificationType> notificationListener;
     private @Nullable Region mainRegion;
 
@@ -183,9 +181,7 @@ public abstract class AbstractMainView<
         }
         observationView.shutdownObservation();
         SimulationTerminationHandle terminationHandle = viewModel.shutdownSimulation();
-        basePainter = null;
-        dynamicPainter = null;
-        overlayPainter = null;
+        painters = null;
         cellFont = null;
         cellEmojiFont = null;
         clearNotification();
@@ -197,11 +193,12 @@ public abstract class AbstractMainView<
 
     private void registerOverlayPrimaryClickHandler() {
         overlayCanvas.setOnMouseReleased(event -> {
-            FXGridCanvasPainter painter = overlayPainter;
-            if ((painter != null)
+            CanvasPainters currentPainters = painters();
+            if ((currentPainters != null)
                     && (event.getButton() == MouseButton.PRIMARY)
                     && event.isStillSincePress()
                     && (event.getClickCount() == 1)) {
+                FXGridCanvasPainter painter = currentPainters.overlay();
                 Point2D mousePoint = new Point2D(event.getX(), event.getY());
                 GridCoordinate mouseCoordinate = GridGeometry.fromCanvasPosition(mousePoint,
                         painter.cellDimension(), painter.gridDimension2D(), painter.gridStructure());
@@ -331,6 +328,30 @@ public abstract class AbstractMainView<
     }
 
     /**
+     * Returns the painters of the canvas layers.
+     *
+     * @return the current painters, or {@code null} before {@link #recreatePaintersAndResizeCanvases} and after
+     * {@link #clearPainters()} or the shutdown
+     */
+    protected final @Nullable CanvasPainters painters() {
+        return painters;
+    }
+
+    /**
+     * Clears the canvases of the current painters and removes the painters; {@link #painters()} returns
+     * {@code null} afterwards.
+     */
+    protected final void clearPainters() {
+        CanvasPainters oldPainters = painters;
+        if (oldPainters != null) {
+            oldPainters.base().clearCanvasBackground();
+            oldPainters.dynamic().clearCanvasBackground();
+            oldPainters.overlay().clearCanvasBackground();
+            painters = null;
+        }
+    }
+
+    /**
      * Replaces the base, dynamic, and overlay painters for the given structure and resizes their canvases.
      * <p>
      * The canvas size is limited; if the grid does not fit, the {@link SimulationNotificationType#CANVAS_SIZE_LIMIT}
@@ -339,30 +360,25 @@ public abstract class AbstractMainView<
      *
      * @param structure      grid structure to paint
      * @param cellEdgeLength edge length of one cell in pixels
-     * @return the cell dimension of the new painters
+     * @return the new painters
      */
-    protected final CellDimension recreatePaintersAndResizeCanvases(GridStructure structure, double cellEdgeLength) {
-        if ((basePainter != null) && (dynamicPainter != null) && (overlayPainter != null)) {
-            basePainter.clearCanvasBackground();
-            dynamicPainter.clearCanvasBackground();
-            overlayPainter.clearCanvasBackground();
-            basePainter = null;
-            dynamicPainter = null;
-            overlayPainter = null;
-        }
+    protected final CanvasPainters recreatePaintersAndResizeCanvases(GridStructure structure, double cellEdgeLength) {
+        clearPainters();
 
-        basePainter = new FXGridCanvasPainter(baseCanvas, structure, cellEdgeLength);
+        FXGridCanvasPainter basePainter = new FXGridCanvasPainter(baseCanvas, structure, cellEdgeLength);
         baseCanvas.setWidth(Math.min(MAX_CANVAS_WIDTH, Math.ceil(basePainter.gridDimension2D().getWidth())));
         baseCanvas.setHeight(Math.min(MAX_CANVAS_HEIGHT, Math.ceil(basePainter.gridDimension2D().getHeight())));
 
-        dynamicPainter = new FXGridCanvasPainter(dynamicCanvas, structure, cellEdgeLength);
+        FXGridCanvasPainter dynamicPainter = new FXGridCanvasPainter(dynamicCanvas, structure, cellEdgeLength);
         dynamicCanvas.setWidth(baseCanvas.getWidth());
         dynamicCanvas.setHeight(baseCanvas.getHeight());
 
-        overlayPainter = new FXGridCanvasPainter(overlayCanvas, structure, cellEdgeLength);
+        FXGridCanvasPainter overlayPainter = new FXGridCanvasPainter(overlayCanvas, structure, cellEdgeLength);
         overlayCanvas.setWidth(baseCanvas.getWidth());
         overlayCanvas.setHeight(baseCanvas.getHeight());
 
+        CanvasPainters newPainters = new CanvasPainters(basePainter, dynamicPainter, overlayPainter);
+        painters = newPainters;
         CellDimension cellDimension = basePainter.cellDimension();
 
         AppLogger.infof("%s: Canvas painter created. painter=%s", LOG_COMPONENT, basePainter);
@@ -390,7 +406,7 @@ public abstract class AbstractMainView<
             AppLogger.infof("%s: Cell emoji font not created because font size is too small. fontSize=%.1f", LOG_COMPONENT, fontSizeEmoji);
         }
 
-        return cellDimension;
+        return newPainters;
     }
 
     protected final void updateCanvasBorderPane(GridStructure structure) {

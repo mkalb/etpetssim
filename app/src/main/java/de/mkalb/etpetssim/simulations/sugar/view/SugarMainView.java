@@ -6,6 +6,7 @@ import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptor;
 import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorRegistry;
 import de.mkalb.etpetssim.simulations.core.shared.SimulationUserActionScope;
 import de.mkalb.etpetssim.simulations.core.view.AbstractDefaultMainView;
+import de.mkalb.etpetssim.simulations.core.view.CanvasPainters;
 import de.mkalb.etpetssim.simulations.core.view.CellDrawer;
 import de.mkalb.etpetssim.simulations.core.view.DefaultControlView;
 import de.mkalb.etpetssim.simulations.core.viewmodel.DefaultMainViewModel;
@@ -106,15 +107,11 @@ public final class SugarMainView
     }
 
     @Override
-    protected void initializeSimulation(SugarConfig config, CellDimension cellDimension, SugarGridModel model) {
-        if (basePainter == null) {
-            AppLogger.warn("Painter is not initialized, cannot draw canvas.");
-            return;
-        }
+    protected void initializeSimulation(CanvasPainters painters, SugarConfig config, CellDimension cellDimension, SugarGridModel model) {
         Color backgroundColor = entityDescriptorRegistry
                 .requireByDescriptorId(SugarEntity.DESCRIPTOR_ID_TERRAIN)
                 .colorOrFallback();
-        basePainter.fillCanvasBackground(backgroundColor);
+        painters.base().fillCanvasBackground(backgroundColor);
 
         maxColorAgentEnergy = computeMaxColorAgentEnergy(config);
         entityColors.put(SugarEntity.DESCRIPTOR_ID_SUGAR,
@@ -200,17 +197,13 @@ public final class SugarMainView
     }
 
     @Override
-    protected void drawSimulation(SugarGridModel currentGridModel, int stepCount, int lastDrawnStepCount) {
-        if ((basePainter == null) || (dynamicPainter == null) || (overlayPainter == null)) {
-            AppLogger.warn("Painter is not initialized, cannot draw canvas.");
-            return;
-        }
+    protected void drawSimulation(CanvasPainters painters, SugarGridModel currentGridModel, int stepCount, int lastDrawnStepCount) {
         if ((cellResourceDrawer == null) || (cellAgentDrawer == null)) {
             AppLogger.warn("CellDrawer is not initialized, cannot draw canvas.");
             return;
         }
 
-        dynamicPainter.clearCanvasBackground();
+        painters.dynamic().clearCanvasBackground();
 
         var resourceModel = currentGridModel.resourceModel();
         var agentModel = currentGridModel.agentModel();
@@ -218,12 +211,12 @@ public final class SugarMainView
         resourceModel.nonDefaultCells()
                 .forEach(resourceCell -> cellResourceDrawer.draw(
                         entityDescriptorRegistry.requireByDescriptorId(resourceCell.descriptorId()),
-                        dynamicPainter, resourceCell, stepCount));
+                        painters.dynamic(), resourceCell, stepCount));
 
         agentModel.nonDefaultCells()
                 .forEach(agentCell -> cellAgentDrawer.draw(
                         entityDescriptorRegistry.requireByDescriptorId(agentCell.descriptorId()),
-                        dynamicPainter, agentCell, stepCount));
+                        painters.dynamic(), agentCell, stepCount));
     }
 
     @Override

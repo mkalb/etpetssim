@@ -19,6 +19,7 @@ import de.mkalb.etpetssim.simulations.core.shared.SimulationMode;
 import de.mkalb.etpetssim.simulations.core.shared.SimulationNotificationType;
 import de.mkalb.etpetssim.simulations.core.shared.SimulationStartMode;
 import de.mkalb.etpetssim.simulations.core.shared.SimulationState;
+import de.mkalb.etpetssim.simulations.core.shared.SimulationStepEvent;
 import de.mkalb.etpetssim.simulations.core.shared.SimulationTerminationCheckMode;
 import de.mkalb.etpetssim.testsupport.FXTestSupport;
 import javafx.application.Platform;
@@ -30,6 +31,7 @@ import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.CountDownLatch;
@@ -38,6 +40,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BiFunction;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -95,6 +98,40 @@ final class DefaultMainViewModelTest {
         assertTrue(initializationCompleted.await(FXTestSupport.DEFAULT_TIMEOUT_SECONDS, TimeUnit.SECONDS));
     }
 
+    private static void recordStates(Fixture fixture, List<SimulationState> states) {
+        fixture.mainViewModel().simulationStateProperty().addListener((_, _, newState) -> states.add(newState));
+    }
+
+    private static CountDownLatch createStateLatch(Fixture fixture, SimulationState awaitedState) {
+        CountDownLatch awaitedStateReached = new CountDownLatch(1);
+        fixture.mainViewModel().simulationStateProperty().addListener((_, _, newState) -> {
+            if (newState == awaitedState) {
+                awaitedStateReached.countDown();
+            }
+        });
+        return awaitedStateReached;
+    }
+
+    private static void startBatchAndRunOnFirstBatchStep(Fixture fixture, Runnable action) {
+        AtomicBoolean actionRun = new AtomicBoolean();
+        fixture.controlViewModel().startModeProperty().setValue(SimulationStartMode.START_IMMEDIATELY);
+        fixture.controlViewModel().simulationModeProperty().setValue(SimulationMode.BATCH_SINGLE);
+        fixture.controlViewModel().stepCountProperty().setValue(10_000);
+        fixture.controlViewModel().terminationCheckProperty().setValue(SimulationTerminationCheckMode.UNCHECKED);
+        fixture.mainViewModel().setSimulationStepListener(event -> {
+            if (event.batchModeRunning()
+                    && (fixture.mainViewModel().getSimulationState() == SimulationState.RUNNING_BATCH)
+                    && !actionRun.getAndSet(true)) {
+                action.run();
+            }
+        });
+        fixture.controlViewModel().requestActionButton();
+    }
+
+    private static List<SimulationState> statesFrom(List<SimulationState> states, SimulationState firstState) {
+        return List.copyOf(states.subList(states.indexOf(firstState), states.size()));
+    }
+
     private static Object getField(Object target, String fieldName) {
         try {
             Field field = DefaultMainViewModel.class.getDeclaredField(fieldName);
@@ -113,6 +150,58 @@ final class DefaultMainViewModelTest {
         } catch (ReflectiveOperationException e) {
             throw new AssertionError("Failed to read static field: " + fieldName, e);
         }
+    }
+
+    @Test
+    void testHandleCancelButtonCancelsRunningBatch() throws InterruptedException {
+        Fixture fixture = FXTestSupport.supplyAndWaitNonNull(DefaultMainViewModelTest::createFixture);
+        List<SimulationState> states = new ArrayList<>();
+        AtomicReference<CountDownLatch> canceled = new AtomicReference<>();
+
+        FXTestSupport.runAndWait(() -> {
+            recordStates(fixture, states);
+            canceled.set(createStateLatch(fixture, SimulationState.CANCELED));
+            startBatchAndRunOnFirstBatchStep(fixture, fixture.controlViewModel()::requestCancelButton);
+        });
+
+        assertTrue(canceled.get().await(FXTestSupport.DEFAULT_TIMEOUT_SECONDS, TimeUnit.SECONDS));
+        FXTestSupport.runAndWait(() -> assertEquals(
+                List.of(SimulationState.RUNNING_BATCH, SimulationState.CANCELLING_BATCH, SimulationState.CANCELED),
+                statesFrom(states, SimulationState.RUNNING_BATCH)));
+        FXTestSupport.runAndWait(fixture.mainViewModel()::shutdownSimulation);
+    }
+
+    @Test
+    void testHandleCancelButtonCancelsRunningTimerWithFinalStep() throws InterruptedException {
+        Fixture fixture = FXTestSupport.supplyAndWaitNonNull(DefaultMainViewModelTest::createFixture);
+        List<SimulationState> states = new ArrayList<>();
+        List<SimulationStepEvent> events = new ArrayList<>();
+        CountDownLatch firstStep = new CountDownLatch(1);
+
+        FXTestSupport.runAndWait(() -> {
+            recordStates(fixture, states);
+            fixture.controlViewModel().startModeProperty().setValue(SimulationStartMode.START_IMMEDIATELY);
+            fixture.controlViewModel().simulationModeProperty().setValue(SimulationMode.TIMED);
+            fixture.controlViewModel().stepDurationProperty().setValue(50);
+            fixture.mainViewModel().setSimulationStepListener(event -> {
+                events.add(event);
+                firstStep.countDown();
+            });
+            fixture.controlViewModel().requestActionButton();
+        });
+        assertTrue(firstStep.await(FXTestSupport.DEFAULT_TIMEOUT_SECONDS, TimeUnit.SECONDS));
+
+        FXTestSupport.runAndWait(() -> {
+            fixture.controlViewModel().requestCancelButton();
+            assertAll(
+                    () -> assertEquals(
+                            List.of(SimulationState.RUNNING_TIMED, SimulationState.CANCELED),
+                            statesFrom(states, SimulationState.RUNNING_TIMED)),
+                    () -> assertTrue(events.getLast().finalStep()),
+                    () -> assertFalse(events.getLast().batchModeRunning())
+            );
+        });
+        FXTestSupport.runAndWait(fixture.mainViewModel()::shutdownSimulation);
     }
 
     @Test
@@ -308,6 +397,25 @@ final class DefaultMainViewModelTest {
         FXTestSupport.runAndWait(fixture.mainViewModel()::shutdownSimulation);
     }
 
+    @Test
+    void testHandlePauseActionPausesRunningBatch() throws InterruptedException {
+        Fixture fixture = FXTestSupport.supplyAndWaitNonNull(DefaultMainViewModelTest::createFixture);
+        List<SimulationState> states = new ArrayList<>();
+        AtomicReference<CountDownLatch> paused = new AtomicReference<>();
+
+        FXTestSupport.runAndWait(() -> {
+            recordStates(fixture, states);
+            paused.set(createStateLatch(fixture, SimulationState.PAUSED));
+            startBatchAndRunOnFirstBatchStep(fixture, fixture.controlViewModel()::requestActionButton);
+        });
+
+        assertTrue(paused.get().await(FXTestSupport.DEFAULT_TIMEOUT_SECONDS, TimeUnit.SECONDS));
+        FXTestSupport.runAndWait(() -> assertEquals(
+                List.of(SimulationState.RUNNING_BATCH, SimulationState.PAUSING_BATCH, SimulationState.PAUSED),
+                statesFrom(states, SimulationState.RUNNING_BATCH)));
+        FXTestSupport.runAndWait(fixture.mainViewModel()::shutdownSimulation);
+    }
+
     @SuppressWarnings("ResultOfMethodCallIgnored")
     @Test
     void testShutdownSimulationSuppressesStaleInitializationCompletion() throws InterruptedException {
@@ -447,6 +555,28 @@ final class DefaultMainViewModelTest {
                     () -> assertEquals(StatisticsExtrema.empty(), fixture.observationViewModel().getStatisticsExtrema())
             );
         });
+    }
+
+    @Test
+    void testShutdownSimulationKeepsShuttingDownWhenRunningBatchCompletes() throws InterruptedException {
+        Fixture fixture = FXTestSupport.supplyAndWaitNonNull(DefaultMainViewModelTest::createFixture);
+        List<SimulationState> states = new ArrayList<>();
+        AtomicReference<SimulationTerminationHandle> terminationHandle = new AtomicReference<>();
+        CountDownLatch shutdownRequested = new CountDownLatch(1);
+
+        FXTestSupport.runAndWait(() -> {
+            recordStates(fixture, states);
+            startBatchAndRunOnFirstBatchStep(fixture, () -> {
+                terminationHandle.set(fixture.mainViewModel().shutdownSimulation());
+                shutdownRequested.countDown();
+            });
+        });
+
+        assertTrue(shutdownRequested.await(FXTestSupport.DEFAULT_TIMEOUT_SECONDS, TimeUnit.SECONDS));
+        assertTrue(terminationHandle.get().awaitTermination(FXTestSupport.DEFAULT_TIMEOUT_SECONDS, TimeUnit.SECONDS));
+        FXTestSupport.runAndWait(() -> assertEquals(
+                List.of(SimulationState.RUNNING_BATCH, SimulationState.SHUTTING_DOWN),
+                statesFrom(states, SimulationState.RUNNING_BATCH)));
     }
 
     @Test
