@@ -2,17 +2,24 @@ package de.mkalb.etpetssim.simulations.core.viewmodel;
 
 import de.mkalb.etpetssim.core.AppLocalization;
 import de.mkalb.etpetssim.core.AppLogger;
+import de.mkalb.etpetssim.engine.GridStructure;
+import de.mkalb.etpetssim.engine.executor.DefaultSimulationExecutor;
+import de.mkalb.etpetssim.engine.executor.SynchronousStepRunner;
+import de.mkalb.etpetssim.engine.executor.TimedSimulationExecutor;
 import de.mkalb.etpetssim.engine.model.GridCell;
 import de.mkalb.etpetssim.engine.model.ReadableGridModel;
+import de.mkalb.etpetssim.engine.model.SparseGridModel;
 import de.mkalb.etpetssim.engine.model.WritableGridModel;
 import de.mkalb.etpetssim.simulations.conway.model.ConwayConfig;
 import de.mkalb.etpetssim.simulations.conway.model.ConwaySimulationManager;
 import de.mkalb.etpetssim.simulations.conway.model.ConwayStatistics;
-import de.mkalb.etpetssim.simulations.conway.model.ConwayUserAction;
+import de.mkalb.etpetssim.simulations.conway.model.ConwayStepLogic;
+import de.mkalb.etpetssim.simulations.conway.model.ConwayTerminationCondition;
 import de.mkalb.etpetssim.simulations.conway.model.entity.ConwayEntity;
 import de.mkalb.etpetssim.simulations.conway.shared.ConwayUserActionContext;
 import de.mkalb.etpetssim.simulations.conway.viewmodel.ConwayConfigViewModel;
 import de.mkalb.etpetssim.simulations.core.SimulationTerminationHandle;
+import de.mkalb.etpetssim.simulations.core.model.AbstractTimedSimulationManager;
 import de.mkalb.etpetssim.simulations.core.model.SimulationInitializationCancellation;
 import de.mkalb.etpetssim.simulations.core.model.StatisticsExtrema;
 import de.mkalb.etpetssim.simulations.core.shared.SimulationMode;
@@ -25,6 +32,7 @@ import de.mkalb.etpetssim.testsupport.FXTestSupport;
 import javafx.application.Platform;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import org.jspecify.annotations.NonNull;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Execution;
@@ -67,7 +75,9 @@ final class DefaultMainViewModelTest {
     }
 
     private static Fixture createFixture(
-            BiFunction<ConwayConfig, SimulationInitializationCancellation, ConwaySimulationManager> simulationManagerFactory,
+            BiFunction<ConwayConfig, SimulationInitializationCancellation,
+                    AbstractTimedSimulationManager<ConwayEntity, WritableGridModel<ConwayEntity>, ConwayConfig,
+                            ConwayStatistics>> simulationManagerFactory,
             ExecutorService lifecycleExecutor) {
         ObjectProperty<SimulationState> simulationState =
                 new SimpleObjectProperty<>(SimulationState.READY);
@@ -76,16 +86,44 @@ final class DefaultMainViewModelTest {
         controlViewModel.startModeProperty().setValue(SimulationStartMode.START_PAUSED);
         var observationViewModel =
                 new DefaultObservationViewModel<ConwayEntity, GridCell<ConwayEntity>, ConwayStatistics>(simulationState);
-        var mainViewModel = new DefaultMainViewModel<>(
-                simulationState,
-                configViewModel,
-                controlViewModel,
-                observationViewModel,
-                simulationManagerFactory,
-                ReadableGridModel::getGridCell,
-                new ConwayUserAction(),
-                lifecycleExecutor);
-        return new Fixture(mainViewModel, configViewModel, controlViewModel, observationViewModel);
+        return new Fixture(
+                new DefaultMainViewModel<>(
+                        simulationState,
+                        configViewModel,
+                        controlViewModel,
+                        observationViewModel,
+                        simulationManagerFactory,
+                        ReadableGridModel::getGridCell,
+                        (_, _, _) -> {},
+                        lifecycleExecutor),
+                configViewModel, controlViewModel, observationViewModel);
+    }
+
+    private static Fixture createFixtureWithFailingStep(Runnable stepFailure) {
+        return FXTestSupport.supplyAndWaitNonNull(() -> createFixture(
+                (config, _) -> new StubSimulationManager(config, stepFailure), Executors.newSingleThreadExecutor()));
+    }
+
+    private static void startAndAwaitError(Fixture fixture, List<SimulationState> states) throws InterruptedException {
+        AtomicReference<CountDownLatch> errorReached = new AtomicReference<>();
+        FXTestSupport.runAndWait(() -> {
+            recordStates(fixture, states);
+            errorReached.set(createStateLatch(fixture, SimulationState.ERROR));
+            fixture.controlViewModel().requestActionButton();
+        });
+        assertTrue(errorReached.get().await(FXTestSupport.DEFAULT_TIMEOUT_SECONDS, TimeUnit.SECONDS));
+        FXTestSupport.runAndWait(() -> assertAll(
+                () -> assertEquals(SimulationState.ERROR, fixture.mainViewModel().getSimulationState()),
+                () -> assertEquals(SimulationNotificationType.EXCEPTION,
+                        fixture.mainViewModel().notificationTypeProperty().get())
+        ));
+    }
+
+    private static void configureBatch(Fixture fixture) {
+        fixture.controlViewModel().startModeProperty().setValue(SimulationStartMode.START_IMMEDIATELY);
+        fixture.controlViewModel().simulationModeProperty().setValue(SimulationMode.BATCH_SINGLE);
+        fixture.controlViewModel().stepCountProperty().setValue(10);
+        fixture.controlViewModel().terminationCheckProperty().setValue(SimulationTerminationCheckMode.UNCHECKED);
     }
 
     private static void startAndAwaitInitialization(Fixture fixture) throws InterruptedException {
@@ -371,6 +409,21 @@ final class DefaultMainViewModelTest {
     }
 
     @Test
+    void testHandleStartActionTransitionsToErrorWhenManagerThrowsError() throws InterruptedException {
+        Fixture fixture = FXTestSupport.supplyAndWaitNonNull(() -> createFixture((_, _) -> {
+            throw new OutOfMemoryError("Test initialization error");
+        }, Executors.newSingleThreadExecutor()));
+        List<SimulationState> states = new ArrayList<>();
+
+        startAndAwaitError(fixture, states);
+        FXTestSupport.runAndWait(() -> assertAll(
+                () -> assertEquals(List.of(SimulationState.INITIALIZING, SimulationState.ERROR), states),
+                () -> assertFalse(fixture.mainViewModel().hasSimulationManager())
+        ));
+        FXTestSupport.runAndWait(fixture.mainViewModel()::shutdownSimulation);
+    }
+
+    @Test
     void testHandleStartActionTransitionsToErrorWhenListenerFails() throws InterruptedException {
         Fixture fixture = FXTestSupport.supplyAndWaitNonNull(DefaultMainViewModelTest::createFixture);
         CountDownLatch failureHandled = new CountDownLatch(1);
@@ -412,6 +465,36 @@ final class DefaultMainViewModelTest {
         assertTrue(paused.get().await(FXTestSupport.DEFAULT_TIMEOUT_SECONDS, TimeUnit.SECONDS));
         FXTestSupport.runAndWait(() -> assertEquals(
                 List.of(SimulationState.RUNNING_BATCH, SimulationState.PAUSING_BATCH, SimulationState.PAUSED),
+                statesFrom(states, SimulationState.RUNNING_BATCH)));
+        FXTestSupport.runAndWait(fixture.mainViewModel()::shutdownSimulation);
+    }
+
+    @Test
+    void testExecuteBatchStepsTransitionsToErrorWhenStepFails() throws InterruptedException {
+        Fixture fixture = createFixtureWithFailingStep(() -> {
+            throw new ArithmeticException("Test batch step failure");
+        });
+        List<SimulationState> states = new ArrayList<>();
+
+        FXTestSupport.runAndWait(() -> configureBatch(fixture));
+        startAndAwaitError(fixture, states);
+        FXTestSupport.runAndWait(() -> assertEquals(
+                List.of(SimulationState.RUNNING_BATCH, SimulationState.ERROR),
+                statesFrom(states, SimulationState.RUNNING_BATCH)));
+        FXTestSupport.runAndWait(fixture.mainViewModel()::shutdownSimulation);
+    }
+
+    @Test
+    void testExecuteBatchStepsTransitionsToErrorWhenStepThrowsError() throws InterruptedException {
+        Fixture fixture = createFixtureWithFailingStep(() -> {
+            throw new StackOverflowError("Test batch step error");
+        });
+        List<SimulationState> states = new ArrayList<>();
+
+        FXTestSupport.runAndWait(() -> configureBatch(fixture));
+        startAndAwaitError(fixture, states);
+        FXTestSupport.runAndWait(() -> assertEquals(
+                List.of(SimulationState.RUNNING_BATCH, SimulationState.ERROR),
                 statesFrom(states, SimulationState.RUNNING_BATCH)));
         FXTestSupport.runAndWait(fixture.mainViewModel()::shutdownSimulation);
     }
@@ -610,11 +693,59 @@ final class DefaultMainViewModelTest {
                     WritableGridModel<ConwayEntity>,
                     ConwayConfig,
                     ConwayStatistics,
-                    ConwaySimulationManager,
+                    AbstractTimedSimulationManager<ConwayEntity, WritableGridModel<ConwayEntity>, ConwayConfig,
+                            ConwayStatistics>,
                     ConwayUserActionContext> mainViewModel,
             ConwayConfigViewModel configViewModel,
             DefaultControlViewModel controlViewModel,
             DefaultObservationViewModel<ConwayEntity, GridCell<ConwayEntity>, ConwayStatistics> observationViewModel) {
+    }
+
+    private static final class StubSimulationManager
+            extends AbstractTimedSimulationManager<ConwayEntity, WritableGridModel<ConwayEntity>, ConwayConfig,
+            ConwayStatistics> {
+
+        private final GridStructure structure;
+        private final ConwayStatistics statistics;
+        private final TimedSimulationExecutor<ConwayEntity, WritableGridModel<ConwayEntity>> executor;
+        private final Runnable stepFailure;
+
+        StubSimulationManager(ConwayConfig config, Runnable stepFailure) {
+            super(config);
+            structure = config.createGridStructure();
+            statistics = new ConwayStatistics(structure);
+            var model = new SparseGridModel<>(structure, ConwayEntity.DEAD);
+            var runner = new SynchronousStepRunner<>(model, new ConwayStepLogic(structure, config));
+            executor = new TimedSimulationExecutor<>(new DefaultSimulationExecutor<>(runner,
+                    runner::currentGridModel, new ConwayTerminationCondition(), statistics));
+            this.stepFailure = stepFailure;
+        }
+
+        @NonNull
+        @Override
+        public GridStructure structure() {
+            return structure;
+        }
+
+        @NonNull
+        @Override
+        public ConwayStatistics statistics() {
+            return statistics;
+        }
+
+        @Override
+        protected void updateStatistics() {
+            if (executor.stepCount() > 0) {
+                stepFailure.run();
+            }
+        }
+
+        @NonNull
+        @Override
+        protected TimedSimulationExecutor<ConwayEntity, WritableGridModel<ConwayEntity>> executor() {
+            return executor;
+        }
+
     }
 
 }

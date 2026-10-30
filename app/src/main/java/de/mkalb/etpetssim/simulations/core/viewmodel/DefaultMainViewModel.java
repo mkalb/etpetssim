@@ -490,7 +490,7 @@ public final class DefaultMainViewModel<
         } catch (SimulationInitializationCanceledException e) {
             AppLogger.infof("%s: Simulation initialization was canceled. generation=%d, request=%s",
                     LOG_COMPONENT, generation, request);
-        } catch (RuntimeException e) {
+        } catch (RuntimeException | Error e) {
             Platform.runLater(() -> failInitialization(request, generation, e));
         }
     }
@@ -530,7 +530,7 @@ public final class DefaultMainViewModel<
         }
     }
 
-    private void failInitialization(SimulationStartRequest<CON> request, long generation, RuntimeException exception) {
+    private void failInitialization(SimulationStartRequest<CON> request, long generation, Throwable exception) {
         if (!isInitializationActive(generation)) {
             return;
         }
@@ -719,8 +719,7 @@ public final class DefaultMainViewModel<
                                 getSimulationState());
                     }
                 });
-            } catch (IllegalArgumentException | IllegalStateException | NullPointerException
-                     | IndexOutOfBoundsException | NoSuchElementException | UnsupportedOperationException e) {
+            } catch (RuntimeException | Error e) {
                 Platform.runLater(() -> {
                     if (!isActiveTask(generation)) {
                         return;
