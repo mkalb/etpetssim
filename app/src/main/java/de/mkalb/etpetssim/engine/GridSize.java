@@ -33,12 +33,12 @@ public record GridSize(int width, int height) {
      */
     public GridSize {
         if (isInvalidSize(width)) {
-            throw new IllegalArgumentException(String.format(Locale.ROOT,
-                    "Width must be between %d and %d, but was: %d", MIN_SIZE, MAX_SIZE, width));
+            throw new IllegalArgumentException(
+                    "width must be in [" + MIN_SIZE + ", " + MAX_SIZE + "], but was: " + width);
         }
         if (isInvalidSize(height)) {
-            throw new IllegalArgumentException(String.format(Locale.ROOT,
-                    "Height must be between %d and %d, but was: %d", MIN_SIZE, MAX_SIZE, height));
+            throw new IllegalArgumentException(
+                    "height must be in [" + MIN_SIZE + ", " + MAX_SIZE + "], but was: " + height);
         }
     }
 

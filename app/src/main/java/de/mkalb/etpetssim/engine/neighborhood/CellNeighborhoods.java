@@ -142,7 +142,8 @@ public final class CellNeighborhoods {
      */
     public static List<CompassDirection> directionRing(NeighborhoodMode neighborhoodMode, CellShape cellShape) {
         return switch (cellShape) {
-            case TRIANGLE -> throw new IllegalArgumentException("Triangle cells have no direction ring.");
+            case TRIANGLE -> throw new IllegalArgumentException("cellShape must be SQUARE or HEXAGON, but was: "
+                    + cellShape);
             case SQUARE -> (neighborhoodMode == NeighborhoodMode.EDGES_ONLY)
                     ? SQUARE_EDGES_DIRECTION_RING
                     : SQUARE_EDGES_AND_VERTICES_DIRECTION_RING;
@@ -398,8 +399,8 @@ public final class CellNeighborhoods {
             Function<GridCoordinate, C> cellFactory) {
         checkRadius(radius);
         if (!structure.isCoordinateValid(startCoordinate)) {
-            throw new IllegalArgumentException("Start coordinate must be valid within the grid structure, but was: "
-                    + startCoordinate.toDisplayString());
+            throw new IllegalArgumentException("startCoordinate must be valid for structure " + structure
+                    + ", but was: " + startCoordinate);
         }
 
         SortedMap<Integer, SortedMap<GridCoordinate, RadiusRingCell<C>>> radiusRings = new TreeMap<>();
@@ -756,7 +757,7 @@ public final class CellNeighborhoods {
 
     private static void checkRadius(int radius) {
         if ((radius < 0) || (radius > MAX_RADIUS)) {
-            throw new IllegalArgumentException("Radius must be between 0 and " + MAX_RADIUS + ", but was: " + radius);
+            throw new IllegalArgumentException("radius must be in [0, " + MAX_RADIUS + "], but was: " + radius);
         }
     }
 

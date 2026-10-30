@@ -166,7 +166,7 @@ public enum CompassDirection {
         int toIdx = ring.indexOf(to);
 
         if ((fromIdx < 0) || (toIdx < 0)) {
-            throw new IllegalArgumentException("Direction not available in direction ring. from=" + from
+            throw new IllegalArgumentException("from and to must be contained in ring, but was: from=" + from
                     + ", to=" + to + ", ring=" + ring);
         }
 

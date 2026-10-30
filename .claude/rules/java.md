@@ -20,6 +20,10 @@ Rules for all `.java` files; repository-wide instructions still apply.
   leaves unused; leave the other imports unchanged.
 - Prefer modern Java 27 APIs and language features when they improve clarity; avoid novelty.
 - Use locale-stable normalization for technical text (e.g., `toLowerCase(Locale.ROOT)`).
+- Write exception messages without a final period in one of three forms: `<name> must <condition>, but was: <value>`
+  for rejected values (`in [min, max]` for inclusive ranges, `name=value` pairs for relations between values),
+  `Unable to <action>: <reason or name=value pairs>` for failed operations, and `No <thing> found for <name>: <value>`
+  for failed lookups. Use the exact code name of the checked value, its `toString()`, and string concatenation.
 - Do not initialize fields explicitly to their default value (`0`, `false`, `null`); an explicit initializer is for a
   different value, such as the sentinel `Long.MAX_VALUE` of a minimum.
 - Order the members of classes, enums, and records as the IntelliJ default arrangement does: static fields

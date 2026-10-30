@@ -35,16 +35,18 @@ public record InputIntegerProperty(IntegerProperty property, int min, int max, i
      */
     public InputIntegerProperty {
         if (min >= max) {
-            throw new IllegalArgumentException("min must be less than max");
+            throw new IllegalArgumentException("min must be < max, but was: min=" + min + ", max=" + max);
         }
         if (step <= 0) {
-            throw new IllegalArgumentException("step must be positive");
+            throw new IllegalArgumentException("step must be > 0, but was: " + step);
         }
         if (((max - min) % step) != 0) {
-            throw new IllegalArgumentException("The range (max - min) must be divisible by step");
+            throw new IllegalArgumentException("max - min must be a multiple of step, but was: min=" + min
+                    + ", max=" + max + ", step=" + step);
         }
         if (isInvalidValue(property.get(), min, max, step)) {
-            throw new IllegalArgumentException("Initial value is not valid: " + property.get());
+            throw new IllegalArgumentException("property value must be in [min, max] and a multiple of step from min, "
+                    + "but was: value=" + property.get() + ", min=" + min + ", max=" + max + ", step=" + step);
         }
     }
 

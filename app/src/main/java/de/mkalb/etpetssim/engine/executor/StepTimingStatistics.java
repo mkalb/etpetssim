@@ -27,21 +27,26 @@ public record StepTimingStatistics(
      */
     public StepTimingStatistics {
         if ((currentNanos < 0) || (minNanos < 0) || (maxNanos < 0) || (sumNanos < 0) || (avgNanos < 0)) {
-            throw new IllegalArgumentException("timing values must be >= 0");
+            throw new IllegalArgumentException("all values must be >= 0, but was: "
+                    + formatValues(currentNanos, minNanos, maxNanos, sumNanos, avgNanos));
         }
         if (minNanos > maxNanos) {
-            throw new IllegalArgumentException("minNanos must be <= maxNanos");
+            throw new IllegalArgumentException("minNanos must be <= maxNanos, but was: minNanos=" + minNanos
+                    + ", maxNanos=" + maxNanos);
         }
         if (sumNanos == 0) {
             if ((currentNanos != 0) || (minNanos != 0) || (maxNanos != 0) || (avgNanos != 0)) {
-                throw new IllegalArgumentException("empty statistics must contain only zero values");
+                throw new IllegalArgumentException("all values must be 0 if sumNanos is 0, but was: "
+                        + formatValues(currentNanos, minNanos, maxNanos, sumNanos, avgNanos));
             }
         } else {
             if ((currentNanos < minNanos) || (currentNanos > maxNanos)) {
-                throw new IllegalArgumentException("currentNanos must be between minNanos and maxNanos");
+                throw new IllegalArgumentException("currentNanos must be in [minNanos, maxNanos], but was: "
+                        + "currentNanos=" + currentNanos + ", minNanos=" + minNanos + ", maxNanos=" + maxNanos);
             }
             if ((avgNanos < minNanos) || (avgNanos > maxNanos)) {
-                throw new IllegalArgumentException("avgNanos must be between minNanos and maxNanos");
+                throw new IllegalArgumentException("avgNanos must be in [minNanos, maxNanos], but was: "
+                        + "avgNanos=" + avgNanos + ", minNanos=" + minNanos + ", maxNanos=" + maxNanos);
             }
         }
     }
@@ -56,6 +61,12 @@ public record StepTimingStatistics(
      */
     public static StepTimingStatistics empty() {
         return new StepTimingStatistics(0, 0, 0, 0, 0);
+    }
+
+    private static String formatValues(long currentNanos, long minNanos, long maxNanos, long sumNanos,
+                                       long avgNanos) {
+        return "currentNanos=" + currentNanos + ", minNanos=" + minNanos + ", maxNanos=" + maxNanos
+                + ", sumNanos=" + sumNanos + ", avgNanos=" + avgNanos;
     }
 
 }

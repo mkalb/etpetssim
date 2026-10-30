@@ -45,7 +45,7 @@ settled before `code-simulation-classes.md` starts, which took over the classes 
   `code-enum-types.md` are done; their decisions apply here. They stay in `docs/planning` as reference until
   `code-simulation-classes.md` is done.
 - Categories 1 to 3 are done and committed (category 1 in `fc3cff53`, category 3 in `af48c441`); category 4 is
-  done and committed group by group. The deferred findings remain open.
+  done and committed group by group. The deferred findings are decided and done (2026-10-30).
 - Categories 2 and 3 settle the rules before category 4 applies them; category 2 comes first, because it also
   changes code. Category 4 reviews the packages one group at a time.
 - `code-simulation-classes.md` starts only after all categories of this plan are done.
@@ -1106,6 +1106,27 @@ Group 8, root package (2026-10-30):
   `System.exit(..)` and `Application.launch(..)`, and its initializations change global state.
 - `app:test` and `app:javadoc` pass.
 
+Deferred findings (2026-10-30):
+
+- `GridInitializers.placeShuffledCount(..)` and `placeAllAtRandomPositions(..)` shuffle with
+  `Collections.shuffle(list, random)` instead of the private `shuffleCoordinates(..)`, which made the same swaps with
+  the same `nextInt(..)` calls; the random sequence of a seed is unchanged, but the shuffle no longer runs the
+  cancellation check. `placeShuffledCount(..)` takes the coordinates from `GridStructure.coordinatesList()` instead
+  of the private `createCoordinates(..)`. `GridInitializersTest` drops `testPlaceShuffledCountChecksDuringShuffle`
+  and its `TrackingRandom`.
+- Rule change: `java.md` ("Code Style"): exception messages have no final period and one of three forms:
+  `<name> must <condition>, but was: <value>` for rejected values (`in [min, max]` for inclusive ranges, `name=value`
+  pairs for relations), `Unable to <action>: <reason or name=value pairs>` for failed operations, and
+  `No <thing> found for <name>: <value>` for failed lookups; with the exact code name, `toString()`, and string
+  concatenation.
+- All exception messages in `core`, `ui`, and `engine` follow these forms (the root package throws none), e.g.,
+  `width must be in [8, 16384], but was: 5`,
+  `executedSteps must be <= stepCount, but was: executedSteps=5, stepCount=3`, and
+  `Unable to initialize AppLogger: already initialized`. `GridSize` and `GridStructure` use concatenation instead of
+  `String.format(..)`; the record constructors of `StepTimingStatistics` and `CellDimension` list all their values
+  through a private `formatValues(..)`. No test compares these messages.
+- `app:test` and `app:javadoc` pass.
+
 ### Procedure
 
 - One group at a time, in the order of the inventory; each group is presented and decided on its own in the chat
@@ -1142,6 +1163,10 @@ Group 8, root package (2026-10-30):
   `CellNeighborhoods.directionRing(..)`.
 - (1, all) Class-level `@SuppressWarnings` are narrowed to the members that need them, with the maintainer's
   approval per case (`java.md`, "Suppressions Policy").
+- (4, all) Exception messages follow the three forms of `java.md` ("Code Style"); `code-simulation-classes.md` adapts
+  the messages of `simulations`.
+- (4, all) Lists are shuffled with `Collections.shuffle(list, random)`, without cancellation checks during the
+  shuffle; all grid coordinates in row-major order come from `GridStructure.coordinatesList()`.
 
 ## Deferred findings
 
@@ -1152,8 +1177,12 @@ Group 8, root package (2026-10-30):
 - Problem: The Fisher-Yates shuffle with cancellation checkpoints `shuffleCoordinates(..)` is duplicated in
   `GridInitializers` (private, with a `Runnable`) and `EtpetsSimulationManager` (with a
   `SimulationInitializationCancellation`); `EtpetsSimulationManager` also duplicates `createCoordinates(..)`.
-- Proposal: Open; options are a generic `shuffle(List, Random, Runnable)` in `WorkCheckpoints`, a public method in
-  `GridInitializers`, or keeping the duplicate. Decide later; `code-simulation-classes.md` adopts the result.
+- Proposal: Options were a generic `shuffle(List, Random, Runnable)` in `WorkCheckpoints`, a public method in
+  `GridInitializers`, `Collections.shuffle(..)`, or keeping the duplicate.
+- Status: done (2026-10-30) for `GridInitializers`: `Collections.shuffle(..)`, which makes the same swaps with the
+  same random calls, without cancellation checks during the shuffle; the coordinates come from
+  `GridStructure.coordinatesList()`. `code-simulation-classes.md` (category 5) removes `shuffleCoordinates(..)` and
+  `createCoordinates(..)` of `EtpetsSimulationManager` the same way.
 
 ### Exception messages in `engine`
 
@@ -1164,5 +1193,7 @@ Group 8, root package (2026-10-30):
 - Problem: The exception messages use different styles: capitalized or lowercase start, with or without a final
   period, `but was: X`, `but was X.`, or no actual value at all (e.g., `"stepCount must be >= 0"`), `String.format`
   with `Locale.ROOT` or concatenation, and symbols (`>=`, `<=`) or words (`must not be negative`, `at least 1`).
-- Proposal: Open; agree on one message style for all engine packages (and possibly a rule in `java.md`), then adapt
-  the messages in one change; check the tests that compare messages.
+- Proposal: Agree on one message style (and possibly a rule in `java.md`), then adapt the messages in one change;
+  check the tests that compare messages.
+- Status: done (2026-10-30); three message forms ruled in `java.md` ("Code Style"), applied to `core`, `ui`, and
+  `engine` (see the decisions of category 4).

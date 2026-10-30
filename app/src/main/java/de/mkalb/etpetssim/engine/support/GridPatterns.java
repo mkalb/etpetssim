@@ -168,7 +168,7 @@ public final class GridPatterns {
      */
     public static <ENT extends GridEntity> GridPattern<ENT> circleOutline(ENT entity, int radius) {
         if (radius < 0) {
-            throw new IllegalArgumentException("radius must not be negative, but was " + radius + '.');
+            throw new IllegalArgumentException("radius must be >= 0, but was: " + radius);
         }
         Set<GridOffset> offsets = new HashSet<>();
         int x = radius;
@@ -197,7 +197,7 @@ public final class GridPatterns {
 
     private static void checkPositive(int value, String name) {
         if (value < 1) {
-            throw new IllegalArgumentException(name + " must be at least 1, but was " + value + '.');
+            throw new IllegalArgumentException(name + " must be >= 1, but was: " + value);
         }
     }
 

@@ -287,7 +287,7 @@ public final class ArrayGridModel<ENT extends GridEntity> implements WritableGri
     private void checkCoordinate(GridCoordinate coordinate) {
         if (!structure.isCoordinateValid(coordinate)) {
             throw new IndexOutOfBoundsException(
-                    "Coordinate out of bounds: " + coordinate + " for structure: " + structure);
+                    "coordinate must be valid for structure " + structure + ", but was: " + coordinate);
         }
     }
 

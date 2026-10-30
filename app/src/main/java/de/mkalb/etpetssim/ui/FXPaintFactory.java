@@ -51,13 +51,14 @@ public final class FXPaintFactory {
             double maxFactorDelta) {
         int range = (maxInclusive - minInclusive) + 1;
         if (range < 1) {
-            throw new IllegalArgumentException("Invalid range: " + minInclusive + " to " + maxInclusive);
+            throw new IllegalArgumentException("maxInclusive must be >= minInclusive, but was: minInclusive="
+                    + minInclusive + ", maxInclusive=" + maxInclusive);
         }
         if (groupCount < 1) {
-            throw new IllegalArgumentException("Group count must be at least 1: " + groupCount);
+            throw new IllegalArgumentException("groupCount must be >= 1, but was: " + groupCount);
         }
         if (Double.isNaN(maxFactorDelta) || (maxFactorDelta < -1.0d) || (maxFactorDelta > 10.0d)) {
-            throw new IllegalArgumentException("maxFactorDelta must be in the range [-1.0, 10.0]: " + maxFactorDelta);
+            throw new IllegalArgumentException("maxFactorDelta must be in [-1.0, 10.0], but was: " + maxFactorDelta);
         }
 
         int effectiveGroupCount = Math.min(groupCount, range);
@@ -95,7 +96,7 @@ public final class FXPaintFactory {
      */
     public static Color adjustBrightness(Color baseColor, double factor) {
         if (!Double.isFinite(factor)) {
-            throw new IllegalArgumentException("factor must be finite: " + factor);
+            throw new IllegalArgumentException("factor must be finite, but was: " + factor);
         }
         double r = Math.clamp(baseColor.getRed() * factor, 0.0d, 1.0d);
         double g = Math.clamp(baseColor.getGreen() * factor, 0.0d, 1.0d);
@@ -170,7 +171,7 @@ public final class FXPaintFactory {
      */
     public static Color adjustColorAlpha(Color baseColor, double alpha) {
         if (Double.isNaN(alpha) || (alpha < 0.0) || (alpha > 1.0)) {
-            throw new IllegalArgumentException("Alpha must be in the range [0.0, 1.0]");
+            throw new IllegalArgumentException("alpha must be in [0.0, 1.0], but was: " + alpha);
         }
         return new Color(
                 baseColor.getRed(),

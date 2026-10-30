@@ -24,13 +24,14 @@ public record StepExecutionResult(
      */
     public StepExecutionResult {
         if (stepCount < 0) {
-            throw new IllegalArgumentException("stepCount must be >= 0");
+            throw new IllegalArgumentException("stepCount must be >= 0, but was: " + stepCount);
         }
         if (executedSteps < 0) {
-            throw new IllegalArgumentException("executedSteps must be >= 0");
+            throw new IllegalArgumentException("executedSteps must be >= 0, but was: " + executedSteps);
         }
         if (executedSteps > stepCount) {
-            throw new IllegalArgumentException("executedSteps must be <= stepCount");
+            throw new IllegalArgumentException("executedSteps must be <= stepCount, but was: executedSteps="
+                    + executedSteps + ", stepCount=" + stepCount);
         }
     }
 

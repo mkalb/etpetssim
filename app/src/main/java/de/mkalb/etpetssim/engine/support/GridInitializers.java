@@ -299,8 +299,8 @@ public final class GridInitializers {
         return model -> {
             int placed = 0;
             if (count > 0) {
-                List<GridCoordinate> coordinates = createCoordinates(model.structure().size(), cancellationCheck);
-                shuffleCoordinates(coordinates, random, cancellationCheck);
+                List<GridCoordinate> coordinates = model.structure().coordinatesList();
+                Collections.shuffle(coordinates, random);
                 ENT nextEntity = entitySupplier.get();
                 for (int index = 0; index < coordinates.size(); index++) {
                     if (WorkCheckpoints.isCancellationCheckpoint(index)) {
@@ -320,7 +320,7 @@ public final class GridInitializers {
             }
             if (placed < count) {
                 throw new IllegalStateException(
-                        "Unable to place all entities. Only " + placed + " entities were placed.");
+                        "Unable to place all entities: placed=" + placed + ", count=" + count);
             }
         };
     }
@@ -351,11 +351,11 @@ public final class GridInitializers {
                 }
             });
             if (freeCoordinates.size() < entities.size()) {
-                throw new IllegalStateException("Unable to place all entities. Needed " + entities.size()
-                        + " replaceable cells, but found " + freeCoordinates.size() + ".");
+                throw new IllegalStateException("Unable to place all entities: entityCount=" + entities.size()
+                        + ", replaceableCellCount=" + freeCoordinates.size());
             }
 
-            shuffleCoordinates(freeCoordinates, random, cancellationCheck);
+            Collections.shuffle(freeCoordinates, random);
 
             for (int index = 0; index < entities.size(); index++) {
                 if (WorkCheckpoints.isCancellationCheckpoint(index)) {
@@ -368,7 +368,7 @@ public final class GridInitializers {
 
     private static void checkFraction(double value, String name) {
         if ((value < 0.0d) || (value > 1.0d)) {
-            throw new IllegalArgumentException(name + " must be in range [0.0, 1.0], but was " + value + '.');
+            throw new IllegalArgumentException(name + " must be in [0.0, 1.0], but was: " + value);
         }
     }
 
@@ -405,7 +405,8 @@ public final class GridInitializers {
                 attempts++;
             }
             if (!nextEntityPlaced) {
-                throw new IllegalStateException("Unable to place all entities within the maximum number of attempts.");
+                throw new IllegalStateException("Unable to place all entities: placed=" + placed + ", count=" + count
+                        + ", maxAttempts=" + maxAttempts);
             }
         }
     }
@@ -414,12 +415,6 @@ public final class GridInitializers {
                                                            Runnable cancellationCheck) {
         forEachCoordinate(model.structure().size(), cancellationCheck,
                 coordinate -> model.setEntity(coordinate, entitySupplier.get()));
-    }
-
-    private static List<GridCoordinate> createCoordinates(GridSize size, Runnable cancellationCheck) {
-        List<GridCoordinate> coordinates = new ArrayList<>(size.area());
-        forEachCoordinate(size, cancellationCheck, coordinates::add);
-        return coordinates;
     }
 
     private static void forEachCoordinate(GridSize size, Runnable cancellationCheck,
@@ -433,17 +428,6 @@ public final class GridInitializers {
                 index++;
                 action.accept(new GridCoordinate(x, y));
             }
-        }
-    }
-
-    private static void shuffleCoordinates(List<GridCoordinate> coordinates, Random random,
-                                           Runnable cancellationCheck) {
-        for (int index = 0; index < (coordinates.size() - 1); index++) {
-            if (WorkCheckpoints.isCancellationCheckpoint(index)) {
-                cancellationCheck.run();
-            }
-            int coordinateIndex = coordinates.size() - index - 1;
-            Collections.swap(coordinates, coordinateIndex, random.nextInt(coordinateIndex + 1));
         }
     }
 

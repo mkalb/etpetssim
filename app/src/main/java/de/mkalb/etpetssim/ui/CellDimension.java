@@ -55,21 +55,37 @@ public record CellDimension(
     public CellDimension {
         if (!DoubleStream.of(edgeLength, width, height, halfEdgeLength, halfWidth, halfHeight,
                 innerRadius, outerRadius, columnWidth, rowHeight).allMatch(Double::isFinite)) {
-            throw new IllegalArgumentException("All dimensions must be finite.");
+            throw new IllegalArgumentException("all values must be finite, but was: "
+                    + formatValues(edgeLength, width, height, halfEdgeLength, halfWidth, halfHeight, innerRadius,
+                    outerRadius, columnWidth, rowHeight));
         }
         if ((edgeLength <= 0) || (width <= 0) || (height <= 0)
                 || (innerRadius <= 0) || (outerRadius <= 0)
                 || (columnWidth <= 0) || (rowHeight <= 0)) {
-            throw new IllegalArgumentException("All dimensions must be positive.");
+            throw new IllegalArgumentException("all values except the half values must be > 0, but was: "
+                    + formatValues(edgeLength, width, height, halfEdgeLength, halfWidth, halfHeight, innerRadius,
+                    outerRadius, columnWidth, rowHeight));
         }
         if ((Math.abs(edgeLength - (2 * halfEdgeLength)) > DOUBLE_COMPARE_EPSILON)
                 || (Math.abs(width - (2 * halfWidth)) > DOUBLE_COMPARE_EPSILON)
                 || (Math.abs(height - (2 * halfHeight)) > DOUBLE_COMPARE_EPSILON)) {
-            throw new IllegalArgumentException("Half dimensions must be half of the full dimensions.");
+            throw new IllegalArgumentException("all half values must be half of their full values, but was: "
+                    + formatValues(edgeLength, width, height, halfEdgeLength, halfWidth, halfHeight, innerRadius,
+                    outerRadius, columnWidth, rowHeight));
         }
         if (outerRadius <= innerRadius) {
-            throw new IllegalArgumentException("Outer radius must be greater than inner radius.");
+            throw new IllegalArgumentException("outerRadius must be > innerRadius, but was: outerRadius="
+                    + outerRadius + ", innerRadius=" + innerRadius);
         }
+    }
+
+    private static String formatValues(double edgeLength, double width, double height, double halfEdgeLength,
+                                       double halfWidth, double halfHeight, double innerRadius, double outerRadius,
+                                       double columnWidth, double rowHeight) {
+        return "edgeLength=" + edgeLength + ", width=" + width + ", height=" + height
+                + ", halfEdgeLength=" + halfEdgeLength + ", halfWidth=" + halfWidth + ", halfHeight=" + halfHeight
+                + ", innerRadius=" + innerRadius + ", outerRadius=" + outerRadius
+                + ", columnWidth=" + columnWidth + ", rowHeight=" + rowHeight;
     }
 
     /**

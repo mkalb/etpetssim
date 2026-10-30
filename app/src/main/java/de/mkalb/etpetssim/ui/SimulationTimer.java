@@ -39,7 +39,7 @@ public final class SimulationTimer {
      */
     public void start(Duration interval) {
         if (interval.isUnknown() || interval.isIndefinite() || (interval.toMillis() <= 0.0d)) {
-            throw new IllegalArgumentException("interval must be a finite duration greater than 0 ms");
+            throw new IllegalArgumentException("interval must be finite and > 0 ms, but was: " + interval);
         }
         stop();
         timeline = new Timeline(new KeyFrame(interval, _ -> simulationStep.run()));

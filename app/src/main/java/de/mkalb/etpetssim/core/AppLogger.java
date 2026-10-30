@@ -254,7 +254,7 @@ public final class AppLogger {
 
     private synchronized void initializeLogger(LogLevel logLevel, boolean useConsole, @Nullable Path logPath) {
         if (initialized) {
-            throw new IllegalStateException("AppLogger is already initialized.");
+            throw new IllegalStateException("Unable to initialize AppLogger: already initialized");
         }
 
         logger.setUseParentHandlers(false);

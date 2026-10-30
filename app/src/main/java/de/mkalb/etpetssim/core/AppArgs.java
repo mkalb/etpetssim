@@ -117,7 +117,7 @@ public final class AppArgs {
      */
     public boolean isFlagActive(Key key) {
         if (!key.isFlag()) {
-            throw new IllegalArgumentException("Key is not a flag: " + key);
+            throw new IllegalArgumentException("key must be a flag, but was: " + key);
         }
         return getBoolean(key, false);
     }

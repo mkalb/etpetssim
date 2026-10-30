@@ -103,10 +103,10 @@ public final class AppStorage {
             Files.createDirectories(path);
         }
         if (!Files.isDirectory(path)) {
-            throw new IOException("Path " + path + " is not a directory.");
+            throw new IOException("path must be a directory, but was: " + path);
         }
         if (!Files.isWritable(path)) {
-            throw new IOException("Path " + path + " is not writable.");
+            throw new IOException("path must be writable, but was: " + path);
         }
         return path;
     }
@@ -169,13 +169,14 @@ public final class AppStorage {
      */
     private static Path resolveFileInDirectory(Path directory, String fileName) throws IOException {
         if (fileName.isBlank()) {
-            throw new IllegalArgumentException("File name must not be empty or blank");
+            throw new IllegalArgumentException("fileName must not be blank, but was: \"" + fileName + '"');
         }
 
         Path normalizedDirectory = directory.toAbsolutePath().normalize();
         Path resolvedPath = normalizedDirectory.resolve(fileName).toAbsolutePath().normalize();
         if (!resolvedPath.startsWith(normalizedDirectory)) {
-            throw new IOException("File name resolves outside of target directory: " + fileName);
+            throw new IOException("fileName must resolve inside directory " + normalizedDirectory + ", but was: "
+                    + fileName);
         }
         return resolvedPath;
     }

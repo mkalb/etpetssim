@@ -36,7 +36,7 @@ public record RadiusRingCell<C>(int ring,
      */
     public RadiusRingCell {
         if (ring < 0) {
-            throw new IllegalArgumentException("Ring must be greater than or equal to 0, but was: " + ring);
+            throw new IllegalArgumentException("ring must be >= 0, but was: " + ring);
         }
         reachedFromPreviousRing = Collections.unmodifiableSortedSet(new TreeSet<>(reachedFromPreviousRing));
     }

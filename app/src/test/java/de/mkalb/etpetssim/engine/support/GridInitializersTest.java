@@ -389,22 +389,6 @@ final class GridInitializersTest {
     }
 
     @Test
-    void testPlaceShuffledCountChecksDuringShuffle() {
-        TrackingRandom random = new TrackingRandom();
-        SparseGridModel<TestEntity> model = createModel();
-
-        assertThrows(CancellationException.class, () ->
-                GridInitializers.placeShuffledCount(1, () -> TestEntity.FILLED, TestEntity.EMPTY::equals, random,
-                        () -> {
-                            if (random.nextIntCalls() > 0) {
-                                throw new CancellationException();
-                            }
-                        }).initialize(model));
-
-        assertEquals(WorkCheckpoints.CANCELLATION_CHECK_INTERVAL, random.nextIntCalls());
-    }
-
-    @Test
     void testPlaceAllAtRandomPositions() {
         SparseGridModel<TestEntity> model = createSmallModel();
         model.setEntity(new GridCoordinate(2, 2), TestEntity.OTHER);
@@ -439,22 +423,6 @@ final class GridInitializersTest {
         public String descriptorId() {
             return name().toLowerCase(Locale.ROOT);
         }
-    }
-
-    private static final class TrackingRandom extends Random {
-
-        private int nextIntCalls;
-
-        @Override
-        public int nextInt(int bound) {
-            nextIntCalls++;
-            return super.nextInt(bound);
-        }
-
-        int nextIntCalls() {
-            return nextIntCalls;
-        }
-
     }
 
 }

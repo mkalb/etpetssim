@@ -74,7 +74,7 @@ public final class GridEntityDescriptorRegistry {
     public GridEntityDescriptor requireByDescriptorId(String descriptorId) {
         GridEntityDescriptor descriptor = descriptorsById.get(descriptorId);
         if (descriptor == null) {
-            throw new NoSuchElementException("No GridEntityDescriptor found for id: " + descriptorId);
+            throw new NoSuchElementException("No descriptor found for descriptorId: " + descriptorId);
         }
         return descriptor;
     }

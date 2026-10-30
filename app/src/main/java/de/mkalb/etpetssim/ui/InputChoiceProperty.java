@@ -40,13 +40,14 @@ public record InputChoiceProperty<T>(ObjectProperty<T> property,
      */
     public InputChoiceProperty {
         if (validValues.isEmpty()) {
-            throw new IllegalArgumentException("validValues must not be empty");
+            throw new IllegalArgumentException("validValues must not be empty, but was: " + validValues);
         }
         if (new HashSet<>(validValues).size() != validValues.size()) {
-            throw new IllegalArgumentException("validValues must not contain duplicates");
+            throw new IllegalArgumentException("validValues must not contain duplicates, but was: " + validValues);
         }
         if (isInvalidValue(property.get(), validValues)) {
-            throw new IllegalArgumentException("Initial value is not valid: " + property.get());
+            throw new IllegalArgumentException("property value must be one of validValues " + validValues
+                    + ", but was: " + property.get());
         }
         validValues = List.copyOf(validValues);
     }

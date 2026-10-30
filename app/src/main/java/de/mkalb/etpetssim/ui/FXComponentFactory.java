@@ -165,16 +165,19 @@ public final class FXComponentFactory {
         List<T> validValues = inputChoiceProperty.validValues();
         if (validValues.size() != 2) {
             throw new IllegalArgumentException(
-                    "InputChoiceProperty must define exactly 2 valid values for checkbox usage.");
+                    "validValues of inputChoiceProperty must contain exactly 2 values, but was: " + validValues);
         }
         if (!validValues.contains(checkedValue)) {
-            throw new IllegalArgumentException("checkedValue must be part of valid values: " + checkedValue);
+            throw new IllegalArgumentException("checkedValue must be one of validValues " + validValues
+                    + ", but was: " + checkedValue);
         }
         if (!validValues.contains(uncheckedValue)) {
-            throw new IllegalArgumentException("uncheckedValue must be part of valid values: " + uncheckedValue);
+            throw new IllegalArgumentException("uncheckedValue must be one of validValues " + validValues
+                    + ", but was: " + uncheckedValue);
         }
         if (Objects.equals(checkedValue, uncheckedValue)) {
-            throw new IllegalArgumentException("checkedValue and uncheckedValue must be different.");
+            throw new IllegalArgumentException("checkedValue must be different from uncheckedValue, but was: "
+                    + checkedValue);
         }
 
         CheckBox checkBox = new CheckBox();

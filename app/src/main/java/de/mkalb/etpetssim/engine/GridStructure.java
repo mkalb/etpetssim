@@ -32,16 +32,12 @@ public record GridStructure(GridTopology topology, GridSize size) {
      */
     public GridStructure {
         if (!hasValidWidthMultiple(topology, size)) {
-            throw new IllegalArgumentException(
-                    String.format(Locale.ROOT, "Grid width (%d) must be a multiple of %d for topology %s",
-                            size.width(), topology.requiredWidthMultiple(), topology.toDisplayString())
-            );
+            throw new IllegalArgumentException("width must be a multiple of " + topology.requiredWidthMultiple()
+                    + " for topology " + topology + ", but was: " + size.width());
         }
         if (!hasValidHeightMultiple(topology, size)) {
-            throw new IllegalArgumentException(
-                    String.format(Locale.ROOT, "Grid height (%d) must be a multiple of %d for topology %s",
-                            size.height(), topology.requiredHeightMultiple(), topology.toDisplayString())
-            );
+            throw new IllegalArgumentException("height must be a multiple of " + topology.requiredHeightMultiple()
+                    + " for topology " + topology + ", but was: " + size.height());
         }
     }
 

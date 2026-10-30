@@ -33,10 +33,11 @@ public record InputDoubleIntRangeProperty(DoubleProperty property, int min, int 
      */
     public InputDoubleIntRangeProperty {
         if (min >= max) {
-            throw new IllegalArgumentException("min must be less than max");
+            throw new IllegalArgumentException("min must be < max, but was: min=" + min + ", max=" + max);
         }
         if (isInvalidValue(property.get(), min, max)) {
-            throw new IllegalArgumentException("Initial value is not valid: " + property.get());
+            throw new IllegalArgumentException("property value must be in [min, max], but was: value="
+                    + property.get() + ", min=" + min + ", max=" + max);
         }
     }
 

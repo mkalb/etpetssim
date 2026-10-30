@@ -97,8 +97,8 @@ public final class GridGeometry {
      */
     public static CellDimension computeCellDimension(double edgeLength, CellShape cellShape) {
         if ((edgeLength < MIN_EDGE_LENGTH) || (edgeLength > MAX_EDGE_LENGTH)) {
-            throw new IllegalArgumentException(
-                    "Edge length must be between " + MIN_EDGE_LENGTH + " and " + MAX_EDGE_LENGTH + ".");
+            throw new IllegalArgumentException("edgeLength must be in [" + MIN_EDGE_LENGTH + ", " + MAX_EDGE_LENGTH
+                    + "], but was: " + edgeLength);
         }
 
         double halfEdgeLength = edgeLength * ONE_HALF;

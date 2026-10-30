@@ -75,14 +75,14 @@ public final class AppLocalization {
      */
     public static synchronized void initialize(@Nullable String localeArgument, Locale defaultLocale) {
         if (isInitialized()) {
-            throw new IllegalStateException("AppLocalization is already initialized.");
+            throw new IllegalStateException("Unable to initialize AppLocalization: already initialized");
         }
 
         Locale resolvedLocale = resolveLocaleFromArgument(localeArgument)
                 .or(() -> resolveLocaleFromDefault(defaultLocale))
                 .orElse(DEFAULT_LOCALE);
         ResourceBundle resolvedBundle = AppResources.getBundle(resolvedLocale).orElseThrow(() ->
-                new IllegalStateException("ResourceBundle for locale " + resolvedLocale + " could not be loaded."));
+                new IllegalStateException("Unable to load resource bundle: locale=" + resolvedLocale));
         state = new LocalizationState(resolvedLocale, resolvedBundle);
         AppLogger.info("AppLocalization: Initialized with locale: " + resolvedLocale + " and loaded ResourceBundle");
     }
@@ -210,7 +210,8 @@ public final class AppLocalization {
      */
     static synchronized void initializeForTesting(Locale testLocale, String bundleBaseName) {
         ResourceBundle testBundle = AppResources.getBundle(bundleBaseName, testLocale).orElseThrow(() ->
-                new IllegalStateException("Test ResourceBundle " + bundleBaseName + " could not be loaded."));
+                new IllegalStateException("Unable to load resource bundle: bundleBaseName=" + bundleBaseName
+                        + ", locale=" + testLocale));
         state = new LocalizationState(testLocale, testBundle);
     }
 
@@ -231,7 +232,7 @@ public final class AppLocalization {
     private static LocalizationState requireState() {
         LocalizationState activeState = state;
         if (activeState == null) {
-            throw new IllegalStateException("AppLocalization is not initialized.");
+            throw new IllegalStateException("Unable to access AppLocalization: not initialized");
         }
         return activeState;
     }
