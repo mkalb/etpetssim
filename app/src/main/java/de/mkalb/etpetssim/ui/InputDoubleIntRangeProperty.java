@@ -56,8 +56,8 @@ public record InputDoubleIntRangeProperty(DoubleProperty property, int min, int 
             @Override
             public void set(double newValue) {
                 if (isInvalidValue(newValue, min, max)) {
-                    AppLogger.error("InputDoubleIntRangeProperty: Invalid value set: " + newValue +
-                            " (min=" + min + ", max=" + max + ")");
+                    AppLogger.errorf("InputDoubleIntRangeProperty: Invalid value set: %s (min=%d, max=%d)",
+                            newValue, min, max);
                 }
                 // The value is set even if it is invalid.
                 super.set(newValue);
@@ -116,7 +116,8 @@ public record InputDoubleIntRangeProperty(DoubleProperty property, int min, int 
     }
 
     /**
-     * Rounds a value to the nearest integer (ties to even) and clamps it to the range between {@code min} and {@code max}.
+     * Rounds a value to the nearest integer (ties to even) and clamps it to the range between {@code min} and
+     * {@code max}.
      *
      * @param newValue the value to adjust
      * @return the adjusted value

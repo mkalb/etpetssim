@@ -12,6 +12,7 @@ import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.canvas.Canvas;
+import javafx.scene.image.PixelReader;
 import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.StrokeType;
@@ -40,13 +41,13 @@ final class FXGridCanvasPainterTest {
         FXTestSupport.ensureStarted();
     }
 
-    @SuppressWarnings("SameParameterValue")
-    private static GridStructure createStructure(CellShape shape) {
-        return new GridStructure(new GridTopology(shape, GridEdgeBehavior.ABSORB_XY), GridSize.square(GridSize.MIN_SIZE));
+    private static GridStructure createStructure() {
+        return new GridStructure(new GridTopology(CellShape.SQUARE, GridEdgeBehavior.ABSORB_XY),
+                GridSize.square(GridSize.MIN_SIZE));
     }
 
     private static FXGridCanvasPainter createPainter(Canvas canvas) {
-        return new FXGridCanvasPainter(canvas, createStructure(CellShape.SQUARE), EDGE_LENGTH);
+        return new FXGridCanvasPainter(canvas, createStructure(), EDGE_LENGTH);
     }
 
     private static Color snapshotColorAt(Canvas canvas, int x, int y) {
@@ -54,6 +55,20 @@ final class FXGridCanvasPainterTest {
         parameters.setFill(Color.TRANSPARENT);
         WritableImage snapshot = canvas.snapshot(parameters, null);
         return snapshot.getPixelReader().getColor(x, y);
+    }
+
+    private static boolean isPaintedNear(Canvas canvas, int x, int y) {
+        SnapshotParameters parameters = new SnapshotParameters();
+        parameters.setFill(Color.TRANSPARENT);
+        PixelReader pixelReader = canvas.snapshot(parameters, null).getPixelReader();
+        for (int dx = -4; dx <= 4; dx++) {
+            for (int dy = -4; dy <= 4; dy++) {
+                if (pixelReader.getColor(x + dx, y + dy).getOpacity() > 0.0d) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     private static void assertColorEquals(Color expected, Color actual) {
@@ -69,27 +84,34 @@ final class FXGridCanvasPainterTest {
     void testConstructor() {
         FXTestSupport.runAndWait(() -> {
             Canvas canvas = new Canvas(CANVAS_SIZE, CANVAS_SIZE);
-            GridStructure structure = createStructure(CellShape.SQUARE);
+            GridStructure structure = createStructure();
             FXGridCanvasPainter painter = new FXGridCanvasPainter(canvas, structure, EDGE_LENGTH);
 
             assertAll(
                     () -> assertSame(canvas, painter.canvas()),
                     () -> assertSame(structure, painter.gridStructure()),
                     () -> assertSame(canvas.getGraphicsContext2D(), painter.graphicsContext2D()),
-                    () -> assertEquals(GridGeometry.computeCellDimension(EDGE_LENGTH, CellShape.SQUARE), painter.cellDimension()),
-                    () -> assertEquals(GridGeometry.computeGridDimension(structure.size(), EDGE_LENGTH, CellShape.SQUARE), painter.gridDimension2D())
+                    () -> assertEquals(GridGeometry.computeCellDimension(EDGE_LENGTH, CellShape.SQUARE),
+                            painter.cellDimension()),
+                    () -> assertEquals(
+                            GridGeometry.computeGridDimension(structure.size(), EDGE_LENGTH, CellShape.SQUARE),
+                            painter.gridDimension2D())
             );
         });
     }
 
     @Test
-    void testConstructorRejectsTooSmallCellEdgeLength() {
+    void testConstructorRejectsCellEdgeLengthOutOfRange() {
         FXTestSupport.runAndWait(() -> {
             Canvas canvas = new Canvas(CANVAS_SIZE, CANVAS_SIZE);
-            GridStructure structure = createStructure(CellShape.SQUARE);
+            GridStructure structure = createStructure();
 
-            assertThrows(IllegalArgumentException.class,
-                    () -> new FXGridCanvasPainter(canvas, structure, 0.5d));
+            assertAll(
+                    () -> assertThrows(IllegalArgumentException.class,
+                            () -> new FXGridCanvasPainter(canvas, structure, GridGeometry.MIN_EDGE_LENGTH - 0.5d)),
+                    () -> assertThrows(IllegalArgumentException.class,
+                            () -> new FXGridCanvasPainter(canvas, structure, GridGeometry.MAX_EDGE_LENGTH + 0.5d))
+            );
         });
     }
 
@@ -368,6 +390,36 @@ final class FXGridCanvasPainterTest {
         });
     }
 
+    @Test
+    void testDrawCenteredTextInCell() {
+        FXTestSupport.runAndWait(() -> {
+            Canvas canvas = new Canvas(CANVAS_SIZE, CANVAS_SIZE);
+            FXGridCanvasPainter painter = createPainter(canvas);
+
+            painter.drawCenteredTextInCell(new GridCoordinate(2, 2), "W", Color.BLACK, Font.font("System", 12.0d));
+
+            assertAll(
+                    () -> assertTrue(isPaintedNear(canvas, 25, 25)),
+                    () -> assertFalse(isPaintedNear(canvas, 5, 5))
+            );
+        });
+    }
+
+    @Test
+    void testDrawCenteredTextAt() {
+        FXTestSupport.runAndWait(() -> {
+            Canvas canvas = new Canvas(CANVAS_SIZE, CANVAS_SIZE);
+            FXGridCanvasPainter painter = createPainter(canvas);
+
+            painter.drawCenteredTextAt(new Point2D(60, 60), "W", Color.BLACK, Font.font("System", 12.0d));
+
+            assertAll(
+                    () -> assertTrue(isPaintedNear(canvas, 60, 60)),
+                    () -> assertFalse(isPaintedNear(canvas, 5, 5))
+            );
+        });
+    }
+
     @SuppressWarnings("TestMethodWithoutAssertion")
     @Test
     void testDrawCircle() {
@@ -387,7 +439,8 @@ final class FXGridCanvasPainterTest {
             Canvas canvas = new Canvas(CANVAS_SIZE, CANVAS_SIZE);
             FXGridCanvasPainter painter = createPainter(canvas);
 
-            painter.drawCenteredTextWithBackgroundAt(new Point2D(30, 30), "A", Color.WHITE, Font.font("System", 12.0d), Color.BLACK, 4.0d);
+            painter.drawCenteredTextWithBackgroundAt(new Point2D(30, 30), "A", Color.WHITE, Font.font("System", 12.0d),
+                    Color.BLACK, 4.0d);
 
             assertTrue(snapshotColorAt(canvas, 30, 30).getOpacity() > 0.0d);
         });

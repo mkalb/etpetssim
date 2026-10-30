@@ -74,7 +74,7 @@ final class FXComponentFactoryTest {
     }
 
     @Test
-    void testCreateLabeledChoiceRadioButtonsSynchronizesSelectionAndProperty() {
+    void testCreateLabeledChoiceRadioButtons() {
         FXTestSupport.runAndWait(() -> {
             InputChoiceProperty<TestMode> property = InputChoiceProperty.ofEnum(
                     TestMode.ALPHA,
@@ -111,7 +111,7 @@ final class FXComponentFactoryTest {
     }
 
     @Test
-    void testCreateLabeledChoiceCheckBoxSynchronizesSelectionAndProperty() {
+    void testCreateLabeledChoiceCheckBox() {
         FXTestSupport.runAndWait(() -> {
             InputChoiceProperty<TestToggle> property = InputChoiceProperty.ofEnum(
                     TestToggle.OFF,
@@ -155,10 +155,21 @@ final class FXComponentFactoryTest {
                     TestToggle.class,
                     TestToggle::name);
 
+            InputChoiceProperty<TestMode> twoModeProperty = InputChoiceProperty.ofList(
+                    TestMode.ALPHA,
+                    List.of(TestMode.ALPHA, TestMode.BETA),
+                    TestMode::name);
+
             assertAll(
                     () -> assertThrows(IllegalArgumentException.class,
                             () -> FXComponentFactory.createLabeledChoiceCheckBox(
                                     threeValueProperty, TestMode.ALPHA, TestMode.BETA, "%s", TOOLTIP, STYLE_CLASS)),
+                    () -> assertThrows(IllegalArgumentException.class,
+                            () -> FXComponentFactory.createLabeledChoiceCheckBox(
+                                    twoModeProperty, TestMode.GAMMA, TestMode.ALPHA, "%s", TOOLTIP, STYLE_CLASS)),
+                    () -> assertThrows(IllegalArgumentException.class,
+                            () -> FXComponentFactory.createLabeledChoiceCheckBox(
+                                    twoModeProperty, TestMode.ALPHA, TestMode.GAMMA, "%s", TOOLTIP, STYLE_CLASS)),
                     () -> assertThrows(IllegalArgumentException.class,
                             () -> FXComponentFactory.createLabeledChoiceCheckBox(
                                     twoValueProperty, TestToggle.ON, TestToggle.ON, "%s", TOOLTIP, STYLE_CLASS))
@@ -167,7 +178,35 @@ final class FXComponentFactoryTest {
     }
 
     @Test
-    void testCreateLabeledChoiceComboBoxSynchronizesValuesAndStopsOnCleanup() {
+    void testCreateLabeledChoiceComboBox() {
+        FXTestSupport.runAndWait(() -> {
+            InputChoiceProperty<String> property = InputChoiceProperty.ofList(
+                    "alpha",
+                    List.of("alpha", "beta", "gamma"),
+                    String::toUpperCase);
+
+            FXComponentFactory.LabeledControl<ComboBox<String>> control =
+                    FXComponentFactory.createLabeledChoiceComboBox(property, "Choice: %s", TOOLTIP, STYLE_CLASS);
+            ComboBox<String> comboBox = control.controlRegion();
+
+            comboBox.setValue("beta");
+            String valueAfterComboChange = property.getValue();
+            property.setValue("gamma");
+
+            assertAll(
+                    () -> assertEquals(List.of("alpha", "beta", "gamma"), comboBox.getItems()),
+                    () -> assertEquals("beta", valueAfterComboChange),
+                    () -> assertEquals("gamma", comboBox.getValue()),
+                    () -> assertEquals("Choice: GAMMA", control.label().getText()),
+                    () -> assertSame(comboBox, control.label().getLabelFor()),
+                    () -> assertSame(control.label().getTooltip(), comboBox.getTooltip()),
+                    () -> assertTrue(comboBox.getStyleClass().contains(STYLE_CLASS))
+            );
+        });
+    }
+
+    @Test
+    void testCreateLabeledChoiceComboBoxWithCleanupRegistrar() {
         FXTestSupport.runAndWait(() -> {
             InputChoiceProperty<String> property = InputChoiceProperty.ofList(
                     "alpha",
@@ -175,7 +214,8 @@ final class FXComponentFactoryTest {
                     String::toUpperCase);
             AtomicReference<Runnable> cleanup = new AtomicReference<>();
 
-            FXComponentFactory.LabeledControl<ComboBox<String>> control = FXComponentFactory.createLabeledChoiceComboBox(
+            FXComponentFactory.LabeledControl<ComboBox<String>> control =
+                    FXComponentFactory.createLabeledChoiceComboBox(
                     property,
                     "Choice: %s",
                     TOOLTIP,
@@ -193,12 +233,8 @@ final class FXComponentFactoryTest {
             property.setValue("alpha");
 
             assertAll(
-                    () -> assertEquals(List.of("alpha", "beta", "gamma"), comboBox.getItems()),
                     // Cleanup unbinds the label, so it stays at the last synchronized value ("gamma").
                     () -> assertEquals("Choice: GAMMA", control.label().getText()),
-                    () -> assertSame(comboBox, control.label().getLabelFor()),
-                    () -> assertSame(control.label().getTooltip(), comboBox.getTooltip()),
-                    () -> assertTrue(comboBox.getStyleClass().contains(STYLE_CLASS)),
                     () -> assertEquals("beta", valueAfterComboChange),
                     () -> assertEquals("gamma", comboValueAfterPropertyChange),
                     () -> assertEquals("gamma", comboBox.getValue())
@@ -207,7 +243,7 @@ final class FXComponentFactoryTest {
     }
 
     @Test
-    void testCreateLabeledIntSliderBindsValueAndConfiguresSlider() {
+    void testCreateLabeledIntSlider() {
         FXTestSupport.runAndWait(() -> {
             InputDoubleIntRangeProperty property = InputDoubleIntRangeProperty.of(3, 0, 10);
 
@@ -239,7 +275,7 @@ final class FXComponentFactoryTest {
     }
 
     @Test
-    void testCreateLabeledIntSpinnerNormalizesEditorInputAndSyncsProperty() {
+    void testCreateLabeledIntSpinner() {
         FXTestSupport.runAndWait(() -> {
             InputIntegerProperty property = InputIntegerProperty.of(10, 0, 20, 5);
 
@@ -270,7 +306,7 @@ final class FXComponentFactoryTest {
     }
 
     @Test
-    void testCreateLabeledPercentSliderRoundsValueAndBindsLabel() {
+    void testCreateLabeledPercentSlider() {
         FXTestSupport.runAndWait(() -> {
             InputDoubleProperty property = InputDoubleProperty.of(0.255d, 0.0d, 1.0d);
 
@@ -289,6 +325,7 @@ final class FXComponentFactoryTest {
                     () -> assertEquals(0.33d, slider.getValue(), 0.000_001d),
                     () -> assertEquals(0.33d, property.getValue(), 0.000_001d),
                     () -> assertEquals("33 %", control.label().getText()),
+                    () -> assertEquals(9, slider.getMinorTickCount()),
                     () -> assertEquals(0.01d, slider.getBlockIncrement(), 0.000_001d),
                     () -> assertSame(slider, control.label().getLabelFor())
             );
@@ -296,7 +333,7 @@ final class FXComponentFactoryTest {
     }
 
     @Test
-    void testCreateLabeledDoubleSliderRoundsValueAndBindsLabel() {
+    void testCreateLabeledDoubleSlider() {
         FXTestSupport.runAndWait(() -> {
             InputDoubleProperty property = InputDoubleProperty.of(0.255d, 0.0d, 1.0d);
 
@@ -324,7 +361,7 @@ final class FXComponentFactoryTest {
     }
 
     @Test
-    void testCreateLabeledStringTextBoxBindsTextAndClearButton() {
+    void testCreateLabeledStringTextBox() {
         FXTestSupport.runAndWait(() -> {
             StringProperty inputProperty = new SimpleStringProperty("initial");
             StringProperty labelProperty = new SimpleStringProperty("label");
@@ -358,7 +395,7 @@ final class FXComponentFactoryTest {
     }
 
     @Test
-    void testCreateLabeledStringTextBoxWithAdoptCopiesValueAndTracksDisabled() {
+    void testCreateLabeledStringTextBoxWithAdopt() {
         FXTestSupport.runAndWait(() -> {
             StringProperty inputProperty = new SimpleStringProperty("initial");
             StringProperty labelProperty = new SimpleStringProperty("label");

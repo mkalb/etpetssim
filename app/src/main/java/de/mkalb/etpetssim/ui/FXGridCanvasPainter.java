@@ -2,7 +2,6 @@ package de.mkalb.etpetssim.ui;
 
 import de.mkalb.etpetssim.engine.CellShape;
 import de.mkalb.etpetssim.engine.GridCoordinate;
-import de.mkalb.etpetssim.engine.GridSize;
 import de.mkalb.etpetssim.engine.GridStructure;
 import javafx.geometry.Dimension2D;
 import javafx.geometry.Point2D;
@@ -19,13 +18,9 @@ import org.jspecify.annotations.Nullable;
 
 /**
  * Draws grids, cells, shapes, pixels, and text on one JavaFX {@link Canvas}.
- * <p>
- * The cell edge length given at construction defines the length of each edge of the cell
- * (TRIANGLE, SQUARE, HEXAGON) in pixels; the cell and grid dimensions are computed once from it.
  *
- * @see CellShape
- * @see GridSize
- * @see GridCoordinate
+ * <p>The cell edge length given at construction defines the length of each edge of the cell
+ * (TRIANGLE, SQUARE, HEXAGON) in pixels; the cell and grid dimensions are computed once from it.
  */
 public final class FXGridCanvasPainter {
 
@@ -43,13 +38,10 @@ public final class FXGridCanvasPainter {
      * @param canvas         the canvas to draw on
      * @param structure      the structure of the grid, defining its cell shape and size
      * @param cellEdgeLength the length of each edge of the cell in pixels
-     * @throws IllegalArgumentException if {@code cellEdgeLength} is less than 1 pixel
+     * @throws IllegalArgumentException if {@code cellEdgeLength} is outside the inclusive range
+     *                                  [{@link GridGeometry#MIN_EDGE_LENGTH}, {@link GridGeometry#MAX_EDGE_LENGTH}]
      */
     public FXGridCanvasPainter(Canvas canvas, GridStructure structure, double cellEdgeLength) {
-        if (cellEdgeLength < 1.0d) {
-            throw new IllegalArgumentException("Cell edge length must be at least 1 pixel.");
-        }
-
         this.canvas = canvas;
         this.structure = structure;
         graphicsContext2D = canvas.getGraphicsContext2D();
@@ -113,7 +105,6 @@ public final class FXGridCanvasPainter {
      *
      * @param coordinate the grid coordinate to check
      * @return {@code true} if the coordinate is inside the grid area, {@code false} otherwise
-     * @see GridStructure#isCoordinateValid(GridCoordinate)
      * @see #isOutsideGrid(GridCoordinate)
      */
     public boolean isInsideGrid(GridCoordinate coordinate) {
@@ -127,7 +118,6 @@ public final class FXGridCanvasPainter {
      *
      * @param coordinate the grid coordinate to check
      * @return {@code true} if the coordinate is outside the grid area, {@code false} otherwise
-     * @see GridStructure#isCoordinateValid(GridCoordinate)
      * @see #isInsideGrid(GridCoordinate)
      */
     public boolean isOutsideGrid(GridCoordinate coordinate) {
@@ -152,11 +142,9 @@ public final class FXGridCanvasPainter {
     }
 
     /**
-     * Fills the background of the grid area with the specified color.
-     * The grid area is defined by the grid size and cell edge length.
+     * Fills the background of the grid area ({@link #gridDimension2D()}) with the specified color.
      *
      * @param fillColor the color used to fill the grid background
-     * @see #gridDimension2D
      */
     public void fillGridBackground(Paint fillColor) {
         graphicsContext2D.setFill(fillColor);
@@ -164,10 +152,7 @@ public final class FXGridCanvasPainter {
     }
 
     /**
-     * Clears the background of the grid area.
-     * The grid area is defined by the grid size, cell shape and cell edge length.
-     *
-     * @see #gridDimension2D
+     * Clears the background of the grid area ({@link #gridDimension2D()}).
      */
     public void clearGridBackground() {
         graphicsContext2D.clearRect(0.0d, 0.0d, gridDimension2D.getWidth(), gridDimension2D.getHeight());
@@ -177,8 +162,8 @@ public final class FXGridCanvasPainter {
      * Draws a cell at the specified grid coordinate using the given fill and stroke colors.
      *
      * @param coordinate      the grid coordinate of the cell to draw
-     * @param fillColor       the color used to fill the cell, or null if no fill is desired
-     * @param strokeColor     the color used to draw the cell's border, or null if no border is desired
+     * @param fillColor       the color used to fill the cell, or {@code null} if no fill is desired
+     * @param strokeColor     the color used to draw the cell's border, or {@code null} if no border is desired
      * @param strokeLineWidth the width of the stroke line in pixels
      */
     public void drawCell(GridCoordinate coordinate,
@@ -195,8 +180,8 @@ public final class FXGridCanvasPainter {
      * the cell to avoid rendering gaps between adjacent cells.
      *
      * @param coordinate      the grid coordinate of the cell to draw
-     * @param fillColor       the color used to fill the cell, or null if no fill is desired
-     * @param strokeColor     the color used to draw the cell's border, or null if no border is desired
+     * @param fillColor       the color used to fill the cell, or {@code null} if no fill is desired
+     * @param strokeColor     the color used to draw the cell's border, or {@code null} if no border is desired
      * @param strokeLineWidth the width of the stroke line in pixels
      * @param scale           the scale factor to apply to the cell polygon (e.g. 1.01 for 1% larger)
      */
@@ -206,9 +191,8 @@ public final class FXGridCanvasPainter {
                                double scale) {
         double[][] cellPolygon = GridGeometry.computeCellPolygon(coordinate, cellDimension, structure.cellShape());
         Point2D center = GridGeometry.computeCellCenter(coordinate, cellDimension, structure.cellShape());
-        // Slightly enlarge the polygon (e.g., 1.01 = 1% larger).
-        double[][] enlarged = scalePolygonFromCenter(cellPolygon[0], cellPolygon[1], center.getX(), center.getY(), scale);
-        drawPolygon(enlarged[0], enlarged[1], fillColor, strokeColor, strokeLineWidth);
+        double[][] scaled = scalePolygonFromCenter(cellPolygon[0], cellPolygon[1], center.getX(), center.getY(), scale);
+        drawPolygon(scaled[0], scaled[1], fillColor, strokeColor, strokeLineWidth);
     }
 
     /**
@@ -224,8 +208,9 @@ public final class FXGridCanvasPainter {
                                      Paint strokeColor,
                                      double strokeLineWidth,
                                      CellShapeSide side) {
-        double[][] cellPolygon = GridGeometry.computeCellFrameSegmentPolyline(coordinate, cellDimension, structure.cellShape(), side);
-        drawPolyline(cellPolygon[0], cellPolygon[1], strokeColor, strokeLineWidth);
+        double[][] polyline = GridGeometry.computeCellFrameSegmentPolyline(coordinate, cellDimension,
+                structure.cellShape(), side);
+        drawPolyline(polyline[0], polyline[1], strokeColor, strokeLineWidth);
     }
 
     /**
@@ -233,8 +218,8 @@ public final class FXGridCanvasPainter {
      * The bounding box is defined by the cell's shape and dimensions.
      *
      * @param coordinate      the grid coordinate of the cell whose bounding box is to be drawn
-     * @param fillColor       the color used to fill the bounding box, or null if no fill is desired
-     * @param strokeColor     the color used to draw the bounding box's border, or null if no border is desired
+     * @param fillColor       the color used to fill the bounding box, or {@code null} if no fill is desired
+     * @param strokeColor     the color used to draw the bounding box's border, or {@code null} if no border is desired
      * @param strokeLineWidth the width of the stroke line in pixels
      * @param strokeType      specifies how the stroke is rendered relative to the bounding box outline
      */
@@ -250,8 +235,8 @@ public final class FXGridCanvasPainter {
      * The inner circle is defined by the cell's inner radius and center point.
      *
      * @param coordinate      the grid coordinate of the cell whose inner circle is to be drawn
-     * @param fillColor       the color used to fill the inner circle, or null if no fill is desired
-     * @param strokeColor     the color used to draw the inner circle's border, or null if no border is desired
+     * @param fillColor       the color used to fill the inner circle, or {@code null} if no fill is desired
+     * @param strokeColor     the color used to draw the inner circle's border, or {@code null} if no border is desired
      * @param strokeLineWidth the width of the stroke line in pixels
      * @param strokeType      specifies how the stroke is rendered relative to the circle outline
      */
@@ -267,8 +252,8 @@ public final class FXGridCanvasPainter {
      * The outer circle is defined by the cell's outer radius and center point.
      *
      * @param coordinate      the grid coordinate of the cell whose outer circle is to be drawn
-     * @param fillColor       the color used to fill the outer circle, or null if no fill is desired
-     * @param strokeColor     the color used to draw the outer circle's border, or null if no border is desired
+     * @param fillColor       the color used to fill the outer circle, or {@code null} if no fill is desired
+     * @param strokeColor     the color used to draw the outer circle's border, or {@code null} if no border is desired
      * @param strokeLineWidth the width of the stroke line in pixels
      * @param strokeType      specifies how the stroke is rendered relative to the circle outline
      */
@@ -285,19 +270,17 @@ public final class FXGridCanvasPainter {
      *
      * @param coordinate         the grid coordinate where the triangle will be drawn
      * @param triangleEdgeLength the length of each edge of the triangle in pixels
-     * @param fillColor          the color used to fill the triangle, or null if no fill is desired
-     * @param strokeColor        the color used to draw the triangle's border, or null if no border is desired
+     * @param fillColor          the color used to fill the triangle, or {@code null} if no fill is desired
+     * @param strokeColor        the color used to draw the triangle's border, or {@code null} if no border is desired
      * @param strokeLineWidth    the width of the stroke line in pixels
      */
     public void drawTriangle(GridCoordinate coordinate, double triangleEdgeLength,
                              @Nullable Paint fillColor, @Nullable Paint strokeColor,
                              double strokeLineWidth) {
-        // Compute the position from the current dimensions and shape.
         Point2D cellTopLeft = GridGeometry.toCanvasPosition(coordinate, cellDimension, structure.cellShape());
-
-        // Compute new dimensions for the triangle based on its edge length.
         CellDimension triangleCellDimension = GridGeometry.computeCellDimension(triangleEdgeLength, CellShape.TRIANGLE);
-        double[][] trianglePoints = GridGeometry.computeTrianglePolygon(cellTopLeft, triangleCellDimension, coordinate.isTriangleCellPointingDown());
+        double[][] trianglePoints = GridGeometry.computeTrianglePolygon(cellTopLeft, triangleCellDimension,
+                coordinate.isTriangleCellPointingDown());
         drawPolygon(trianglePoints[0], trianglePoints[1], fillColor, strokeColor, strokeLineWidth);
     }
 
@@ -307,14 +290,15 @@ public final class FXGridCanvasPainter {
      * The triangle is drawn with optional fill and stroke properties.
      *
      * @param coordinate      the grid coordinate where the triangle will be drawn
-     * @param fillColor       the color used to fill the triangle, or null if no fill is desired
-     * @param strokeColor     the color used to draw the triangle's border, or null if no border is desired
+     * @param fillColor       the color used to fill the triangle, or {@code null} if no fill is desired
+     * @param strokeColor     the color used to draw the triangle's border, or {@code null} if no border is desired
      * @param strokeLineWidth the width of the stroke line in pixels
      */
     public void drawTriangleMatchingCellWidth(GridCoordinate coordinate,
                                               @Nullable Paint fillColor, @Nullable Paint strokeColor,
                                               double strokeLineWidth) {
-        double convertedEdgeLength = GridGeometry.computeEdgeLengthToMatchWidth(cellDimension.edgeLength(), structure.cellShape(), CellShape.TRIANGLE);
+        double convertedEdgeLength = GridGeometry.computeEdgeLengthToMatchWidth(cellDimension.edgeLength(),
+                structure.cellShape(), CellShape.TRIANGLE);
         drawTriangle(coordinate, convertedEdgeLength, fillColor, strokeColor, strokeLineWidth);
     }
 
@@ -324,17 +308,14 @@ public final class FXGridCanvasPainter {
      *
      * @param coordinate        the grid coordinate where the hexagon will be drawn
      * @param hexagonEdgeLength the length of each edge of the hexagon in pixels
-     * @param fillColor         the color used to fill the hexagon, or null if no fill is desired
-     * @param strokeColor       the color used to draw the hexagon's border, or null if no border is desired
+     * @param fillColor         the color used to fill the hexagon, or {@code null} if no fill is desired
+     * @param strokeColor       the color used to draw the hexagon's border, or {@code null} if no border is desired
      * @param strokeLineWidth   the width of the stroke line in pixels
      */
     public void drawHexagon(GridCoordinate coordinate, double hexagonEdgeLength,
                             @Nullable Paint fillColor, @Nullable Paint strokeColor,
                             double strokeLineWidth) {
-        // Compute the position from the current dimensions and shape.
         Point2D cellTopLeft = GridGeometry.toCanvasPosition(coordinate, cellDimension, structure.cellShape());
-
-        // Compute new dimensions for the hexagon based on its edge length.
         CellDimension hexagonCellDimension = GridGeometry.computeCellDimension(hexagonEdgeLength, CellShape.HEXAGON);
         double[][] hexagonPoints = GridGeometry.computeHexagonPolygon(cellTopLeft, hexagonCellDimension);
         drawPolygon(hexagonPoints[0], hexagonPoints[1], fillColor, strokeColor, strokeLineWidth);
@@ -346,14 +327,15 @@ public final class FXGridCanvasPainter {
      * The hexagon is drawn with optional fill and stroke properties.
      *
      * @param coordinate      the grid coordinate where the hexagon will be drawn
-     * @param fillColor       the color used to fill the hexagon, or null if no fill is desired
-     * @param strokeColor     the color used to draw the hexagon's border, or null if no border is desired
+     * @param fillColor       the color used to fill the hexagon, or {@code null} if no fill is desired
+     * @param strokeColor     the color used to draw the hexagon's border, or {@code null} if no border is desired
      * @param strokeLineWidth the width of the stroke line in pixels
      */
     public void drawHexagonMatchingCellWidth(GridCoordinate coordinate,
                                              @Nullable Paint fillColor, @Nullable Paint strokeColor,
                                              double strokeLineWidth) {
-        double convertedEdgeLength = GridGeometry.computeEdgeLengthToMatchWidth(cellDimension.edgeLength(), structure.cellShape(), CellShape.HEXAGON);
+        double convertedEdgeLength = GridGeometry.computeEdgeLengthToMatchWidth(cellDimension.edgeLength(),
+                structure.cellShape(), CellShape.HEXAGON);
         drawHexagon(coordinate, convertedEdgeLength, fillColor, strokeColor, strokeLineWidth);
     }
 
@@ -362,8 +344,8 @@ public final class FXGridCanvasPainter {
      * The stroke can be adjusted to be inside, outside, or centered relative to the rectangle's outline.
      *
      * @param rectangle       the rectangle to be drawn
-     * @param fillColor       the color used to fill the rectangle, or null if no fill is desired
-     * @param strokeColor     the color used to draw the rectangle's border, or null if no border is desired
+     * @param fillColor       the color used to fill the rectangle, or {@code null} if no fill is desired
+     * @param strokeColor     the color used to draw the rectangle's border, or {@code null} if no border is desired
      * @param strokeLineWidth the width of the stroke line in pixels
      * @param strokeType      specifies how the stroke is rendered relative to the rectangle's outline
      */
@@ -374,7 +356,8 @@ public final class FXGridCanvasPainter {
         if ((rectangle.getWidth() > 0.0d) && (rectangle.getHeight() > 0.0d)) {
             if (fillColor != null) {
                 graphicsContext2D.setFill(fillColor);
-                graphicsContext2D.fillRect(rectangle.getMinX(), rectangle.getMinY(), rectangle.getWidth(), rectangle.getHeight());
+                graphicsContext2D.fillRect(rectangle.getMinX(), rectangle.getMinY(), rectangle.getWidth(),
+                        rectangle.getHeight());
             }
 
             if ((strokeColor != null) && (strokeLineWidth > 0.0d)) {
@@ -401,8 +384,8 @@ public final class FXGridCanvasPainter {
      *
      * @param xPoints         an array of x-coordinates for the vertices of the polygon
      * @param yPoints         an array of y-coordinates for the vertices of the polygon
-     * @param fillColor       the color used to fill the polygon, or null if no fill is desired
-     * @param strokeColor     the color used to draw the polygon's border, or null if no border is desired
+     * @param fillColor       the color used to fill the polygon, or {@code null} if no fill is desired
+     * @param strokeColor     the color used to draw the polygon's border, or {@code null} if no border is desired
      * @param strokeLineWidth the width of the stroke line in pixels
      */
     public void drawPolygon(double[] xPoints, double[] yPoints,
@@ -450,13 +433,10 @@ public final class FXGridCanvasPainter {
      *
      * @param x         the x-coordinate of the pixel
      * @param y         the y-coordinate of the pixel
-     * @param fillColor the color of the pixel, or null if nothing should be drawn
+     * @param fillColor the color of the pixel, or {@code null} if nothing should be drawn
      */
-    @SuppressWarnings("NumericCastThatLosesPrecision")
     public void drawPixelDirect(int x, int y, @Nullable Color fillColor) {
-        if ((fillColor != null)
-                && (x >= 0) && (x < (int) canvas.getWidth())
-                && (y >= 0) && (y < (int) canvas.getHeight())) {
+        if ((fillColor != null) && isOnCanvas(x, y)) {
             PixelWriter pw = graphicsContext2D.getPixelWriter();
             pw.setColor(x, y, fillColor);
         }
@@ -469,13 +449,10 @@ public final class FXGridCanvasPainter {
      *
      * @param x         the x-coordinate of the pixel
      * @param y         the y-coordinate of the pixel
-     * @param fillColor the color of the pixel, or null if nothing should be drawn
+     * @param fillColor the color of the pixel, or {@code null} if nothing should be drawn
      */
-    @SuppressWarnings("NumericCastThatLosesPrecision")
     public void drawPixelRect(int x, int y, @Nullable Paint fillColor) {
-        if ((fillColor != null)
-                && (x >= 0) && (x < (int) canvas.getWidth())
-                && (y >= 0) && (y < (int) canvas.getHeight())) {
+        if ((fillColor != null) && isOnCanvas(x, y)) {
             graphicsContext2D.setFill(fillColor);
             graphicsContext2D.fillRect(x, y, 1, 1);
         }
@@ -520,8 +497,8 @@ public final class FXGridCanvasPainter {
      *
      * @param center          the center point of the circle
      * @param radius          the radius of the circle in pixels
-     * @param fillColor       the color used to fill the circle, or null if no fill is desired
-     * @param strokeColor     the color used to draw the circle's border, or null if no border is desired
+     * @param fillColor       the color used to fill the circle, or {@code null} if no fill is desired
+     * @param strokeColor     the color used to draw the circle's border, or {@code null} if no border is desired
      * @param strokeLineWidth the width of the stroke line in pixels
      * @param strokeType      specifies how the stroke is rendered relative to the circle's outline
      */
@@ -586,7 +563,8 @@ public final class FXGridCanvasPainter {
      * @param backgroundColor the color used to fill the background rectangle
      * @param padding         the padding added around the text inside the background rectangle
      */
-    public void drawCenteredTextWithBackgroundAt(Point2D center, String text, Paint textColor, Font font, Paint backgroundColor, double padding) {
+    public void drawCenteredTextWithBackgroundAt(Point2D center, String text, Paint textColor, Font font,
+                                                 Paint backgroundColor, double padding) {
         Dimension2D textDimension = computeTextDimension(text, font);
 
         double bgWidth = textDimension.getWidth() + padding;
@@ -644,6 +622,11 @@ public final class FXGridCanvasPainter {
                 ", canvas=[" + canvas.getWidth() + ", " + canvas.getHeight() + "]" +
                 ", cellDimension=" + cellDimension.toDisplayString() +
                 '}';
+    }
+
+    @SuppressWarnings("NumericCastThatLosesPrecision")
+    private boolean isOnCanvas(int x, int y) {
+        return (x >= 0) && (x < (int) canvas.getWidth()) && (y >= 0) && (y < (int) canvas.getHeight());
     }
 
 }

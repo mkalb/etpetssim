@@ -41,7 +41,6 @@ import java.util.stream.Collectors;
  * <p>A labeled control consists of a label that is bound to the value of the property, the control itself, and a
  * tooltip that the label and the control share.
  */
-@SuppressWarnings("MagicNumber")
 public final class FXComponentFactory {
 
     private static final String BUTTON_TEXT_ADOPT = "↩";
@@ -50,37 +49,18 @@ public final class FXComponentFactory {
     private FXComponentFactory() {
     }
 
-    /**
-     * Creates a Label with the specified text and CSS class.
-     *
-     * @param text       the text to display in the label
-     * @param styleClass the style class to add to the label
-     * @return a Label with the specified text and CSS class
-     */
     public static Label createLabel(String text, String styleClass) {
         Label label = new Label(text);
         label.getStyleClass().add(styleClass);
         return label;
     }
 
-    /**
-     * Creates an {@link HBox} with the specified style class.
-     *
-     * @param styleClass the style class to add to the HBox
-     * @return a new HBox with the given style class
-     */
     public static HBox createHBox(String styleClass) {
         HBox hbox = new HBox();
         hbox.getStyleClass().add(styleClass);
         return hbox;
     }
 
-    /**
-     * Creates a {@link VBox} with the specified style class.
-     *
-     * @param styleClass the style class to add to the VBox
-     * @return a new VBox with the given style class
-     */
     public static VBox createVBox(String styleClass) {
         VBox vbox = new VBox();
         vbox.getStyleClass().add(styleClass);
@@ -94,8 +74,8 @@ public final class FXComponentFactory {
      * <p>Each radio button represents a valid value from the provided InputChoiceProperty and shows the display name
      * supplied by the property's display name provider. All radio buttons are added to the given container pane,
      * which can be any Pane (e.g., VBox, HBox) for flexible layout. The radio buttons are grouped using a ToggleGroup,
-     * ensuring only one can be selected at a time. Selection changes are synchronized with the property, and vice versa.
-     * The label displays the current value using the provided format string.
+     * ensuring only one can be selected at a time. Selection changes are synchronized with the property, and vice
+     * versa. The label displays the current value using the provided format string.
      * Both the label and the radio buttons share the same tooltip for improved accessibility.
      *
      * @param inputChoiceProperty      the InputChoiceProperty defining valid values, display names, and value binding
@@ -127,14 +107,12 @@ public final class FXComponentFactory {
                 })
                 .toList();
 
-        // Set the initial selection.
         for (RadioButton rb : radioButtons) {
             if (inputChoiceProperty.isValue((T) rb.getUserData())) {
                 rb.setSelected(true);
             }
         }
 
-        // Update the property when the selection changes.
         toggleGroup.selectedToggleProperty().addListener((_, _, newToggle) -> {
             if (newToggle != null) {
                 T selectedValue = (T) newToggle.getUserData();
@@ -142,7 +120,6 @@ public final class FXComponentFactory {
             }
         });
 
-        // Update the selection when the property changes.
         inputChoiceProperty.property().addListener((_, _, newVal) -> {
             for (RadioButton rb : radioButtons) {
                 rb.setSelected(Objects.equals(rb.getUserData(), newVal));
@@ -187,7 +164,8 @@ public final class FXComponentFactory {
             String styleClass) {
         List<T> validValues = inputChoiceProperty.validValues();
         if (validValues.size() != 2) {
-            throw new IllegalArgumentException("InputChoiceProperty must define exactly 2 valid values for checkbox usage.");
+            throw new IllegalArgumentException(
+                    "InputChoiceProperty must define exactly 2 valid values for checkbox usage.");
         }
         if (!validValues.contains(checkedValue)) {
             throw new IllegalArgumentException("checkedValue must be part of valid values: " + checkedValue);
@@ -210,9 +188,11 @@ public final class FXComponentFactory {
                 inputChoiceProperty.setValue(uncheckedValue);
             }
         });
-        inputChoiceProperty.property().addListener((_, _, newVal) -> checkBox.setSelected(Objects.equals(newVal, checkedValue)));
+        inputChoiceProperty.property()
+                .addListener((_, _, newVal) -> checkBox.setSelected(Objects.equals(newVal, checkedValue)));
 
-        Label label = createBoundLabel(inputChoiceProperty.asStringBinding(labelFormatString), checkBox, tooltip, checkBox);
+        Label label = createBoundLabel(inputChoiceProperty.asStringBinding(labelFormatString), checkBox, tooltip,
+                checkBox);
         return new LabeledControl<>(label, checkBox);
     }
 
@@ -264,11 +244,7 @@ public final class FXComponentFactory {
         Map<T, String> displayNames = inputChoiceProperty
                 .validValues()
                 .stream()
-                .collect(Collectors.toMap(
-                        Function.identity(),
-                        inputChoiceProperty.displayNameProvider(),
-                        (v1, _) -> v1 // Merge function, in case the list contains duplicates.
-                ));
+                .collect(Collectors.toMap(Function.identity(), inputChoiceProperty.displayNameProvider()));
 
         ComboBox<T> comboBox = new ComboBox<>();
         comboBox.getItems().addAll(inputChoiceProperty.validValues());
@@ -277,7 +253,6 @@ public final class FXComponentFactory {
         comboBox.setButtonCell(createDisplayNameListCell(displayNames));
         comboBox.getStyleClass().add(styleClass);
 
-        // Update the property when the combo box selection changes.
         ChangeListener<T> comboBoxSelectionListener = (_, _, newVal) -> {
             if (newVal != null) {
                 inputChoiceProperty.setValue(newVal);
@@ -285,7 +260,6 @@ public final class FXComponentFactory {
         };
         comboBox.getSelectionModel().selectedItemProperty().addListener(comboBoxSelectionListener);
 
-        // Update the combo box when the property changes.
         ChangeListener<T> inputChoicePropertyListener = (_, _, newVal) -> {
             if (newVal != null) {
                 comboBox.setValue(newVal);
@@ -322,6 +296,7 @@ public final class FXComponentFactory {
      * @param styleClass                  the CSS style class to apply to the slider
      * @return a LabeledControl containing the label and the slider
      */
+    @SuppressWarnings("ExtractMethodRecommender")
     public static LabeledControl<Slider> createLabeledIntSlider(
             InputDoubleIntRangeProperty inputDoubleIntRangeProperty,
             String labelFormatString,
@@ -348,8 +323,9 @@ public final class FXComponentFactory {
      * Creates a labeled integer spinner with a bound value, formatted label, tooltip, and custom style class.
      *
      * <p>The spinner is configured for integer values in the range and step defined by the given InputIntegerProperty.
-     * The spinner and the property are kept in sync via listeners and normalization logic. The label displays the current value using
-     * the provided format string. Both the label and the spinner share the same tooltip for improved accessibility.
+     * The spinner and the property are kept in sync via listeners and normalization logic. The label displays the
+     * current value using the provided format string. Both the label and the spinner share the same tooltip for
+     * improved accessibility.
      *
      * <p>The spinner is editable, allowing direct user input, and uses the specified CSS style class.
      * Input is validated and normalized to ensure only valid values are accepted.
@@ -386,27 +362,23 @@ public final class FXComponentFactory {
         });
         spinner.getEditor().setTextFormatter(formatter);
 
-        // Keep the spinner in sync with property changes.
         inputIntegerProperty.asObjectProperty().addListener((_, _, newVal) -> {
             if (!spinner.getValueFactory().getValue().equals(newVal)) {
                 spinner.getValueFactory().setValue(newVal);
             }
         });
 
-        // Normalize and sync on spinner value change.
         spinner.valueProperty().addListener((_, _, _) -> normalizeAndSyncSpinnerValue(spinner, inputIntegerProperty));
-
-        // Normalize and sync when the editor loses focus.
         spinner.getEditor().focusedProperty().addListener((_, _, isNowFocused) -> {
             if (!isNowFocused) {
                 normalizeAndSyncSpinnerValue(spinner, inputIntegerProperty);
             }
         });
-
-        // Normalize and sync on Enter key in the editor.
+        // The editor fires its action on the Enter key.
         spinner.getEditor().setOnAction(_ -> normalizeAndSyncSpinnerValue(spinner, inputIntegerProperty));
 
-        Label label = createBoundLabel(inputIntegerProperty.asStringBinding(labelFormatString), spinner, tooltip, spinner);
+        Label label = createBoundLabel(inputIntegerProperty.asStringBinding(labelFormatString), spinner, tooltip,
+                spinner);
         return new LabeledControl<>(label, spinner);
     }
 
@@ -427,38 +399,18 @@ public final class FXComponentFactory {
      * @param styleClass          the CSS style class to apply to the slider
      * @return a LabeledControl containing the label and the slider
      */
-    @SuppressWarnings("NumericCastThatLosesPrecision")
+    @SuppressWarnings("MagicNumber")
     public static LabeledControl<Slider> createLabeledPercentSlider(
             InputDoubleProperty inputDoubleProperty,
             String labelFormatString,
             String tooltip,
             String styleClass) {
-        double min = inputDoubleProperty.min();
-        double max = inputDoubleProperty.max();
+        double minRounded = Math.max(0.0d, Math.round(inputDoubleProperty.min() * 100.0d) / 100.0d);
+        double maxRounded = Math.min(1.0d, Math.round(inputDoubleProperty.max() * 100.0d) / 100.0d);
+        int range = Math.toIntExact(Math.round(maxRounded * 100.0d) - Math.round(minRounded * 100.0d));
 
-        double minRounded = Math.max(0.0d, Math.round(min * 100.0d) / 100.0d);
-        double maxRounded = Math.min(1.0d, Math.round(max * 100.0d) / 100.0d);
-        double valueRounded = Math.round(inputDoubleProperty.getValue() * 100.0d) / 100.0d;
-        double majorTickUnit = (maxRounded - minRounded);
-        int range = ((int) (maxRounded * 100)) - ((int) (minRounded * 100));
-        int minorTickCount = computeMinorTickCountForPercentSlider(range);
-
-        double value = Math.clamp(valueRounded, minRounded, maxRounded);
-        inputDoubleProperty.setValue(value);
-
-        Slider slider = new Slider(minRounded, maxRounded, value);
-        slider.setShowTickLabels(false);
-        slider.setShowTickMarks(true);
-        slider.setMajorTickUnit(majorTickUnit);
-        slider.setMinorTickCount(minorTickCount);
-        slider.setBlockIncrement(0.01d);
-        slider.setSnapToTicks(false);
-        slider.getStyleClass().add(styleClass);
-        slider.valueProperty().bindBidirectional(inputDoubleProperty.property());
-        slider.valueProperty().addListener((_, _, newValue) -> {
-            double rounded = Math.round(newValue.doubleValue() * 100.0d) / 100.0d;
-            slider.setValue(rounded);
-        });
+        Slider slider = createRoundingSlider(inputDoubleProperty, minRounded, maxRounded, 100.0d,
+                computeMinorTickCountForPercentSlider(range), styleClass);
 
         Label label = createBoundLabel(inputDoubleProperty.property().multiply(100).asString(labelFormatString), slider,
                 tooltip, slider);
@@ -466,7 +418,8 @@ public final class FXComponentFactory {
     }
 
     /**
-     * Creates a labeled double slider with configurable decimal precision, formatted label, tooltip, and custom style class.
+     * Creates a labeled double slider with configurable decimal precision, formatted label, tooltip, and custom style
+     * class.
      *
      * <p>The slider is configured for double values in the range defined by the given InputDoubleProperty.
      * The decimal places parameter is clamped to the range [0, 9] to avoid excessively large precision and
@@ -478,45 +431,23 @@ public final class FXComponentFactory {
      * As a side effect, the current value of the property is rounded and clamped to the property range.
      *
      * @param inputDoubleProperty the InputDoubleProperty defining range and value binding
-     * @param decimalPlaces       the requested number of decimal places to round the slider's value to; will be clamped to the range 0..9
+     * @param decimalPlaces       the requested number of decimal places to round the slider's value to; will be
+     *                            clamped to the range 0..9
      * @param labelFormatString   the format string for the label (e.g., "%.2f")
      * @param tooltip             the tooltip text for both the label and the slider
      * @param styleClass          the CSS style class to apply to the slider
      * @return a LabeledControl containing the label and the slider
      */
+    @SuppressWarnings("MagicNumber")
     public static LabeledControl<Slider> createLabeledDoubleSlider(
             InputDoubleProperty inputDoubleProperty,
             int decimalPlaces,
             String labelFormatString,
             String tooltip,
             String styleClass) {
-        int decimals = Math.clamp(decimalPlaces, 0, 9);
-        double factor = Math.pow(10.0d, decimals);
-        double blockIncrement = 1.0d / factor;
-
-        double min = inputDoubleProperty.min();
-        double max = inputDoubleProperty.max();
-
-        double valueRounded = Math.round(inputDoubleProperty.getValue() * factor) / factor;
-        double majorTickUnit = (max - min);
-        int minorTickCount = 0; // No minor ticks for general double sliders.
-
-        double value = Math.clamp(valueRounded, min, max);
-        inputDoubleProperty.setValue(value);
-
-        Slider slider = new Slider(min, max, value);
-        slider.setShowTickLabels(false);
-        slider.setShowTickMarks(true);
-        slider.setMajorTickUnit(majorTickUnit);
-        slider.setMinorTickCount(minorTickCount);
-        slider.setBlockIncrement(blockIncrement);
-        slider.setSnapToTicks(false);
-        slider.getStyleClass().add(styleClass);
-        slider.valueProperty().bindBidirectional(inputDoubleProperty.property());
-        slider.valueProperty().addListener((_, _, newValue) -> {
-            double rounded = Math.round(newValue.doubleValue() * factor) / factor;
-            slider.setValue(rounded);
-        });
+        double factor = Math.pow(10.0d, Math.clamp(decimalPlaces, 0, 9));
+        Slider slider = createRoundingSlider(inputDoubleProperty, inputDoubleProperty.min(), inputDoubleProperty.max(),
+                factor, 0, styleClass);
 
         Label label = createBoundLabel(inputDoubleProperty.asStringBinding(labelFormatString), slider, tooltip, slider);
         return new LabeledControl<>(label, slider);
@@ -555,12 +486,14 @@ public final class FXComponentFactory {
         HBox hBox = new HBox(textField, clearButton);
         hBox.getStyleClass().add(styleClass);
 
-        Label label = createBoundLabel(Bindings.format(labelFormatString, labelProperty), textField, tooltip, textField);
+        Label label = createBoundLabel(Bindings.format(labelFormatString, labelProperty), textField, tooltip,
+                textField);
         return new LabeledControl<>(label, hBox);
     }
 
     /**
-     * Creates a labeled text box with an adopt button and a clear button, formatted label, prompt text, tooltips, and custom style class.
+     * Creates a labeled text box with an adopt button and a clear button, formatted label, prompt text, tooltips, and
+     * custom style class.
      *
      * <p>The text field is bidirectionally bound to the given StringProperty. The label displays the current value
      * using the provided format string and is bound to the given label property. An adopt button allows users to
@@ -601,7 +534,8 @@ public final class FXComponentFactory {
         HBox hBox = new HBox(textField, adoptButton, clearButton);
         hBox.getStyleClass().add(styleClass);
 
-        Label label = createBoundLabel(Bindings.format(labelFormatString, labelProperty), textField, tooltip, textField);
+        Label label = createBoundLabel(Bindings.format(labelFormatString, labelProperty), textField, tooltip,
+                textField);
         return new LabeledControl<>(label, hBox);
     }
 
@@ -620,7 +554,8 @@ public final class FXComponentFactory {
             @SuppressWarnings({"ConstantValue", "DataFlowIssue"})
             @Override
             protected void updateItem(@Nullable T item, boolean empty) {
-                // Follow the JavaFX Cell#updateItem(...) contract: call super first and clear the cell for empty or null items.
+                // Follow the JavaFX Cell#updateItem(...) contract: call super first and clear the cell for empty or
+                // null items.
                 super.updateItem(item, empty);
                 if (empty || (item == null)) {
                     setText(null);
@@ -633,11 +568,12 @@ public final class FXComponentFactory {
     }
 
     /**
-     * Normalizes and synchronizes the value of a Spinner's editor with its value factory and the associated InputIntegerProperty.
+     * Normalizes and synchronizes the value of a Spinner's editor with its value factory and the associated
+     * InputIntegerProperty.
      *
      * <p>Attempts to parse the editor text as an integer, clamps and snaps it to the valid range and step
-     * defined by the given InputIntegerProperty, and updates both the spinner and the property with the normalized value.
-     * If parsing fails, resets the editor text and spinner value to the current property value.
+     * defined by the given InputIntegerProperty, and updates both the spinner and the property with the normalized
+     * value. If parsing fails, resets the editor text and spinner value to the current property value.
      *
      * @param spinner              the Spinner whose editor input is to be normalized and synchronized
      * @param inputIntegerProperty the InputIntegerProperty providing range and step constraints
@@ -651,23 +587,16 @@ public final class FXComponentFactory {
             try {
                 int parsedValue = Integer.parseInt(text);
                 int normalizedValue = inputIntegerProperty.adjustValue(parsedValue);
-
-                // 1. Update the editor text if normalization changed the value.
                 if (parsedValue != normalizedValue) {
                     spinner.getEditor().setText(String.valueOf(normalizedValue));
                 }
-
-                // 2. Update the property if needed.
                 if (inputIntegerProperty.getValue() != normalizedValue) {
                     inputIntegerProperty.setValue(normalizedValue);
                 }
-
-                // 3. Update the spinner if needed.
                 if (!valueFactory.getValue().equals(normalizedValue)) {
                     valueFactory.setValue(normalizedValue);
                 }
             } catch (NumberFormatException e) {
-                // Reset to the current property value if parsing fails.
                 int currentValue = inputIntegerProperty.getValue();
                 spinner.getEditor().setText(String.valueOf(currentValue));
                 valueFactory.setValue(currentValue);
@@ -688,6 +617,7 @@ public final class FXComponentFactory {
      * @param range the range of the slider (difference between max and min values multiplied by 100)
      * @return the number of minor ticks (divisor - 1) if a matching divisor is found, or 0 otherwise
      */
+    @SuppressWarnings("MagicNumber")
     private static int computeMinorTickCountForPercentSlider(int range) {
         if ((range >= 2) && (range <= 100)) {
             int[] divisors = {10, 8, 6, 4, 9, 7, 5, 11, 13, 17, 19, 3, 2};
@@ -698,6 +628,38 @@ public final class FXComponentFactory {
             }
         }
         return 0;
+    }
+
+    /**
+     * Creates a slider whose value is rounded to {@code 1 / factor} and bidirectionally bound to the property.
+     *
+     * <p>As a side effect, the current value of the property is rounded and clamped to the range.
+     *
+     * @param inputDoubleProperty the property to bind to the slider
+     * @param min                 the minimum value of the slider
+     * @param max                 the maximum value of the slider
+     * @param factor              the rounding factor, a power of ten (e.g., {@code 100.0} for two decimal places)
+     * @param minorTickCount      the number of minor ticks between the major ticks at {@code min} and {@code max}
+     * @param styleClass          the CSS style class to apply to the slider
+     * @return the configured slider
+     */
+    private static Slider createRoundingSlider(InputDoubleProperty inputDoubleProperty, double min, double max,
+                                               double factor, int minorTickCount, String styleClass) {
+        double value = Math.clamp(Math.round(inputDoubleProperty.getValue() * factor) / factor, min, max);
+        inputDoubleProperty.setValue(value);
+
+        Slider slider = new Slider(min, max, value);
+        slider.setShowTickLabels(false);
+        slider.setShowTickMarks(true);
+        slider.setMajorTickUnit(max - min);
+        slider.setMinorTickCount(minorTickCount);
+        slider.setBlockIncrement(1.0d / factor);
+        slider.setSnapToTicks(false);
+        slider.getStyleClass().add(styleClass);
+        slider.valueProperty().bindBidirectional(inputDoubleProperty.property());
+        slider.valueProperty().addListener((_, _, newValue) ->
+                slider.setValue(Math.round(newValue.doubleValue() * factor) / factor));
+        return slider;
     }
 
     private static Label createBoundLabel(ObservableValue<String> text, Node labelFor, String tooltip,

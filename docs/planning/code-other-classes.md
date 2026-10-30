@@ -699,7 +699,7 @@ Notes:
   (`GridStructure`, `GridCoordinate`), the link from `SimulationUserActionContext` to `simulations.core.model`, the
   Javadoc of `AppArgs.toString()`, and Javadoc that only restates accessors.
 - Proposal: Check and adapt the Javadoc of each package in its group.
-- Status: groups 1 to 6 done (2026-10-29)
+- Status: groups 1 to 6 done (2026-10-29), group 7 done (2026-10-30)
 
 #### Lookup name of the log levels
 
@@ -835,6 +835,39 @@ Notes:
   `StepExecutionResult` from `stepCount()` in four places.
 - Proposal: Private interface methods `createInterruptedResult(..)` and `createResult(..)`; no behavior change.
 - Status: done (2026-10-29)
+
+#### API scope of the drawing toolkit
+
+- Origin: analysis of group 7
+- Types: `FXGridCanvasPainter`, `FXPaintFactory`, `GridGeometry`, `CellDimension`
+- Problem: `CellDimension.boundingBoxDimension()`, `FXPaintFactory.createVerticalGradient(..)`, and
+  `createRadialGradient(..)` have no caller in main sources; `ui.md` kept the complete API only for
+  `FXGridCanvasPainter`. The package-private shape helpers of `GridGeometry` are used only inside the class.
+- Proposal: Extend the rule of `ui.md` to the whole drawing toolkit; make the shape helpers private.
+- Status: done (2026-10-30); the rule is extended, the shape helpers stay package-private so that tests can call
+  them directly.
+
+#### Duplicated checks and slider setup in `ui`
+
+- Origin: analysis of group 7
+- Types: `FXGridCanvasPainter`, `FXComponentFactory`
+- Problem: The painter constructor repeated the edge length check of `GridGeometry.computeCellDimension(..)` with
+  only the lower bound; `drawPixelDirect(..)` and `drawPixelRect(..)` repeated the canvas bounds check;
+  `createLabeledPercentSlider(..)` and `createLabeledDoubleSlider(..)` repeated the slider setup and the rounding
+  listener.
+- Proposal: Remove the constructor check and document the range; private helpers `isOnCanvas(..)` and
+  `createRoundingSlider(..)`.
+- Status: done (2026-10-30)
+
+#### Test gaps of `GridGeometry`
+
+- Origin: analysis of group 7
+- Types: `GridGeometry`, `GridGeometryTest`
+- Problem: `fromCanvasPosition(..)` was tested only for squares, so the triangle and hexagon search and
+  `isPointInTriangleCell(..)` had no test; the polygon and frame segment tests checked only the number of points.
+- Proposal: Round trip of points inside every cell for all shapes; exact coordinates for polygons and frame
+  segments.
+- Status: done (2026-10-30)
 
 ### Decisions
 
@@ -998,6 +1031,47 @@ Group 6, `engine.executor` (2026-10-29):
   `StepTimingStatisticsTest` and `StepExecutionResultTest` checks the accepted boundary values.
 - `app:test` and `app:javadoc` pass.
 
+Group 7, `ui` (2026-10-30):
+
+- Rule change: `ui.md` ("Scope") keeps the complete public API of the drawing toolkit (`FXGridCanvasPainter`,
+  `FXPaintFactory`, `GridGeometry`, and `CellDimension`), also members without a current caller; the sentence on
+  `FXGridCanvasPainter` in "Grid Geometry and Rendering" is merged into it.
+- The package-private shape helpers of `GridGeometry` stay package-private, so that tests call them without
+  reflection.
+- `FXGridCanvasPainter`: the constructor no longer checks the edge length itself; `@throws` names the range
+  [`MIN_EDGE_LENGTH`, `MAX_EDGE_LENGTH`] of `GridGeometry.computeCellDimension(..)`, only the message changes. The
+  pixel methods share the private `isOnCanvas(..)`; `drawScaledCell(..)` names its result `scaled`.
+- `FXComponentFactory`: the percent and the double slider share the private `createRoundingSlider(..)`; the range of
+  the percent slider is computed with `Math.round(..)` instead of a truncating cast (e.g., `0.29` gave `28`); the
+  combo box map drops the merge function, because the valid values have no duplicates.
+- Suppressions: the class-level `@SuppressWarnings("MagicNumber")` of `FXComponentFactory` and `FXPaintFactory` is
+  narrowed to `createLabeledPercentSlider(..)`, `createLabeledDoubleSlider(..)`,
+  `computeMinorTickCountForPercentSlider(..)`, `computeBrightnessVariantsMap(..)`, and `createRadialGradient(..)`;
+  the maintainer checks it with the IntelliJ inspection.
+- The `Input*Property` factories log invalid values through `AppLogger.errorf(..)`; `InputChoiceProperty` checks
+  duplicates through the size of a `HashSet`.
+- `GridGeometry`: the neighbor candidates are `GridOffset` lists used with `GridCoordinate.offset(..)`; the outer
+  radius of the triangle uses `Math.hypot(..)`, and the constant `TWO` is removed. After the IntelliJ inspection,
+  `computeGridDimension(..)` computes the width of all columns and the height of all rows once instead of repeating
+  them per cell shape; `createLabeledIntSlider(..)` keeps its slider setup, because an extracted method would have
+  one caller, and the setup differs from `createRoundingSlider(..)`.
+- Javadoc: `<p>` directly before the first word in `AboutDialog`, `SimulationTimer`, and `FXGridCanvasPainter`;
+  `{@code null}` in the painter; the `@see` tags of parameter types and of `GridStructure#isCoordinateValid(..)` and
+  `@see #gridDimension2D` are removed (the grid area links `gridDimension2D()` in the text); the compact constructor
+  of `CellDimension` starts with "Creates a ..."; the restating Javadoc of `createLabel(..)`, `createHBox(..)`,
+  `createVBox(..)`, `AboutDialog.createHeader(..)`, and `createTextAreaTab(..)` and restating line comments are
+  removed.
+- Lines in main and test sources fit 120 characters.
+- Tests: `GridGeometryTest` is rebuilt with helpers: exact values of all cell dimensions, polygons, and frame
+  segments, `testFromCanvasPositionReturnsCoordinateForPointsInsideCell` for all shapes (the center and points near
+  every vertex of every cell), `testIsPointInTriangleCell`, and no `@Execution(SAME_THREAD)`. `CellDimensionTest`
+  gets `@Execution(SAME_THREAD)` for `Locale.setDefault(..)` and drops its forwarding helper; new
+  `FXDialogStylerTest`; `FXGridCanvasPainterTest` adds the two centered text methods and the upper edge length
+  bound; `FXComponentFactoryTest` and `FXPaintFactoryTest` name single tests `test<Subject>`, add the base overload
+  of `createLabeledChoiceComboBox(..)`, the invalid checkbox values, the minor ticks of the percent slider, and
+  uneven brightness groups; the `Input*PropertyTest` classes check rounding ties.
+- `app:test` and `app:javadoc` pass.
+
 ### Procedure
 
 - One group at a time, in the order of the inventory; each group is presented and decided on its own in the chat
@@ -1015,8 +1089,8 @@ Group 6, `engine.executor` (2026-10-29):
 - (1, all) Javadoc writes the literals `true`, `false`, and `null` as `{@code ...}` (rule change: `java.md`,
   "Javadoc").
 - (1, all) Public methods and constructors without a caller in main sources are removed (API change with approval)
-  unless the maintainer keeps them for a planned use; core classes, all engine packages, and `FXGridCanvasPainter`
-  keep their complete API (rule change: `core.md`, `engine.md`, and `ui.md`).
+  unless the maintainer keeps them for a planned use; core classes, all engine packages, and the drawing toolkit of
+  `ui` keep their complete API (rule change: `core.md`, `engine.md`, and `ui.md`).
 - (1, 2, all) Member order (rule change: `java.md`, "Code Style"): static fields, instance fields, constructors,
   static methods, instance methods, then nested types; within the static and within the instance methods public,
   protected, package-private, then private, with overrides (e.g., lifecycle methods such as `start(..)`) as public

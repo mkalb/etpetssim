@@ -45,11 +45,12 @@ public record CellDimension(
     private static final double DOUBLE_COMPARE_EPSILON = 1.0e-9;
 
     /**
-     * Validates the provided dimensions and derived values for consistency and positivity.
+     * Creates a cell dimension whose values are finite, positive, and consistent.
      *
      * @throws IllegalArgumentException if any value is not finite, if any required dimension is non-positive,
      *                                  if half-dimensions do not match half of their corresponding full
-     *                                  dimensions, or if outerRadius is not greater than innerRadius
+     *                                  dimensions, or if {@code outerRadius} is not greater than
+     *                                  {@code innerRadius}
      */
     public CellDimension {
         if (!DoubleStream.of(edgeLength, width, height, halfEdgeLength, halfWidth, halfHeight,

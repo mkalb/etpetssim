@@ -30,14 +30,21 @@ final class FXPaintFactoryTest {
     }
 
     @Test
-    void testComputeBrightnessVariantsMapCoversRangeAndUsesEffectiveGroupCount() {
+    void testComputeBrightnessVariantsMap() {
         Map<Integer, Color> variants = FXPaintFactory.computeBrightnessVariantsMap(BASE_COLOR, 1, 3, 5, 1.0d);
+        Map<Integer, Color> unevenGroups = FXPaintFactory.computeBrightnessVariantsMap(BASE_COLOR, 1, 5, 2, -0.5d);
+        Color darkened = FXPaintFactory.adjustBrightness(BASE_COLOR, 0.5d);
 
         assertAll(
                 () -> assertEquals(Set.of(1, 2, 3), variants.keySet()),
                 () -> assertColorEquals(BASE_COLOR, variants.get(1)),
                 () -> assertColorEquals(FXPaintFactory.adjustBrightness(BASE_COLOR, 1.5d), variants.get(2)),
-                () -> assertColorEquals(FXPaintFactory.adjustBrightness(BASE_COLOR, 2.0d), variants.get(3))
+                () -> assertColorEquals(FXPaintFactory.adjustBrightness(BASE_COLOR, 2.0d), variants.get(3)),
+                () -> assertEquals(Set.of(1, 2, 3, 4, 5), unevenGroups.keySet()),
+                () -> assertColorEquals(BASE_COLOR, unevenGroups.get(1)),
+                () -> assertColorEquals(BASE_COLOR, unevenGroups.get(3)),
+                () -> assertColorEquals(darkened, unevenGroups.get(4)),
+                () -> assertColorEquals(darkened, unevenGroups.get(5))
         );
     }
 
@@ -58,7 +65,7 @@ final class FXPaintFactoryTest {
     }
 
     @Test
-    void testAdjustBrightnessClampsComponentsAndPreservesOpacity() {
+    void testAdjustBrightness() {
         Color brightened = FXPaintFactory.adjustBrightness(BASE_COLOR, 2.0d);
         Color darkened = FXPaintFactory.adjustBrightness(BASE_COLOR, 0.5d);
 
@@ -118,7 +125,7 @@ final class FXPaintFactoryTest {
     }
 
     @Test
-    void testAdjustColorAlphaPreservesRgb() {
+    void testAdjustColorAlpha() {
         Color adjusted = FXPaintFactory.adjustColorAlpha(BASE_COLOR, 0.25d);
 
         assertAll(

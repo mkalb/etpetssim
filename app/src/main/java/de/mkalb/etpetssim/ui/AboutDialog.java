@@ -36,8 +36,8 @@ import java.util.regex.Pattern;
 
 /**
  * Displays the application's About dialog.
- * <p>
- * The dialog shows the application icon, title, and version in its header, links to the GitHub repository and its
+ *
+ * <p>The dialog shows the application icon, title, and version in its header, links to the GitHub repository and its
  * issues, and tabs with build metadata, the README, the project license, and third-party license information.
  */
 public final class AboutDialog {
@@ -75,8 +75,8 @@ public final class AboutDialog {
 
     /**
      * Formats the README for plain-text display.
-     * <p>
-     * The README starts with an HTML header (logo, title, links, and badges) that is only
+     *
+     * <p>The README starts with an HTML header (logo, title, links, and badges) that is only
      * useful when rendered. The text is therefore shown from the first line starting with
      * {@code "## "}; text without such a line is returned unchanged.
      *
@@ -124,12 +124,6 @@ public final class AboutDialog {
         dialog.showAndWait();
     }
 
-    /**
-     * Creates the header with the application icon, title, and version.
-     *
-     * @param manifestInfo manifest attributes read by {@link #readManifestInfo()}
-     * @return header node
-     */
     private Node createHeader(Map<String, String> manifestInfo) {
         String title = AppLocalization.getText(AppLocalizationKeys.ABOUT_HEADER_TITLE);
         String version = AppLocalization.getFormattedText(AppLocalizationKeys.ABOUT_MANIFEST_VERSION,
@@ -171,13 +165,6 @@ public final class AboutDialog {
         return link;
     }
 
-    /**
-     * Creates a tab containing a read-only text area.
-     *
-     * @param tabTitle title shown on the tab
-     * @param text     text displayed inside the tab content area
-     * @return configured tab instance
-     */
     private Tab createTextAreaTab(String tabTitle, String text) {
         TextArea textArea = new TextArea(text);
         textArea.setEditable(false);
@@ -194,8 +181,8 @@ public final class AboutDialog {
 
     /**
      * Formats a textual summary of selected manifest attributes.
-     * <p>
-     * Attributes missing from the manifest are shown as a localized placeholder.
+     *
+     * <p>Attributes missing from the manifest are shown as a localized placeholder.
      *
      * @param manifestInfo manifest attributes read by {@link #readManifestInfo()}
      * @return formatted manifest summary text

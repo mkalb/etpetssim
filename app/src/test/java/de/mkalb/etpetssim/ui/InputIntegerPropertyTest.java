@@ -168,8 +168,11 @@ final class InputIntegerPropertyTest {
     @Test
     void testAdjustValue() {
         InputIntegerProperty property = createProperty();
+        InputIntegerProperty evenStepProperty = createRecord(0, 0, 4, 2);
 
         assertAll(
+                () -> assertEquals(0, evenStepProperty.adjustValue(1)),
+                () -> assertEquals(2, evenStepProperty.adjustValue(3)),
                 () -> assertEquals(MIN_VALUE, property.adjustValue(MIN_VALUE)),
                 () -> assertEquals(MAX_VALUE, property.adjustValue(MAX_VALUE)),
                 () -> assertEquals(INITIAL_VALUE, property.adjustValue(INITIAL_VALUE)),

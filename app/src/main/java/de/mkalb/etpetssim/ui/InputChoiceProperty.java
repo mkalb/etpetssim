@@ -6,10 +6,9 @@ import javafx.beans.binding.StringBinding;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 
-import java.util.LinkedHashSet;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 import java.util.function.Function;
 
 /**
@@ -43,11 +42,8 @@ public record InputChoiceProperty<T>(ObjectProperty<T> property,
         if (validValues.isEmpty()) {
             throw new IllegalArgumentException("validValues must not be empty");
         }
-        Set<T> uniqueValues = new LinkedHashSet<>(validValues.size());
-        for (T validValue : validValues) {
-            if (!uniqueValues.add(validValue)) {
-                throw new IllegalArgumentException("validValues must not contain duplicates");
-            }
+        if (new HashSet<>(validValues).size() != validValues.size()) {
+            throw new IllegalArgumentException("validValues must not contain duplicates");
         }
         if (isInvalidValue(property.get(), validValues)) {
             throw new IllegalArgumentException("Initial value is not valid: " + property.get());
@@ -56,7 +52,8 @@ public record InputChoiceProperty<T>(ObjectProperty<T> property,
     }
 
     /**
-     * Creates a new {@code InputChoiceProperty} with the specified initial value, valid values, and display name provider.
+     * Creates a new {@code InputChoiceProperty} with the specified initial value, valid values, and display name
+     * provider.
      *
      * <p>Validation is performed by the canonical constructor.
      *
@@ -75,8 +72,8 @@ public record InputChoiceProperty<T>(ObjectProperty<T> property,
             @Override
             public void set(T newValue) {
                 if (isInvalidValue(newValue, copiedValidValues)) {
-                    AppLogger.error("InputChoiceProperty: Invalid value set: " + newValue +
-                            ". Valid values are: " + copiedValidValues);
+                    AppLogger.errorf("InputChoiceProperty: Invalid value set: %s. Valid values are: %s",
+                            newValue, copiedValidValues);
                 }
                 // The value is set even if it is invalid.
                 super.set(newValue);
@@ -122,7 +119,8 @@ public record InputChoiceProperty<T>(ObjectProperty<T> property,
      * @return a {@link StringBinding} representing the formatted display value
      */
     public StringBinding asStringBinding(String format) {
-        return Bindings.createStringBinding(() -> format.formatted(displayNameProvider.apply(property.get())), property);
+        return Bindings.createStringBinding(() -> format.formatted(displayNameProvider.apply(property.get())),
+                property);
     }
 
     public T getValue() {

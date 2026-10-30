@@ -2,6 +2,7 @@ package de.mkalb.etpetssim.ui;
 
 import de.mkalb.etpetssim.engine.CellShape;
 import de.mkalb.etpetssim.engine.GridCoordinate;
+import de.mkalb.etpetssim.engine.GridOffset;
 import de.mkalb.etpetssim.engine.GridSize;
 import de.mkalb.etpetssim.engine.GridStructure;
 import javafx.geometry.Dimension2D;
@@ -31,7 +32,6 @@ public final class GridGeometry {
     private static final double SQRT_TWO = Math.sqrt(2);
     private static final double SQRT_THREE = Math.sqrt(3);
     private static final double ZERO = 0.0d;
-    private static final double TWO = 2.0d;
     private static final double ONE_THIRD = 1.0d / 3.0d;
     private static final double TWO_THIRDS = 2.0d / 3.0d;
     private static final double ONE_HALF = 1.0d / 2.0d;
@@ -40,20 +40,20 @@ public final class GridGeometry {
     /**
      * Offset candidates for TRIANGLE cells, starting with the most likely center (0,0).
      */
-    private static final List<int[]> TRIANGLE_NEIGHBOR_OFFSETS = List.of(
-            new int[]{0, 0},
-            new int[]{1, 0},
-            new int[]{-1, 0}
+    private static final List<GridOffset> TRIANGLE_NEIGHBOR_OFFSETS = List.of(
+            new GridOffset(0, 0),
+            new GridOffset(1, 0),
+            new GridOffset(-1, 0)
     );
     /**
      * Offset candidates for HEXAGON cells, starting with the most likely center (0,0).
      */
-    private static final List<int[]> HEXAGON_NEIGHBOR_OFFSETS = List.of(
-            new int[]{0, 0},
-            new int[]{-1, 0},
-            new int[]{0, -1},
-            new int[]{-1, -1},
-            new int[]{-1, 1}
+    private static final List<GridOffset> HEXAGON_NEIGHBOR_OFFSETS = List.of(
+            new GridOffset(0, 0),
+            new GridOffset(-1, 0),
+            new GridOffset(0, -1),
+            new GridOffset(-1, -1),
+            new GridOffset(-1, 1)
     );
 
     private GridGeometry() {
@@ -68,7 +68,8 @@ public final class GridGeometry {
      * @param toCellShape    the shape of the target cell
      * @return the edge length required for the target cell shape to match the width of the original cell shape
      */
-    public static double computeEdgeLengthToMatchWidth(double fromEdgeLength, CellShape fromCellShape, CellShape toCellShape) {
+    public static double computeEdgeLengthToMatchWidth(double fromEdgeLength, CellShape fromCellShape,
+                                                       CellShape toCellShape) {
         if (fromCellShape == toCellShape) {
             return fromEdgeLength;
         }
@@ -96,7 +97,8 @@ public final class GridGeometry {
      */
     public static CellDimension computeCellDimension(double edgeLength, CellShape cellShape) {
         if ((edgeLength < MIN_EDGE_LENGTH) || (edgeLength > MAX_EDGE_LENGTH)) {
-            throw new IllegalArgumentException("Edge length must be between " + MIN_EDGE_LENGTH + " and " + MAX_EDGE_LENGTH + ".");
+            throw new IllegalArgumentException(
+                    "Edge length must be between " + MIN_EDGE_LENGTH + " and " + MAX_EDGE_LENGTH + ".");
         }
 
         double halfEdgeLength = edgeLength * ONE_HALF;
@@ -123,7 +125,7 @@ public final class GridGeometry {
             case HEXAGON -> halfHeight;
         };
         double outerRadius = switch (cellShape) {
-            case TRIANGLE -> Math.sqrt(Math.pow(halfEdgeLength, TWO) + Math.pow(innerRadius, TWO));
+            case TRIANGLE -> Math.hypot(halfEdgeLength, innerRadius);
             case SQUARE -> SQRT_TWO * halfEdgeLength;
             case HEXAGON -> edgeLength;
         };
@@ -146,20 +148,15 @@ public final class GridGeometry {
      * @param cellShape     the shape of the cells in the grid
      * @return a Dimension2D object representing the total width and height of the grid area
      */
-    public static Dimension2D computeGridDimension(GridSize gridSize, CellDimension cellDimension, CellShape cellShape) {
+    public static Dimension2D computeGridDimension(GridSize gridSize, CellDimension cellDimension,
+                                                   CellShape cellShape) {
+        double columnsWidth = gridSize.width() * cellDimension.columnWidth();
+        double rowsHeight = gridSize.height() * cellDimension.rowHeight();
         return switch (cellShape) {
-            case TRIANGLE -> new Dimension2D(
-                    (gridSize.width() * cellDimension.columnWidth()) + cellDimension.halfEdgeLength(),
-                    gridSize.height() * cellDimension.rowHeight());
-            case SQUARE -> new Dimension2D(
-                    gridSize.width() * cellDimension.columnWidth(),
-                    gridSize.height() * cellDimension.rowHeight());
-            case HEXAGON -> {
-                double rowHeightOffset = ((gridSize.width() > 1) ? cellDimension.halfHeight() : ZERO);
-                yield new Dimension2D(
-                        (gridSize.width() * cellDimension.columnWidth()) + cellDimension.halfEdgeLength(),
-                        (gridSize.height() * cellDimension.rowHeight()) + rowHeightOffset);
-            }
+            case TRIANGLE -> new Dimension2D(columnsWidth + cellDimension.halfEdgeLength(), rowsHeight);
+            case SQUARE -> new Dimension2D(columnsWidth, rowsHeight);
+            case HEXAGON -> new Dimension2D(columnsWidth + cellDimension.halfEdgeLength(),
+                    rowsHeight + ((gridSize.width() > 1) ? cellDimension.halfHeight() : ZERO));
         };
     }
 
@@ -175,8 +172,8 @@ public final class GridGeometry {
      *                   and  {@link #MAX_EDGE_LENGTH}
      * @param cellShape  the shape of the cells in the grid
      * @return a Dimension2D object representing the total width and height of the grid area
-     * @see GridGeometry#computeCellDimension(double, CellShape)
-     * @see GridGeometry#computeGridDimension(GridSize, CellDimension, CellShape)
+     * @see #computeCellDimension(double, CellShape)
+     * @see #computeGridDimension(GridSize, CellDimension, CellShape)
      */
     public static Dimension2D computeGridDimension(GridSize gridSize, double edgeLength, CellShape cellShape) {
         return computeGridDimension(gridSize, computeCellDimension(edgeLength, cellShape), cellShape);
@@ -190,9 +187,12 @@ public final class GridGeometry {
      * @param cellShape     the shape of the cell
      * @return the canvas position of the cell in pixel coordinates
      */
-    public static Point2D toCanvasPosition(GridCoordinate coordinate, CellDimension cellDimension, CellShape cellShape) {
+    public static Point2D toCanvasPosition(GridCoordinate coordinate, CellDimension cellDimension,
+                                           CellShape cellShape) {
         double x = coordinate.x() * cellDimension.columnWidth();
-        double yOffset = ((cellShape == CellShape.HEXAGON) && coordinate.hasHexagonCellYOffset()) ? cellDimension.halfHeight() : ZERO;
+        double yOffset = ((cellShape == CellShape.HEXAGON) && coordinate.hasHexagonCellYOffset())
+                ? cellDimension.halfHeight()
+                : ZERO;
         double y = (coordinate.y() * cellDimension.rowHeight()) + yOffset;
         return new Point2D(x, y);
     }
@@ -236,7 +236,8 @@ public final class GridGeometry {
             }
             case HEXAGON -> {
                 int estimatedGridX = (int) (point.getX() / cellDimension.columnWidth());
-                boolean hasHexagonCellYOffset = (estimatedGridX % 2) != 0; // See GridCoordinate.hasHexagonCellYOffset().
+                // Same rule as GridCoordinate.hasHexagonCellYOffset().
+                boolean hasHexagonCellYOffset = (estimatedGridX % 2) != 0;
                 double yOffset = hasHexagonCellYOffset ? ONE_HALF : ZERO;
                 int estimatedGridY = (int) ((point.getY() / cellDimension.rowHeight()) - yOffset);
                 yield new GridCoordinate(estimatedGridX, estimatedGridY);
@@ -258,7 +259,8 @@ public final class GridGeometry {
      * @param cellDimension the dimensions of the cell
      * @param gridDimension the total dimensions of the grid area in pixels; used to check if the point is within bounds
      * @param structure     the grid structure defining the cell shape and size
-     * @return the grid coordinate corresponding to the canvas position, or {@code GridCoordinate.ILLEGAL} if no match is found
+     * @return the grid coordinate corresponding to the canvas position, or {@code GridCoordinate.ILLEGAL} if no match
+     * is found
      */
     public static GridCoordinate fromCanvasPosition(Point2D point, CellDimension cellDimension,
                                                     Dimension2D gridDimension, GridStructure structure) {
@@ -269,7 +271,7 @@ public final class GridGeometry {
 
         return switch (structure.cellShape()) {
             case TRIANGLE -> TRIANGLE_NEIGHBOR_OFFSETS.stream()
-                    .map(offset -> new GridCoordinate(estimatedCoordinate.x() + offset[0], estimatedCoordinate.y() + offset[1]))
+                    .map(estimatedCoordinate::offset)
                     .filter(structure::isCoordinateValid)
                     .filter(c -> isPointInTriangleCell(point, c, cellDimension))
                     .findFirst()
@@ -279,8 +281,8 @@ public final class GridGeometry {
                 GridCoordinate closestHexCell = GridCoordinate.ILLEGAL;
                 double minDistance = Double.MAX_VALUE;
                 double earlyAcceptThreshold = cellDimension.halfEdgeLength();
-                for (int[] offset : HEXAGON_NEIGHBOR_OFFSETS) {
-                    GridCoordinate candidate = new GridCoordinate(estimatedCoordinate.x() + offset[0], estimatedCoordinate.y() + offset[1]);
+                for (GridOffset offset : HEXAGON_NEIGHBOR_OFFSETS) {
+                    GridCoordinate candidate = estimatedCoordinate.offset(offset);
 
                     Point2D topLeft = toCanvasPosition(candidate, cellDimension, structure.cellShape());
 
@@ -315,7 +317,8 @@ public final class GridGeometry {
      * @param cellShape     the shape of the cell
      * @return the center point of the cell in canvas coordinates
      */
-    public static Point2D computeCellCenter(GridCoordinate coordinate, CellDimension cellDimension, CellShape cellShape) {
+    public static Point2D computeCellCenter(GridCoordinate coordinate, CellDimension cellDimension,
+                                            CellShape cellShape) {
         Point2D topLeft = toCanvasPosition(coordinate, cellDimension, cellShape);
         double xOffset = cellDimension.halfWidth();
         double yOffset = switch (cellShape) {
@@ -335,7 +338,8 @@ public final class GridGeometry {
      * @param cellShape     the shape of the cell
      * @return the bounding rectangle of the cell
      */
-    public static Rectangle2D computeCellBounds(GridCoordinate coordinate, CellDimension cellDimension, CellShape cellShape) {
+    public static Rectangle2D computeCellBounds(GridCoordinate coordinate, CellDimension cellDimension,
+                                                CellShape cellShape) {
         return cellDimension.boundingBoxAt(toCanvasPosition(coordinate, cellDimension, cellShape));
     }
 
@@ -347,7 +351,8 @@ public final class GridGeometry {
      * @param cellShape     the shape of the cell
      * @return a 2D array: [0] = xPoints, [1] = yPoints
      */
-    public static double[][] computeCellPolygon(GridCoordinate coordinate, CellDimension cellDimension, CellShape cellShape) {
+    public static double[][] computeCellPolygon(GridCoordinate coordinate, CellDimension cellDimension,
+                                                CellShape cellShape) {
         Point2D topLeft = toCanvasPosition(coordinate, cellDimension, cellShape);
 
         return switch (cellShape) {
@@ -376,8 +381,8 @@ public final class GridGeometry {
         Point2D topLeft = toCanvasPosition(coordinate, cellDimension, cellShape);
 
         return switch (cellShape) {
-            case TRIANGLE ->
-                    computeTriangleFrameSegmentPolyline(topLeft, cellDimension, coordinate.isTriangleCellPointingDown(), side);
+            case TRIANGLE -> computeTriangleFrameSegmentPolyline(topLeft, cellDimension,
+                    coordinate.isTriangleCellPointingDown(), side);
             case SQUARE -> computeSquareFrameSegmentPolyline(topLeft, cellDimension, side);
             case HEXAGON -> computeHexagonFrameSegmentPolyline(topLeft, cellDimension, side);
         };
@@ -397,9 +402,12 @@ public final class GridGeometry {
      * @return {@code true} if the point {@code p} lies inside or on the edge of the triangle; {@code false} otherwise
      */
     static boolean isPointInTriangle(Point2D p, Point2D a, Point2D b, Point2D c) {
-        double area = ONE_HALF * ((-b.getY() * c.getX()) + (a.getY() * (-b.getX() + c.getX())) + (a.getX() * (b.getY() - c.getY())) + (b.getX() * c.getY()));
-        double s = (1 / (2 * area)) * (((a.getY() * c.getX()) - (a.getX() * c.getY())) + ((c.getY() - a.getY()) * p.getX()) + ((a.getX() - c.getX()) * p.getY()));
-        double t = (1 / (2 * area)) * (((a.getX() * b.getY()) - (a.getY() * b.getX())) + ((a.getY() - b.getY()) * p.getX()) + ((b.getX() - a.getX()) * p.getY()));
+        double area = ONE_HALF * ((-b.getY() * c.getX()) + (a.getY() * (-b.getX() + c.getX()))
+                + (a.getX() * (b.getY() - c.getY())) + (b.getX() * c.getY()));
+        double s = (1 / (2 * area)) * (((a.getY() * c.getX()) - (a.getX() * c.getY()))
+                + ((c.getY() - a.getY()) * p.getX()) + ((a.getX() - c.getX()) * p.getY()));
+        double t = (1 / (2 * area)) * (((a.getX() * b.getY()) - (a.getY() * b.getX()))
+                + ((a.getY() - b.getY()) * p.getX()) + ((b.getX() - a.getX()) * p.getY()));
         double u = 1 - s - t;
         return (s >= 0) && (t >= 0) && (u >= 0);
     }
@@ -410,11 +418,15 @@ public final class GridGeometry {
      * @param point         the point to test
      * @param coordinate    the grid coordinate of the triangle cell
      * @param cellDimension the dimensions of the triangle cell
-     * @return {@code true} if the point lies inside or on the edge of the triangle at the given coordinate; {@code false} otherwise
+     * @return {@code true} if the point lies inside or on the edge of the triangle at the given coordinate;
+     * {@code false} otherwise
      */
     static boolean isPointInTriangleCell(Point2D point, GridCoordinate coordinate, CellDimension cellDimension) {
         double[][] polygon = computeCellPolygon(coordinate, cellDimension, CellShape.TRIANGLE);
-        return isPointInTriangle(point, new Point2D(polygon[0][0], polygon[1][0]), new Point2D(polygon[0][1], polygon[1][1]), new Point2D(polygon[0][2], polygon[1][2]));
+        return isPointInTriangle(point,
+                new Point2D(polygon[0][0], polygon[1][0]),
+                new Point2D(polygon[0][1], polygon[1][1]),
+                new Point2D(polygon[0][2], polygon[1][2]));
     }
 
     /**

@@ -25,6 +25,7 @@ final class InputDoubleIntRangePropertyTest {
     private static final double NON_INTEGER_INITIAL_VALUE = 1.5d;
     private static final double FRACTIONAL_HIGH = 6.6d;
     private static final double FRACTIONAL_LOW = 6.4d;
+    private static final double FRACTIONAL_TIE = 6.5d;
     private static final double EXPECTED_ROUND_HIGH = 7.0d;
     private static final double EXPECTED_ROUND_LOW = 6.0d;
     private static final double ABOVE_MAX = 99.0d;
@@ -155,6 +156,7 @@ final class InputDoubleIntRangePropertyTest {
         assertAll(
                 () -> assertEquals(EXPECTED_ROUND_HIGH, property.adjustValue(FRACTIONAL_HIGH), TOLERANCE),
                 () -> assertEquals(EXPECTED_ROUND_LOW, property.adjustValue(FRACTIONAL_LOW), TOLERANCE),
+                () -> assertEquals(EXPECTED_ROUND_LOW, property.adjustValue(FRACTIONAL_TIE), TOLERANCE),
                 () -> assertEquals(MAX_VALUE, property.adjustValue(ABOVE_MAX), TOLERANCE),
                 () -> assertEquals(MIN_VALUE, property.adjustValue(BELOW_MIN), TOLERANCE)
         );

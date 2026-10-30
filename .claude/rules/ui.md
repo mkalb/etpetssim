@@ -12,6 +12,9 @@ here, not simulation logic.
 
 - Depend only on JavaFX, `core`, and `engine`.
 - Add code here only when it is reusable by multiple UI or simulation components.
+- Keep the complete public API of the drawing toolkit (`FXGridCanvasPainter`, `FXPaintFactory`, `GridGeometry`, and
+  `CellDimension`), also members without a current caller (e.g., `CellDimension.boundingBoxDimension()` or
+  `FXPaintFactory.createRadialGradient(..)`); all simulations draw with it.
 
 ## UI Factories and Styles
 
@@ -42,8 +45,6 @@ here, not simulation logic.
   and point-to-cell conversion.
 - Do not duplicate triangle, square, or hexagon geometry in painters or component code.
 - `FXGridCanvasPainter` is stateful canvas rendering around one `Canvas`, `GridStructure`, and computed dimensions.
-  It is the shared drawing toolkit of all simulations: keep its public accessors and drawing methods, also those
-  without a current caller.
 - Drawing methods may accept a `@Nullable Paint` or `Color` only when `null` means "do not draw this layer".
 - Preserve bounds checks for direct pixel drawing and positive-size checks for shapes.
 - `CellShapeSide` represents UI frame sides only; extend it only when all shape-specific frame methods are updated.

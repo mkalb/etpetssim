@@ -14,7 +14,6 @@ import java.util.Map;
  * Creates and adjusts JavaFX {@link Paint} objects: colors with adjusted brightness or opacity, brightness variant
  * maps, and gradients; also defines the shared background and border colors.
  */
-@SuppressWarnings("MagicNumber")
 public final class FXPaintFactory {
 
     public static final Color BACKGROUND_COLOR = Color.web("#1a2233");
@@ -26,10 +25,11 @@ public final class FXPaintFactory {
     /**
      * Computes a map of brightness variants for a base color.
      *
-     * <p>For each integer value in the range {@code [minInclusive, maxInclusive]}, assigns a color variant based on brightness adjustment.
-     * All values within a group share the same color.
-     * The brightness adjustment is distributed linearly from the base color (factor 1.0) up to {@code 1.0 + maxFactorDelta}.
-     * If {@code maxFactorDelta} is positive, colors are brightened; if negative, colors are darkened.
+     * <p>For each integer value in the range {@code [minInclusive, maxInclusive]}, assigns a color variant based on
+     * brightness adjustment. All values within a group share the same color.
+     * The brightness adjustment is distributed linearly from the base color (factor 1.0) up to
+     * {@code 1.0 + maxFactorDelta}. If {@code maxFactorDelta} is positive, colors are brightened; if negative, colors
+     * are darkened.
      * The number of groups determines how many distinct brightness levels are used.
      * The distribution ensures all values are covered, and groups are as evenly sized as possible.
      *
@@ -42,6 +42,7 @@ public final class FXPaintFactory {
      * @throws IllegalArgumentException if the range is invalid, groupCount is less than 1,
      *                                  or maxFactorDelta is outside the range [-1.0, 10.0]
      */
+    @SuppressWarnings("MagicNumber")
     public static Map<Integer, Color> computeBrightnessVariantsMap(
             Color baseColor,
             int minInclusive,
@@ -143,6 +144,7 @@ public final class FXPaintFactory {
      * @param edgeColor   the color at the edge of the gradient
      * @return a RadialGradient from centerColor to edgeColor
      */
+    @SuppressWarnings("MagicNumber")
     public static Paint createRadialGradient(Color centerColor, Color edgeColor) {
         return new RadialGradient(
                 0, 0, // Focus angle, focus distance.

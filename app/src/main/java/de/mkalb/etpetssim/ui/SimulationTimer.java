@@ -8,11 +8,11 @@ import org.jspecify.annotations.Nullable;
 
 /**
  * A timer for running periodic simulation steps using a JavaFX {@link Timeline}.
- * <p>
- * Allows starting, stopping, and checking the status of a simulation loop,
+ *
+ * <p>Allows starting, stopping, and checking the status of a simulation loop,
  * where a given {@link Runnable} is executed at a fixed interval on the JavaFX Application Thread.
- * <p>
- * Example usage:
+ *
+ * <p>Example usage:
  * <pre>
  *     SimulationTimer timer = new SimulationTimer(() -> doStep());
  *     timer.start(Duration.millis(500));
@@ -30,8 +30,8 @@ public final class SimulationTimer {
 
     /**
      * Starts the timer with the given interval. Stops any previous timer.
-     * <p>
-     * Can be called repeatedly with a new interval to update the timer
+     *
+     * <p>Can be called repeatedly with a new interval to update the timer
      * without creating a new instance.
      *
      * @param interval the interval between executions; must be finite and greater than 0 ms
