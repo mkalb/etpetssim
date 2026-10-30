@@ -11,7 +11,9 @@ Rules for all `.java` files; repository-wide instructions still apply.
 
 - Do not add comments that only restate obvious code.
 - Format code as `.editorconfig` in the repository root and the IntelliJ defaults specify (e.g., 4 spaces, a
-  continuation indent of 8, at most 120 characters per line, and chained method calls without alignment).
+  continuation indent of 8, at most 120 characters per line, and chained method calls without alignment). End each
+  file with exactly one newline, and put one blank line before the closing brace of a type body, except for an empty
+  body; the IntelliJ formatter keeps extra or missing blank lines there.
 - Use single-type imports, also for static members; do not use on-demand imports (`.*`). Import a nested type with
   a regular import, not with `import static`.
 - Group imports as IntelliJ does, with one blank line between the groups: all other packages, `javax.*`, `java.*`,

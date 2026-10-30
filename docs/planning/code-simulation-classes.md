@@ -69,6 +69,18 @@ are done and pushed.
   plan is done and are then deleted together with it and `code-other-classes.md`.
 - Categories in their numeric order: the shared base classes (1 to 3) first, because their changes reach all
   subclasses, then the families per simulation (4 to 9).
+- Script checks before category 1 and after the last category and the deferred findings, as in
+  `code-other-classes.md` (2026-10-30): a script in the scratchpad checks all Java files of `simulations` in main and
+  test sources for lines over 120 characters, for their file endings (exactly one final newline, no blank line
+  after the final `}`, and one blank line before the class end except for empty bodies), and for rule regressions
+  with one-line patterns: trailing whitespace, tabs, wildcard imports, `requireNonNull(` (only for `@Nullable`
+  values), `@throws NullPointerException`, `{@return`, `</p>`, `<p>` alone on a line, exception messages with a
+  final period, `toLowerCase(`, `toUpperCase(`, and `String.format(` without a `Locale` (also on the next line),
+  `System.out` and `System.err` in main sources, and in test sources `setAccessible(`, `@DisplayName`, `@Nested`,
+  `@Nullable`, underscores in test names, line comments that do not precede assertions, and Javadoc outside the
+  support classes and manual test utilities. Keep the scripts line-based, without regexes over whole files. Present
+  the results in the chat; the first check assigns its findings to the categories or records them as deferred
+  findings, the last check fixes the remaining ones after the maintainer has decided.
 
 ### Class-specific guidelines
 
@@ -342,8 +354,10 @@ Notes:
   samples, extrema, and golden values for Conway, Forest, and Wa-Tor) and through the user action tests. Test gaps
   for the later separate optimization: the five `*StepLogic` classes and `LangtonStepRunner`, which contains the
   Langton rules itself (six package-private methods).
-- `EtpetsSimulationManager` duplicates `shuffleCoordinates(..)` of `GridInitializers`; see the deferred finding
-  "Shuffle with cancellation checks" in `code-other-classes.md`.
+- `EtpetsSimulationManager` duplicates the former `shuffleCoordinates(..)` and `createCoordinates(..)` of
+  `GridInitializers`; as decided in `code-other-classes.md` (deferred finding "Shuffle with cancellation checks"), it
+  uses `Collections.shuffle(list, random)` and `structure.coordinatesList()` instead. The random sequence stays the
+  same; a manual test with the maximum grid of ET Pets was fast (2026-10-30).
 
 ### Findings
 
@@ -548,4 +562,14 @@ None yet.
 
 ## Deferred findings
 
-None yet.
+### Blank line before the end of constant-only enums
+
+- Origin: `code-other-classes.md`, script check of the file endings (2026-10-30)
+- Types: `etpets.model.entity.PetActionType`, `lab.shared.LabColorMode`
+- Problem: Enums with only constants end with `}` directly after the last constant, while `StatisticsChartGroup`,
+  `NoUserActionContext`, `SimulationStartMode`, `SimulationTerminationCheckMode`, `SimulationUserActionScope`, and
+  `WatorUserActionContext` have one blank line before the class end, as `.editorconfig` sets; IntelliJ keeps both,
+  because `ij_java_keep_blank_lines_before_right_brace = 1` neither adds nor removes the line. `ui.CellShapeSide` got
+  the blank line in `code-other-classes.md`; empty bodies (`{` and `}`) stay without one.
+- Proposal: Add the blank line in both enums; they belong to no category of this plan, so change them with the
+  category that touches their package, or in a final cleanup.

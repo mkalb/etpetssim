@@ -300,7 +300,8 @@ public final class AppLogger {
             removeHandlers(false);
             logHandlers.forEach(logger::addHandler);
             if (logLevel == LogLevel.DEBUG) {
-                logHandlers.forEach(handler -> debug("AppLogger: Added handler: " + handler.getClass().getSimpleName()));
+                logHandlers.forEach(handler ->
+                        debug("AppLogger: Added handler: " + handler.getClass().getSimpleName()));
             }
         }
         initialized = true;
@@ -374,7 +375,8 @@ public final class AppLogger {
             StringBuilder sb = new StringBuilder(INITIAL_BUILDER_CAPACITY);
             String time = TIME_FORMATTER.format(
                     LocalTime.ofInstant(Instant.ofEpochMilli(record.getMillis()), ZoneId.systemDefault()));
-            sb.append(String.format(Locale.ROOT, HEADER_FORMAT, time, record.getLevel().getName(), displayThreadName()));
+            sb.append(String.format(Locale.ROOT, HEADER_FORMAT, time, record.getLevel().getName(),
+                    displayThreadName()));
             sb.append(formatMessage(record)).append(System.lineSeparator());
 
             Throwable throwable = record.getThrown();

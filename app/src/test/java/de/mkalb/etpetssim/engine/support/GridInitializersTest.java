@@ -389,6 +389,17 @@ final class GridInitializersTest {
     }
 
     @Test
+    void testPlaceShuffledCountRunsCheckBeforeFirstCell() {
+        SparseGridModel<TestEntity> model = createSmallModel();
+
+        assertThrows(CancellationException.class, () -> GridInitializers.placeShuffledCount(
+                10, () -> TestEntity.FILLED, TestEntity.EMPTY::equals, new Random(42L), () -> {
+                    throw new CancellationException();
+                }).initialize(model));
+        assertEquals(64, count(model, TestEntity.EMPTY));
+    }
+
+    @Test
     void testPlaceAllAtRandomPositions() {
         SparseGridModel<TestEntity> model = createSmallModel();
         model.setEntity(new GridCoordinate(2, 2), TestEntity.OTHER);
@@ -410,6 +421,18 @@ final class GridInitializersTest {
 
         assertThrows(IllegalStateException.class, () -> GridInitializers.placeAllAtRandomPositions(
                 entities, TestEntity.EMPTY::equals, new Random(42L), () -> {}).initialize(model));
+        assertEquals(64, count(model, TestEntity.EMPTY));
+    }
+
+    @Test
+    void testPlaceAllAtRandomPositionsRunsCheckBeforeFirstCell() {
+        SparseGridModel<TestEntity> model = createSmallModel();
+        List<TestEntity> entities = Collections.nCopies(10, TestEntity.FILLED);
+
+        assertThrows(CancellationException.class, () -> GridInitializers.placeAllAtRandomPositions(
+                entities, TestEntity.EMPTY::equals, new Random(42L), () -> {
+                    throw new CancellationException();
+                }).initialize(model));
         assertEquals(64, count(model, TestEntity.EMPTY));
     }
 

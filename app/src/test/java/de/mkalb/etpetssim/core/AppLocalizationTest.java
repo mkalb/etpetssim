@@ -213,7 +213,8 @@ final class AppLocalizationTest {
                 () -> assertEquals(Optional.of(Locale.US), AppLocalization.resolveLocaleFromDefault(Locale.CANADA)),
                 () -> assertEquals(Optional.of(Locale.US), AppLocalization.resolveLocaleFromDefault(Locale.ENGLISH)),
                 () -> assertEquals(Optional.of(Locale.US), AppLocalization.resolveLocaleFromDefault(Locale.UK)),
-                () -> assertEquals(Optional.of(Locale.GERMANY), AppLocalization.resolveLocaleFromDefault(Locale.GERMAN)),
+                () -> assertEquals(Optional.of(Locale.GERMANY),
+                        AppLocalization.resolveLocaleFromDefault(Locale.GERMAN)),
                 () -> assertEquals(Optional.empty(), AppLocalization.resolveLocaleFromDefault(Locale.FRANCE)),
                 () -> assertEquals(Optional.empty(), AppLocalization.resolveLocaleFromDefault(Locale.CANADA_FRENCH))
         );

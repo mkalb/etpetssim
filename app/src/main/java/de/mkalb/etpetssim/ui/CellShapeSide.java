@@ -17,4 +17,5 @@ public enum CellShapeSide {
     BOTTOM,
     LEFT,
     RIGHT
+
 }

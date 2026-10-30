@@ -1,6 +1,6 @@
 # Other Classes and Foundation Packages
 
-**Status:** in progress
+**Status:** done
 
 **Related issues:** #23
 
@@ -1125,6 +1125,17 @@ Deferred findings (2026-10-30):
   `Unable to initialize AppLogger: already initialized`. `GridSize` and `GridStructure` use concatenation instead of
   `String.format(..)`; the record constructors of `StepTimingStatistics` and `CellDimension` list all their values
   through a private `formatValues(..)`. No test compares these messages.
+- A script over all Java files outside `simulations` found six lines over 120 characters that the groups had missed,
+  although group 1 recorded that all lines of `core` fit: `AppArgs`, `AppLogger` (twice), `AppLocalizationTest`, and
+  `GridTopologyTest` (twice, now with a local assertion message). They are wrapped; the skill tests keep their long
+  lines, mostly expected outputs.
+- A script check of the file endings: `AppArgs` loses the blank line after its final `}` (`insert_final_newline` only
+  adds a missing newline), and the constant-only enum `CellShapeSide` gets one blank line before the class end like
+  most such enums. Empty bodies and `module-info.java` stay without one; the two deviating enums in `simulations`
+  are a deferred finding of `code-simulation-classes.md`. Rule change: `java.md` ("Code Style") requires exactly one
+  final newline and one blank line before the closing brace of a non-empty type body.
+- `GridInitializersTest` adds `testPlaceShuffledCountRunsCheckBeforeFirstCell` and
+  `testPlaceAllAtRandomPositionsRunsCheckBeforeFirstCell`, which replace the dropped test of the cancellation check.
 - `app:test` and `app:javadoc` pass.
 
 ### Procedure

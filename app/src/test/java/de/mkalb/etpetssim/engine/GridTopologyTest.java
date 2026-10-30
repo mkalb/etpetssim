@@ -4,7 +4,6 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 final class GridTopologyTest {
 
@@ -14,9 +13,10 @@ final class GridTopologyTest {
             for (EdgeBehavior edgeBehavior : EdgeBehavior.values()) {
                 int widthMultiple = GridTopology.requiredWidthMultiple(cellShape, edgeBehavior);
                 int heightMultiple = GridTopology.requiredHeightMultiple(cellShape, edgeBehavior);
+                String message = cellShape + " " + edgeBehavior;
                 assertAll(
-                        () -> assertEquals(0, (GridTopology.MAX_REQUIRED_WIDTH_MULTIPLE % widthMultiple), cellShape + " " + edgeBehavior),
-                        () -> assertEquals(0, (GridTopology.MAX_REQUIRED_HEIGHT_MULTIPLE % heightMultiple), cellShape + " " + edgeBehavior)
+                        () -> assertEquals(0, (GridTopology.MAX_REQUIRED_WIDTH_MULTIPLE % widthMultiple), message),
+                        () -> assertEquals(0, (GridTopology.MAX_REQUIRED_HEIGHT_MULTIPLE % heightMultiple), message)
                 );
             }
         }

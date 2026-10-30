@@ -181,7 +181,8 @@ public final class AppArgs {
     private void parseArgument(String arg) {
         Matcher matcher = ARGUMENT_PATTERN.matcher(arg);
         if (!matcher.matches() || ((matcher.group(3) != null) && matcher.group(3).isBlank())) {
-            AppLogger.warn("AppArgs: Invalid argument format: '" + arg + "'. Expected format is --key=value or --flag.");
+            AppLogger.warn("AppArgs: Invalid argument format: '" + arg
+                    + "'. Expected format is --key=value or --flag.");
             return;
         }
         Optional<Key> key = Key.fromKeyName(matcher.group(1));
@@ -295,4 +296,3 @@ public final class AppArgs {
     }
 
 }
-
