@@ -88,6 +88,9 @@ Rules for test sources only; repository-wide and Java instructions still apply.
 - Name fixture types `Test<Type>` for a minimal implementation of a production type; `Stub<Type>`, `Counting<Type>`,
   or `Recording<Type>` when the behavior of the test double matters; otherwise a meaningful domain name. Fixture names
   that contain a production type name follow its renames.
+- Access members of main classes that are not public through package-private access as `java.md` ("Test Access")
+  describes; do not use reflection on private members. Reflection on public members, such as the constants that
+  `ConstantTestSupport` checks, is allowed.
 - Prefer immutable test data; verify defensive copies and unmodifiable views where they are part of the contract.
 - Put test-only nested enums, records, and small fixture types at the bottom of the class.
 - Use method-level `@SuppressWarnings("DataFlowIssue")` for intentional null-passing tests.

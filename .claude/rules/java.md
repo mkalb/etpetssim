@@ -163,7 +163,26 @@ Rules for classes with only static members (constants, static methods, or both).
   `GridPattern`, `GridInitializers` for `GridInitializer`), as in `Collections`; name classes that create JavaFX
   objects `FX*Factory` (see `ui.md`); name other utility classes after their role (e.g., `GridGeometry`,
   `CellNeighborhoods`, `<Simulation>Constraints`).
-- Make helper methods `private`, or package-private when tests call them directly.
+
+## Test Access
+
+Rules for all classes in main sources. Tests lie in the package of the tested class (`junit.md`), so they access its
+package-private members directly.
+
+- Keep a method `private` and test it through the API of its class by default. Test it directly only if it contains
+  non-trivial logic (e.g., calculations, rules, parsing, or validation) whose cases are hard to reach through the
+  class API with reasonable setup; then make it package-private instead of using reflection. Several methods of one
+  class may become package-private; do not extract logic into new classes or methods only for tests.
+- In a non-final class, including an abstract class, declare a method that is package-private only for tests also
+  `final`.
+- Check private state through the API or an observable property. If that is not possible, add a package-private
+  accessor named by "Naming Conventions" (e.g., a noun-style name); do not open fields for tests.
+- Package-private constructors or overloads that let tests replace a dependency are allowed (e.g., the constructor of
+  `DefaultMainViewModel` that takes an `ExecutorService`).
+- Reserve `*ForTesting` methods for the test infrastructure of `core` (`core.md`), which changes the state of a class
+  for tests (e.g., `AppLogger.initializeForTesting()`); other members for tests do not use the suffix.
+- Do not mark members opened for tests: no annotation such as `@VisibleForTesting`, and no Javadoc or comment that
+  says so.
 
 ## Nullability (JSpecify)
 
