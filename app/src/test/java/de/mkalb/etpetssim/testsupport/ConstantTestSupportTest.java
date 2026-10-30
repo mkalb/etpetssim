@@ -62,6 +62,7 @@ final class ConstantTestSupportTest {
                 () -> ConstantTestSupport.assertConstantValuesMatch(SortedConstants.class, "a[a-z]*"));
     }
 
+    @SuppressWarnings("unused")
     static final class SortedConstants {
 
         public static final String ALPHA = "alpha";
@@ -74,6 +75,7 @@ final class ConstantTestSupportTest {
 
     }
 
+    @SuppressWarnings("unused")
     static final class UnsortedConstants {
 
         public static final String BETA = "beta";
@@ -84,6 +86,7 @@ final class ConstantTestSupportTest {
 
     }
 
+    @SuppressWarnings("unused")
     static final class DuplicateConstants {
 
         public static final String ALPHA = "same";
@@ -94,6 +97,7 @@ final class ConstantTestSupportTest {
 
     }
 
+    @SuppressWarnings("unused")
     static final class BlankConstants {
 
         public static final String ALPHA = "alpha";
@@ -104,6 +108,7 @@ final class ConstantTestSupportTest {
 
     }
 
+    @SuppressWarnings("unused")
     static final class NoStringConstants {
 
         public static final int NUMBER = 1;

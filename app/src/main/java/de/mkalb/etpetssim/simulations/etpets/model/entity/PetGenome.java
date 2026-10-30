@@ -24,7 +24,7 @@ public record PetGenome(PetTraits traits) {
      * @param mutationDelta          the relative mutation strength
      * @return the derived child genome
      */
-    @SuppressWarnings("MagicNumber")
+    @SuppressWarnings({"MagicNumber", "NumericCastThatLosesPrecision"})
     public static PetGenome fromParents(PetGenome parentA, PetGenome parentB,
                                         Random random,
                                         double mutationChancePerTrait, double mutationDelta) {

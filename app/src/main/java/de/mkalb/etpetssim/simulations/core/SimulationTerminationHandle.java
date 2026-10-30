@@ -12,6 +12,7 @@ public interface SimulationTerminationHandle {
      *
      * @return completed termination handle
      */
+    @SuppressWarnings("SameReturnValue")
     static SimulationTerminationHandle completed() {
         return CompletedSimulationTerminationHandle.INSTANCE;
     }

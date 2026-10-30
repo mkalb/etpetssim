@@ -235,6 +235,7 @@ public final class EtpetsMainView extends AbstractDefaultMainView<
         };
     }
 
+    @SuppressWarnings("OverloadedMethodsWithSameNumberOfParameters")
     private int clampToMapRange(double value,
                                 int min,
                                 int max) {
@@ -245,6 +246,7 @@ public final class EtpetsMainView extends AbstractDefaultMainView<
         return Math.clamp(Math.round(value), min, max);
     }
 
+    @SuppressWarnings("OverloadedMethodsWithSameNumberOfParameters")
     private int clampToMapRange(int value,
                                 int min,
                                 int max) {

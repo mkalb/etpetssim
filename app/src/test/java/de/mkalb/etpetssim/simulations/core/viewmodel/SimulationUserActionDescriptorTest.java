@@ -20,6 +20,7 @@ final class SimulationUserActionDescriptorTest {
     private static final String LABEL_KEY_SAMPLE = "sample.toolbar.tool";
     private static final String TOOLTIP_KEY_SAMPLE = "sample.toolbar.tool.tooltip";
 
+    @SuppressWarnings("UnusedReturnValue")
     private static SimulationUserActionDescriptor<NoUserActionContext> createDescriptor(String toolId,
                                                                                         String labelKey,
                                                                                         String tooltipKey) {

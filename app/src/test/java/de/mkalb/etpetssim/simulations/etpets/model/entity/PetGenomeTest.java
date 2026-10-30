@@ -76,6 +76,7 @@ final class PetGenomeTest {
         );
     }
 
+    @SuppressWarnings("SameParameterValue")
     private static final class StubRandom extends Random {
 
         private final double nextDoubleValue;

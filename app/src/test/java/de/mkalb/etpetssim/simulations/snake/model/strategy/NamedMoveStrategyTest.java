@@ -32,6 +32,7 @@ final class NamedMoveStrategyTest {
         );
     }
 
+    @SuppressWarnings("SameParameterValue")
     private record TestMoveDecision(
             GridCoordinate targetCoordinate,
             CompassDirection direction,

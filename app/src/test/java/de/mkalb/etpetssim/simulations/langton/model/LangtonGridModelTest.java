@@ -23,6 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+@SuppressWarnings("SameParameterValue")
 final class LangtonGridModelTest {
 
     private static GridStructure createStructure(int width, int height) {

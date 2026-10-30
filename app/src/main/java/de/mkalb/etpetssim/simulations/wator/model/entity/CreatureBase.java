@@ -30,6 +30,7 @@ public abstract sealed class CreatureBase implements WatorEntity, Comparable<Cre
         return descriptorId;
     }
 
+    @SuppressWarnings("ConstantValue")
     @Override
     public final boolean equals(Object obj) {
         if ((obj == null) || (getClass() != obj.getClass())) {

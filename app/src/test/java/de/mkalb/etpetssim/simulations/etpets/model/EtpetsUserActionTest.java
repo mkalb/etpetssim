@@ -108,6 +108,7 @@ final class EtpetsUserActionTest {
         assertSame(TerrainConstant.GROUND, manager.currentGridModel().terrainModel().getEntity(coordinate));
     }
 
+    @SuppressWarnings("DataFlowIssue")
     @Test
     void testApplySetResourcePlantUsesDeterministicFullDefaults() {
         EtpetsSimulationManager manager = new EtpetsSimulationManager(createConfig());
@@ -128,6 +129,7 @@ final class EtpetsUserActionTest {
         );
     }
 
+    @SuppressWarnings("DataFlowIssue")
     @Test
     void testApplySetResourceInsectUsesDeterministicFullDefaults() {
         EtpetsSimulationManager manager = new EtpetsSimulationManager(createConfig());

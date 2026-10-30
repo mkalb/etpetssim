@@ -107,6 +107,7 @@ final class SnakeMoveStrategiesTest {
         return strategy.decideMove(context).orElseThrow();
     }
 
+    @SuppressWarnings("DataFlowIssue")
     @Test
     void testStrategies() {
         List<SnakeMoveStrategy> strategies = SnakeMoveStrategies.strategies();

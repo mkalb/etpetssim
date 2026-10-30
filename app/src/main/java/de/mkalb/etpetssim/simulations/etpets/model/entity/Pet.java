@@ -94,6 +94,7 @@ public final class Pet implements AgentEntity {
         return ageAtStepIndex(stepCount - 1);
     }
 
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public boolean hasReachedAgingEffectsAge(int stepIndex) {
         return ageAtStepIndex(stepIndex) >= EtpetsBalance.PET_AGING_EFFECTS_AGE_MIN;
     }

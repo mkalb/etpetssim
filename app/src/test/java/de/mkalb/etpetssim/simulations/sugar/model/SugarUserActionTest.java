@@ -38,6 +38,7 @@ final class SugarUserActionTest {
         );
     }
 
+    @SuppressWarnings("DataFlowIssue")
     @Test
     void testApplyAddSugarAddsResourceWithSelectedLevel() {
         SugarSimulationManager manager = new SugarSimulationManager(createConfig());
