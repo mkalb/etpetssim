@@ -216,11 +216,11 @@ final class FXComponentFactoryTest {
 
             FXComponentFactory.LabeledControl<ComboBox<String>> control =
                     FXComponentFactory.createLabeledChoiceComboBox(
-                    property,
-                    "Choice: %s",
-                    TOOLTIP,
-                    STYLE_CLASS,
-                    cleanup::set);
+                            property,
+                            "Choice: %s",
+                            TOOLTIP,
+                            STYLE_CLASS,
+                            cleanup::set);
             ComboBox<String> comboBox = control.controlRegion();
 
             comboBox.setValue("beta");
