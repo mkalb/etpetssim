@@ -76,7 +76,7 @@ public final class ReboundingConfigViewModel
     private final InputChoiceProperty<NeighborhoodMode> neighborhoodMode = InputChoiceProperty.ofEnum(
             NEIGHBORHOOD_MODE_DEFAULT,
             NeighborhoodMode.class,
-            e -> AppLocalization.getOptionalText(e.resourceKey()).orElse(e.toString()));
+            e -> AppLocalization.getText(e.resourceKey()));
 
     public ReboundingConfigViewModel(ReadOnlyObjectProperty<SimulationState> simulationState) {
         super(simulationState, COMMON_SETTINGS);

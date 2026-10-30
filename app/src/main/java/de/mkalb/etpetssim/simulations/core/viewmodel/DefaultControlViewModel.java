@@ -29,7 +29,7 @@ public final class DefaultControlViewModel
     private final ReadOnlyObjectProperty<SimulationState> simulationState;
     private final InputChoiceProperty<SimulationMode> simulationMode = InputChoiceProperty.ofEnum(SimulationMode.TIMED,
             SimulationMode.class,
-            e -> AppLocalization.getOptionalText(e.resourceKey()).orElse(e.toString()));
+            e -> AppLocalization.getText(e.resourceKey()));
     private final InputDoubleIntRangeProperty stepDuration = InputDoubleIntRangeProperty.of(STEP_DURATION_INITIAL,
             STEP_DURATION_MIN, STEP_DURATION_MAX);
     private final InputIntegerProperty stepCount = InputIntegerProperty.of(STEP_COUNT_INITIAL,

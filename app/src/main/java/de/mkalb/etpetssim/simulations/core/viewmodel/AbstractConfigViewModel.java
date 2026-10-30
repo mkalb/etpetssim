@@ -49,11 +49,11 @@ public abstract class AbstractConfigViewModel<CON extends SimulationConfig>
         cellShape = InputChoiceProperty.ofList(
                 commonConfigSettings.cellShapeInitial(),
                 commonConfigSettings.cellShapeValues(),
-                e -> AppLocalization.getOptionalText(e.resourceKey()).orElse(e.toString()));
+                e -> AppLocalization.getText(e.resourceKey()));
         gridEdgeBehavior = InputChoiceProperty.ofList(
                 commonConfigSettings.gridEdgeBehaviorInitial(),
                 commonConfigSettings.gridEdgeBehaviorValues(),
-                e -> AppLocalization.getOptionalText(e.resourceKey()).orElse(e.toString()));
+                e -> AppLocalization.getText(e.resourceKey()));
         gridWidth = InputIntegerProperty.of(
                 commonConfigSettings.gridWidthInitial(),
                 commonConfigSettings.gridWidthMin(),
@@ -71,7 +71,7 @@ public abstract class AbstractConfigViewModel<CON extends SimulationConfig>
         cellDisplayMode = InputChoiceProperty.ofList(
                 commonConfigSettings.cellDisplayModeInitial(),
                 commonConfigSettings.cellDisplayModeValues(),
-                e -> AppLocalization.getOptionalText(e.resourceKey()).orElse(e.toString()));
+                e -> AppLocalization.getText(e.resourceKey()));
         seed = new SeedProperty(commonConfigSettings.seedInitial());
     }
 

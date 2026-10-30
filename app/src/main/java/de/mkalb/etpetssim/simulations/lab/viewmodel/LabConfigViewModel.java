@@ -65,13 +65,13 @@ public final class LabConfigViewModel
 
     // Layout
     private final InputChoiceProperty<LabColorMode> colorMode = InputChoiceProperty.ofList(COLOR_MODE_DEFAULT, COLOR_MODE_VALUES,
-            e -> AppLocalization.getOptionalText(e.resourceKey()).orElse(e.toString()));
+            e -> AppLocalization.getText(e.resourceKey()));
 
     // Rules - NeighborhoodMode
     private final InputChoiceProperty<NeighborhoodMode> neighborhoodMode = InputChoiceProperty.ofEnum(
             NEIGHBORHOOD_MODE_DEFAULT,
             NeighborhoodMode.class,
-            e -> AppLocalization.getOptionalText(e.resourceKey()).orElse(e.toString()));
+            e -> AppLocalization.getText(e.resourceKey()));
 
     // Internal state
     private final BooleanProperty configChangedRequested = new SimpleBooleanProperty(false);
