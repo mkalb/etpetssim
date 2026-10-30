@@ -27,7 +27,6 @@ import javafx.util.Duration;
 import org.jspecify.annotations.Nullable;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ExecutorService;
@@ -360,6 +359,10 @@ public final class DefaultMainViewModel<
         return throttleDrawMillis;
     }
 
+    boolean isTimerRunning() {
+        return timer.isRunning();
+    }
+
     private void handleActionButton() {
         if (!getSimulationState().isRunning() && (isTimerRunning() || isBatchRunning())) {
             throw new IllegalStateException("Simulation is running but state is not RUNNING_TIMED or RUNNING_BATCH: " + getSimulationState());
@@ -623,8 +626,7 @@ public final class DefaultMainViewModel<
                             "timeoutViewMillis=" + timeoutViewMillis);
                 }
             }
-        } catch (IllegalArgumentException | IllegalStateException | NullPointerException
-                 | IndexOutOfBoundsException | NoSuchElementException | UnsupportedOperationException e) {
+        } catch (RuntimeException e) {
             setNotificationType(SimulationNotificationType.EXCEPTION);
 
             setSimulationState(SimulationState.ERROR);
@@ -733,10 +735,6 @@ public final class DefaultMainViewModel<
                 batchThread = null;
             }
         });
-    }
-
-    private boolean isTimerRunning() {
-        return timer.isRunning();
     }
 
     private boolean isBatchRunning() {

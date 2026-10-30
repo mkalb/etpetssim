@@ -470,6 +470,31 @@ final class DefaultMainViewModelTest {
     }
 
     @Test
+    void testExecuteTimerStepTransitionsToErrorWhenStepFails() throws InterruptedException {
+        Fixture fixture = createFixtureWithFailingStep(() -> {
+            throw new ArithmeticException("Test timer step failure");
+        });
+        List<SimulationState> states = new ArrayList<>();
+        List<SimulationStepEvent> events = new ArrayList<>();
+
+        FXTestSupport.runAndWait(() -> {
+            fixture.controlViewModel().startModeProperty().setValue(SimulationStartMode.START_IMMEDIATELY);
+            fixture.controlViewModel().simulationModeProperty().setValue(SimulationMode.TIMED);
+            fixture.controlViewModel().stepDurationProperty().setValue(50);
+            fixture.mainViewModel().setSimulationStepListener(events::add);
+        });
+        startAndAwaitError(fixture, states);
+        FXTestSupport.runAndWait(() -> assertAll(
+                () -> assertEquals(
+                        List.of(SimulationState.RUNNING_TIMED, SimulationState.ERROR),
+                        statesFrom(states, SimulationState.RUNNING_TIMED)),
+                () -> assertFalse(fixture.mainViewModel().isTimerRunning()),
+                () -> assertTrue(events.getLast().finalStep())
+        ));
+        FXTestSupport.runAndWait(fixture.mainViewModel()::shutdownSimulation);
+    }
+
+    @Test
     void testExecuteBatchStepsTransitionsToErrorWhenStepFails() throws InterruptedException {
         Fixture fixture = createFixtureWithFailingStep(() -> {
             throw new ArithmeticException("Test batch step failure");
