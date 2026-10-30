@@ -45,7 +45,7 @@ settled before `code-simulation-classes.md` starts, which took over the classes 
   `code-enum-types.md` are done; their decisions apply here. They stay in `docs/planning` as reference until
   `code-simulation-classes.md` is done.
 - Categories 1 to 3 are done and committed (category 1 in `fc3cff53`, category 3 in `af48c441`); category 4 is
-  committed group by group.
+  done and committed group by group. The deferred findings remain open.
 - Categories 2 and 3 settle the rules before category 4 applies them; category 2 comes first, because it also
   changes code. Category 4 reviews the packages one group at a time.
 - `code-simulation-classes.md` starts only after all categories of this plan are done.
@@ -99,7 +99,7 @@ Table format:
 | 1 | Engine, core, UI, and application classes |   12 classes | done        |
 | 2 | Member order: rules and IntelliJ          |            - | done        |
 | 3 | Javadoc rules of all rule files           | 5 rule files | done        |
-| 4 | Package reviews outside `simulations`     |   9 packages | in progress |
+| 4 | Package reviews outside `simulations`     |   9 packages | done        |
 
 ## 1. Engine, core, UI, and application classes
 
@@ -699,7 +699,7 @@ Notes:
   (`GridStructure`, `GridCoordinate`), the link from `SimulationUserActionContext` to `simulations.core.model`, the
   Javadoc of `AppArgs.toString()`, and Javadoc that only restates accessors.
 - Proposal: Check and adapt the Javadoc of each package in its group.
-- Status: groups 1 to 6 done (2026-10-29), group 7 done (2026-10-30)
+- Status: groups 1 to 6 done (2026-10-29), groups 7 and 8 done (2026-10-30)
 
 #### Lookup name of the log levels
 
@@ -867,6 +867,17 @@ Notes:
   `isPointInTriangleCell(..)` had no test; the polygon and frame segment tests checked only the number of points.
 - Proposal: Round trip of points inside every cell for all shapes; exact coordinates for polygons and frame
   segments.
+- Status: done (2026-10-30)
+
+#### Reflection in the application test
+
+- Origin: analysis of group 8
+- Types: `ExtraterrestrialPetsSimulation`, `ExtraterrestrialPetsSimulationTest`
+- Problem: The test wrote the private field `currentSimulationInstance` and called the private
+  `shutdownCurrentSimulation()` through reflection (`setAccessible(true)`).
+- Proposal: Make `shutdownCurrentSimulation()` package-private and set the field through a package-private
+  `setCurrentSimulationInstance(..)`, which `switchToSimulation(..)` uses as well; an extracted lifecycle class was
+  rejected as an abstraction for about 50 lines.
 - Status: done (2026-10-30)
 
 ### Decisions
@@ -1070,6 +1081,29 @@ Group 7, `ui` (2026-10-30):
   bound; `FXComponentFactoryTest` and `FXPaintFactoryTest` name single tests `test<Subject>`, add the base overload
   of `createLabeledChoiceComboBox(..)`, the invalid checkbox values, the minor ticks of the percent slider, and
   uneven brightness groups; the `Input*PropertyTest` classes check rounding ties.
+- `app:test` and `app:javadoc` pass.
+
+Group 8, root package (2026-10-30):
+
+- `ExtraterrestrialPetsSimulation`: `shutdownCurrentSimulation()` and the new `setCurrentSimulationInstance(..)` are
+  package-private, so that the test needs no reflection; `resolveSimulationType(..)` and
+  `resolveScreenContainingStage(..)` are `private static` and precede the instance methods (category 2).
+- Logging: parameterized messages use `AppLogger.infof(..)` and `errorf(..)`; the uncaught exception message gets the
+  prefix `Application:`.
+- `adjustStageLayoutToScreen(..)` keeps its structure, because no test covers it and its behavior depends on the real
+  window and screen; only comments that restated the code and the local variable `margin` are removed.
+- `pendingTerminationHandles` keeps one handle per simulation switch until `stop()`; pruning terminated handles would
+  need a query in `SimulationTerminationHandle`, which the small list does not justify.
+- Javadoc: `<p>` directly before the first word; `stop()` and `awaitPendingTerminations()` describe the shared
+  termination timeout, the forced shutdown, and the restored interrupted status; `switchToSimulation(..)` names the
+  callback for the `SimulationFactory` in the text instead of two `@see` tags (one fully qualified to
+  `StartMainView`). `AppLauncher` drops `@see AppArgs.Key#printHelp(..)` and documents the fallback of
+  `initializeAppLogger(..)` instead of a line comment.
+- Lines in main and test sources fit 120 characters.
+- Tests: `ExtraterrestrialPetsSimulationTest` uses the package-private methods and the helper `createInstance(..)`,
+  checks the disabled region inside the FX block, and drops its assertion messages; `AppLogger.initializeForTesting()`
+  stays in `@BeforeEach`, because `stop()` shuts the logger down. `AppLauncher` stays without a test: `main(..)` calls
+  `System.exit(..)` and `Application.launch(..)`, and its initializations change global state.
 - `app:test` and `app:javadoc` pass.
 
 ### Procedure

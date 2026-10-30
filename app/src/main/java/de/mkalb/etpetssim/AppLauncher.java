@@ -46,7 +46,6 @@ public final class AppLauncher {
      *
      * @param args command-line arguments; may be empty
      * @return parsed {@link AppArgs} instance
-     * @see AppArgs.Key#printHelp(Appendable)
      */
     @SuppressWarnings("CallToSystemExit")
     private static AppArgs parseArgumentsAndHandleHelp(String[] args) {
@@ -60,6 +59,9 @@ public final class AppLauncher {
 
     /**
      * Initializes application logging from parsed arguments.
+     *
+     * <p>If the log file is requested but its directory cannot be created, logging continues without a file and the
+     * error is logged.
      *
      * @param arguments parsed command-line arguments
      */
@@ -75,7 +77,6 @@ public final class AppLauncher {
                     : null;
             AppLogger.initialize(logLevel, useConsole, logPath);
         } catch (IOException e) {
-            // Log without a file if the log directory cannot be created
             AppLogger.initialize(logLevel, useConsole, null);
             AppLogger.error(e, "AppLauncher: Failed to initialize log file.");
         }

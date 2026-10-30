@@ -37,8 +37,8 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * Main JavaFX {@link Application} implementation.
- * <p>
- * Creates the primary stage content, switches between simulations,
+ *
+ * <p>Creates the primary stage content, switches between simulations,
  * and coordinates startup and shutdown behavior. Command-line parsing, logging,
  * and localization are initialized by {@link AppLauncher} before launch.
  */
@@ -64,34 +64,61 @@ public final class ExtraterrestrialPetsSimulation extends Application {
     private static final double FALLBACK_WINDOW_DECORATION_HEIGHT = 39.0d;
     private static final double DEFAULT_WINDOW_MARGIN = 8.0d;
     private static final long TERMINATION_TIMEOUT_SECONDS = 5L;
+
     private final List<SimulationTerminationHandle> pendingTerminationHandles = new ArrayList<>();
     private List<Image> appIcons = List.of();
     private @Nullable SimulationInstance currentSimulationInstance;
     private boolean terminationAwaited;
 
     /**
+     * Resolves the initial simulation type from parsed arguments, restricted to implemented simulations.
+     *
+     * @param arguments parsed application arguments
+     * @return an {@link Optional} containing the matching simulation type, or empty if none matches
+     */
+    private static Optional<SimulationType> resolveSimulationType(AppArgs arguments) {
+        return arguments.getValue(AppArgs.Key.SIMULATION)
+                .flatMap(arg -> SimulationType.fromCliArgument(arg, true));
+    }
+
+    /**
+     * Resolves the screen containing the stage center point, with the primary screen as a fallback.
+     *
+     * @param stage stage to evaluate
+     * @return matching screen, or the primary screen if none matches
+     */
+    @SuppressWarnings("MagicNumber")
+    private static Screen resolveScreenContainingStage(Stage stage) {
+        double cx = stage.getX() + (stage.getWidth() / 2.0d);
+        double cy = stage.getY() + (stage.getHeight() / 2.0d);
+
+        for (Screen s : Screen.getScreens()) {
+            if (s.getBounds().contains(cx, cy)) {
+                return s;
+            }
+        }
+        return Screen.getPrimary();
+    }
+
+    /**
      * Starts the JavaFX application.
-     * <p>
-     * Installs uncaught-exception handling, resolves the requested
+     *
+     * <p>Installs uncaught-exception handling, resolves the requested
      * simulation type, and shows the primary stage.
      *
      * @param primaryStage primary stage created by JavaFX
      */
     @Override
     public void start(Stage primaryStage) {
-        // Initialize exception handling for uncaught exceptions
         Thread.setDefaultUncaughtExceptionHandler((thread, throwable) -> {
-            AppLogger.error(throwable, "Uncaught exception in thread " + thread.getName());
+            AppLogger.errorf(throwable, "Application: Uncaught exception in thread %s", thread.getName());
             Platform.runLater(() -> showUnexpectedErrorAlert(throwable));
         });
 
-        // Determine the simulation type from command-line arguments
         AppArgs arguments = new AppArgs(getParameters().getRaw().toArray(new String[0]));
-        SimulationType type = resolveSimulationType(arguments)
-                .orElse(SimulationType.STARTSCREEN); // Default to STARTSCREEN if no valid simulation type is found
-        AppLogger.info("Application: Starting with simulation type: " + type.name());
+        SimulationType type = resolveSimulationType(arguments).orElse(SimulationType.STARTSCREEN);
+        AppLogger.infof("Application: Starting with simulation type: %s", type.name());
 
-        // Initialize and show the primary stage with the appropriate scene
         updateStageIcons(primaryStage);
         switchToSimulation(primaryStage, type);
         primaryStage.show();
@@ -99,7 +126,10 @@ public final class ExtraterrestrialPetsSimulation extends Application {
     }
 
     /**
-     * Stops the application and shuts down logging.
+     * Stops the application.
+     *
+     * <p>Shuts down the current simulation, waits at most {@value #TERMINATION_TIMEOUT_SECONDS} seconds in total for
+     * all pending simulation terminations, and shuts down logging.
      */
     @Override
     public void stop() {
@@ -110,14 +140,37 @@ public final class ExtraterrestrialPetsSimulation extends Application {
     }
 
     /**
-     * Resolves the initial simulation type from parsed arguments, restricted to implemented simulations.
+     * Sets the active simulation instance without shutting down the previous one;
+     * {@link #switchToSimulation(Stage, SimulationType)} shuts it down first.
      *
-     * @param arguments parsed application arguments
-     * @return an {@link Optional} containing the matching simulation type, or empty if none matches
+     * @param simulationInstance simulation instance shown on the primary stage
      */
-    private Optional<SimulationType> resolveSimulationType(AppArgs arguments) {
-        return arguments.getValue(AppArgs.Key.SIMULATION)
-                .flatMap(arg -> SimulationType.fromCliArgument(arg, true));
+    void setCurrentSimulationInstance(SimulationInstance simulationInstance) {
+        currentSimulationInstance = simulationInstance;
+    }
+
+    /**
+     * Shuts down the currently active simulation instance, if one exists.
+     *
+     * <p>The instance reference is cleared before invoking simulation shutdown so
+     * repeated lifecycle paths, such as close request followed by {@link #stop()},
+     * cannot shut down the same instance twice.
+     */
+    void shutdownCurrentSimulation() {
+        SimulationInstance simulationInstance = currentSimulationInstance;
+        if (simulationInstance == null) {
+            return;
+        }
+
+        currentSimulationInstance = null;
+        try {
+            AppLogger.infof("Application: Shutting down simulation instance: %s", simulationInstance.simulationType());
+            simulationInstance.region().setDisable(true);
+            pendingTerminationHandles.add(simulationInstance.simulationMainView().shutdownSimulation());
+        } catch (Exception e) {
+            AppLogger.errorf(e, "Application: Error during simulation shutdown: %s",
+                    simulationInstance.simulationType());
+        }
     }
 
     /**
@@ -152,33 +205,29 @@ public final class ExtraterrestrialPetsSimulation extends Application {
 
     /**
      * Switches the primary stage to a simulation.
-     * <p>
-     * A new simulation instance is created, the scene content is replaced, and the
-     * stage title, stylesheets, shutdown handling, and layout are updated.
+     *
+     * <p>The current simulation is shut down, a new simulation instance is created, the scene content is replaced, and
+     * the stage title, stylesheets, shutdown handling, and layout are updated. The {@link SimulationFactory} receives
+     * this method as a callback, so that a simulation (e.g., the start screen) can switch to another one.
      *
      * @param stage          primary application stage
      * @param simulationType simulation type to display
-     * @see SimulationFactory
-     * @see de.mkalb.etpetssim.simulations.start.StartMainView
      */
     private void switchToSimulation(Stage stage, SimulationType simulationType) {
-        AppLogger.info("Application: Updating stage scene to simulation: " + simulationType);
+        AppLogger.infof("Application: Updating stage scene to simulation: %s", simulationType);
         shutdownCurrentSimulation();
 
-        // Create new simulation instance with header and main region
         var simulationInstance = SimulationFactory.createInstance(simulationType, stage, this::switchToSimulation);
         var simulationHeaderNode = createSimulationHeaderNode(stage, simulationInstance);
         var simulationMainRegion = simulationInstance.region();
 
-        currentSimulationInstance = simulationInstance;
+        setCurrentSimulationInstance(simulationInstance);
 
-        // Create new root layout with header and main region
         VBox root = new VBox(simulationHeaderNode, simulationMainRegion);
         root.getStyleClass().add(FXStyleClasses.APP_VBOX);
         VBox.setVgrow(simulationMainRegion, Priority.ALWAYS);
         root.setDisable(true); // Disable first until fully initialized later
 
-        // Create or update scene with new root
         Scene scene = stage.getScene();
         if (scene == null) {
             scene = new Scene(root);
@@ -187,13 +236,12 @@ public final class ExtraterrestrialPetsSimulation extends Application {
             scene.setRoot(root);
         }
 
-        // Update scene styles -  Add common stylesheets first and then the specific simulation type stylesheet
+        // Add the common stylesheet first and then the stylesheet of the simulation type
         List<String> styles = new ArrayList<>();
         AppResources.getCssUrl("scene.css").ifPresent(styles::add);
         simulationType.cssUrl().ifPresent(styles::add);
         scene.getStylesheets().setAll(styles);
 
-        // Update stage
         stage.setTitle(AppLocalization.getFormattedText(AppLocalizationKeys.WINDOW_TITLE, simulationType.title()));
         stage.setOnCloseRequest(_ -> shutdownCurrentSimulation());
 
@@ -202,28 +250,12 @@ public final class ExtraterrestrialPetsSimulation extends Application {
     }
 
     /**
-     * Shuts down the currently active simulation instance, if one exists.
-     * <p>
-     * The instance reference is cleared before invoking simulation shutdown so
-     * repeated lifecycle paths, such as close request followed by {@link #stop()},
-     * cannot shut down the same instance twice.
+     * Waits for the pending simulation terminations, at most once per application.
+     *
+     * <p>All terminations share one timeout budget of {@value #TERMINATION_TIMEOUT_SECONDS} seconds; a termination
+     * that does not complete in time is forced with {@link SimulationTerminationHandle#shutdownNow()}. If the waiting
+     * thread is interrupted, all pending terminations are forced and the interrupted status is restored.
      */
-    private void shutdownCurrentSimulation() {
-        SimulationInstance simulationInstance = currentSimulationInstance;
-        if (simulationInstance == null) {
-            return;
-        }
-
-        currentSimulationInstance = null;
-        try {
-            AppLogger.info("Application: Shutting down simulation instance: " + simulationInstance.simulationType());
-            simulationInstance.region().setDisable(true);
-            pendingTerminationHandles.add(simulationInstance.simulationMainView().shutdownSimulation());
-        } catch (Exception e) {
-            AppLogger.error(e, "Application: Error during simulation shutdown: " + simulationInstance.simulationType());
-        }
-    }
-
     private void awaitPendingTerminations() {
         if (terminationAwaited) {
             return;
@@ -235,8 +267,10 @@ public final class ExtraterrestrialPetsSimulation extends Application {
         for (SimulationTerminationHandle terminationHandle : pendingTerminationHandles) {
             long remainingNanos = deadlineNanos - System.nanoTime();
             try {
-                if ((remainingNanos <= 0L) || !terminationHandle.awaitTermination(remainingNanos, TimeUnit.NANOSECONDS)) {
-                    AppLogger.warn("Application: Simulation executor did not terminate before application shutdown timeout.");
+                if ((remainingNanos <= 0L)
+                        || !terminationHandle.awaitTermination(remainingNanos, TimeUnit.NANOSECONDS)) {
+                    AppLogger.warn(
+                            "Application: Simulation executor did not terminate before application shutdown timeout.");
                     terminationHandle.shutdownNow();
                 }
             } catch (InterruptedException e) {
@@ -252,41 +286,19 @@ public final class ExtraterrestrialPetsSimulation extends Application {
     }
 
     /**
-     * Resolves the screen containing the stage center point, with the primary screen as a fallback.
-     *
-     * @param stage stage to evaluate
-     * @return matching screen, or the primary screen if none matches
-     */
-    @SuppressWarnings("MagicNumber")
-    private Screen resolveScreenContainingStage(Stage stage) {
-        // Calculate center coordinates of the stage
-        double cx = stage.getX() + (stage.getWidth() / 2.0d);
-        double cy = stage.getY() + (stage.getHeight() / 2.0d);
-
-        for (Screen s : Screen.getScreens()) {
-            if (s.getBounds().contains(cx, cy)) {
-                return s;
-            }
-        }
-        // Fallback to primary screen
-        return Screen.getPrimary();
-    }
-
-    /**
      * Adjusts stage size and position to fit the current screen's visual bounds.
-     * <p>
-     * Iconified stages are left unchanged, full-screen stages adopt the visual bounds,
+     *
+     * <p>Iconified stages are left unchanged, full-screen stages adopt the visual bounds,
      * and maximized or normal stages are resized and repositioned with decoration and
      * margin handling.
-     * <p>
-     * Intended to run from {@link Platform#runLater(Runnable)} after
+     *
+     * <p>Intended to run from {@link Platform#runLater(Runnable)} after
      * JavaFX has completed the initial layout pass.
      *
      * @param stage stage to adjust
      * @param root  scene root associated with the stage
      */
     private void adjustStageLayoutToScreen(Stage stage, Region root) {
-        // Skip if minimized
         if (stage.isIconified()) {
             root.setDisable(false); // Enable now. No adjustments needed.
 
@@ -294,12 +306,10 @@ public final class ExtraterrestrialPetsSimulation extends Application {
             return;
         }
 
-        // Visual screen bounds
         Screen screen = resolveScreenContainingStage(stage);
         Rectangle2D visualBounds = screen.getVisualBounds();
-        AppLogger.info("Application: Found screen and using visual bounds: " + visualBounds);
+        AppLogger.infof("Application: Found screen and using visual bounds: %s", visualBounds);
 
-        // Handle Fullscreen separately
         if (stage.isFullScreen()) {
             root.setMaxWidth(visualBounds.getWidth());
             root.setMaxHeight(visualBounds.getHeight());
@@ -322,7 +332,6 @@ public final class ExtraterrestrialPetsSimulation extends Application {
             // First un-maximize the stage, so we can resize/relocate it
             stage.setMaximized(false);
 
-            // Adjust stage size and position to visual bounds
             stage.setX(visualBounds.getMinX());
             stage.setY(visualBounds.getMinY());
             stage.setWidth(visualBounds.getWidth());
@@ -351,25 +360,20 @@ public final class ExtraterrestrialPetsSimulation extends Application {
                 decoHeight = FALLBACK_WINDOW_DECORATION_HEIGHT;
             }
 
-            double margin = DEFAULT_WINDOW_MARGIN;
-
             // Limit root max size to visual bounds minus decoration and margin
-            root.setMaxWidth(visualBounds.getWidth() - decoWidth - margin);
-            root.setMaxHeight(visualBounds.getHeight() - decoHeight - margin);
+            root.setMaxWidth(visualBounds.getWidth() - decoWidth - DEFAULT_WINDOW_MARGIN);
+            root.setMaxHeight(visualBounds.getHeight() - decoHeight - DEFAULT_WINDOW_MARGIN);
 
             // Stabilize layout calculations another time after changing max sizes
             root.applyCss();
             root.layout();
 
-            // Limit stage max size to visual bounds
             stage.setMaxWidth(visualBounds.getWidth());
             stage.setMaxHeight(visualBounds.getHeight());
 
-            // Set new stage size within visual bounds
-            stage.setWidth(Math.min(prefWidth + decoWidth + margin, visualBounds.getWidth()));
-            stage.setHeight(Math.min(prefHeight + decoHeight + margin, visualBounds.getHeight()));
+            stage.setWidth(Math.min(prefWidth + decoWidth + DEFAULT_WINDOW_MARGIN, visualBounds.getWidth()));
+            stage.setHeight(Math.min(prefHeight + decoHeight + DEFAULT_WINDOW_MARGIN, visualBounds.getHeight()));
 
-            // Set new stage position within visual bounds
             stage.setX(Math.clamp(stage.getX(), visualBounds.getMinX(), visualBounds.getMaxX() - stage.getWidth()));
             stage.setY(Math.clamp(stage.getY(), visualBounds.getMinY(), visualBounds.getMaxY() - stage.getHeight()));
 
@@ -394,22 +398,24 @@ public final class ExtraterrestrialPetsSimulation extends Application {
     private Node createSimulationHeaderNode(Stage stage, SimulationInstance simulationInstance) {
         SimulationType simulationType = simulationInstance.simulationType();
 
-        VBox titleBox = new VBox(FXComponentFactory.createLabel(simulationType.title(), FXStyleClasses.HEADER_TITLE_LABEL));
+        VBox titleBox = new VBox(
+                FXComponentFactory.createLabel(simulationType.title(), FXStyleClasses.HEADER_TITLE_LABEL));
         titleBox.getStyleClass().add(FXStyleClasses.HEADER_TITLE_VBOX);
 
         simulationType.subtitle()
-                .ifPresent(subtitle ->
-                        titleBox.getChildren().add(FXComponentFactory.createLabel(subtitle, FXStyleClasses.HEADER_SUBTITLE_LABEL)));
+                .ifPresent(subtitle -> titleBox.getChildren()
+                        .add(FXComponentFactory.createLabel(subtitle, FXStyleClasses.HEADER_SUBTITLE_LABEL)));
 
         VBox linkBox = new VBox();
         linkBox.setAlignment(Pos.TOP_RIGHT);
         linkBox.getStyleClass().add(FXStyleClasses.HEADER_LINK_VBOX);
 
         if (simulationType != SimulationType.STARTSCREEN) {
-            Hyperlink startScreenLink = new Hyperlink(AppLocalization.getText(AppLocalizationKeys.HEADER_STARTSCREEN_LINK));
+            Hyperlink startScreenLink = new Hyperlink(
+                    AppLocalization.getText(AppLocalizationKeys.HEADER_STARTSCREEN_LINK));
             startScreenLink.getStyleClass().add(FXStyleClasses.HEADER_URL_HYPERLINK);
             startScreenLink.setOnAction(_ -> {
-                AppLogger.info("Application: Switching to start screen from simulation: " + simulationInstance.simulationType());
+                AppLogger.infof("Application: Switching to start screen from simulation: %s", simulationType);
                 switchToSimulation(stage, SimulationType.STARTSCREEN);
             });
             linkBox.getChildren().add(startScreenLink);

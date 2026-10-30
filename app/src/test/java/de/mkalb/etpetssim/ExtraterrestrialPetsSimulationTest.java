@@ -14,14 +14,10 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.LockSupport;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -36,25 +32,8 @@ final class ExtraterrestrialPetsSimulationTest {
         FXTestSupport.ensureStarted();
     }
 
-    private static void setCurrentSimulationInstance(ExtraterrestrialPetsSimulation application,
-                                                     SimulationInstance simulationInstance) {
-        try {
-            Field field = ExtraterrestrialPetsSimulation.class.getDeclaredField("currentSimulationInstance");
-            field.setAccessible(true);
-            field.set(application, simulationInstance);
-        } catch (ReflectiveOperationException e) {
-            throw new AssertionError("Failed to set current simulation instance", e);
-        }
-    }
-
-    private static void invokeShutdownCurrentSimulation(ExtraterrestrialPetsSimulation application) {
-        try {
-            Method method = ExtraterrestrialPetsSimulation.class.getDeclaredMethod("shutdownCurrentSimulation");
-            method.setAccessible(true);
-            method.invoke(application);
-        } catch (ReflectiveOperationException e) {
-            throw new AssertionError("Failed to invoke current simulation shutdown", e);
-        }
+    private static SimulationInstance createInstance(SimulationType simulationType, SimulationMainView view) {
+        return new SimulationInstance(simulationType, view, new Region());
     }
 
     @BeforeEach
@@ -66,24 +45,20 @@ final class ExtraterrestrialPetsSimulationTest {
     void testStopShutsDownCurrentSimulationOnce() {
         CountingMainView view = new CountingMainView();
         ExtraterrestrialPetsSimulation application = new ExtraterrestrialPetsSimulation();
-        AtomicReference<Region> regionRef = new AtomicReference<>();
 
         FXTestSupport.runAndWait(() -> {
-            Region region = new Region();
-            regionRef.set(region);
-            setCurrentSimulationInstance(application,
-                    new SimulationInstance(SimulationType.WATOR, view, region));
+            SimulationInstance instance = createInstance(SimulationType.WATOR, view);
+            application.setCurrentSimulationInstance(instance);
 
             application.stop();
             application.stop();
+
+            assertAll(
+                    () -> assertEquals(1, view.shutdownCount()),
+                    () -> assertEquals(1, view.terminationHandle().awaitCount()),
+                    () -> assertTrue(instance.region().isDisabled())
+            );
         });
-        Region region = Objects.requireNonNull(regionRef.get(), "Expected simulation region");
-
-        assertAll(
-                () -> assertEquals(1, view.shutdownCount(), "Current simulation must be shut down exactly once"),
-                () -> assertEquals(1, view.terminationHandle().awaitCount(), "Termination must be awaited exactly once"),
-                () -> assertTrue(region.isDisabled(), "Current simulation region must be disabled during shutdown")
-        );
     }
 
     @Test
@@ -92,27 +67,24 @@ final class ExtraterrestrialPetsSimulationTest {
         ExtraterrestrialPetsSimulation application = new ExtraterrestrialPetsSimulation();
 
         FXTestSupport.runAndWait(() -> {
-            Region region = new Region();
-            setCurrentSimulationInstance(application,
-                    new SimulationInstance(SimulationType.SNAKE, view, region));
+            application.setCurrentSimulationInstance(createInstance(SimulationType.SNAKE, view));
 
-            invokeShutdownCurrentSimulation(application);
+            application.shutdownCurrentSimulation();
             application.stop();
         });
 
-        assertEquals(1, view.shutdownCount(), "Close request followed by stop must not shut down twice");
+        assertEquals(1, view.shutdownCount());
     }
 
     @Test
     void testStopEscalatesWhenTerminationDoesNotComplete() {
-        CountingTerminationHandle terminationHandle = new CountingTerminationHandle(TerminationAwaitOutcome.INCOMPLETE);
-        CountingMainView view = new CountingMainView(terminationHandle);
+        CountingTerminationHandle terminationHandle =
+                new CountingTerminationHandle(TerminationAwaitOutcome.INCOMPLETE);
         ExtraterrestrialPetsSimulation application = new ExtraterrestrialPetsSimulation();
 
         FXTestSupport.runAndWait(() -> {
-            Region region = new Region();
-            setCurrentSimulationInstance(application,
-                    new SimulationInstance(SimulationType.FOREST_FIRE, view, region));
+            application.setCurrentSimulationInstance(
+                    createInstance(SimulationType.FOREST_FIRE, new CountingMainView(terminationHandle)));
             application.stop();
         });
 
@@ -125,15 +97,15 @@ final class ExtraterrestrialPetsSimulationTest {
     @SuppressWarnings("ResultOfMethodCallIgnored")
     @Test
     void testStopInterruptsTerminationWaitAndRestoresInterruptStatus() {
-        CountingTerminationHandle terminationHandle = new CountingTerminationHandle(TerminationAwaitOutcome.INTERRUPTED);
-        CountingMainView view = new CountingMainView(terminationHandle);
+        CountingTerminationHandle terminationHandle =
+                new CountingTerminationHandle(TerminationAwaitOutcome.INTERRUPTED);
         ExtraterrestrialPetsSimulation application = new ExtraterrestrialPetsSimulation();
         AtomicBoolean interrupted = new AtomicBoolean();
 
         FXTestSupport.runAndWait(() -> {
             try {
-                setCurrentSimulationInstance(application,
-                        new SimulationInstance(SimulationType.SUGARSCAPE, view, new Region()));
+                application.setCurrentSimulationInstance(
+                        createInstance(SimulationType.SUGARSCAPE, new CountingMainView(terminationHandle)));
                 application.stop();
                 interrupted.set(Thread.currentThread().isInterrupted());
             } finally {
@@ -144,24 +116,26 @@ final class ExtraterrestrialPetsSimulationTest {
         assertAll(
                 () -> assertEquals(1, terminationHandle.awaitCount()),
                 () -> assertEquals(1, terminationHandle.shutdownNowCount()),
-                () -> assertTrue(interrupted.get(), "The interrupted status must be restored after termination waiting")
+                () -> assertTrue(interrupted.get())
         );
     }
 
     @SuppressWarnings("ResultOfMethodCallIgnored")
     @Test
     void testStopInterruptionEscalatesEveryPendingTermination() {
-        CountingTerminationHandle interruptedTerminationHandle = new CountingTerminationHandle(TerminationAwaitOutcome.INTERRUPTED);
-        CountingTerminationHandle pendingTerminationHandle = new CountingTerminationHandle(TerminationAwaitOutcome.TERMINATED);
+        CountingTerminationHandle interruptedTerminationHandle =
+                new CountingTerminationHandle(TerminationAwaitOutcome.INTERRUPTED);
+        CountingTerminationHandle pendingTerminationHandle =
+                new CountingTerminationHandle(TerminationAwaitOutcome.TERMINATED);
         ExtraterrestrialPetsSimulation application = new ExtraterrestrialPetsSimulation();
 
         FXTestSupport.runAndWait(() -> {
             try {
-                setCurrentSimulationInstance(application,
-                        new SimulationInstance(SimulationType.SUGARSCAPE, new CountingMainView(interruptedTerminationHandle), new Region()));
-                invokeShutdownCurrentSimulation(application);
-                setCurrentSimulationInstance(application,
-                        new SimulationInstance(SimulationType.WATOR, new CountingMainView(pendingTerminationHandle), new Region()));
+                application.setCurrentSimulationInstance(
+                        createInstance(SimulationType.SUGARSCAPE, new CountingMainView(interruptedTerminationHandle)));
+                application.shutdownCurrentSimulation();
+                application.setCurrentSimulationInstance(
+                        createInstance(SimulationType.WATOR, new CountingMainView(pendingTerminationHandle)));
                 application.stop();
             } finally {
                 Thread.interrupted();
@@ -180,23 +154,24 @@ final class ExtraterrestrialPetsSimulationTest {
     void testStopSharesTerminationTimeoutBudgetAcrossPendingTerminations() {
         CountingTerminationHandle firstTerminationHandle = new CountingTerminationHandle(
                 TerminationAwaitOutcome.TERMINATED, TimeUnit.MILLISECONDS.toNanos(10));
-        CountingTerminationHandle secondTerminationHandle = new CountingTerminationHandle(TerminationAwaitOutcome.TERMINATED);
+        CountingTerminationHandle secondTerminationHandle =
+                new CountingTerminationHandle(TerminationAwaitOutcome.TERMINATED);
         ExtraterrestrialPetsSimulation application = new ExtraterrestrialPetsSimulation();
 
         FXTestSupport.runAndWait(() -> {
-            setCurrentSimulationInstance(application,
-                    new SimulationInstance(SimulationType.CONWAYS_LIFE, new CountingMainView(firstTerminationHandle), new Region()));
-            invokeShutdownCurrentSimulation(application);
-            setCurrentSimulationInstance(application,
-                    new SimulationInstance(SimulationType.WATOR, new CountingMainView(secondTerminationHandle), new Region()));
+            application.setCurrentSimulationInstance(
+                    createInstance(SimulationType.CONWAYS_LIFE, new CountingMainView(firstTerminationHandle)));
+            application.shutdownCurrentSimulation();
+            application.setCurrentSimulationInstance(
+                    createInstance(SimulationType.WATOR, new CountingMainView(secondTerminationHandle)));
             application.stop();
         });
 
         assertAll(
                 () -> assertEquals(1, firstTerminationHandle.awaitCount()),
                 () -> assertEquals(1, secondTerminationHandle.awaitCount()),
-                () -> assertTrue(secondTerminationHandle.awaitedTimeoutNanos() < firstTerminationHandle.awaitedTimeoutNanos(),
-                        "Each termination must receive the remaining shared timeout budget")
+                () -> assertTrue(
+                        secondTerminationHandle.awaitedTimeoutNanos() < firstTerminationHandle.awaitedTimeoutNanos())
         );
     }
 
@@ -204,7 +179,6 @@ final class ExtraterrestrialPetsSimulationTest {
         TERMINATED,
         INCOMPLETE,
         INTERRUPTED
-
     }
 
     private static final class CountingMainView implements SimulationMainView {

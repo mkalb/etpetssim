@@ -225,6 +225,18 @@ Notes:
 - Proposal: Rename the `*Initial` components to `*Default` (e.g., `seedDefault`) and adapt the Javadoc and
   `AbstractConfigViewModelTest`; the callers pass the arguments by position and need no change. An API change.
 
+#### Reflection in DefaultMainViewModelTest
+
+- Origin: analysis of the tests for reflection (2026-10-30)
+- Types: `DefaultMainViewModel`, `DefaultMainViewModelTest`
+- Problem: The test reads private fields of `DefaultMainViewModel` through reflection (`getDeclaredField`,
+  `setAccessible(true)`, and `Field.get`) in its helpers `getField(Object, String)` (instance fields) and
+  `getStaticField(String)` (static fields).
+- Proposal: Look at every call of the two helpers and decide per field whether the test can check the behavior through
+  the public API or an observable property instead. Otherwise expose the state as a package-private accessor (like the
+  package-private constructor that takes an `ExecutorService` for the tests) or keep the reflection; justify the
+  decision in the chat. Remove the helpers if no call remains.
+
 ## 3. Shared views
 
 Base classes and shared views in `simulations.core.view`.
@@ -245,6 +257,19 @@ Notes:
 
 - `AbstractObservationView` (about 550 lines) and `AbstractMainView` (about 420 lines) are the largest views.
 - Three package-private helpers: `DrawCallThrottler`, `EditToolBarView`, and `StatisticsHistoryChartView`.
+
+### Findings
+
+#### Reflection in AbstractMainViewTest
+
+- Origin: analysis of the tests for reflection (2026-10-30)
+- Types: `AbstractMainView`, `AbstractMainViewTest`
+- Problem: The test reads private fields of `AbstractMainView` (or of a class passed as `declaringClass`) through
+  reflection (`getDeclaredField`, `setAccessible(true)`, and `Field.get`) in its helpers `getNullableField(..)` and
+  `getNonNullField(..)`.
+- Proposal: Look at every call of the helpers and decide per field whether the test can check the behavior through the
+  public or protected API (e.g., the node tree of the view) instead. Otherwise expose the state as a package-private
+  accessor or keep the reflection; justify the decision in the chat. Remove the helpers if no call remains.
 
 ## 4. Simulation statistics
 
