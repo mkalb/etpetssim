@@ -9,8 +9,9 @@ bin/
 # Ignore Kotlin plugin data
 .kotlin
 
-# Ignore IntelliJ IDEA
-.idea/
+# Ignore IntelliJ IDEA, except shared inspection profiles
+/.idea/*
+!/.idea/inspectionProfiles/
 *.iws
 *.iml
 
