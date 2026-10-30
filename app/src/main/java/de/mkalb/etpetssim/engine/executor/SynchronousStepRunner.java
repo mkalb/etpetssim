@@ -6,15 +6,14 @@ import de.mkalb.etpetssim.engine.model.entity.GridEntity;
 
 /**
  * Executes synchronous simulation steps on a {@link WritableGridModel}.
- * <p>
- * Applies synchronous step logic to the simulation model:
+ *
+ * <p>Applies synchronous step logic to the simulation model:
  * it reads from the current model (as a {@link ReadableGridModel}) and writes results
  * to the next model. After each step, the models are swapped, and the next model is cleared
  * for the following step.
  *
  * @param <ENT> the type of {@link GridEntity} contained in the grid model
  * @param <C>   the type of the context object provided to each simulation step
- * @see SynchronousStepLogic
  */
 public final class SynchronousStepRunner<ENT extends GridEntity, C> implements SimulationStepRunner<C> {
 
@@ -24,8 +23,8 @@ public final class SynchronousStepRunner<ENT extends GridEntity, C> implements S
 
     /**
      * Creates a runner that starts with the given model as current model and an empty copy of it as next model.
-     * <p>
-     * The step logic must not modify the {@code ReadableGridModel} parameter.
+     *
+     * <p>The step logic must not modify the {@code ReadableGridModel} parameter.
      *
      * @param initialModel the initial grid model
      * @param stepLogic    the logic to apply for each synchronous simulation step
@@ -37,15 +36,6 @@ public final class SynchronousStepRunner<ENT extends GridEntity, C> implements S
         nextGridModel = currentGridModel.copyWithDefaultEntity();
     }
 
-    /**
-     * Performs a single synchronous simulation step.
-     * <p>
-     * The step logic reads from the current model and writes to the next model.
-     * After the update, the models are swapped and the next model is cleared.
-     *
-     * @param stepIndex the index of the current simulation step
-     * @param context   the context object used to share or accumulate state during the simulation
-     */
     @Override
     public void performStep(int stepIndex, C context) {
         stepLogic.performSynchronousStep(currentGridModel, nextGridModel, stepIndex, context);

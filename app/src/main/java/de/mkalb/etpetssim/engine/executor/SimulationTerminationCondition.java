@@ -37,7 +37,8 @@ public interface SimulationTerminationCondition<
      * @return a new termination condition representing the logical AND of both conditions
      */
     default SimulationTerminationCondition<ENT, GM, C> and(SimulationTerminationCondition<ENT, GM, C> other) {
-        return (model, stepCount, context) -> isFinished(model, stepCount, context) && other.isFinished(model, stepCount, context);
+        return (model, stepCount, context) -> isFinished(model, stepCount, context)
+                && other.isFinished(model, stepCount, context);
     }
 
     /**
@@ -48,7 +49,8 @@ public interface SimulationTerminationCondition<
      * @return a new termination condition representing the logical OR of both conditions
      */
     default SimulationTerminationCondition<ENT, GM, C> or(SimulationTerminationCondition<ENT, GM, C> other) {
-        return (model, stepCount, context) -> isFinished(model, stepCount, context) || other.isFinished(model, stepCount, context);
+        return (model, stepCount, context) -> isFinished(model, stepCount, context)
+                || other.isFinished(model, stepCount, context);
     }
 
     /**

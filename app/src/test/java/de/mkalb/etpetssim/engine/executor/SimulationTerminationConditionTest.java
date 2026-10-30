@@ -25,7 +25,8 @@ final class SimulationTerminationConditionTest {
     private static final SparseGridModel<TestEntity> MODEL = new SparseGridModel<>(STRUCTURE, TestEntity.EMPTY);
     private static final String CONTEXT = "context";
 
-    private static boolean isFinished(SimulationTerminationCondition<TestEntity, SparseGridModel<TestEntity>, String> condition) {
+    private static boolean isFinished(
+            SimulationTerminationCondition<TestEntity, SparseGridModel<TestEntity>, String> condition) {
         return condition.isFinished(MODEL, 3, CONTEXT);
     }
 

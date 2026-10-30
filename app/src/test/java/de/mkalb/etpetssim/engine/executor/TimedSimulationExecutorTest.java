@@ -33,7 +33,8 @@ final class TimedSimulationExecutorTest {
     @Test
     void testStepCount() {
         StubExecutor delegate = new StubExecutor(0);
-        TimedSimulationExecutor<TestEntity, SparseGridModel<TestEntity>> executor = new TimedSimulationExecutor<>(delegate);
+        TimedSimulationExecutor<TestEntity, SparseGridModel<TestEntity>> executor =
+                new TimedSimulationExecutor<>(delegate);
 
         delegate.stepCount = 7;
 
@@ -43,7 +44,8 @@ final class TimedSimulationExecutorTest {
     @Test
     void testIsFinished() {
         StubExecutor delegate = new StubExecutor(0);
-        TimedSimulationExecutor<TestEntity, SparseGridModel<TestEntity>> executor = new TimedSimulationExecutor<>(delegate);
+        TimedSimulationExecutor<TestEntity, SparseGridModel<TestEntity>> executor =
+                new TimedSimulationExecutor<>(delegate);
         boolean finishedBefore = executor.isFinished();
 
         delegate.finished = true;
@@ -57,7 +59,8 @@ final class TimedSimulationExecutorTest {
     @Test
     void testIsExecutorFinished() {
         StubExecutor delegate = new StubExecutor(0);
-        TimedSimulationExecutor<TestEntity, SparseGridModel<TestEntity>> executor = new TimedSimulationExecutor<>(delegate);
+        TimedSimulationExecutor<TestEntity, SparseGridModel<TestEntity>> executor =
+                new TimedSimulationExecutor<>(delegate);
         boolean executorFinishedBefore = executor.isExecutorFinished();
 
         delegate.stepCount = Integer.MAX_VALUE;
@@ -71,7 +74,8 @@ final class TimedSimulationExecutorTest {
     @Test
     void testExecuteStep() {
         StubExecutor delegate = new StubExecutor(0);
-        TimedSimulationExecutor<TestEntity, SparseGridModel<TestEntity>> executor = new TimedSimulationExecutor<>(delegate);
+        TimedSimulationExecutor<TestEntity, SparseGridModel<TestEntity>> executor =
+                new TimedSimulationExecutor<>(delegate);
 
         executor.executeStep();
         executor.executeStep();

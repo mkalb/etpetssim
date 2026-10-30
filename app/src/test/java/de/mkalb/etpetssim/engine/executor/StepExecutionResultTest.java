@@ -17,12 +17,17 @@ final class StepExecutionResultTest {
     @Test
     void testRecord() {
         StepExecutionResult result = new StepExecutionResult(STEP_COUNT, EXECUTED_STEPS, true, false);
+        StepExecutionResult emptyResult = new StepExecutionResult(0, 0, false, true);
+        StepExecutionResult allStepsResult = new StepExecutionResult(STEP_COUNT, STEP_COUNT, false, false);
 
         assertAll(
                 () -> assertEquals(STEP_COUNT, result.stepCount()),
                 () -> assertEquals(EXECUTED_STEPS, result.executedSteps()),
                 () -> assertTrue(result.isFinished()),
-                () -> assertFalse(result.isInterrupted())
+                () -> assertFalse(result.isInterrupted()),
+                () -> assertEquals(0, emptyResult.stepCount()),
+                () -> assertTrue(emptyResult.isInterrupted()),
+                () -> assertEquals(STEP_COUNT, allStepsResult.executedSteps())
         );
     }
 
@@ -44,4 +49,3 @@ final class StepExecutionResultTest {
     }
 
 }
-

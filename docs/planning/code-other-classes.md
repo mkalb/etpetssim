@@ -44,7 +44,8 @@ settled before `code-simulation-classes.md` starts, which took over the classes 
 - The sibling plans `code-interface-types.md`, `code-record-types.md`, `code-private-constructor-classes.md`, and
   `code-enum-types.md` are done; their decisions apply here. They stay in `docs/planning` as reference until
   `code-simulation-classes.md` is done.
-- Category 1 is done and committed (`fc3cff53`); category 2 is done and committed; category 3 is done and committed (`af48c441`).
+- Categories 1 to 3 are done and committed (category 1 in `fc3cff53`, category 3 in `af48c441`); category 4 is
+  committed group by group.
 - Categories 2 and 3 settle the rules before category 4 applies them; category 2 comes first, because it also
   changes code. Category 4 reviews the packages one group at a time.
 - `code-simulation-classes.md` starts only after all categories of this plan are done.
@@ -281,8 +282,7 @@ Group `core`, `ui`, and the root package (2026-10-29):
   are removed.
 - `SimulationTimer`: Javadoc without `</p>` and `<p>` before `<pre>`, no constructor Javadoc, `{@code true}`.
 - `AboutDialog`: the static `formatReadmeText(..)` precedes the instance methods (category 2); `Map.of()` instead of
-  `Collections.emptyMap()`;
-  `value` instead of `v`.
+  `Collections.emptyMap()`; `value` instead of `v`.
 - `ExtraterrestrialPetsSimulation`: `start(..)` and `stop()` precede the private methods; the routine
   `Objects.requireNonNull(..)` checks of private methods and the fully qualified `Priority` are removed;
   `resolveSimulationType(..)` drops the always-`true` parameter together with `@SuppressWarnings("SameParameterValue")`.
@@ -647,8 +647,8 @@ Notes:
 - Test files are the `.java` files in the same test package, including `*TestSupport` classes.
 - The groups follow the package dependencies: `core` first, then `engine` from its base types to the executors, then
   `ui` and the root package (`AppLauncher`, `ExtraterrestrialPetsSimulation`).
-- `engine.md` applies to `engine`, `engine.model`, `engine.model.entity`, and `engine.neighborhood` (groups 2 to 4)
-  and, since group 5, to `engine.support`; group 6 checks whether `engine.executor` needs it too.
+- `engine.md` applies to `engine`, `engine.model`, `engine.model.entity`, and `engine.neighborhood` (groups 2 to 4),
+  since group 5 to `engine.support`, and since group 6 to all of `engine` (`engine/**/*.java`).
 
 ### Checks per package
 
@@ -699,7 +699,7 @@ Notes:
   (`GridStructure`, `GridCoordinate`), the link from `SimulationUserActionContext` to `simulations.core.model`, the
   Javadoc of `AppArgs.toString()`, and Javadoc that only restates accessors.
 - Proposal: Check and adapt the Javadoc of each package in its group.
-- Status: groups 1 to 5 done (2026-10-29)
+- Status: groups 1 to 6 done (2026-10-29)
 
 #### Lookup name of the log levels
 
@@ -815,6 +815,25 @@ Notes:
   `fillWithProbability(..)`, and `placeWithProbability(..)` treated such values as 0.0 or 1.0. The row-major loop with
   cancellation checkpoints was repeated three times, and `fillRandomPercent(..)` ran the first check in three lambdas.
 - Proposal: All four factories reject a value outside [0.0, 1.0] (an API change); one private loop helper; one lambda.
+- Status: done (2026-10-29)
+
+#### API scope of `engine.executor`
+
+- Origin: analysis of group 6
+- Types: all types of `engine.executor`
+- Problem: `engine.executor` depends only on `engine.model` and `engine.model.entity`; its only public members without
+  a caller in main sources, `SimulationTerminationCondition.and(..)`, `or(..)`, and `negate()`, were kept as a toolkit
+  in `code-interface-types.md`, but no rule covered the package.
+- Proposal: Extend `engine.md` to all of `engine`.
+- Status: done (2026-10-29)
+
+#### Duplicated results of `executeSteps(..)`
+
+- Origin: analysis of group 6
+- Types: `SimulationExecutor`
+- Problem: `executeSteps(..)` repeated the interrupted return with its comment twice and built the
+  `StepExecutionResult` from `stepCount()` in four places.
+- Proposal: Private interface methods `createInterruptedResult(..)` and `createResult(..)`; no behavior change.
 - Status: done (2026-10-29)
 
 ### Decisions
@@ -960,6 +979,25 @@ Group 5, `engine.support` (2026-10-29):
   that both `of(..)` results are unmodifiable.
 - `app:test` and `app:javadoc` pass.
 
+Group 6, `engine.executor` (2026-10-29):
+
+- Rule change: `engine.md` (and its Copilot reference file) applies to all of `engine` through the path
+  `engine/**/*.java` and describes `engine.executor`; all engine packages keep their complete public API (e.g.,
+  `SimulationTerminationCondition.negate()`).
+- `SimulationExecutor.executeSteps(..)` builds its results through the private `createInterruptedResult(..)` and
+  `createResult(..)`; the behavior is unchanged.
+- Javadoc: `TimedSimulationExecutor`, `AsynchronousStepRunner`, `SynchronousStepRunner`, and
+  `DefaultSimulationExecutor` write `<p>` directly before the first word after an empty `*` line; the restating
+  Javadoc of both `performStep(..)` overrides and of `AsynchronousStepRunner.model()` and `@see SynchronousStepLogic`
+  of `SynchronousStepRunner` (a parameter type) are removed; `AgentStepLogic` and `SynchronousStepLogic` keep their
+  `@see` of the counterpart runner.
+- Lines in main and test sources fit 120 characters; `StepExecutionResultTest` and `StepTimingStatisticsTest` lose a
+  blank line at their end.
+- Tests: `StepTimingStatisticsTest` uses literals with the class-level `@SuppressWarnings("MagicNumber")` instead of
+  the constants `ZERO` to `HUNDRED_TWENTY` and compares `empty()` with a record; `testRecord` of
+  `StepTimingStatisticsTest` and `StepExecutionResultTest` checks the accepted boundary values.
+- `app:test` and `app:javadoc` pass.
+
 ### Procedure
 
 - One group at a time, in the order of the inventory; each group is presented and decided on its own in the chat
@@ -977,9 +1015,8 @@ Group 5, `engine.support` (2026-10-29):
 - (1, all) Javadoc writes the literals `true`, `false`, and `null` as `{@code ...}` (rule change: `java.md`,
   "Javadoc").
 - (1, all) Public methods and constructors without a caller in main sources are removed (API change with approval)
-  unless the maintainer keeps them for a planned use; core classes, the base types of `engine`, `engine.model`,
-  `engine.model.entity`, and `engine.neighborhood`, the toolkit in `engine.support`, and `FXGridCanvasPainter` keep
-  their complete API (rule change: `core.md`, `engine.md`, and `ui.md`).
+  unless the maintainer keeps them for a planned use; core classes, all engine packages, and `FXGridCanvasPainter`
+  keep their complete API (rule change: `core.md`, `engine.md`, and `ui.md`).
 - (1, 2, all) Member order (rule change: `java.md`, "Code Style"): static fields, instance fields, constructors,
   static methods, instance methods, then nested types; within the static and within the instance methods public,
   protected, package-private, then private, with overrides (e.g., lifecycle methods such as `start(..)`) as public
@@ -1009,3 +1046,15 @@ Group 5, `engine.support` (2026-10-29):
   `SimulationInitializationCancellation`); `EtpetsSimulationManager` also duplicates `createCoordinates(..)`.
 - Proposal: Open; options are a generic `shuffle(List, Random, Runnable)` in `WorkCheckpoints`, a public method in
   `GridInitializers`, or keeping the duplicate. Decide later; `code-simulation-classes.md` adopts the result.
+
+### Exception messages in `engine`
+
+- Origin: analysis of group 6 of category 4
+- Types: the types of all engine packages that throw `IllegalArgumentException`, e.g., `GridSize`, `GridStructure`,
+  `CellNeighborhoods`, `RadiusRingCell`, `CompassDirection`, `GridPatterns`, `GridInitializers`,
+  `StepExecutionResult`, and `StepTimingStatistics`
+- Problem: The exception messages use different styles: capitalized or lowercase start, with or without a final
+  period, `but was: X`, `but was X.`, or no actual value at all (e.g., `"stepCount must be >= 0"`), `String.format`
+  with `Locale.ROOT` or concatenation, and symbols (`>=`, `<=`) or words (`must not be negative`, `at least 1`).
+- Proposal: Open; agree on one message style for all engine packages (and possibly a rule in `java.md`), then adapt
+  the messages in one change; check the tests that compare messages.

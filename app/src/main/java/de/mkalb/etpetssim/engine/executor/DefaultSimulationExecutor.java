@@ -8,8 +8,8 @@ import java.util.function.Supplier;
 /**
  * Default implementation of {@link SimulationExecutor} that executes simulation steps
  * for a given model until a specified termination condition is met.
- * <p>
- * Manages the simulation lifecycle, supporting stepwise execution
+ *
+ * <p>Manages the simulation lifecycle, supporting stepwise execution
  * and batch execution. It provides access to the current model state and step count.
  *
  * @param <ENT> the type of {@link GridEntity} in the simulation
@@ -34,13 +34,14 @@ public final class DefaultSimulationExecutor<
 
     /**
      * Creates an executor that starts at step {@code 0}.
-     * <p>
-     * The model supplier is queried on every access, so it may return another model after each step (e.g.,
+     *
+     * <p>The model supplier is queried on every access, so it may return another model after each step (e.g.,
      * {@code SynchronousStepRunner::currentGridModel}).
      *
      * @param stepRunner           the logic to perform a single simulation step, using the provided context
      * @param modelSupplier        supplies the current simulation model
-     * @param terminationCondition the condition that determines when the simulation should stop, evaluated with the context
+     * @param terminationCondition the condition that determines when the simulation should stop, evaluated with the
+     *                             context
      * @param context              the context object used to share or accumulate state during the simulation
      */
     public DefaultSimulationExecutor(

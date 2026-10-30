@@ -5,8 +5,8 @@ import de.mkalb.etpetssim.engine.model.entity.GridEntity;
 
 /**
  * Decorator for {@link SimulationExecutor} that measures the execution time of each simulation step.
- * <p>
- * Tracks the most recent, minimum, maximum, sum, and average step durations in nanoseconds; they are accessible via
+ *
+ * <p>Tracks the most recent, minimum, maximum, sum, and average step durations in nanoseconds; they are accessible via
  * {@link #stepTimingStatistics()}.
  *
  * @param <ENT> the type of {@link GridEntity} in the simulation
@@ -26,8 +26,8 @@ public final class TimedSimulationExecutor<
 
     /**
      * Creates a timed executor for the given delegate.
-     * <p>
-     * The delegate must not have executed any step yet, because the average divides the timed durations by the step
+     *
+     * <p>The delegate must not have executed any step yet, because the average divides the timed durations by the step
      * count of the delegate (see {@link #stepTimingStatistics()}).
      *
      * @param delegate the underlying {@link SimulationExecutor} to decorate
@@ -77,13 +77,13 @@ public final class TimedSimulationExecutor<
 
     /**
      * Returns an immutable record containing timing statistics for simulation steps.
-     * <p>
-     * The statistics include the minimum, maximum, and most recent step durations,
+     *
+     * <p>The statistics include the minimum, maximum, and most recent step durations,
      * as well as the sum and average of all step durations in nanoseconds.
-     * <p>
-     * The average is the sum divided by {@link #stepCount()}, which counts all steps of the delegate.
-     * <p>
-     * If no steps have been executed yet, all values in the returned record are {@code 0}.
+     *
+     * <p>The average is the sum divided by {@link #stepCount()}, which counts all steps of the delegate.
+     *
+     * <p>If no steps have been executed yet, all values in the returned record are {@code 0}.
      *
      * @return a {@link StepTimingStatistics} record with the current timing statistics
      * @throws IllegalArgumentException if the delegate executed steps before it was wrapped and these counted but

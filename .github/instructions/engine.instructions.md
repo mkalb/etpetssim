@@ -1,6 +1,6 @@
 ---
-applyTo: "**/src/main/java/de/mkalb/etpetssim/engine/*.java,**/src/main/java/de/mkalb/etpetssim/engine/model/*.java,**/src/main/java/de/mkalb/etpetssim/engine/model/entity/*.java,**/src/main/java/de/mkalb/etpetssim/engine/neighborhood/*.java,**/src/main/java/de/mkalb/etpetssim/engine/support/*.java"
-description: "Rules for the grid base types in de.mkalb.etpetssim.engine, engine.model, engine.model.entity, and engine.neighborhood, and for the toolkit in engine.support: complete public API and dependency boundaries."
+applyTo: "**/src/main/java/de/mkalb/etpetssim/engine/**/*.java"
+description: "Rules for de.mkalb.etpetssim.engine and all its sub-packages (grid base types, engine.support toolkit, and engine.executor): complete public API and dependency boundaries."
 ---
 
 Read and follow the rules in [.claude/rules/engine.md](../../.claude/rules/engine.md).

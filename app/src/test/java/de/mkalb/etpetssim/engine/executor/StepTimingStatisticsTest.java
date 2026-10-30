@@ -6,46 +6,33 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+@SuppressWarnings("MagicNumber")
 final class StepTimingStatisticsTest {
-
-    private static final long ZERO = 0L;
-    private static final long ONE = 1L;
-    private static final long NINE = 9L;
-    private static final long TEN = 10L;
-    private static final long ELEVEN = 11L;
-    private static final long TWELVE = 12L;
-    private static final long FIFTEEN = 15L;
-    private static final long TWENTY = 20L;
-    private static final long TWENTY_ONE = 21L;
-    private static final long FIFTY = 50L;
-    private static final long HUNDRED_TWENTY = 120L;
 
     @Test
     void testRecord() {
-        StepTimingStatistics statistics = new StepTimingStatistics(TWELVE, TEN, TWENTY, HUNDRED_TWENTY, FIFTEEN);
+        StepTimingStatistics statistics = new StepTimingStatistics(12L, 10L, 20L, 120L, 15L);
+        StepTimingStatistics boundaries = new StepTimingStatistics(10L, 10L, 20L, 40L, 20L);
 
         assertAll(
-                () -> assertEquals(TWELVE, statistics.currentNanos()),
-                () -> assertEquals(TEN, statistics.minNanos()),
-                () -> assertEquals(TWENTY, statistics.maxNanos()),
-                () -> assertEquals(HUNDRED_TWENTY, statistics.sumNanos()),
-                () -> assertEquals(FIFTEEN, statistics.avgNanos())
+                () -> assertEquals(12L, statistics.currentNanos()),
+                () -> assertEquals(10L, statistics.minNanos()),
+                () -> assertEquals(20L, statistics.maxNanos()),
+                () -> assertEquals(120L, statistics.sumNanos()),
+                () -> assertEquals(15L, statistics.avgNanos()),
+                () -> assertEquals(10L, boundaries.currentNanos()),
+                () -> assertEquals(20L, boundaries.avgNanos())
         );
     }
 
     @Test
     void testConstructorRejectsNegativeValues() {
         assertAll(
-                () -> assertThrows(IllegalArgumentException.class,
-                        () -> new StepTimingStatistics(-ONE, ZERO, ZERO, ZERO, ZERO)),
-                () -> assertThrows(IllegalArgumentException.class,
-                        () -> new StepTimingStatistics(ZERO, -ONE, ZERO, ZERO, ZERO)),
-                () -> assertThrows(IllegalArgumentException.class,
-                        () -> new StepTimingStatistics(ZERO, ZERO, -ONE, ZERO, ZERO)),
-                () -> assertThrows(IllegalArgumentException.class,
-                        () -> new StepTimingStatistics(ZERO, ZERO, ZERO, -ONE, ZERO)),
-                () -> assertThrows(IllegalArgumentException.class,
-                        () -> new StepTimingStatistics(ZERO, ZERO, ZERO, ZERO, -ONE))
+                () -> assertThrows(IllegalArgumentException.class, () -> new StepTimingStatistics(-1L, 0L, 0L, 0L, 0L)),
+                () -> assertThrows(IllegalArgumentException.class, () -> new StepTimingStatistics(0L, -1L, 0L, 0L, 0L)),
+                () -> assertThrows(IllegalArgumentException.class, () -> new StepTimingStatistics(0L, 0L, -1L, 0L, 0L)),
+                () -> assertThrows(IllegalArgumentException.class, () -> new StepTimingStatistics(0L, 0L, 0L, -1L, 0L)),
+                () -> assertThrows(IllegalArgumentException.class, () -> new StepTimingStatistics(0L, 0L, 0L, 0L, -1L))
         );
     }
 
@@ -53,44 +40,31 @@ final class StepTimingStatisticsTest {
     void testConstructorRejectsInconsistentRanges() {
         assertAll(
                 () -> assertThrows(IllegalArgumentException.class,
-                        () -> new StepTimingStatistics(TEN, ELEVEN, TEN, FIFTY, TEN)),
+                        () -> new StepTimingStatistics(10L, 11L, 10L, 50L, 10L)),
                 () -> assertThrows(IllegalArgumentException.class,
-                        () -> new StepTimingStatistics(NINE, TEN, TWENTY, FIFTY, FIFTEEN)),
+                        () -> new StepTimingStatistics(9L, 10L, 20L, 50L, 15L)),
                 () -> assertThrows(IllegalArgumentException.class,
-                        () -> new StepTimingStatistics(TWENTY_ONE, TEN, TWENTY, FIFTY, FIFTEEN)),
+                        () -> new StepTimingStatistics(21L, 10L, 20L, 50L, 15L)),
                 () -> assertThrows(IllegalArgumentException.class,
-                        () -> new StepTimingStatistics(TWELVE, TEN, TWENTY, FIFTY, NINE)),
+                        () -> new StepTimingStatistics(12L, 10L, 20L, 50L, 9L)),
                 () -> assertThrows(IllegalArgumentException.class,
-                        () -> new StepTimingStatistics(TWELVE, TEN, TWENTY, FIFTY, TWENTY_ONE))
+                        () -> new StepTimingStatistics(12L, 10L, 20L, 50L, 21L))
         );
     }
 
     @Test
     void testConstructorRejectsNonZeroValuesWhenSumIsZero() {
         assertAll(
-                () -> assertThrows(IllegalArgumentException.class,
-                        () -> new StepTimingStatistics(ONE, ZERO, ZERO, ZERO, ZERO)),
-                () -> assertThrows(IllegalArgumentException.class,
-                        () -> new StepTimingStatistics(ZERO, ONE, ONE, ZERO, ONE)),
-                () -> assertThrows(IllegalArgumentException.class,
-                        () -> new StepTimingStatistics(ZERO, ZERO, ONE, ZERO, ZERO)),
-                () -> assertThrows(IllegalArgumentException.class,
-                        () -> new StepTimingStatistics(ZERO, ZERO, ZERO, ZERO, ONE))
+                () -> assertThrows(IllegalArgumentException.class, () -> new StepTimingStatistics(1L, 0L, 0L, 0L, 0L)),
+                () -> assertThrows(IllegalArgumentException.class, () -> new StepTimingStatistics(0L, 1L, 1L, 0L, 1L)),
+                () -> assertThrows(IllegalArgumentException.class, () -> new StepTimingStatistics(0L, 0L, 1L, 0L, 0L)),
+                () -> assertThrows(IllegalArgumentException.class, () -> new StepTimingStatistics(0L, 0L, 0L, 0L, 1L))
         );
     }
 
     @Test
     void testEmpty() {
-        StepTimingStatistics statistics = StepTimingStatistics.empty();
-
-        assertAll(
-                () -> assertEquals(ZERO, statistics.currentNanos()),
-                () -> assertEquals(ZERO, statistics.minNanos()),
-                () -> assertEquals(ZERO, statistics.maxNanos()),
-                () -> assertEquals(ZERO, statistics.sumNanos()),
-                () -> assertEquals(ZERO, statistics.avgNanos())
-        );
+        assertEquals(new StepTimingStatistics(0L, 0L, 0L, 0L, 0L), StepTimingStatistics.empty());
     }
 
 }
-

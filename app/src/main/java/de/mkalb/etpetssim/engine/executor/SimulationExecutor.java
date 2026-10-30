@@ -69,8 +69,8 @@ public interface SimulationExecutor<
      * its technical limit ({@link #isExecutorFinished()}), or (optionally) if
      * {@code checkTermination} is {@code true} and {@link #isFinished()} becomes {@code true}.
      *
-     * <p>After each executed step, the provided {@code onStep} callback is invoked. This allows external code to track progress,
-     * update the UI, or perform other actions after each step.
+     * <p>After each executed step, the provided {@code onStep} callback is invoked. This allows external code to track
+     * progress, update the UI, or perform other actions after each step.
      *
      * @param count            the maximum number of steps to execute
      * @param checkTermination if {@code true}, the method will terminate early when the simulation is finished
@@ -87,24 +87,28 @@ public interface SimulationExecutor<
         int stepBefore = stepCount();
         for (int i = 0; i < count; i++) {
             if (Thread.currentThread().isInterrupted()) {
-                int stepAfter = stepCount();
-                // isFinished is not evaluated when interrupted; the caller handles interruption independently.
-                return new StepExecutionResult(stepAfter, stepAfter - stepBefore, isExecutorFinished(), true);
+                return createInterruptedResult(stepBefore);
             }
             executeStep();
             onStep.run();
             if (Thread.currentThread().isInterrupted()) {
-                int stepAfter = stepCount();
-                // isFinished is not evaluated when interrupted; the caller handles interruption independently.
-                return new StepExecutionResult(stepAfter, stepAfter - stepBefore, isExecutorFinished(), true);
+                return createInterruptedResult(stepBefore);
             }
             if ((checkTermination && isFinished()) || isExecutorFinished()) {
-                int stepAfter = stepCount();
-                return new StepExecutionResult(stepAfter, stepAfter - stepBefore, true, false);
+                return createResult(stepBefore, true, false);
             }
         }
+        return createResult(stepBefore, isExecutorFinished(), false);
+    }
+
+    private StepExecutionResult createInterruptedResult(int stepBefore) {
+        // isFinished is not evaluated when interrupted; the caller handles interruption independently.
+        return createResult(stepBefore, isExecutorFinished(), true);
+    }
+
+    private StepExecutionResult createResult(int stepBefore, boolean finished, boolean interrupted) {
         int stepAfter = stepCount();
-        return new StepExecutionResult(stepAfter, stepAfter - stepBefore, isExecutorFinished(), false);
+        return new StepExecutionResult(stepAfter, stepAfter - stepBefore, finished, interrupted);
     }
 
 }
