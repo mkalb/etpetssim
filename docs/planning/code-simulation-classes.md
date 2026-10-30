@@ -245,9 +245,8 @@ Notes:
   `setAccessible(true)`, and `Field.get`) in its helpers `getField(Object, String)` (instance fields) and
   `getStaticField(String)` (static fields).
 - Proposal: Look at every call of the two helpers and decide per field whether the test can check the behavior through
-  the public API or an observable property instead. Otherwise expose the state as a package-private accessor (like the
-  package-private constructor that takes an `ExecutorService` for the tests) or keep the reflection; justify the
-  decision in the chat. Remove the helpers if no call remains.
+  the public API or an observable property instead. Otherwise expose the state as a package-private accessor, as the
+  rule of #69 requires; tests do not use reflection on private members. Remove the helpers.
 
 ## 3. Shared views
 
@@ -281,7 +280,15 @@ Notes:
   `getNonNullField(..)`.
 - Proposal: Look at every call of the helpers and decide per field whether the test can check the behavior through the
   public or protected API (e.g., the node tree of the view) instead. Otherwise expose the state as a package-private
-  accessor or keep the reflection; justify the decision in the chat. Remove the helpers if no call remains.
+  accessor, as the rule of #69 requires; tests do not use reflection on private members. Remove the helpers.
+
+#### Test accessor of StatisticsHistoryChartView
+
+- Origin: refinement of #69 (2026-10-30)
+- Types: `StatisticsHistoryChartView`, `StatisticsHistoryChartViewTest`
+- Problem: The package-private `chartsForTesting()` only reads the charts for the test. By #69, `*ForTesting` is
+  reserved for special cases that change the state of a class for tests, as in `core`.
+- Proposal: Rename it to the noun-style `charts()` and adapt the test.
 
 ## 4. Simulation statistics
 
