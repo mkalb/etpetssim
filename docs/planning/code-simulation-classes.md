@@ -64,6 +64,7 @@ are done and pushed.
 - `code-other-classes.md` comes first; its decisions apply here (see "Cross-category decisions"). All its categories,
   including the member order (category 2) and the Javadoc rules (category 3), are done before this plan is refined
   and category 1 starts.
+- `code-warning-suppressions.md` (#68) is done before this plan starts (maintainer, 2026-10-30).
 - The sibling plans `code-interface-types.md`, `code-record-types.md`, `code-private-constructor-classes.md`, and
   `code-enum-types.md` are done; their decisions apply here. They stay in `docs/planning` as reference until this
   plan is done and are then deleted together with it and `code-other-classes.md`.
