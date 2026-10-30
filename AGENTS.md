@@ -104,8 +104,9 @@ Other locations:
   quote it verbatim or give a short summary or explanation in the chat language; the user can read the file, diff,
   or issue directly.
 - Keep user-facing text in `i18n.messages` resource bundles.
-- Use constants for localization keys instead of string literals: app-wide keys in `core.AppLocalizationKeys`,
-  simulation-specific keys as constants in the class that uses them.
+- Use constants for localization keys instead of string literals at the call site: app-wide keys in
+  `core.AppLocalizationKeys`, simulation-specific keys as constants in the class that uses them. The key methods
+  of enums (`labelResourceKey()`, `resourceKey()`) may return string literals.
 
 ## Issues and Plans
 

@@ -1,6 +1,6 @@
 package de.mkalb.etpetssim.testsupport;
 
-import de.mkalb.etpetssim.core.AppLocalizationKeys;
+import de.mkalb.etpetssim.engine.CellShape;
 import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorSpec;
 import de.mkalb.etpetssim.engine.model.entity.SpecBackedGridEntityDescriptorProvider;
 import org.junit.jupiter.api.Test;
@@ -15,20 +15,20 @@ final class LocalizationTestSupportTest {
     @Test
     void testAssertKeysInAllBundles() {
         assertDoesNotThrow(() -> LocalizationTestSupport.assertKeysInAllBundles(
-                List.of(AppLocalizationKeys.ENUM_LABEL_CELLSHAPE)));
+                List.of(CellShape.labelResourceKey())));
     }
 
     @Test
     void testAssertKeysInAllBundlesRejectsMissingKey() {
         assertThrows(AssertionError.class, () -> LocalizationTestSupport.assertKeysInAllBundles(
-                List.of(AppLocalizationKeys.ENUM_LABEL_CELLSHAPE, "missing.key.for.test")));
+                List.of(CellShape.labelResourceKey(), "missing.key.for.test")));
     }
 
     @Test
     void testAssertDescriptorKeysInAllBundlesRejectsMissingKey() {
         SpecBackedGridEntityDescriptorProvider provider = () -> new GridEntityDescriptorSpec(
-                "test", true, AppLocalizationKeys.ENUM_LABEL_CELLSHAPE, AppLocalizationKeys.ENUM_LABEL_CELLSHAPE,
-                AppLocalizationKeys.ENUM_LABEL_CELLSHAPE, "missing.emoji.key.for.test", null, null);
+                "test", true, CellShape.labelResourceKey(), CellShape.labelResourceKey(),
+                CellShape.labelResourceKey(), "missing.emoji.key.for.test", null, null);
         assertThrows(AssertionError.class,
                 () -> LocalizationTestSupport.assertDescriptorKeysInAllBundles(List.of(provider)));
     }

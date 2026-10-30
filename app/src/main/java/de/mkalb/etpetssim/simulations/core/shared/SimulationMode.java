@@ -1,7 +1,5 @@
 package de.mkalb.etpetssim.simulations.core.shared;
 
-import de.mkalb.etpetssim.core.AppLocalizationKeys;
-
 /**
  * Defines the available simulation modes for running a simulation.
  */
@@ -38,7 +36,7 @@ public enum SimulationMode {
      */
     @SuppressWarnings("SameReturnValue")
     public static String labelResourceKey() {
-        return AppLocalizationKeys.ENUM_LABEL_SIMULATIONMODE;
+        return "simulationmode.label";
     }
 
     /**

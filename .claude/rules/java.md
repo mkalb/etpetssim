@@ -149,6 +149,8 @@ Use these method naming patterns when they match the method's primary behavior; 
 - Use explicit stable codes/keys for external representations; never persist or exchange `ordinal()`.
 - Enums offered as a config selection follow the existing `labelResourceKey()`/`resourceKey()` pair for their
   localization keys; edit toolbar choices and records expose the key of their own display text as `labelKey()`.
+  The enum defines its keys itself: per-constant keys as constructor arguments, the type label key as the string
+  literal returned by the static `labelResourceKey()`.
 - Document declaration-order semantics in type Javadoc when order matters.
 
 ## Utility Classes

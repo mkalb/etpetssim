@@ -1,7 +1,5 @@
 package de.mkalb.etpetssim.engine.neighborhood;
 
-import de.mkalb.etpetssim.core.AppLocalizationKeys;
-
 /**
  * Defines the neighborhood mode for cell-based simulations.
  * Determines which neighboring cells are considered adjacent:
@@ -32,7 +30,7 @@ public enum NeighborhoodMode {
      */
     @SuppressWarnings("SameReturnValue")
     public static String labelResourceKey() {
-        return AppLocalizationKeys.ENUM_LABEL_NEIGHBORHOODMODE;
+        return "neighborhoodmode.label";
     }
 
     /**

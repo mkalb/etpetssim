@@ -1,7 +1,5 @@
 package de.mkalb.etpetssim.simulations.snake.shared;
 
-import de.mkalb.etpetssim.core.AppLocalizationKeys;
-
 /**
  * Defines the death behavior modes for the snake in the Snake simulation.
  *
@@ -32,7 +30,7 @@ public enum SnakeDeathMode {
      */
     @SuppressWarnings("SameReturnValue")
     public static String labelResourceKey() {
-        return AppLocalizationKeys.ENUM_LABEL_SNAKEDEATHMODE;
+        return "snakedeathmode.label";
     }
 
     /**

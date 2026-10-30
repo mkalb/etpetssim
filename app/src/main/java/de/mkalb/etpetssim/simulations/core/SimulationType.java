@@ -1,7 +1,6 @@
 package de.mkalb.etpetssim.simulations.core;
 
 import de.mkalb.etpetssim.core.AppLocalization;
-import de.mkalb.etpetssim.core.AppLocalizationKeys;
 import de.mkalb.etpetssim.core.AppLogger;
 import de.mkalb.etpetssim.core.AppResources;
 
@@ -199,7 +198,7 @@ public enum SimulationType {
      */
     @SuppressWarnings("SameReturnValue")
     public static String labelResourceKey() {
-        return AppLocalizationKeys.ENUM_LABEL_SIMULATIONTYPE;
+        return "simulationtype.label";
     }
 
     public boolean isImplemented() {

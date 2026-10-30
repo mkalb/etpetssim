@@ -1,7 +1,5 @@
 package de.mkalb.etpetssim.engine;
 
-import de.mkalb.etpetssim.core.AppLocalizationKeys;
-
 /**
  * Defines the possible shapes for a cell in a regular two-dimensional grid.
  *
@@ -51,7 +49,7 @@ public enum CellShape {
      */
     @SuppressWarnings("SameReturnValue")
     public static String labelResourceKey() {
-        return AppLocalizationKeys.ENUM_LABEL_CELLSHAPE;
+        return "cellshape.label";
     }
 
     /**

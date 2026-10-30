@@ -4,6 +4,7 @@ import de.mkalb.etpetssim.core.AppLocalization;
 import de.mkalb.etpetssim.core.AppLocalizationKeys;
 import de.mkalb.etpetssim.simulations.core.view.AbstractConfigView;
 import de.mkalb.etpetssim.simulations.lab.model.LabConfig;
+import de.mkalb.etpetssim.simulations.lab.shared.LabColorMode;
 import de.mkalb.etpetssim.simulations.lab.viewmodel.LabConfigViewModel;
 import de.mkalb.etpetssim.ui.FXComponentFactory;
 import de.mkalb.etpetssim.ui.FXStyleClasses;
@@ -13,7 +14,6 @@ public final class LabConfigView
         extends AbstractConfigView<LabConfig, LabConfigViewModel> {
 
     // Layout
-    private static final String LAB_CONFIG_COLOR = "lab.config.color";
     private static final String LAB_CONFIG_COLOR_TOOLTIP = "lab.config.color.tooltip";
 
     public LabConfigView(LabConfigViewModel viewModel) {
@@ -28,7 +28,7 @@ public final class LabConfigView
         // Layout
         var colorModeControl = FXComponentFactory.createLabeledChoiceRadioButtons(viewModel.colorModeProperty(),
                 FXComponentFactory.createHBox(FXStyleClasses.CONFIG_RADIOBUTTON_BOX),
-                AppLocalization.getText(LAB_CONFIG_COLOR),
+                AppLocalization.getText(LabColorMode.labelResourceKey()),
                 AppLocalization.getText(LAB_CONFIG_COLOR_TOOLTIP),
                 FXStyleClasses.CONFIG_RADIOBUTTON
         );
