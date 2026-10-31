@@ -170,6 +170,10 @@ Supported application arguments:
 | `--log-level=<level>` | Sets the log level: `debug`, `info`, `warn`, or `error` (case-insensitive); default: `info`                                |
 | `--simulation=<name>` | Starts a simulation directly, e.g. `etpets`, `wator`, `sugar`, `conway`, `langton`, `forest`, `snake`, `rebounding`        |
 
+The selected UI language is saved in the file `settings.properties` in the application data directory
+(Windows: `%LOCALAPPDATA%\ExtraterrestrialPetsSimulation`) and used on the next start. `--locale` takes precedence for
+the current run and does not change the saved setting. Delete the file to reset the settings.
+
 Flags can also take a boolean value, e.g. `--log-console=false`. Several arguments are passed to Gradle as one quoted
 string, separated by spaces.
 
