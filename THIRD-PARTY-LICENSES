@@ -3,7 +3,6 @@ Runtime libraries (shipped in the distribution)
 Library  | License                          | Version | License text
 ---------|----------------------------------|---------|-------------------------------------------
 JavaFX   | GPL v2 with Classpath Exception  | 27      | https://openjdk.org/legal/gplv2+ce.html
-JSpecify | Apache License 2.0               | 1.0.1   | https://www.apache.org/licenses/LICENSE-2.0
 
 Notes on JavaFX:
 - The JavaFX JARs are shipped unmodified. They contain no license files.
@@ -16,9 +15,10 @@ Notes on JavaFX:
 - Source code: https://github.com/openjdk/jfx/tree/27-ga
 - Project home page: https://openjfx.io/
 
-Build and test tools (not shipped in the distribution)
+Build, compile-time, and test dependencies (not shipped in the distribution)
 
-Tool   | License            | Version | License text
--------|--------------------|---------|-------------------------------------------------------
-Gradle | Apache License 2.0 | 9.8.0   | https://github.com/gradle/gradle/blob/v9.8.0/LICENSE
-JUnit  | EPL 2.0            | 6.1.3   | https://www.eclipse.org/legal/epl/epl-v20.html
+Component | License            | Version | License text
+----------|--------------------|---------|-------------------------------------------------------
+Gradle    | Apache License 2.0 | 9.8.0   | https://github.com/gradle/gradle/blob/v9.8.0/LICENSE
+JSpecify  | Apache License 2.0 | 1.0.1   | https://www.apache.org/licenses/LICENSE-2.0
+JUnit     | EPL 2.0            | 6.1.3   | https://www.eclipse.org/legal/epl/epl-v20.html

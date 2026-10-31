@@ -37,7 +37,8 @@ dependencies {
 
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 
-    implementation(libs.jspecify)
+    compileOnly(libs.jspecify)
+    testCompileOnly(libs.jspecify)
 
     listOf(libs.javafx.base, libs.javafx.graphics, libs.javafx.controls).forEach { javafxModule ->
         implementation(variantOf(javafxModule) { classifier(javafxPlatform) }) {
