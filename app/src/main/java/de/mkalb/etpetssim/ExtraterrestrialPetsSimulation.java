@@ -69,6 +69,9 @@ public final class ExtraterrestrialPetsSimulation extends Application {
     private List<Image> appIcons = List.of();
     private @Nullable SimulationInstance currentSimulationInstance;
     private boolean terminationAwaited;
+    private @Nullable Alert unexpectedErrorAlert;
+    private @Nullable Throwable unexpectedErrorThrowable;
+    private int furtherErrorCount;
 
     /**
      * Resolves the initial simulation type from parsed arguments, restricted to implemented simulations.
@@ -101,6 +104,27 @@ public final class ExtraterrestrialPetsSimulation extends Application {
     }
 
     /**
+     * Formats the content text of the unexpected error alert.
+     *
+     * @param throwable         uncaught exception shown in the alert
+     * @param furtherErrorCount number of further errors since the alert opened
+     * @return the exception message (or its simple class name if the message is null or blank), an empty line,
+     *         the log hint, and, if {@code furtherErrorCount} is positive, a line with the count
+     */
+    static String formatUnexpectedErrorContent(Throwable throwable, int furtherErrorCount) {
+        String message = throwable.getMessage();
+        StringBuilder content = new StringBuilder((message == null) || message.isBlank()
+                ? throwable.getClass().getSimpleName()
+                : message);
+        content.append("\n\n").append(AppLocalization.getText(AppLocalizationKeys.ALERT_UNEXPECTED_ERROR_LOG));
+        if (furtherErrorCount > 0) {
+            content.append('\n').append(AppLocalization.getFormattedText(
+                    AppLocalizationKeys.ALERT_UNEXPECTED_ERROR_FURTHER, furtherErrorCount));
+        }
+        return content.toString();
+    }
+
+    /**
      * Starts the JavaFX application.
      *
      * <p>Installs uncaught-exception handling, resolves the requested
@@ -112,7 +136,7 @@ public final class ExtraterrestrialPetsSimulation extends Application {
     public void start(Stage primaryStage) {
         Thread.setDefaultUncaughtExceptionHandler((thread, throwable) -> {
             AppLogger.errorf(throwable, "Application: Uncaught exception in thread %s", thread.getName());
-            Platform.runLater(() -> showUnexpectedErrorAlert(throwable));
+            Platform.runLater(() -> handleUncaughtException(throwable));
         });
 
         AppArgs arguments = new AppArgs(getParameters().getRaw().toArray(new String[0]));
@@ -188,19 +212,56 @@ public final class ExtraterrestrialPetsSimulation extends Application {
     }
 
     /**
+     * Handles an uncaught exception on the JavaFX Application Thread.
+     *
+     * <p>If an unexpected error alert is already open, the further error is counted and the content of the open
+     * alert is updated. Otherwise, a new alert is shown.
+     *
+     * @param throwable uncaught exception
+     */
+    private void handleUncaughtException(Throwable throwable) {
+        Alert openAlert = unexpectedErrorAlert;
+        Throwable shownThrowable = unexpectedErrorThrowable;
+        if ((openAlert != null) && (shownThrowable != null)) {
+            furtherErrorCount++;
+            try {
+                openAlert.setContentText(formatUnexpectedErrorContent(shownThrowable, furtherErrorCount));
+            } catch (RuntimeException e) {
+                AppLogger.error(e, "Application: Unable to update the unexpected error alert");
+            }
+        } else {
+            showUnexpectedErrorAlert(throwable);
+        }
+    }
+
+    /**
      * Shows an alert for an uncaught exception and waits until it is closed.
      *
-     * @param throwable uncaught exception whose message is shown
+     * <p>The alert and its exception are kept until it is closed, so that further errors can update it. A failure
+     * to create or show the alert is only logged, so that it cannot trigger another alert.
+     *
+     * @param throwable uncaught exception shown in the alert
      */
     private void showUnexpectedErrorAlert(Throwable throwable) {
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        FXDialogStyler.applyAppStyle(alert, appIcons);
-        alert.setTitle(AppLocalization.getFormattedText(AppLocalizationKeys.WINDOW_TITLE,
-                AppLocalization.getText(AppLocalizationKeys.ALERT_UNEXPECTED_ERROR_TITLE)));
-        alert.setHeaderText(AppLocalization.getText(AppLocalizationKeys.ALERT_UNEXPECTED_ERROR_HEADER));
-        alert.setGraphic(null);
-        alert.setContentText(throwable.getMessage());
-        alert.showAndWait();
+        try {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            FXDialogStyler.applyAppStyle(alert, appIcons);
+            alert.setTitle(AppLocalization.getFormattedText(AppLocalizationKeys.WINDOW_TITLE,
+                    AppLocalization.getText(AppLocalizationKeys.ALERT_UNEXPECTED_ERROR_TITLE)));
+            alert.setHeaderText(AppLocalization.getText(AppLocalizationKeys.ALERT_UNEXPECTED_ERROR_HEADER));
+            alert.setGraphic(null);
+            unexpectedErrorAlert = alert;
+            unexpectedErrorThrowable = throwable;
+            furtherErrorCount = 0;
+            alert.setContentText(formatUnexpectedErrorContent(throwable, 0));
+            alert.showAndWait();
+        } catch (RuntimeException e) {
+            AppLogger.error(e, "Application: Unable to show the unexpected error alert");
+        } finally {
+            unexpectedErrorAlert = null;
+            unexpectedErrorThrowable = null;
+            furtherErrorCount = 0;
+        }
     }
 
     /**
