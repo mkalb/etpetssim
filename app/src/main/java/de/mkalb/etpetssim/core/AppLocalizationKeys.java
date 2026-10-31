@@ -10,6 +10,9 @@ package de.mkalb.etpetssim.core;
 public final class AppLocalizationKeys {
 
     public static final String ABOUT_HEADER_TITLE = "about.header.title";
+    public static final String ABOUT_HELP_ARGUMENTS_NOTES = "about.help.arguments.notes";
+    public static final String ABOUT_HELP_ARGUMENTS_TITLE = "about.help.arguments.title";
+    public static final String ABOUT_HELP_USAGE = "about.help.usage";
     public static final String ABOUT_LINK_ISSUES = "about.link.issues";
     public static final String ABOUT_LINK_REPOSITORY = "about.link.repository";
     public static final String ABOUT_MANIFEST_BUILD_JDK = "about.manifest.buildjdk";
@@ -21,6 +24,7 @@ public final class AppLocalizationKeys {
     public static final String ABOUT_MANIFEST_VENDOR = "about.manifest.vendor";
     public static final String ABOUT_MANIFEST_VERSION = "about.manifest.version";
     public static final String ABOUT_RESOURCE_NOT_FOUND = "about.resource.notfound";
+    public static final String ABOUT_TAB_HELP = "about.tab.help";
     public static final String ABOUT_TAB_LICENSE = "about.tab.license";
     public static final String ABOUT_TAB_README = "about.tab.readme";
     public static final String ABOUT_TAB_THIRD_PARTY_LICENSES = "about.tab.thirdpartylicenses";
@@ -28,6 +32,14 @@ public final class AppLocalizationKeys {
     public static final String ABOUT_TITLE = "about.title";
     public static final String ALERT_UNEXPECTED_ERROR_HEADER = "alert.unexpected.error.header";
     public static final String ALERT_UNEXPECTED_ERROR_TITLE = "alert.unexpected.error.title";
+    public static final String ARGS_FLAG = "args.flag";
+    public static final String ARGS_HELP = "args.help";
+    public static final String ARGS_HELP_TITLE = "args.help.title";
+    public static final String ARGS_LOCALE = "args.locale";
+    public static final String ARGS_LOG_CONSOLE = "args.logconsole";
+    public static final String ARGS_LOG_FILE = "args.logfile";
+    public static final String ARGS_LOG_LEVEL = "args.loglevel";
+    public static final String ARGS_SIMULATION = "args.simulation";
     public static final String CONFIG_CELL_DISPLAY_MODE_TOOLTIP = "config.celldisplaymode.tooltip";
     public static final String CONFIG_CELL_EDGE_LENGTH = "config.celledgelength";
     public static final String CONFIG_CELL_EDGE_LENGTH_TOOLTIP = "config.celledgelength.tooltip";
