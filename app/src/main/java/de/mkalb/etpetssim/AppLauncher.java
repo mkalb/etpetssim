@@ -3,8 +3,10 @@ package de.mkalb.etpetssim;
 import de.mkalb.etpetssim.core.AppArgs;
 import de.mkalb.etpetssim.core.AppLocalization;
 import de.mkalb.etpetssim.core.AppLogger;
+import de.mkalb.etpetssim.core.AppSettings;
 import de.mkalb.etpetssim.core.AppStorage;
 import javafx.application.Application;
+import org.jspecify.annotations.Nullable;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -88,8 +90,28 @@ public final class AppLauncher {
      * @param arguments parsed command-line arguments
      */
     private static void initializeAppLocalization(AppArgs arguments) {
-        AppLocalization.initialize(arguments.getValue(AppArgs.Key.LOCALE).orElse(null));
+        String localeArgument = resolveLocaleArgument(arguments.getValue(AppArgs.Key.LOCALE).orElse(null),
+                AppSettings.readLocale().orElse(null));
+        AppLocalization.initialize(localeArgument);
         Locale.setDefault(AppLocalization.locale());
+    }
+
+    /**
+     * Resolves the locale argument for localization initialization.
+     *
+     * <p>Precedence: a valid {@code --locale} argument, then the saved locale setting. If neither applies,
+     * {@code null} is returned and localization falls back to the system locale and then the default locale.
+     *
+     * @param localeArgument the value of the {@code --locale} argument, if any
+     * @param savedLocale    the locale saved in the application settings, if any
+     * @return the locale code to initialize localization with, or {@code null}
+     */
+    static @Nullable String resolveLocaleArgument(@Nullable String localeArgument,
+                                                  AppLocalization.@Nullable CountryLocale savedLocale) {
+        if (AppLocalization.resolveLocaleFromArgument(localeArgument).isPresent()) {
+            return localeArgument;
+        }
+        return (savedLocale == null) ? null : savedLocale.localeCode();
     }
 
 }

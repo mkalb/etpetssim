@@ -177,7 +177,7 @@ public final class AppLocalization {
      * @param localeArgument optional locale argument
      * @return an {@link Optional} containing the resolved locale, or empty if unmatched
      */
-    static Optional<Locale> resolveLocaleFromArgument(@Nullable String localeArgument) {
+    public static Optional<Locale> resolveLocaleFromArgument(@Nullable String localeArgument) {
         if ((localeArgument == null) || localeArgument.isBlank()) {
             return Optional.empty();
         }
