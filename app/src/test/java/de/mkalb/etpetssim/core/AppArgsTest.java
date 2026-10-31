@@ -5,9 +5,13 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 
+import java.util.Arrays;
+import java.util.Locale;
 import java.util.Optional;
+import java.util.ResourceBundle;
 import java.util.Set;
 
+import static de.mkalb.etpetssim.testsupport.LocalizationTestSupport.assertKeysInAllBundles;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -344,16 +348,26 @@ final class AppArgsTest {
 
         AppArgs.Key.printHelp(appendable);
         String result = appendable.toString();
+        ResourceBundle bundle = AppResources.getBundle(AppLocalization.DEFAULT_LOCALE).orElseThrow();
 
         assertAll(
-                () -> assertTrue(result.startsWith("List of available command-line arguments:")),
-                () -> assertTrue(result.contains("--help: Shows this help message (flag)")),
-                () -> assertTrue(result.contains("--locale: ")),
-                () -> assertTrue(result.contains("--log-console: ")),
-                () -> assertTrue(result.contains("--log-file: ")),
-                () -> assertTrue(result.contains("--log-level: ")),
-                () -> assertTrue(result.contains("--simulation: "))
+                () -> assertTrue(result.startsWith(bundle.getString(AppLocalizationKeys.ARGS_HELP_TITLE))),
+                () -> assertTrue(result.contains(" (" + bundle.getString(AppLocalizationKeys.ARGS_FLAG) + ")")),
+                () -> assertTrue(Arrays.stream(AppArgs.Key.values()).allMatch(key ->
+                        result.contains("--" + key.key() + ": " + bundle.getString(key.descriptionKey()))))
         );
+    }
+
+    @Test
+    void testFormatHelpArgumentsUsesActiveBundle() {
+        AppLocalization.initialize("de_DE");
+        try {
+            assertTrue(AppArgs.Key.formatHelpArguments().contains(
+                    AppResources.getBundle(Locale.GERMANY).orElseThrow()
+                            .getString(AppLocalizationKeys.ARGS_HELP)));
+        } finally {
+            AppLocalization.resetForTesting();
+        }
     }
 
     @Test
@@ -369,10 +383,8 @@ final class AppArgsTest {
     }
 
     @Test
-    void testDescription() {
-        for (AppArgs.Key key : AppArgs.Key.values()) {
-            assertFalse(key.description().isBlank(), "Key description should not be blank: " + key);
-        }
+    void testDescriptionKey() {
+        assertKeysInAllBundles(Arrays.stream(AppArgs.Key.values()).map(AppArgs.Key::descriptionKey).toList());
     }
 
     @Test
