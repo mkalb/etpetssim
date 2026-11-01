@@ -39,6 +39,22 @@ final class AppLocalizationTest {
     }
 
     @Test
+    void testSetLocaleRequiresInitialization() {
+        assertThrows(IllegalStateException.class,
+                () -> AppLocalization.setLocale(AppLocalization.CountryLocale.DE_DE));
+    }
+
+    @Test
+    void testSetLocaleSwitchesLocaleAndBundle() {
+        AppLocalization.initialize("en_US");
+
+        AppLocalization.setLocale(AppLocalization.CountryLocale.DE_DE);
+
+        assertEquals(Locale.GERMANY, AppLocalization.locale());
+        assertEquals(Locale.GERMANY, AppLocalization.bundle().getLocale());
+    }
+
+    @Test
     void testIsInitialized() {
         assertFalse(AppLocalization.isInitialized());
 

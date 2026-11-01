@@ -164,7 +164,7 @@ Supported application arguments:
 | Argument              | Description                                                                                                                |
 |-----------------------|----------------------------------------------------------------------------------------------------------------------------|
 | `--help`              | Prints the list of arguments and exits                                                                                     |
-| `--locale=<locale>`   | Sets the UI language: `en`, `de`, `en_US`, or `de_DE` (case-sensitive); default: system locale, otherwise `en_US`          |
+| `--locale=<locale>`   | Sets the UI language: `en`, `de`, `en_US`, or `de_DE` (case-sensitive); default: system locale, otherwise `en_US`; also changeable on the start screen |
 | `--log-console`       | Enables logging to the console                                                                                             |
 | `--log-file`          | Enables logging to the file `ExtraterrestrialPetsSimulation.log` in the application's log directory                        |
 | `--log-level=<level>` | Sets the log level: `debug`, `info`, `warn`, or `error` (case-insensitive); default: `info`                                |

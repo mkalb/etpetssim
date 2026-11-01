@@ -1,6 +1,7 @@
 package de.mkalb.etpetssim.simulations.start;
 
 import de.mkalb.etpetssim.core.AppLocalization;
+import de.mkalb.etpetssim.core.AppLocalization.CountryLocale;
 import de.mkalb.etpetssim.simulations.core.SimulationTerminationHandle;
 import de.mkalb.etpetssim.simulations.core.SimulationType;
 import de.mkalb.etpetssim.simulations.core.view.SimulationControlView;
@@ -8,12 +9,15 @@ import de.mkalb.etpetssim.simulations.core.view.SimulationMainView;
 import de.mkalb.etpetssim.ui.FXComponentFactory;
 import de.mkalb.etpetssim.ui.FXStyleClasses;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import javafx.util.StringConverter;
 
+import java.util.Locale;
 import java.util.function.BiConsumer;
 
 /**
@@ -26,6 +30,8 @@ import java.util.function.BiConsumer;
  * </p>
  */
 public final class StartMainView implements SimulationMainView, SimulationControlView {
+
+    private static final String LANGUAGE_LABEL_KEY = "start.language.label";
 
     private final Stage stage;
     private final BiConsumer<Stage, SimulationType> stageUpdater;
@@ -78,7 +84,42 @@ public final class StartMainView implements SimulationMainView, SimulationContro
             vbox.getChildren().add(button);
         }
 
+        vbox.getChildren().addAll(
+                new Label(AppLocalization.getText(LANGUAGE_LABEL_KEY)),
+                createLanguageComboBox());
+
         return vbox;
+    }
+
+    private ComboBox<CountryLocale> createLanguageComboBox() {
+        ComboBox<CountryLocale> comboBox = new ComboBox<>();
+        comboBox.getItems().addAll(AppLocalization.supportedLocales());
+        comboBox.setConverter(new StringConverter<>() {
+            @Override
+            public String toString(CountryLocale countryLocale) {
+                return (countryLocale == null) ? "" :
+                        countryLocale.displayName() + " [" + countryLocale.localeCode() + "]";
+            }
+
+            @Override
+            public CountryLocale fromString(String string) {
+                throw new UnsupportedOperationException();
+            }
+        });
+        Locale activeLocale = AppLocalization.locale();
+        AppLocalization.supportedLocales().stream()
+                       .filter(countryLocale -> countryLocale.countryLocale().equals(activeLocale))
+                       .findFirst()
+                       .ifPresent(comboBox::setValue);
+        comboBox.getStyleClass().add(FXStyleClasses.CONFIG_COMBOBOX);
+        comboBox.valueProperty().addListener((_, oldValue, newValue) -> {
+            if ((newValue != null) && !newValue.equals(oldValue)) {
+                AppLocalization.setLocale(newValue);
+                Locale.setDefault(AppLocalization.locale());
+                stageUpdater.accept(stage, SimulationType.STARTSCREEN);
+            }
+        });
+        return comboBox;
     }
 
     @Override
