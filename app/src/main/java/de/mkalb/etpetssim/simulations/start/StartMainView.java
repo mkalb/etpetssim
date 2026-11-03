@@ -1,12 +1,15 @@
 package de.mkalb.etpetssim.simulations.start;
 
 import de.mkalb.etpetssim.core.AppLocalization;
+import de.mkalb.etpetssim.core.AppLocalization.CountryLocale;
+import de.mkalb.etpetssim.core.AppSettings;
 import de.mkalb.etpetssim.simulations.core.SimulationTerminationHandle;
 import de.mkalb.etpetssim.simulations.core.SimulationType;
 import de.mkalb.etpetssim.simulations.core.view.SimulationControlView;
 import de.mkalb.etpetssim.simulations.core.view.SimulationMainView;
 import de.mkalb.etpetssim.ui.FXComponentFactory;
 import de.mkalb.etpetssim.ui.FXStyleClasses;
+import de.mkalb.etpetssim.ui.InputChoiceProperty;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
@@ -14,6 +17,7 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
+import java.util.Locale;
 import java.util.function.BiConsumer;
 
 /**
@@ -26,6 +30,9 @@ import java.util.function.BiConsumer;
  * </p>
  */
 public final class StartMainView implements SimulationMainView, SimulationControlView {
+
+    private static final String START_LANGUAGE_LABEL = "start.language.label";
+    private static final String START_LANGUAGE_TOOLTIP = "start.language.tooltip";
 
     private final Stage stage;
     private final BiConsumer<Stage, SimulationType> stageUpdater;
@@ -78,7 +85,40 @@ public final class StartMainView implements SimulationMainView, SimulationContro
             vbox.getChildren().add(button);
         }
 
+        var languageControl = FXComponentFactory.createLabeledChoiceComboBox(
+                createLanguageChoiceProperty(),
+                AppLocalization.getText(START_LANGUAGE_LABEL),
+                AppLocalization.getText(START_LANGUAGE_TOOLTIP),
+                FXStyleClasses.CONFIG_COMBOBOX);
+        vbox.getChildren().addAll(languageControl.label(), languageControl.controlRegion());
+
         return vbox;
+    }
+
+    private InputChoiceProperty<CountryLocale> createLanguageChoiceProperty() {
+        Locale activeLocale = AppLocalization.locale();
+        CountryLocale activeCountryLocale = AppLocalization.supportedLocales().stream()
+                .filter(countryLocale -> countryLocale.countryLocale().equals(activeLocale))
+                .findFirst()
+                .orElseThrow();
+        InputChoiceProperty<CountryLocale> languageProperty = InputChoiceProperty.ofList(activeCountryLocale,
+                AppLocalization.supportedLocales(),
+                countryLocale -> countryLocale.displayName() + " [" + countryLocale.localeCode() + "]");
+        languageProperty.property().addListener((_, _, newLocale) -> handleLanguageSelection(newLocale));
+        return languageProperty;
+    }
+
+    /**
+     * Activates the selected locale, saves it as application setting, and rebuilds the start screen in the new
+     * language.
+     *
+     * @param countryLocale the selected locale, which differs from the active one
+     */
+    private void handleLanguageSelection(CountryLocale countryLocale) {
+        AppLocalization.setLocale(countryLocale);
+        Locale.setDefault(AppLocalization.locale());
+        AppSettings.writeLocale(countryLocale);
+        stageUpdater.accept(stage, SimulationType.STARTSCREEN);
     }
 
     @Override

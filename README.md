@@ -163,29 +163,32 @@ Supported application arguments:
 
 | Argument              | Description                                                                                                                |
 |-----------------------|----------------------------------------------------------------------------------------------------------------------------|
-| `--help`              | Prints the English command-line help and exits; default: `false`                                                   |
-| `--locale=<locale>`   | Sets the UI language: `en`, `de`, `en_US`, or `de_DE` (case-sensitive); default: supported system locale or `en_US`      |
-| `--log-console`       | Enables logging to the console; default: `false`                                                                   |
-| `--log-file`          | Enables logging to `ExtraterrestrialPetsSimulation.log` in the application's log directory; default: `false`      |
-| `--log-level=<level>` | Sets the minimum log level: `debug`, `info`, `warn`, or `error` (case-insensitive); default: `info`               |
-| `--simulation=<name>` | Starts an implemented simulation by alias (case-insensitive); default: start screen when omitted                  |
+| `--help`              | Prints the list of arguments and exits                                                                                     |
+| `--locale=<locale>`   | Sets the UI language: `en`, `de`, `en_US`, or `de_DE` (case-sensitive); default: saved language, system locale, or `en_US` |
+| `--log-console`       | Enables logging to the console                                                                                             |
+| `--log-file`          | Enables logging to the file `ExtraterrestrialPetsSimulation.log` in the application's log directory                        |
+| `--log-level=<level>` | Sets the log level: `debug`, `info`, `warn`, or `error` (case-insensitive); default: `info`                                |
+| `--simulation=<name>` | Starts a simulation directly, e.g. `etpets`, `wator`, `sugar`, `conway`, `langton`, `forest`, `snake`, `rebounding`        |
 
-Argument names are case-insensitive. Flags accept `true`/`false`, `1`/`0`, `yes`/`no`, or `on`/`off` values
-(case-insensitive); an unrecognized flag value enables the flag, e.g. `--log-console=false`. Argument names and the
-`--key=value` syntax must not contain spaces.
-An unrecognized `--log-level` value falls back to `info`.
-Non-flag values may contain spaces (e.g., file paths) when the entire argument is quoted so that it reaches the
-application as one argument; inside the Gradle `--args` string, use single quotes:
+Flags can also take a boolean value, e.g. `--log-console=false`. Several arguments are passed to Gradle as one quoted
+string, separated by spaces.
+
+Argument values may contain spaces (e.g., file paths). Quote such an argument so that it reaches the application as one
+argument; inside the Gradle `--args` string, use single quotes:
 
 ```powershell
 .\bin\ExtraterrestrialPetsSimulation.bat "--key=value with spaces"
 .\gradlew.bat :app:run --args="--locale=en '--key=value with spaces'"
 ```
 
-Simulation aliases are case-insensitive: `startscreen`, `start`; `etpets`; `wator`, `wa-tor`; `sugarscape`, `sugar`;
-`conwayslife`, `conways-life`, `conway`, `conways`, `life`, `cgol`; `langton`, `langtonsant`, `langtons-ant`, `ant`;
-`forestfire`, `forest-fire`, `forest`, `fire`, `forestfiremodel`; `snake`, `snakes`; `reboundingentities`,
-`rebounding-entities`, `rebounding-entity`, `rebounding`, `rebound`, `rebounders`; `simulationlab`, `lab`.
+The UI language can also be changed on the start screen. The selected language is saved as `locale` in the file
+`settings.properties` and used on the next start without `--locale`. `--locale` takes precedence for the current run
+and does not change the saved setting. To reset the settings, delete the file. It is stored in the application data
+directory:
+
+- Windows: `%LOCALAPPDATA%\ExtraterrestrialPetsSimulation`
+- macOS: `~/Library/Application Support/ExtraterrestrialPetsSimulation`
+- Linux: `~/.config/ExtraterrestrialPetsSimulation`
 
 ### Run the Distribution
 
