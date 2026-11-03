@@ -215,7 +215,8 @@ public final class ExtraterrestrialPetsSimulation extends Application {
      * Handles an uncaught exception on the JavaFX Application Thread.
      *
      * <p>If an unexpected error alert is already open, the further error is counted and the content of the open
-     * alert is updated. Otherwise, a new alert is shown.
+     * alert is updated; its window is resized so that the added counter line is not truncated. Otherwise, a new alert
+     * is shown.
      *
      * @param throwable uncaught exception
      */
@@ -226,6 +227,7 @@ public final class ExtraterrestrialPetsSimulation extends Application {
             furtherErrorCount++;
             try {
                 openAlert.setContentText(formatUnexpectedErrorContent(shownThrowable, furtherErrorCount));
+                openAlert.getDialogPane().getScene().getWindow().sizeToScene();
             } catch (RuntimeException e) {
                 AppLogger.error(e, "Application: Unable to update the unexpected error alert");
             }
