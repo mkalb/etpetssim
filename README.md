@@ -163,15 +163,16 @@ Supported application arguments:
 
 | Argument              | Description                                                                                                                |
 |-----------------------|----------------------------------------------------------------------------------------------------------------------------|
-| `--help`              | Prints the list of arguments and exits                                                                                     |
+| `--help`              | Prints the list of arguments in English and exits                                                                          |
 | `--locale=<locale>`   | Sets the UI language: `en`, `de`, `en_US`, or `de_DE` (case-sensitive); default: saved language, system locale, or `en_US` |
 | `--log-console`       | Enables logging to the console                                                                                             |
 | `--log-file`          | Enables logging to the file `ExtraterrestrialPetsSimulation.log` in the application's log directory                        |
 | `--log-level=<level>` | Sets the log level: `debug`, `info`, `warn`, or `error` (case-insensitive); default: `info`                                |
 | `--simulation=<name>` | Starts a simulation directly, e.g. `etpets`, `wator`, `sugar`, `conway`, `langton`, `forest`, `snake`, `rebounding`        |
 
-Flags can also take a boolean value, e.g. `--log-console=false`. Several arguments are passed to Gradle as one quoted
-string, separated by spaces.
+Argument names are case-insensitive. Flags can also take a boolean value (`true`/`false`, `1`/`0`, `yes`/`no`, or
+`on`/`off`), e.g. `--log-console=false`; any other value enables the flag. Several arguments are passed to Gradle as
+one quoted string, separated by spaces.
 
 Argument values may contain spaces (e.g., file paths). Quote such an argument so that it reaches the application as one
 argument; inside the Gradle `--args` string, use single quotes:

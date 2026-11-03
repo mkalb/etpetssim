@@ -247,12 +247,17 @@ public final class AppArgs {
         /**
          * Writes a help text containing all available command-line keys.
          *
-         * <p>Write errors of the target are reported through {@link AppLogger} and not rethrown.
+         * <p>The texts are read from the bundle of {@link AppLocalization#DEFAULT_LOCALE}, because the help is
+         * written before localization is initialized. Write errors of the target are reported through
+         * {@link AppLogger} and not rethrown.
          *
          * @param appendable the output target for the generated help text
+         * @throws IllegalStateException if the bundle of the default locale cannot be loaded
          */
         public static void printHelp(Appendable appendable) {
-            ResourceBundle bundle = AppResources.getBundle(AppLocalization.DEFAULT_LOCALE).orElseThrow();
+            ResourceBundle bundle = AppResources.getBundle(AppLocalization.DEFAULT_LOCALE).orElseThrow(() ->
+                    new IllegalStateException("Unable to load resource bundle: locale="
+                            + AppLocalization.DEFAULT_LOCALE));
             try {
                 appendable.append(bundle.getString(AppLocalizationKeys.ARGS_HELP_TITLE))
                         .append(System.lineSeparator())
@@ -263,22 +268,25 @@ public final class AppArgs {
         }
 
         /**
-         * Formats the command-line arguments with descriptions from the active localization bundle.
+         * Formats the command-line arguments with descriptions in the active language.
          *
-         * @return formatted command-line arguments
+         * <p>Each argument is written on its own line as {@code --<key>: <description>}, followed by the flag marker
+         * for flags; it is the argument list of {@link #printHelp(Appendable)}.
+         *
+         * @return formatted command-line arguments, one line per argument
          * @throws IllegalStateException if localization has not been initialized
          */
         public static String formatHelpArguments() {
             return formatHelpArguments(AppLocalization::getText);
         }
 
-        private static String formatHelpArguments(Function<String, String> getText) {
+        private static String formatHelpArguments(Function<String, String> textLookup) {
             StringBuilder help = new StringBuilder();
             for (Key key : values()) {
                 help.append(String.format(Locale.ROOT, "--%s: %s%s%n",
                         key.key(),
-                        getText.apply(key.descriptionKey()),
-                        key.isFlag() ? " (" + getText.apply(AppLocalizationKeys.ARGS_FLAG) + ")" : ""));
+                        textLookup.apply(key.descriptionKey()),
+                        key.isFlag() ? " (" + textLookup.apply(AppLocalizationKeys.ARGS_FLAG) + ")" : ""));
             }
             return help.toString();
         }

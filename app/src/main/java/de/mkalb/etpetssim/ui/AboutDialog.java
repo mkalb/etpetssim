@@ -89,6 +89,17 @@ public final class AboutDialog {
         return matcher.find() ? readme.substring(matcher.start()) : readme;
     }
 
+    private static String formatHelpText() {
+        String lineSeparator = System.lineSeparator();
+        return AppLocalization.getText(AppLocalizationKeys.ABOUT_HELP_USAGE)
+                + lineSeparator + lineSeparator
+                + AppLocalization.getText(AppLocalizationKeys.ABOUT_HELP_ARGUMENTS_TITLE)
+                + lineSeparator
+                + AppArgs.Key.formatHelpArguments()
+                + lineSeparator
+                + AppLocalization.getText(AppLocalizationKeys.ABOUT_HELP_ARGUMENTS_NOTES);
+    }
+
     /**
      * Shows the About dialog and waits until it is closed.
      */
@@ -126,16 +137,6 @@ public final class AboutDialog {
         dialogPane.getButtonTypes().add(ButtonType.CLOSE);
         dialogPane.setMinHeight(Region.USE_PREF_SIZE);
         dialog.showAndWait();
-    }
-
-    private static String formatHelpText() {
-        String lineSeparator = System.lineSeparator();
-        return AppLocalization.getText(AppLocalizationKeys.ABOUT_HELP_USAGE)
-                + lineSeparator + lineSeparator
-                + AppLocalization.getText(AppLocalizationKeys.ABOUT_HELP_ARGUMENTS_TITLE)
-                + lineSeparator
-                + AppArgs.Key.formatHelpArguments()
-                + AppLocalization.getText(AppLocalizationKeys.ABOUT_HELP_ARGUMENTS_NOTES);
     }
 
     private Node createHeader(Map<String, String> manifestInfo) {

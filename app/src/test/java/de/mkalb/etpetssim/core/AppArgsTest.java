@@ -6,7 +6,6 @@ import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 
 import java.util.Arrays;
-import java.util.Locale;
 import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.Set;
@@ -350,21 +349,31 @@ final class AppArgsTest {
         String result = appendable.toString();
         ResourceBundle bundle = AppResources.getBundle(AppLocalization.DEFAULT_LOCALE).orElseThrow();
 
+        String lineSeparator = System.lineSeparator();
+
         assertAll(
-                () -> assertTrue(result.startsWith(bundle.getString(AppLocalizationKeys.ARGS_HELP_TITLE))),
-                () -> assertTrue(result.contains(" (" + bundle.getString(AppLocalizationKeys.ARGS_FLAG) + ")")),
+                () -> assertTrue(result.startsWith("List of available command-line arguments:" + lineSeparator)),
+                () -> assertTrue(result.contains(
+                        "--help: Prints the list of arguments in English and exits (flag)" + lineSeparator)),
+                () -> assertTrue(result.contains(
+                        "--log-level: " + bundle.getString(AppLocalizationKeys.ARGS_LOG_LEVEL) + lineSeparator)),
                 () -> assertTrue(Arrays.stream(AppArgs.Key.values()).allMatch(key ->
                         result.contains("--" + key.key() + ": " + bundle.getString(key.descriptionKey()))))
         );
     }
 
     @Test
-    void testFormatHelpArgumentsUsesActiveBundle() {
+    void testFormatHelpArguments() {
+        AppLocalization.resetForTesting();
         AppLocalization.initialize("de_DE");
         try {
-            assertTrue(AppArgs.Key.formatHelpArguments().contains(
-                    AppResources.getBundle(Locale.GERMANY).orElseThrow()
-                            .getString(AppLocalizationKeys.ARGS_HELP)));
+            String result = AppArgs.Key.formatHelpArguments();
+
+            assertAll(
+                    () -> assertTrue(result.startsWith("--help: Gibt die Liste der Argumente auf Englisch aus und "
+                            + "beendet die Anwendung (Flag)" + System.lineSeparator())),
+                    () -> assertEquals(AppArgs.Key.values().length, result.lines().count())
+            );
         } finally {
             AppLocalization.resetForTesting();
         }
