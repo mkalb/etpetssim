@@ -3,6 +3,7 @@ package de.mkalb.etpetssim;
 import de.mkalb.etpetssim.core.AppArgs;
 import de.mkalb.etpetssim.core.AppLocalization;
 import de.mkalb.etpetssim.core.AppLogger;
+import de.mkalb.etpetssim.core.AppSettings;
 import de.mkalb.etpetssim.core.AppStorage;
 import javafx.application.Application;
 
@@ -85,10 +86,16 @@ public final class AppLauncher {
     /**
      * Initializes localization from parsed arguments and updates the JVM default locale.
      *
+     * <p>A valid {@code --locale} argument takes precedence over the locale saved in the application settings, which
+     * takes precedence over the system locale. The argument does not change the saved setting.
+     *
      * @param arguments parsed command-line arguments
      */
     private static void initializeAppLocalization(AppArgs arguments) {
-        AppLocalization.initialize(arguments.getValue(AppArgs.Key.LOCALE).orElse(null));
+        Locale defaultLocale = AppSettings.readLocale()
+                .map(AppLocalization.CountryLocale::countryLocale)
+                .orElseGet(Locale::getDefault);
+        AppLocalization.initialize(arguments.getValue(AppArgs.Key.LOCALE).orElse(null), defaultLocale);
         Locale.setDefault(AppLocalization.locale());
     }
 

@@ -1,5 +1,6 @@
 package de.mkalb.etpetssim;
 
+import de.mkalb.etpetssim.core.AppLocalization;
 import de.mkalb.etpetssim.core.AppLogger;
 import de.mkalb.etpetssim.simulations.core.SimulationInstance;
 import de.mkalb.etpetssim.simulations.core.SimulationTerminationHandle;
@@ -14,6 +15,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 
+import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -30,6 +32,9 @@ final class ExtraterrestrialPetsSimulationTest {
     @BeforeAll
     static void setUpBeforeAll() {
         FXTestSupport.ensureStarted();
+        if (!AppLocalization.isInitialized()) {
+            AppLocalization.initialize("en_US", Locale.US);
+        }
     }
 
     private static SimulationInstance createInstance(SimulationType simulationType, SimulationMainView view) {
@@ -39,6 +44,38 @@ final class ExtraterrestrialPetsSimulationTest {
     @BeforeEach
     void setUpBeforeEach() {
         AppLogger.initializeForTesting();
+    }
+
+    @Test
+    void testFormatUnexpectedErrorContent() {
+        String content = ExtraterrestrialPetsSimulation.formatUnexpectedErrorContent(
+                new IllegalStateException("Boom"), 0);
+
+        assertEquals("Boom\n\nDetails are in the application log.", content);
+    }
+
+    @Test
+    void testFormatUnexpectedErrorContentReturnsClassNameForNullMessage() {
+        String content = ExtraterrestrialPetsSimulation.formatUnexpectedErrorContent(
+                new IllegalStateException(), 0);
+
+        assertEquals("IllegalStateException\n\nDetails are in the application log.", content);
+    }
+
+    @Test
+    void testFormatUnexpectedErrorContentReturnsClassNameForBlankMessage() {
+        String content = ExtraterrestrialPetsSimulation.formatUnexpectedErrorContent(
+                new IllegalArgumentException("  "), 0);
+
+        assertEquals("IllegalArgumentException\n\nDetails are in the application log.", content);
+    }
+
+    @Test
+    void testFormatUnexpectedErrorContentReturnsCounterLineForPositiveCount() {
+        String content = ExtraterrestrialPetsSimulation.formatUnexpectedErrorContent(
+                new IllegalStateException("Boom"), 3);
+
+        assertEquals("Boom\n\nDetails are in the application log.\nFurther errors since this alert: 3", content);
     }
 
     @Test

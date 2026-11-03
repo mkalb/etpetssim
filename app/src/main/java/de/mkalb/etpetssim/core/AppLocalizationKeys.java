@@ -26,7 +26,9 @@ public final class AppLocalizationKeys {
     public static final String ABOUT_TAB_THIRD_PARTY_LICENSES = "about.tab.thirdpartylicenses";
     public static final String ABOUT_TAB_VERSION = "about.tab.version";
     public static final String ABOUT_TITLE = "about.title";
+    public static final String ALERT_UNEXPECTED_ERROR_FURTHER = "alert.unexpected.error.further";
     public static final String ALERT_UNEXPECTED_ERROR_HEADER = "alert.unexpected.error.header";
+    public static final String ALERT_UNEXPECTED_ERROR_LOG = "alert.unexpected.error.log";
     public static final String ALERT_UNEXPECTED_ERROR_TITLE = "alert.unexpected.error.title";
     public static final String CONFIG_CELL_DISPLAY_MODE_TOOLTIP = "config.celldisplaymode.tooltip";
     public static final String CONFIG_CELL_EDGE_LENGTH = "config.celledgelength";
