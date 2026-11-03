@@ -39,8 +39,8 @@ Give each issue exactly one kind label and any number of area and process labels
     - `## Goal`,
     - `## Scope` or `## Tasks`,
     - `## Acceptance criteria` (required unless the issue is labeled `needs-refinement`),
-    - `## Dependencies`,
-    - `## Related`.
+    - `## Dependencies` (reasons and non-issue prerequisites, on the blocked issue only),
+    - `## Related` (loose links, on the issue being created or edited only).
 - Open questions that may be decided during implementation go to `## Open questions (decide during implementation)`.
 - The issue body is the source of truth (for the details of an issue with a working plan, see "Planning documents"):
   merge additions and decisions from comments into the body. Comments do not have to be deleted. Only when an issue
@@ -74,12 +74,23 @@ decision, and remove the `needs-refinement` label.
 
 ## Links between issues
 
-- **Sub-issue:** only for follow-up work planned by its parent. Track it as a GitHub sub-issue instead of a
-  hand-maintained list in the parent body; the parent body lists only planned follow-ups that are not created yet.
-- **Dependency:** a prerequisite is recorded as "blocked by" on GitHub and described in a `## Dependencies` section.
-- **Related:** loose links go to `## Related`.
-- Keep `## Dependencies` and `## Related` on both issues of a link while both are open. Do not add a back-reference
-  to a closed issue when a new or open issue refers to it.
+Native links ("blocked by" dependencies and sub-issues) are the source of truth for dependencies and hierarchy; the
+body only explains them. GitHub shows them in the sidebar ("blocked by", "blocking", parent, sub-issues) and mentions in
+the timeline, so do not add back-references by hand.
+
+- **Dependency:** record every prerequisite that is an issue as "blocked by" on GitHub. `## Dependencies` only states
+  the reason for a dependency and prerequisites that are not issues; write it on the blocked issue only. The blocking
+  issue gets no back-reference, because GitHub shows "blocking" automatically.
+- **Sub-issue:** for follow-up work planned by its parent, or for related issues bundled under a parent issue. Track
+  it as a GitHub sub-issue instead of a hand-maintained list in the parent body; the parent body lists only planned
+  follow-ups that are not created yet.
+- **Related:** GitHub has no native "related" link. Loose links go to `## Related`, written only on the issue being
+  created or edited; the other issue gets no back-reference, because the GitHub timeline shows the mention.
+- **Parent issue:** issue types (e.g., "Epic") are only available for organization repositories, not for this user
+  repository; a parent issue with sub-issues takes their place. When about three or more open issues share a common
+  goal and have no parent, propose a parent issue that bundles them as sub-issues. It needs no extra label; its kind
+  label follows its content, and it has its own acceptance criteria (usually: all sub-issues are done). Examples:
+  #23, #24.
 
 ## Commands
 
@@ -115,7 +126,10 @@ chat before changing anything:
 - body structure: sections as in "Issue body"; acceptance criteria unless `needs-refinement`; no status lines; no
   decisions left only in comments,
 - readiness: an issue without `needs-refinement` is complete enough to implement,
-- sub-issues and dependencies: used as in "Links between issues" and linked in both directions between open issues,
+- sub-issues and dependencies: used as in "Links between issues"; every issue number in `## Dependencies` has a
+  matching native "blocked by" link; text links that the native links replace are removed,
+- parent issues: groups of about three or more open issues with a common goal and no parent that could be bundled
+  under a parent issue,
 - overlaps: issues with overlapping scope are merged, split, or linked.
 
 ## Planning documents
