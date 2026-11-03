@@ -63,6 +63,7 @@ Other locations:
     - `app:build` for tests and distribution; `clean app:distZip` for a clean distribution ZIP.
     - `app:run` only when running the JavaFX application is necessary.
 - Run relevant checks when practical; if verification is skipped or blocked, say so briefly.
+- Read `docs/development/dependency-updates.md` before updating Gradle, Java, JavaFX, or other dependencies.
 
 ## Versioning and Releases
 
