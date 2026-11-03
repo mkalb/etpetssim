@@ -1,5 +1,6 @@
 package de.mkalb.etpetssim.ui;
 
+import de.mkalb.etpetssim.core.AppArgs;
 import de.mkalb.etpetssim.core.AppLocalization;
 import de.mkalb.etpetssim.core.AppLocalizationKeys;
 import de.mkalb.etpetssim.core.AppLogger;
@@ -38,7 +39,7 @@ import java.util.regex.Pattern;
  * Displays the application's About dialog.
  *
  * <p>The dialog shows the application icon, title, and version in its header, links to the GitHub repository and its
- * issues, and tabs with build metadata, the README, the project license, and third-party license information.
+ * issues, and tabs with build metadata, help, the README, the project license, and third-party license information.
  */
 public final class AboutDialog {
 
@@ -88,6 +89,17 @@ public final class AboutDialog {
         return matcher.find() ? readme.substring(matcher.start()) : readme;
     }
 
+    private static String formatHelpText() {
+        String lineSeparator = System.lineSeparator();
+        return AppLocalization.getText(AppLocalizationKeys.ABOUT_HELP_USAGE)
+                + lineSeparator + lineSeparator
+                + AppLocalization.getText(AppLocalizationKeys.ABOUT_HELP_ARGUMENTS_TITLE)
+                + lineSeparator
+                + AppArgs.Key.formatHelpArguments()
+                + lineSeparator
+                + AppLocalization.getText(AppLocalizationKeys.ABOUT_HELP_ARGUMENTS_NOTES);
+    }
+
     /**
      * Shows the About dialog and waits until it is closed.
      */
@@ -97,6 +109,9 @@ public final class AboutDialog {
         Tab tabManifest = createTextAreaTab(
                 AppLocalization.getText(AppLocalizationKeys.ABOUT_TAB_VERSION),
                 formatManifestSummary(manifestInfo));
+        Tab tabHelp = createTextAreaTab(
+                AppLocalization.getText(AppLocalizationKeys.ABOUT_TAB_HELP),
+                formatHelpText());
         Tab tabReadme = createTextAreaTab(
                 AppLocalization.getText(AppLocalizationKeys.ABOUT_TAB_README),
                 formatReadmeText(getResourceAsString("README.md")));
@@ -106,7 +121,7 @@ public final class AboutDialog {
         Tab tabThirdParty = createTextAreaTab(
                 AppLocalization.getText(AppLocalizationKeys.ABOUT_TAB_THIRD_PARTY_LICENSES),
                 getResourceAsString("THIRD-PARTY-LICENSES"));
-        TabPane tabPane = new TabPane(tabManifest, tabReadme, tabLicense, tabThirdParty);
+        TabPane tabPane = new TabPane(tabManifest, tabHelp, tabReadme, tabLicense, tabThirdParty);
 
         VBox content = new VBox(createLinkBox(), tabPane);
         content.getStyleClass().add(FXStyleClasses.ABOUT_CONTENT_VBOX);

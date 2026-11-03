@@ -7,7 +7,9 @@ import java.util.EnumMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
+import java.util.ResourceBundle;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -213,22 +215,20 @@ public final class AppArgs {
      * <p>The declaration order defines the order of the keys in the help output.
      */
     public enum Key {
-        HELP("help", "Shows this help message", true),
-        LOCALE("locale",
-                "Sets the locale for the simulation. Format: --locale=<language>_<country> or --locale=<language>",
-                false),
-        LOG_CONSOLE("log-console", "Enables logging to the console. Format: --log-console", true),
-        LOG_FILE("log-file", "Enables logging to a file. Format: --log-file", true),
-        LOG_LEVEL("log-level", "Sets the log level. Format: --log-level=<level>", false),
-        SIMULATION("simulation", "Starts the specified simulation. Format: --simulation=<name>", false);
+        HELP("help", AppLocalizationKeys.ARGS_HELP, true),
+        LOCALE("locale", AppLocalizationKeys.ARGS_LOCALE, false),
+        LOG_CONSOLE("log-console", AppLocalizationKeys.ARGS_LOG_CONSOLE, true),
+        LOG_FILE("log-file", AppLocalizationKeys.ARGS_LOG_FILE, true),
+        LOG_LEVEL("log-level", AppLocalizationKeys.ARGS_LOG_LEVEL, false),
+        SIMULATION("simulation", AppLocalizationKeys.ARGS_SIMULATION, false);
 
         private final String key;
-        private final String description;
+        private final String descriptionKey;
         private final boolean flag;
 
-        Key(String key, String description, boolean flag) {
+        Key(String key, String descriptionKey, boolean flag) {
             this.key = key;
-            this.description = description;
+            this.descriptionKey = descriptionKey;
             this.flag = flag;
         }
 
@@ -247,23 +247,48 @@ public final class AppArgs {
         /**
          * Writes a help text containing all available command-line keys.
          *
-         * <p>Write errors of the target are reported through {@link AppLogger} and not rethrown.
+         * <p>The texts are read from the bundle of {@link AppLocalization#DEFAULT_LOCALE}, because the help is
+         * written before localization is initialized. Write errors of the target are reported through
+         * {@link AppLogger} and not rethrown.
          *
          * @param appendable the output target for the generated help text
+         * @throws IllegalStateException if the bundle of the default locale cannot be loaded
          */
         public static void printHelp(Appendable appendable) {
+            ResourceBundle bundle = AppResources.getBundle(AppLocalization.DEFAULT_LOCALE).orElseThrow(() ->
+                    new IllegalStateException("Unable to load resource bundle: locale="
+                            + AppLocalization.DEFAULT_LOCALE));
             try {
-                appendable.append("List of available command-line arguments:")
-                        .append(System.lineSeparator());
-                for (Key key : values()) {
-                    appendable.append(String.format(Locale.ROOT, "--%s: %s%s%n",
-                            key.key(),
-                            key.description(),
-                            key.isFlag() ? " (flag)" : ""));
-                }
+                appendable.append(bundle.getString(AppLocalizationKeys.ARGS_HELP_TITLE))
+                        .append(System.lineSeparator())
+                        .append(formatHelpArguments(bundle::getString));
             } catch (IOException e) {
                 AppLogger.warn("AppArgs: Failed to print help message: " + e.getMessage());
             }
+        }
+
+        /**
+         * Formats the command-line arguments with descriptions in the active language.
+         *
+         * <p>Each argument is written on its own line as {@code --<key>: <description>}, followed by the flag marker
+         * for flags; it is the argument list of {@link #printHelp(Appendable)}.
+         *
+         * @return formatted command-line arguments, one line per argument
+         * @throws IllegalStateException if localization has not been initialized
+         */
+        public static String formatHelpArguments() {
+            return formatHelpArguments(AppLocalization::getText);
+        }
+
+        private static String formatHelpArguments(Function<String, String> textLookup) {
+            StringBuilder help = new StringBuilder();
+            for (Key key : values()) {
+                help.append(String.format(Locale.ROOT, "--%s: %s%s%n",
+                        key.key(),
+                        textLookup.apply(key.descriptionKey()),
+                        key.isFlag() ? " (" + textLookup.apply(AppLocalizationKeys.ARGS_FLAG) + ")" : ""));
+            }
+            return help.toString();
         }
 
         /**
@@ -276,12 +301,12 @@ public final class AppArgs {
         }
 
         /**
-         * Returns the help description.
+         * Returns the resource key for this argument's help description.
          *
-         * @return the key description shown in help output
+         * @return the description resource key
          */
-        public String description() {
-            return description;
+        public String descriptionKey() {
+            return descriptionKey;
         }
 
         /**
