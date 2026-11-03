@@ -63,6 +63,16 @@ final class SimulationTypeTest {
     }
 
     @Test
+    void testSubtitleKey() {
+        assertKeysInAllBundles(Arrays.stream(SimulationType.values()).map(SimulationType::subtitleKey).toList());
+    }
+
+    @Test
+    void testUrlKey() {
+        assertKeysInAllBundles(Arrays.stream(SimulationType.values()).map(SimulationType::urlKey).toList());
+    }
+
+    @Test
     void testIsImplemented() {
         assertTrue(SimulationType.STARTSCREEN.isImplemented());
         assertTrue(SimulationType.ET_PETS.isImplemented());

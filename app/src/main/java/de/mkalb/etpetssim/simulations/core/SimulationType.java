@@ -230,7 +230,8 @@ public enum SimulationType {
     /**
      * Returns the localization key for the external URL.
      *
-     * <p>The key may be missing in any resource bundle; {@link #url()} is then empty.
+     * <p>The key exists in all resource bundles. An empty value means that the simulation has no link in this
+     * locale; {@link #url()} is then empty.
      *
      * @return URL resource key
      */
