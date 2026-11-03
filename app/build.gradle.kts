@@ -174,6 +174,10 @@ distributions {
             from(rootProject.file("assets")) {
                 into("assets")
             }
+            // License texts of the shipped third-party components (not in the JAR).
+            from(rootProject.file("licenses")) {
+                into("licenses")
+            }
         }
     }
 }

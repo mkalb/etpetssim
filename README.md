@@ -228,6 +228,7 @@ This project is licensed under the [MIT License](LICENSE).
 
 This project uses several third-party libraries and tools, each with its own license.
 For the project's third-party list, see the [THIRD-PARTY-LICENSES](THIRD-PARTY-LICENSES) file.
+The license texts of the third-party components shipped in the distribution ZIP are in the [licenses](licenses) folder.
 
 Both license files are also available in the application's About dialog.
 

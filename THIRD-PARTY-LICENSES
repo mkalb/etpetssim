@@ -1,8 +1,12 @@
 Runtime libraries (shipped in the distribution)
 
 Library  | License                          | Version | License text
----------|----------------------------------|---------|-------------------------------------------
-JavaFX   | GPL v2 with Classpath Exception  | 27      | https://openjdk.org/legal/gplv2+ce.html
+---------|----------------------------------|---------|----------------------------------------------
+JavaFX   | GPL v2 with Classpath Exception  | 27      | licenses/GPL-2.0-with-classpath-exception.txt
+         |                                  |         | https://openjdk.org/legal/gplv2+ce.html
+
+The license texts of the shipped components are in the licenses folder of the
+distribution ZIP.
 
 Notes on JavaFX:
 - The JavaFX JARs are shipped unmodified. They contain no license files.
@@ -10,7 +14,7 @@ Notes on JavaFX:
   libraries (msvcp140*.dll, vcruntime140*.dll, ucrtbase.dll, api-ms-win-*.dll),
   which are redistributed under Microsoft's redistribution terms.
 - The JavaFX native library javafx_iio.dll is based in part on the work of the
-  Independent JPEG Group. License:
+  Independent JPEG Group. License: licenses/IJG-jpeg_fx.md
   https://github.com/openjdk/jfx/blob/27-ga/modules/javafx.graphics/src/main/legal/jpeg_fx.md
 - Source code: https://github.com/openjdk/jfx/tree/27-ga
 - Project home page: https://openjfx.io/
