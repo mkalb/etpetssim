@@ -19,6 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@SuppressWarnings({"MagicNumber", "HardcodedLineSeparator"})
 @Execution(ExecutionMode.SAME_THREAD)
 final class AppSettingsTest {
 
@@ -74,6 +75,7 @@ final class AppSettingsTest {
         );
     }
 
+    @SuppressWarnings("NumericCastThatLosesPrecision")
     @Test
     void testReadLocaleWithFileReturnsEmptyForUnreadableContent() throws IOException {
         Files.write(settingsFile(), new byte[]{'l', 'o', 'c', 'a', 'l', 'e', '=', (byte) 0xFF, (byte) 0xFE});
@@ -89,7 +91,7 @@ final class AppSettingsTest {
     }
 
     @Test
-    void testWriteLocaleWithFile() throws IOException {
+    void testWriteLocaleWithFile() {
         boolean written = AppSettings.writeLocale(settingsFile(), CountryLocale.DE_DE);
 
         assertAll(
@@ -120,6 +122,7 @@ final class AppSettingsTest {
         );
     }
 
+    @SuppressWarnings("NumericCastThatLosesPrecision")
     @Test
     void testWriteLocaleWithFileReplacesUnreadableContent() throws IOException {
         Files.write(settingsFile(), new byte[]{'o', 't', 'h', 'e', 'r', '=', (byte) 0xFF, (byte) 0xFE});

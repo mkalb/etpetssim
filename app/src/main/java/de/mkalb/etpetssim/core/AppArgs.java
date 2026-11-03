@@ -286,7 +286,7 @@ public final class AppArgs {
                 help.append(String.format(Locale.ROOT, "--%s: %s%s%n",
                         key.key(),
                         textLookup.apply(key.descriptionKey()),
-                        key.isFlag() ? " (" + textLookup.apply(AppLocalizationKeys.ARGS_FLAG) + ")" : ""));
+                        key.isFlag() ? (" (" + textLookup.apply(AppLocalizationKeys.ARGS_FLAG) + ")") : ""));
             }
             return help.toString();
         }
