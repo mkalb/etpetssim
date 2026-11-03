@@ -181,9 +181,10 @@ argument; inside the Gradle `--args` string, use single quotes:
 .\gradlew.bat :app:run --args="--locale=en '--key=value with spaces'"
 ```
 
-The selected UI language is saved as `locale` in the file `settings.properties` and used on the next start without
-`--locale`. `--locale` takes precedence for the current run and does not change the saved setting. To reset the
-settings, delete the file. It is stored in the application data directory:
+The UI language can also be changed on the start screen. The selected language is saved as `locale` in the file
+`settings.properties` and used on the next start without `--locale`. `--locale` takes precedence for the current run
+and does not change the saved setting. To reset the settings, delete the file. It is stored in the application data
+directory:
 
 - Windows: `%LOCALAPPDATA%\ExtraterrestrialPetsSimulation`
 - macOS: `~/Library/Application Support/ExtraterrestrialPetsSimulation`

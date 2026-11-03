@@ -108,6 +108,24 @@ final class AppLocalizationTest {
     }
 
     @Test
+    void testSetLocale() {
+        AppLocalization.initialize("en_US");
+
+        AppLocalization.setLocale(AppLocalization.CountryLocale.DE_DE);
+
+        assertAll(
+                () -> assertEquals(Locale.GERMANY, AppLocalization.locale()),
+                () -> assertEquals(Locale.GERMANY, AppLocalization.bundle().getLocale())
+        );
+    }
+
+    @Test
+    void testSetLocaleThrowsBeforeInitialization() {
+        assertThrows(IllegalStateException.class,
+                () -> AppLocalization.setLocale(AppLocalization.CountryLocale.DE_DE));
+    }
+
+    @Test
     void testLocaleThrowsBeforeInitialization() {
         assertThrows(IllegalStateException.class, AppLocalization::locale);
     }

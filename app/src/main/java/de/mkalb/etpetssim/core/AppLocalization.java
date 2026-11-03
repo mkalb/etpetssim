@@ -15,7 +15,7 @@ import java.util.function.Predicate;
  * Provides application-wide localization services.
  *
  * <p>Manages the active {@link Locale} and its corresponding {@link ResourceBundle}. It must be initialized exactly
- * once during startup.
+ * once during startup; afterwards the active locale can be replaced with {@link #setLocale(CountryLocale)}.
  */
 public final class AppLocalization {
 
@@ -85,6 +85,21 @@ public final class AppLocalization {
                 new IllegalStateException("Unable to load resource bundle: locale=" + resolvedLocale));
         state = new LocalizationState(resolvedLocale, resolvedBundle);
         AppLogger.info("AppLocalization: Initialized with locale: " + resolvedLocale + " and loaded ResourceBundle");
+    }
+
+    /**
+     * Replaces the active locale and its resource bundle.
+     *
+     * @param countryLocale the supported locale to activate
+     * @throws IllegalStateException if localization has not been initialized or no bundle can be loaded
+     */
+    public static synchronized void setLocale(CountryLocale countryLocale) {
+        requireState();
+        Locale newLocale = countryLocale.countryLocale();
+        ResourceBundle newBundle = AppResources.getBundle(newLocale).orElseThrow(() ->
+                new IllegalStateException("Unable to load resource bundle: locale=" + newLocale));
+        state = new LocalizationState(newLocale, newBundle);
+        AppLogger.info("AppLocalization: Changed locale to: " + newLocale);
     }
 
     /**
