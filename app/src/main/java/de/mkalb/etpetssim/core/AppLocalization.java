@@ -177,7 +177,7 @@ public final class AppLocalization {
      * @param localeArgument optional locale argument
      * @return an {@link Optional} containing the resolved locale, or empty if unmatched
      */
-    public static Optional<Locale> resolveLocaleFromArgument(@Nullable String localeArgument) {
+    static Optional<Locale> resolveLocaleFromArgument(@Nullable String localeArgument) {
         if ((localeArgument == null) || localeArgument.isBlank()) {
             return Optional.empty();
         }
@@ -253,6 +253,18 @@ public final class AppLocalization {
         CountryLocale(Locale countryLocale, String displayName) {
             this.countryLocale = countryLocale;
             this.displayName = displayName;
+        }
+
+        /**
+         * Looks up a supported locale by its exact locale code.
+         *
+         * @param localeCode locale code in {@code language_COUNTRY} format, for example {@code de_DE}
+         * @return an {@link Optional} containing the matching supported locale, or empty if none matches
+         */
+        public static Optional<CountryLocale> fromLocaleCode(String localeCode) {
+            return Arrays.stream(values())
+                    .filter(supported -> supported.localeCode().equals(localeCode))
+                    .findFirst();
         }
 
         /**

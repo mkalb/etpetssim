@@ -28,10 +28,7 @@ public final class AppSettings {
      */
     public static final String FILE_NAME = "settings.properties";
 
-    /**
-     * Key of the UI locale setting.
-     */
-    public static final String KEY_LOCALE = "locale";
+    private static final String KEY_LOCALE = "locale";
 
     private AppSettings() {
     }
@@ -46,22 +43,12 @@ public final class AppSettings {
     }
 
     /**
-     * Saves the locale to the settings file in the application data directory.
-     *
-     * @param locale the locale to save
-     * @return {@code true} if the setting was written; otherwise {@code false}
-     */
-    public static boolean writeLocale(CountryLocale locale) {
-        return resolveSettingsFile().map(file -> writeLocale(file, locale)).orElse(false);
-    }
-
-    /**
      * Reads the saved locale from the given settings file.
      *
      * @param file the settings file
      * @return the saved locale, or empty if the file or key is missing, the code is unknown, or the file is unreadable
      */
-    public static Optional<CountryLocale> readLocale(Path file) {
+    static Optional<CountryLocale> readLocale(Path file) {
         if (!Files.exists(file)) {
             return Optional.empty();
         }
@@ -73,13 +60,21 @@ public final class AppSettings {
         if (code == null) {
             return Optional.empty();
         }
-        Optional<CountryLocale> locale = AppLocalization.supportedLocales().stream()
-                                                        .filter(supported -> supported.localeCode().equals(code))
-                                                        .findFirst();
+        Optional<CountryLocale> locale = CountryLocale.fromLocaleCode(code);
         if (locale.isEmpty()) {
             AppLogger.warnf("AppSettings: Ignoring unknown locale code '%s' in %s", code, file);
         }
         return locale;
+    }
+
+    /**
+     * Saves the locale to the settings file in the application data directory.
+     *
+     * @param locale the locale to save
+     * @return {@code true} if the setting was written; otherwise {@code false}
+     */
+    public static boolean writeLocale(CountryLocale locale) {
+        return resolveSettingsFile().map(file -> writeLocale(file, locale)).orElse(false);
     }
 
     /**
@@ -91,7 +86,7 @@ public final class AppSettings {
      * @param locale the locale to save
      * @return {@code true} if the setting was written; otherwise {@code false}
      */
-    public static boolean writeLocale(Path file, CountryLocale locale) {
+    static boolean writeLocale(Path file, CountryLocale locale) {
         Properties properties = Files.exists(file) ? load(file).orElseGet(Properties::new) : new Properties();
         properties.setProperty(KEY_LOCALE, locale.localeCode());
         try (Writer writer = Files.newBufferedWriter(file, StandardCharsets.UTF_8)) {

@@ -164,15 +164,11 @@ Supported application arguments:
 | Argument              | Description                                                                                                                |
 |-----------------------|----------------------------------------------------------------------------------------------------------------------------|
 | `--help`              | Prints the list of arguments and exits                                                                                     |
-| `--locale=<locale>`   | Sets the UI language: `en`, `de`, `en_US`, or `de_DE` (case-sensitive); default: system locale, otherwise `en_US`          |
+| `--locale=<locale>`   | Sets the UI language: `en`, `de`, `en_US`, or `de_DE` (case-sensitive); default: saved language, system locale, or `en_US` |
 | `--log-console`       | Enables logging to the console                                                                                             |
 | `--log-file`          | Enables logging to the file `ExtraterrestrialPetsSimulation.log` in the application's log directory                        |
 | `--log-level=<level>` | Sets the log level: `debug`, `info`, `warn`, or `error` (case-insensitive); default: `info`                                |
 | `--simulation=<name>` | Starts a simulation directly, e.g. `etpets`, `wator`, `sugar`, `conway`, `langton`, `forest`, `snake`, `rebounding`        |
-
-The selected UI language is saved in the file `settings.properties` in the application data directory
-(Windows: `%LOCALAPPDATA%\ExtraterrestrialPetsSimulation`) and used on the next start. `--locale` takes precedence for
-the current run and does not change the saved setting. Delete the file to reset the settings.
 
 Flags can also take a boolean value, e.g. `--log-console=false`. Several arguments are passed to Gradle as one quoted
 string, separated by spaces.
@@ -184,6 +180,14 @@ argument; inside the Gradle `--args` string, use single quotes:
 .\bin\ExtraterrestrialPetsSimulation.bat "--key=value with spaces"
 .\gradlew.bat :app:run --args="--locale=en '--key=value with spaces'"
 ```
+
+The selected UI language is saved as `locale` in the file `settings.properties` and used on the next start without
+`--locale`. `--locale` takes precedence for the current run and does not change the saved setting. To reset the
+settings, delete the file. It is stored in the application data directory:
+
+- Windows: `%LOCALAPPDATA%\ExtraterrestrialPetsSimulation`
+- macOS: `~/Library/Application Support/ExtraterrestrialPetsSimulation`
+- Linux: `~/.config/ExtraterrestrialPetsSimulation`
 
 ### Run the Distribution
 
