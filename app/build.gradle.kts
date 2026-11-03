@@ -25,10 +25,14 @@ repositories {
 val javafxPlatform: String = run {
     val osName = providers.systemProperty("os.name").get()
     val osArch = providers.systemProperty("os.arch").get()
-    if (osName.startsWith("Windows") && osArch in setOf("amd64", "x86_64")) {
-        "win"
-    } else {
-        throw GradleException("Unsupported platform for JavaFX: os.name='$osName', os.arch='$osArch'. Only Windows x64 is supported.")
+    val isX64 = osArch in setOf("amd64", "x86_64")
+    when {
+        osName.startsWith("Windows") && isX64 -> "win"
+        osName.startsWith("Linux") && isX64 -> "linux"
+        else -> throw GradleException(
+            "Unsupported platform for JavaFX: os.name='$osName', os.arch='$osArch'. " +
+                "Supported platforms: Windows x64, Linux x64."
+        )
     }
 }
 
@@ -164,7 +168,8 @@ distributions {
     }
 }
 
-// Only Windows x64 is supported, so the Unix start script is not needed.
+// The distribution supports only Windows x64, so the Unix start script is not needed. distZip (part of app:build) also
+// runs on Linux, but its result is not a supported distribution.
 tasks.distZip {
     val unixStartScriptName = baseName
     exclude { it.name == unixStartScriptName }

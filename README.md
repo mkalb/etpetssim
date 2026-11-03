@@ -122,25 +122,25 @@ If possible, include:
 
 ### Platform Support
 
-| Platform      | Status                                                                     |
-|---------------|----------------------------------------------------------------------------|
-| Windows (x64) | Supported                                                                  |
-| Linux         | Not supported yet (the Gradle build selects only the Windows JavaFX files) |
-| macOS         | Not supported yet (the Gradle build selects only the Windows JavaFX files) |
+| Platform      | Status                                                                         |
+|---------------|--------------------------------------------------------------------------------|
+| Windows (x64) | Supported (development and distribution)                                       |
+| Linux (x64)   | Supported for development (build, tests, and run with Gradle); no distribution |
+| macOS         | Not supported                                                                  |
 
-JavaFX artifacts are platform-specific. `app/build.gradle.kts` currently resolves only the Windows x64 variant and fails
+JavaFX artifacts are platform-specific. `app/build.gradle.kts` resolves the Windows x64 or Linux x64 variant and fails
 with a clear error message on any other operating system or architecture.
-Supporting Linux or macOS would require extending the platform detection in that file.
 
 ### Prerequisites
 
-- Windows x64
+- Windows x64 or Linux x64
 - Java 27
 - Git (building the JAR reads the revision and commit date from the Git working tree)
 
 ### Commands
 
-Use the Gradle Wrapper from the repository root. No global Gradle installation is required.
+Use the Gradle Wrapper from the repository root. No global Gradle installation is required. The examples use
+PowerShell on Windows; on Linux, use `./gradlew` instead of `.\gradlew.bat` (e.g., `./gradlew :app:run`).
 
 ```powershell
 # Run the application
