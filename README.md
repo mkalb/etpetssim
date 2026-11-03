@@ -134,7 +134,9 @@ with a clear error message on any other operating system or architecture.
 ### Prerequisites
 
 - Windows x64 or Linux x64
-- Java 27
+- Java 17 to 27 to start the Gradle Wrapper, found via `JAVA_HOME` or on the `PATH`. The build compiles, tests, and
+  runs the application with a Java 27 toolchain (Eclipse Temurin), which Gradle detects among the installed JDKs or
+  downloads automatically (internet access required on first use).
 - Git (building the JAR reads the revision and commit date from the Git working tree)
 
 ### Commands
@@ -193,8 +195,8 @@ directory:
 
 ### Run the Distribution
 
-The distribution ZIP built by `.\gradlew.bat :app:distZip` can be run without Gradle. It requires Java 27 on the `PATH`
-or in `JAVA_HOME`.
+The distribution ZIP built by `.\gradlew.bat :app:distZip` can be run without Gradle. It requires a Java 27 runtime
+(JRE or JDK), found via `JAVA_HOME` or on the `PATH`. JavaFX is included in `lib`.
 
 1. Extract the ZIP.
 2. Open a terminal in the extracted directory (the one that contains `bin` and `lib`).

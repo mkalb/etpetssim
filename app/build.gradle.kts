@@ -65,6 +65,16 @@ application {
     applicationDefaultJvmArgs = listOf("--enable-native-access=javafx.graphics")
 }
 
+// The sources are UTF-8. Without an explicit encoding, javac and javadoc use the default charset of the Gradle JVM,
+// which is not UTF-8 on Java 17 (e.g., windows-1252 on Windows).
+tasks.withType<JavaCompile>().configureEach {
+    options.encoding = "UTF-8"
+}
+
+tasks.withType<Javadoc>().configureEach {
+    options.encoding = "UTF-8"
+}
+
 // Tests share packages with the main code, so they are compiled and run patched into the application module.
 tasks.compileTestJava {
     val moduleName = applicationModuleName

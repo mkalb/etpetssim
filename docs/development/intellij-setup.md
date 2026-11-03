@@ -42,8 +42,9 @@ These settings are not committed and must be set once per working copy:
       existing file indents for editing" off, "Enable EditorConfig support" on.
     - Formatter: do not format `*.md`, because the IntelliJ formatter joined wrapped lines that start with special
       characters into very long lines; formatter markers in code comments off.
-- Terminal (Settings > Tools > Terminal): set the environment variable `JAVA_HOME` to the Java 27 JDK (e.g.,
-  `JAVA_HOME=<path to jdk-27>`), so that the Gradle Wrapper in the IntelliJ terminal uses it.
+- Terminal (Settings > Tools > Terminal): the Gradle Wrapper starts with any Java 17 to 27 from `JAVA_HOME` or the
+  `PATH`. Only if neither provides one, set the environment variable `JAVA_HOME` to such a Java installation (e.g.,
+  `JAVA_HOME=<path to jdk-27>`); the build provisions its Java 27 toolchain itself.
 - File encodings: UTF-8 for project files and for `.properties` files.
 - Line endings: Git converts the working copy to CRLF (`core.autocrlf=true`); keep the line separator of existing
   files.
