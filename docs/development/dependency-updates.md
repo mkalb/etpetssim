@@ -26,8 +26,9 @@ project uses the latest stable versions whenever possible.
    `https://services.gradle.org/distributions/gradle-<version>-wrapper.jar.sha256`.
 5. Update the version in `README.md` (technology table) and in `THIRD-PARTY-LICENSES` (version and license URL
    `https://github.com/gradle/gradle/blob/v<version>/LICENSE`).
-6. Check the release notes for changes to the Java versions that can run Gradle. The supported range ("Java 17 to 27")
-   appears in `README.md` (Prerequisites) and `docs/development/intellij-setup.md` (Terminal).
+6. For a minor or major release (not for a patch release), check the release notes for changes to the Java versions
+   that can run Gradle. The supported range ("Java 17 to 27") appears in `README.md` (Prerequisites) and
+   `docs/development/intellij-setup.md` (Terminal).
 
 The `wrapper` task updates `gradle/wrapper/gradle-wrapper.properties` and `gradle/wrapper/gradle-wrapper.jar`, and
 `gradlew` and `gradlew.bat` if their templates changed. It writes the properties file with LF line endings; Git warns
