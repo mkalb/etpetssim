@@ -74,6 +74,27 @@ public final class ExtraterrestrialPetsSimulation extends Application {
     private int furtherErrorCount;
 
     /**
+     * Formats the content text of the unexpected error alert.
+     *
+     * @param throwable         uncaught exception shown in the alert
+     * @param furtherErrorCount number of further errors since the alert opened
+     * @return the exception message (or its simple class name if the message is {@code null} or blank), an empty
+     *         line, the log hint, and, if {@code furtherErrorCount} is positive, a line with the count
+     */
+    static String formatUnexpectedErrorContent(Throwable throwable, int furtherErrorCount) {
+        String message = throwable.getMessage();
+        StringBuilder content = new StringBuilder((message == null) || message.isBlank()
+                ? throwable.getClass().getSimpleName()
+                : message);
+        content.append("\n\n").append(AppLocalization.getText(AppLocalizationKeys.ALERT_UNEXPECTED_ERROR_LOG));
+        if (furtherErrorCount > 0) {
+            content.append('\n').append(AppLocalization.getFormattedText(
+                    AppLocalizationKeys.ALERT_UNEXPECTED_ERROR_FURTHER, furtherErrorCount));
+        }
+        return content.toString();
+    }
+
+    /**
      * Resolves the initial simulation type from parsed arguments, restricted to implemented simulations.
      *
      * @param arguments parsed application arguments
@@ -101,27 +122,6 @@ public final class ExtraterrestrialPetsSimulation extends Application {
             }
         }
         return Screen.getPrimary();
-    }
-
-    /**
-     * Formats the content text of the unexpected error alert.
-     *
-     * @param throwable         uncaught exception shown in the alert
-     * @param furtherErrorCount number of further errors since the alert opened
-     * @return the exception message (or its simple class name if the message is null or blank), an empty line,
-     *         the log hint, and, if {@code furtherErrorCount} is positive, a line with the count
-     */
-    static String formatUnexpectedErrorContent(Throwable throwable, int furtherErrorCount) {
-        String message = throwable.getMessage();
-        StringBuilder content = new StringBuilder((message == null) || message.isBlank()
-                ? throwable.getClass().getSimpleName()
-                : message);
-        content.append("\n\n").append(AppLocalization.getText(AppLocalizationKeys.ALERT_UNEXPECTED_ERROR_LOG));
-        if (furtherErrorCount > 0) {
-            content.append('\n').append(AppLocalization.getFormattedText(
-                    AppLocalizationKeys.ALERT_UNEXPECTED_ERROR_FURTHER, furtherErrorCount));
-        }
-        return content.toString();
     }
 
     /**
