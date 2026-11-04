@@ -301,6 +301,22 @@ Notes:
 - Proposal: Remove the `Optional` parameters, e.g., by reading the statistics from the ViewModel inside the methods
   or by taking a `@Nullable STA`, and remove the suppressions; adapt the callers. An API change.
 
+#### Tooltips of the edit tool bar buttons
+
+- Origin: #36 (review of the split of the localization keys, 2026-11-04)
+- Types: `EditToolBarView`; `simulations.md` ("UI Construction")
+- Problem: `EditToolBarView` creates a `Tooltip` directly for all its buttons: for the edit and select buttons with
+  the fixed keys `SIMULATION_TOOLBAR_EDIT_TOOLTIP` and `SIMULATION_TOOLBAR_SELECT_TOOLTIP`, and for the action
+  buttons with `descriptor.tooltipKey()`. `simulations.md` allows direct `Tooltip` instances only for computed texts
+  without a fixed key and says that edit tool bar buttons get their tooltip key from `SimulationUserActionDescriptor`;
+  the edit and select buttons have no descriptor, and the rule does not say how a button without a label sets its
+  tooltip. `FXComponentFactory` has no public method for a button with a tooltip (only the private
+  `createTextFieldButton(..)`).
+- Proposal: Decide whether the tool bar buttons keep `new Tooltip(..)` and clarify the rule in `simulations.md`
+  (buttons without a label get their own tooltip; the edit and select buttons use the fixed keys of
+  `SimulationLocalizationKeys`), or create the four buttons through one helper that sets text and tooltip (e.g., in
+  `EditToolBarView`, or a new method in `FXComponentFactory`, which would be an API change).
+
 ## 4. Simulation statistics
 
 One statistics class per simulation in its `model` package.
