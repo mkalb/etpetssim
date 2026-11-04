@@ -84,7 +84,6 @@ below, and `.claude/rules/simulations.md` applies the same principle to the MVVM
 
 - Use UTF-8 for `.java`, `.md`, and `.properties` files.
 - Prefer ASCII unless existing content or domain needs justify non-ASCII.
-- Keep entries in `.properties` files sorted alphabetically by key.
 - Write repository Markdown in standard GitHub Markdown.
 - Format Markdown by hand: wrap prose at 120 characters, or at the narrower width an existing file uses; break lines
   only between words, not inside code spans, links, or emphasis that fits on one line, and rewrap only the paragraphs
@@ -112,7 +111,8 @@ below, and `.claude/rules/simulations.md` applies the same principle to the MVVM
 - Do not translate English repository or GitHub text into the chat language. When reporting such text in chat, either
   quote it verbatim or give a short summary or explanation in the chat language; the user can read the file, diff,
   or issue directly.
-- Keep user-facing text in `i18n.messages` resource bundles.
+- Keep user-facing text in `i18n.messages` resource bundles; `.claude/rules/i18n.md` describes their conventions and
+  the localization key constants.
 
 ## Issues and Plans
 

@@ -1,12 +1,14 @@
 ---
 name: i18n-consistency
-description: 'Explicitly check the production en_US and de_DE localization bundles for encoding, Java properties syntax, structural consistency, and formatting. Starts in read-only report mode; run its guided auto-fix only after the user confirms. Invoke to review or clean up localization/i18n.'
+description: 'Check the production en_US and de_DE localization bundles for encoding, Java properties syntax, structural consistency, and formatting. Starts in read-only report mode; run its guided auto-fix only after the user confirms. Invoke after changing a bundle, or to review or clean up localization/i18n.'
 argument-hint: "[report|fix]"
 user-invocable: true
-disable-model-invocation: true
 ---
 
 # i18n Consistency
+
+The conventions of the bundles are defined in `.claude/rules/i18n.md`; this
+skill checks them. Keep the helper and this file consistent with that rule.
 
 ## How to run (do this first)
 
@@ -95,10 +97,11 @@ different `%` URL-encoding.
       "Run fix"). A bare "fix" reply counts as confirmation **only** in answer to
       this question.
     - If the user declines or does not confirm, do nothing further.
-- **Never edit, sort, re-align, or otherwise change the `.properties` files
-  yourself.** The only allowed way to change them is by invoking the helper in
-  `fix` mode (see below). If you cannot run the helper, report that and stop —
-  do not hand-edit the bundles.
+- **Within this workflow, never edit, sort, re-align, or otherwise change the
+  `.properties` files yourself.** The only allowed way to change them here is
+  by invoking the helper in `fix` mode (see below); adding or changing entries
+  as part of other work follows `.claude/rules/i18n.md`. If you cannot run the
+  helper, report that and stop — do not hand-edit the bundles.
 - `fix` strips a UTF-8 BOM, removes invisible/non-printable characters (except
   regular spaces) that are literally present in decoded keys or values,
   normalizes line endings to one consistent style with exactly one trailing

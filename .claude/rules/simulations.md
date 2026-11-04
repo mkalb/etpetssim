@@ -46,7 +46,7 @@ Keep the cross-cutting files in sync, for example:
 |---------------------------------------|-------------------------------------------------------------------------|
 | Enum metadata (title, CSS, CLI alias) | `SimulationType.java`, `SimulationTypeTest.java`, localization          |
 | Entity/display changes                | `docs/simulations/Simulation_Entity_Catalog.md`                         |
-| Localization keys                     | All `messages_*.properties` files                                       |
+| Localization keys                     | All `messages_*.properties` files (see `i18n.md`)                       |
 | Factory wiring                        | `simulations/core/SimulationFactory.java`, `SimulationFactoryTest.java` |
 
 Lists of simulations (e.g., the README table and gallery, and the entity catalog) follow the declaration order of
@@ -173,7 +173,7 @@ are meant to be extended (e.g., `BaseTimedSimulationStatistics`).
 ### Resources and Internationalization
 
 - Load images, CSS, and UI resources through `AppResources`.
-- Access bundles through `AppLocalization`.
+- Access bundles through `AppLocalization`; `i18n.md` describes the bundles and the localization key constants.
 
 ## Factory Pattern
 

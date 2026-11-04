@@ -27,8 +27,9 @@ Rules for all `.java` files; repository-wide instructions still apply.
   loop when it is clearer than a stream. Extract lambdas with several statements into named methods.
 - Use locale-stable normalization for technical text (e.g., `toLowerCase(Locale.ROOT)`).
 - Reference localization keys through constants instead of string literals at the call site: app-wide keys in
-  `core.AppLocalizationKeys`, simulation-specific keys in the class that uses them. The key methods of enums
-  (`labelResourceKey()`, `resourceKey()`) may return string literals.
+  `core.AppLocalizationKeys`, keys shared by the simulations in `simulations.core.view.SimulationLocalizationKeys`,
+  simulation-specific keys in the class that uses them; `i18n.md` describes the key schema and the constant names.
+  The key methods of enums (`labelResourceKey()`, `resourceKey()`) may return string literals.
 - Name domain numbers as constants (e.g., in `<Simulation>Constraints` or `<Simulation>Balance`); literals in
   formulas, geometry, and layout code may stay inline.
 - Do not initialize fields explicitly to their default value (`0`, `false`, `null`); an explicit initializer is for a
