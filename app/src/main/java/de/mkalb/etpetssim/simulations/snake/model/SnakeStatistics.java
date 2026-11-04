@@ -19,10 +19,10 @@ public final class SnakeStatistics
     public static final String KEY_FOOD_CELLS = "foodCells";
     public static final String KEY_CUMULATIVE_SNAKE_DEATH_COUNT = "cumulativeSnakeDeathCount";
 
-    private static final String SNAKE_OBSERVATION_SNAKE_HEAD_CELLS = "snake.observation.cells.snakehead";
-    private static final String SNAKE_OBSERVATION_LIVING_SNAKE_HEAD_CELLS = "snake.observation.cells.livingsnakehead";
-    private static final String SNAKE_OBSERVATION_WALL_CELLS = "snake.observation.cells.wall";
-    private static final String SNAKE_OBSERVATION_FOOD_CELLS = "snake.observation.cells.food";
+    private static final String SNAKE_OBSERVATION_CELLS_SNAKE_HEAD = "snake.observation.cells.snakehead";
+    private static final String SNAKE_OBSERVATION_CELLS_LIVING_SNAKE_HEAD = "snake.observation.cells.livingsnakehead";
+    private static final String SNAKE_OBSERVATION_CELLS_WALL = "snake.observation.cells.wall";
+    private static final String SNAKE_OBSERVATION_CELLS_FOOD = "snake.observation.cells.food";
     private static final String SNAKE_OBSERVATION_CUMULATIVE_SNAKE_DEATH_COUNT = "snake.observation.cumulativesnakedeathcount";
 
     private int snakeHeadCells;
@@ -42,16 +42,16 @@ public final class SnakeStatistics
 
     public static List<StatisticsMetric<SnakeStatistics>> metrics() {
         return List.of(
-                new StatisticsMetric<>(KEY_SNAKE_HEAD_CELLS, SNAKE_OBSERVATION_SNAKE_HEAD_CELLS,
+                new StatisticsMetric<>(KEY_SNAKE_HEAD_CELLS, SNAKE_OBSERVATION_CELLS_SNAKE_HEAD,
                         SnakeStatistics::snakeHeadCells,
                         StatisticsExtremaMode.NONE),
-                new StatisticsMetric<>(KEY_LIVING_SNAKE_HEAD_CELLS, SNAKE_OBSERVATION_LIVING_SNAKE_HEAD_CELLS,
+                new StatisticsMetric<>(KEY_LIVING_SNAKE_HEAD_CELLS, SNAKE_OBSERVATION_CELLS_LIVING_SNAKE_HEAD,
                         SnakeStatistics::livingSnakeHeadCells,
                         StatisticsExtremaMode.NONE),
-                new StatisticsMetric<>(KEY_WALL_CELLS, SNAKE_OBSERVATION_WALL_CELLS,
+                new StatisticsMetric<>(KEY_WALL_CELLS, SNAKE_OBSERVATION_CELLS_WALL,
                         SnakeStatistics::wallCells,
                         StatisticsExtremaMode.NONE),
-                new StatisticsMetric<>(KEY_FOOD_CELLS, SNAKE_OBSERVATION_FOOD_CELLS,
+                new StatisticsMetric<>(KEY_FOOD_CELLS, SNAKE_OBSERVATION_CELLS_FOOD,
                         SnakeStatistics::foodCells,
                         StatisticsExtremaMode.NONE),
                 new StatisticsMetric<>(KEY_CUMULATIVE_SNAKE_DEATH_COUNT, SNAKE_OBSERVATION_CUMULATIVE_SNAKE_DEATH_COUNT,

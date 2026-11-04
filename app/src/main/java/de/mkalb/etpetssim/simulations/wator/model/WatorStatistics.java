@@ -17,8 +17,8 @@ public final class WatorStatistics
     public static final String KEY_FISH_CELLS = "fishCells";
     public static final String KEY_SHARK_CELLS = "sharkCells";
 
-    private static final String WATOR_OBSERVATION_FISH_CELLS = "wator.observation.cells.fish";
-    private static final String WATOR_OBSERVATION_SHARK_CELLS = "wator.observation.cells.shark";
+    private static final String WATOR_OBSERVATION_CELLS_FISH = "wator.observation.cells.fish";
+    private static final String WATOR_OBSERVATION_CELLS_SHARK = "wator.observation.cells.shark";
     private static final int CHART_WINDOW_SIZE = 500;
 
     private int fishCells;
@@ -32,10 +32,10 @@ public final class WatorStatistics
 
     public static List<StatisticsMetric<WatorStatistics>> metrics() {
         return List.of(
-                new StatisticsMetric<>(KEY_FISH_CELLS, WATOR_OBSERVATION_FISH_CELLS,
+                new StatisticsMetric<>(KEY_FISH_CELLS, WATOR_OBSERVATION_CELLS_FISH,
                         WatorStatistics::fishCells,
                         StatisticsExtremaMode.MIN_AND_MAX, StatisticsChartGroup.PRIMARY, CHART_WINDOW_SIZE),
-                new StatisticsMetric<>(KEY_SHARK_CELLS, WATOR_OBSERVATION_SHARK_CELLS,
+                new StatisticsMetric<>(KEY_SHARK_CELLS, WATOR_OBSERVATION_CELLS_SHARK,
                         WatorStatistics::sharkCells,
                         StatisticsExtremaMode.MIN_AND_MAX, StatisticsChartGroup.PRIMARY, CHART_WINDOW_SIZE)
         );

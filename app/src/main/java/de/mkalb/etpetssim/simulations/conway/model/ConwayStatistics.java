@@ -18,9 +18,9 @@ public final class ConwayStatistics
     public static final String KEY_DEAD_CELLS = "deadCells";
     public static final String KEY_CHANGED_CELLS = "changedCells";
 
-    private static final String CONWAY_OBSERVATION_ALIVE_CELLS = "conway.observation.cells.alive";
-    private static final String CONWAY_OBSERVATION_DEAD_CELLS = "conway.observation.cells.dead";
-    private static final String CONWAY_OBSERVATION_CHANGED_CELLS = "conway.observation.cells.changed";
+    private static final String CONWAY_OBSERVATION_CELLS_ALIVE = "conway.observation.cells.alive";
+    private static final String CONWAY_OBSERVATION_CELLS_DEAD = "conway.observation.cells.dead";
+    private static final String CONWAY_OBSERVATION_CELLS_CHANGED = "conway.observation.cells.changed";
     private static final int CHART_WINDOW_SIZE = 50;
 
     private int aliveCells;
@@ -36,13 +36,13 @@ public final class ConwayStatistics
 
     public static List<StatisticsMetric<ConwayStatistics>> metrics() {
         return List.of(
-                new StatisticsMetric<>(KEY_ALIVE_CELLS, CONWAY_OBSERVATION_ALIVE_CELLS,
+                new StatisticsMetric<>(KEY_ALIVE_CELLS, CONWAY_OBSERVATION_CELLS_ALIVE,
                         ConwayStatistics::aliveCells,
                         StatisticsExtremaMode.MIN_AND_MAX, StatisticsChartGroup.PRIMARY, CHART_WINDOW_SIZE),
-                new StatisticsMetric<>(KEY_DEAD_CELLS, CONWAY_OBSERVATION_DEAD_CELLS,
+                new StatisticsMetric<>(KEY_DEAD_CELLS, CONWAY_OBSERVATION_CELLS_DEAD,
                         ConwayStatistics::deadCells,
                         StatisticsExtremaMode.MIN_AND_MAX),
-                new StatisticsMetric<>(KEY_CHANGED_CELLS, CONWAY_OBSERVATION_CHANGED_CELLS,
+                new StatisticsMetric<>(KEY_CHANGED_CELLS, CONWAY_OBSERVATION_CELLS_CHANGED,
                         ConwayStatistics::changedCells,
                         StatisticsExtremaMode.MAX)
         );

@@ -10,27 +10,27 @@ public enum GridEdgeBehavior {
     /**
      * Both X and Y edges are blocking. Entities cannot cross the grid boundaries.
      */
-    BLOCK_XY(EdgeBehavior.BLOCK, EdgeBehavior.BLOCK, "gridedgebehavior.block_xy"),
+    BLOCK_XY(EdgeBehavior.BLOCK, EdgeBehavior.BLOCK, "gridedgebehavior.blockxy"),
 
     /**
      * Both X and Y edges wrap. Entities reappear on the opposite edge in both directions.
      */
-    WRAP_XY(EdgeBehavior.WRAP, EdgeBehavior.WRAP, "gridedgebehavior.wrap_xy"),
+    WRAP_XY(EdgeBehavior.WRAP, EdgeBehavior.WRAP, "gridedgebehavior.wrapxy"),
 
     /**
      * Both X and Y edges absorb entities. Entities are removed when reaching any edge.
      */
-    ABSORB_XY(EdgeBehavior.ABSORB, EdgeBehavior.ABSORB, "gridedgebehavior.absorb_xy"),
+    ABSORB_XY(EdgeBehavior.ABSORB, EdgeBehavior.ABSORB, "gridedgebehavior.absorbxy"),
 
     /**
      * X edge is blocking, Y edge wraps. Entities reappear on the opposite Y edge.
      */
-    BLOCK_X_WRAP_Y(EdgeBehavior.BLOCK, EdgeBehavior.WRAP, "gridedgebehavior.block_x_wrap_y"),
+    BLOCK_X_WRAP_Y(EdgeBehavior.BLOCK, EdgeBehavior.WRAP, "gridedgebehavior.blockxwrapy"),
 
     /**
      * X edge wraps, Y edge is blocking. Entities reappear on the opposite X edge.
      */
-    WRAP_X_BLOCK_Y(EdgeBehavior.WRAP, EdgeBehavior.BLOCK, "gridedgebehavior.wrap_x_block_y");
+    WRAP_X_BLOCK_Y(EdgeBehavior.WRAP, EdgeBehavior.BLOCK, "gridedgebehavior.wrapxblocky");
 
     private final EdgeBehavior edgeBehaviorX;
     private final EdgeBehavior edgeBehaviorY;

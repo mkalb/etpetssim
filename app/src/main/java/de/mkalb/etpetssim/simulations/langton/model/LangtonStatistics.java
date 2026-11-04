@@ -16,8 +16,8 @@ public final class LangtonStatistics
     public static final String KEY_ANT_CELLS = "antCells";
     public static final String KEY_VISITED_CELLS = "visitedCells";
 
-    private static final String LANGTON_OBSERVATION_ANT_CELLS = "langton.observation.cells.ant";
-    private static final String LANGTON_OBSERVATION_VISITED_CELLS = "langton.observation.cells.visited";
+    private static final String LANGTON_OBSERVATION_CELLS_ANT = "langton.observation.cells.ant";
+    private static final String LANGTON_OBSERVATION_CELLS_VISITED = "langton.observation.cells.visited";
 
     private int antCells;
     private int visitedCells;
@@ -30,10 +30,10 @@ public final class LangtonStatistics
 
     public static List<StatisticsMetric<LangtonStatistics>> metrics() {
         return List.of(
-                new StatisticsMetric<>(KEY_ANT_CELLS, LANGTON_OBSERVATION_ANT_CELLS,
+                new StatisticsMetric<>(KEY_ANT_CELLS, LANGTON_OBSERVATION_CELLS_ANT,
                         LangtonStatistics::antCells,
                         StatisticsExtremaMode.NONE),
-                new StatisticsMetric<>(KEY_VISITED_CELLS, LANGTON_OBSERVATION_VISITED_CELLS,
+                new StatisticsMetric<>(KEY_VISITED_CELLS, LANGTON_OBSERVATION_CELLS_VISITED,
                         LangtonStatistics::visitedCells,
                         StatisticsExtremaMode.NONE)
         );

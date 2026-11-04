@@ -18,9 +18,9 @@ public final class ForestStatistics
     public static final String KEY_TREE_CELLS = "treeCells";
     public static final String KEY_BURNING_CELLS = "burningCells";
 
-    private static final String FOREST_OBSERVATION_EMPTY_CELLS = "forest.observation.cells.empty";
-    private static final String FOREST_OBSERVATION_TREE_CELLS = "forest.observation.cells.tree";
-    private static final String FOREST_OBSERVATION_BURNING_CELLS = "forest.observation.cells.burning";
+    private static final String FOREST_OBSERVATION_CELLS_EMPTY = "forest.observation.cells.empty";
+    private static final String FOREST_OBSERVATION_CELLS_TREE = "forest.observation.cells.tree";
+    private static final String FOREST_OBSERVATION_CELLS_BURNING = "forest.observation.cells.burning";
 
     private int emptyCells;
     private int treeCells;
@@ -35,13 +35,13 @@ public final class ForestStatistics
 
     public static List<StatisticsMetric<ForestStatistics>> metrics() {
         return List.of(
-                new StatisticsMetric<>(KEY_EMPTY_CELLS, FOREST_OBSERVATION_EMPTY_CELLS,
+                new StatisticsMetric<>(KEY_EMPTY_CELLS, FOREST_OBSERVATION_CELLS_EMPTY,
                         ForestStatistics::emptyCells,
                         StatisticsExtremaMode.MAX),
-                new StatisticsMetric<>(KEY_TREE_CELLS, FOREST_OBSERVATION_TREE_CELLS,
+                new StatisticsMetric<>(KEY_TREE_CELLS, FOREST_OBSERVATION_CELLS_TREE,
                         ForestStatistics::treeCells,
                         StatisticsExtremaMode.MIN_AND_MAX, StatisticsChartGroup.PRIMARY),
-                new StatisticsMetric<>(KEY_BURNING_CELLS, FOREST_OBSERVATION_BURNING_CELLS,
+                new StatisticsMetric<>(KEY_BURNING_CELLS, FOREST_OBSERVATION_CELLS_BURNING,
                         ForestStatistics::burningCells,
                         StatisticsExtremaMode.MAX, StatisticsChartGroup.SECONDARY)
         );
