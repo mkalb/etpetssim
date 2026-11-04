@@ -139,8 +139,8 @@ public final class ConwayConfigView
                 viewModel.getBirthProperties(),
                 viewModel.transitionRulesProperty(),
                 viewModel.maxNeighborCountProperty(),
-                AppLocalization.getText(CONWAY_CONFIG_RULES),
-                AppLocalization.getText(CONWAY_CONFIG_RULES_TOOLTIP));
+                CONWAY_CONFIG_RULES,
+                CONWAY_CONFIG_RULES_TOOLTIP);
 
         var rulesPane = createConfigTitledPane(
                 AppLocalization.getText(AppLocalizationKeys.CONFIG_TITLE_RULES), true,
@@ -162,17 +162,17 @@ public final class ConwayConfigView
                                                                                      List<BooleanProperty> birthProperties,
                                                                                      ObjectProperty<ConwayTransitionRules> transitionRulesProperty,
                                                                                      IntegerProperty maxNeighborCountProperty,
-                                                                                     String labelFormatString,
-                                                                                     String tooltipFormatString) {
+                                                                                     String labelKey,
+                                                                                     String tooltipKey) {
         Label label = new Label();
         label.textProperty().bind(Bindings.createStringBinding(
-                () -> String.format(labelFormatString, transitionRulesProperty.get().toDisplayString()),
+                () -> AppLocalization.getFormattedText(labelKey, transitionRulesProperty.get().toDisplayString()),
                 transitionRulesProperty
         ));
-        Tooltip tooltip = new Tooltip(tooltipFormatString);
+        Tooltip tooltip = new Tooltip();
         tooltip.textProperty().bind(
                 Bindings.createStringBinding(
-                        () -> String.format(tooltipFormatString, maxNeighborCountProperty.get()),
+                        () -> AppLocalization.getFormattedText(tooltipKey, maxNeighborCountProperty.get()),
                         maxNeighborCountProperty
                 )
         );

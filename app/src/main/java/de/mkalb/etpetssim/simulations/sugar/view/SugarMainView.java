@@ -38,7 +38,6 @@ import javafx.scene.Node;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
-import javafx.scene.control.Tooltip;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.StrokeType;
@@ -253,12 +252,11 @@ public final class SugarMainView
             levelComboBox.setValue(selectedLevel);
         }
 
-        Label levelLabel = FXComponentFactory.createLabel(
+        Label levelLabel = FXComponentFactory.createLabeledControl(
+                levelComboBox,
                 AppLocalization.getText(SUGAR_TOOLBAR_ADD_SUGAR_LEVEL),
-                FXStyleClasses.SIMULATION_EDIT_TOOLBAR_OPTION_LABEL);
-        levelLabel.setLabelFor(levelComboBox);
-        levelLabel.setTooltip(new Tooltip(AppLocalization.getText(SUGAR_TOOLBAR_ADD_SUGAR_LEVEL_TOOLTIP)));
-        levelComboBox.setTooltip(new Tooltip(AppLocalization.getText(SUGAR_TOOLBAR_ADD_SUGAR_LEVEL_TOOLTIP)));
+                AppLocalization.getText(SUGAR_TOOLBAR_ADD_SUGAR_LEVEL_TOOLTIP),
+                FXStyleClasses.SIMULATION_EDIT_TOOLBAR_OPTION_LABEL).label();
 
         ChangeListener<@Nullable SugarAddSugarLevel> comboSelectionListener = (_, oldValue, newValue) -> {
             if (oldValue != newValue) {

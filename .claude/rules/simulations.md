@@ -139,6 +139,10 @@ are meant to be extended (e.g., `BaseTimedSimulationStatistics`).
 
 - Build scene graphs programmatically; do not use FXML.
 - Use `FXComponentFactory` for standard styled controls; direct instantiation is fine for one-off layouts.
+- Set the tooltip of a label and its control through `FXComponentFactory` with one shared `Tooltip`
+  (`createLabeled*(..)`, or `createLabeledControl(..)` for a custom control); edit toolbar buttons get their tooltip
+  key from `SimulationUserActionDescriptor`. Create `Tooltip` instances directly only for computed texts without a
+  fixed key (e.g., the min and max values in `AbstractObservationView`).
 - Keep `Scene`, `Stage`, and root wiring in entry-point/View classes.
 
 ### Properties and Bindings

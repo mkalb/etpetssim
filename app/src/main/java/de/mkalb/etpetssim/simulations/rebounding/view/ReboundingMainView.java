@@ -32,7 +32,6 @@ import javafx.scene.Node;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
-import javafx.scene.control.Tooltip;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.StrokeType;
@@ -198,12 +197,11 @@ public final class ReboundingMainView
             directionComboBox.setValue(selectedDirection);
         }
 
-        Label directionLabel = FXComponentFactory.createLabel(
+        Label directionLabel = FXComponentFactory.createLabeledControl(
+                directionComboBox,
                 AppLocalization.getText(REBOUNDING_TOOLBAR_ADD_REBOUNDER_DIRECTION),
-                FXStyleClasses.SIMULATION_EDIT_TOOLBAR_OPTION_LABEL);
-        directionLabel.setLabelFor(directionComboBox);
-        directionLabel.setTooltip(new Tooltip(AppLocalization.getText(REBOUNDING_TOOLBAR_ADD_REBOUNDER_DIRECTION_TOOLTIP)));
-        directionComboBox.setTooltip(new Tooltip(AppLocalization.getText(REBOUNDING_TOOLBAR_ADD_REBOUNDER_DIRECTION_TOOLTIP)));
+                AppLocalization.getText(REBOUNDING_TOOLBAR_ADD_REBOUNDER_DIRECTION_TOOLTIP),
+                FXStyleClasses.SIMULATION_EDIT_TOOLBAR_OPTION_LABEL).label();
 
         ChangeListener<@Nullable CompassDirection> comboSelectionListener = (_, oldValue, newValue) -> {
             if (oldValue != newValue) {

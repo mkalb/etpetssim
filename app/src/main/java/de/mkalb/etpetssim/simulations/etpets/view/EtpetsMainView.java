@@ -46,7 +46,6 @@ import javafx.scene.Node;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
-import javafx.scene.control.Tooltip;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.StrokeType;
@@ -410,12 +409,11 @@ public final class EtpetsMainView extends AbstractDefaultMainView<
             terrainComboBox.setValue(selectedTerrainChoice);
         }
 
-        Label terrainLabel = FXComponentFactory.createLabel(
+        Label terrainLabel = FXComponentFactory.createLabeledControl(
+                terrainComboBox,
                 AppLocalization.getText(ETPETS_TOOLBAR_SET_TERRAIN_OPTION),
-                FXStyleClasses.SIMULATION_EDIT_TOOLBAR_OPTION_LABEL);
-        terrainLabel.setLabelFor(terrainComboBox);
-        terrainLabel.setTooltip(new Tooltip(AppLocalization.getText(ETPETS_TOOLBAR_SET_TERRAIN_OPTION_TOOLTIP)));
-        terrainComboBox.setTooltip(new Tooltip(AppLocalization.getText(ETPETS_TOOLBAR_SET_TERRAIN_OPTION_TOOLTIP)));
+                AppLocalization.getText(ETPETS_TOOLBAR_SET_TERRAIN_OPTION_TOOLTIP),
+                FXStyleClasses.SIMULATION_EDIT_TOOLBAR_OPTION_LABEL).label();
 
         ChangeListener<@Nullable EtpetsTerrainChoice> comboSelectionListener = (_, oldValue, newValue) -> {
             if (oldValue != newValue) {
@@ -475,12 +473,11 @@ public final class EtpetsMainView extends AbstractDefaultMainView<
             resourceComboBox.setValue(selectedResourceChoice);
         }
 
-        Label resourceLabel = FXComponentFactory.createLabel(
+        Label resourceLabel = FXComponentFactory.createLabeledControl(
+                resourceComboBox,
                 AppLocalization.getText(ETPETS_TOOLBAR_SET_RESOURCE_OPTION),
-                FXStyleClasses.SIMULATION_EDIT_TOOLBAR_OPTION_LABEL);
-        resourceLabel.setLabelFor(resourceComboBox);
-        resourceLabel.setTooltip(new Tooltip(AppLocalization.getText(ETPETS_TOOLBAR_SET_RESOURCE_OPTION_TOOLTIP)));
-        resourceComboBox.setTooltip(new Tooltip(AppLocalization.getText(ETPETS_TOOLBAR_SET_RESOURCE_OPTION_TOOLTIP)));
+                AppLocalization.getText(ETPETS_TOOLBAR_SET_RESOURCE_OPTION_TOOLTIP),
+                FXStyleClasses.SIMULATION_EDIT_TOOLBAR_OPTION_LABEL).label();
 
         ChangeListener<@Nullable EtpetsResourceChoice> comboSelectionListener = (_, oldValue, newValue) -> {
             if (oldValue != newValue) {

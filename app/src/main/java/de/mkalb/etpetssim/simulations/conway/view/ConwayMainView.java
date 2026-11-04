@@ -32,7 +32,6 @@ import javafx.scene.Node;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
-import javafx.scene.control.Tooltip;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.StrokeType;
@@ -197,12 +196,11 @@ public final class ConwayMainView
             patternComboBox.setValue(selectedPatternChoice);
         }
 
-        Label patternLabel = FXComponentFactory.createLabel(
+        Label patternLabel = FXComponentFactory.createLabeledControl(
+                patternComboBox,
                 AppLocalization.getText(CONWAY_TOOLBAR_PATTERN),
-                FXStyleClasses.SIMULATION_EDIT_TOOLBAR_OPTION_LABEL);
-        patternLabel.setLabelFor(patternComboBox);
-        patternLabel.setTooltip(new Tooltip(AppLocalization.getText(CONWAY_TOOLBAR_PATTERN_TOOLTIP)));
-        patternComboBox.setTooltip(new Tooltip(AppLocalization.getText(CONWAY_TOOLBAR_PATTERN_TOOLTIP)));
+                AppLocalization.getText(CONWAY_TOOLBAR_PATTERN_TOOLTIP),
+                FXStyleClasses.SIMULATION_EDIT_TOOLBAR_OPTION_LABEL).label();
 
         ChangeListener<@Nullable ConwayPatternChoice> comboSelectionListener = (_, oldValue, newValue) -> {
             if (!Objects.equals(oldValue, newValue)) {

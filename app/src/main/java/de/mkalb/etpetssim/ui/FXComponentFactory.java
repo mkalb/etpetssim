@@ -543,6 +543,29 @@ public final class FXComponentFactory {
     }
 
     /**
+     * Creates a label with a fixed text for an existing control.
+     *
+     * <p>The label is connected to the control with {@code setLabelFor(..)}, and both share the same tooltip. The
+     * control itself is not changed otherwise; its content, style, and listeners remain the caller's responsibility.
+     *
+     * @param control         the existing control to label
+     * @param labelText       the text of the label
+     * @param tooltip         the tooltip text for both the label and the control
+     * @param labelStyleClass the CSS style class to apply to the label
+     * @param <R>             the type of the control
+     * @return a LabeledControl containing the new label and the given control
+     */
+    public static <R extends Control> LabeledControl<R> createLabeledControl(
+            R control,
+            String labelText,
+            String tooltip,
+            String labelStyleClass) {
+        Label label = createLabel(labelText, labelStyleClass);
+        connectLabel(label, control, tooltip, control);
+        return new LabeledControl<>(label, control);
+    }
+
+    /**
      * Creates a ListCell for displaying values using their display names.
      *
      * <p>The cell uses the provided map to look up display names for each value.
@@ -669,6 +692,11 @@ public final class FXComponentFactory {
                                           Control... tooltipControls) {
         Label label = new Label();
         label.textProperty().bind(text);
+        connectLabel(label, labelFor, tooltip, tooltipControls);
+        return label;
+    }
+
+    private static void connectLabel(Label label, Node labelFor, String tooltip, Control... tooltipControls) {
         label.setLabelFor(labelFor);
 
         Tooltip sharedTooltip = new Tooltip(tooltip);
@@ -676,7 +704,6 @@ public final class FXComponentFactory {
         for (Control control : tooltipControls) {
             control.setTooltip(sharedTooltip);
         }
-        return label;
     }
 
     private static TextField createBoundTextField(StringProperty inputProperty, String promptText, String styleClass) {
