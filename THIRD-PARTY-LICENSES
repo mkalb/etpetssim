@@ -2,7 +2,7 @@ Runtime libraries (shipped in the distribution)
 
 Library  | License                          | Version | License text
 ---------|----------------------------------|---------|----------------------------------------------
-JavaFX   | GPL v2 with Classpath Exception  | 27      | licenses/GPL-2.0-with-classpath-exception.txt
+JavaFX   | GPL v2 with Classpath Exception  | 27.0.1  | licenses/GPL-2.0-with-classpath-exception.txt
          |                                  |         | https://openjdk.org/legal/gplv2+ce.html
 
 The license texts of the shipped components are in the licenses folder of the
