@@ -84,7 +84,7 @@ final class AppResourcesTest {
 
     @Test
     void testGetImageReturnsEmptyForIllegalImage() {
-        assertTrue(AppResources.getImage("illegal_image.png").isEmpty());
+        assertTrue(AppResources.getImage("test_illegal_image.png").isEmpty());
     }
 
     @Test
