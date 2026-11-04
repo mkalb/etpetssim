@@ -173,7 +173,8 @@ public abstract class AbstractObservationView<
 
     /**
      * Creates a titled observation section as a {@link VBox} containing a two-column {@link GridPane}.
-     * Each row pairs a localized name label (left-aligned) with a value label (right-aligned, expanding).
+     * Each row pairs a localized name label (left-aligned, followed by a colon) with a value label (right-aligned,
+     * expanding).
      * {@code nameKeys} and {@code valueLabels} must have the same length.
      *
      * @param titleKey    localization key for the section title
@@ -196,7 +197,7 @@ public abstract class AbstractObservationView<
         grid.getColumnConstraints().addAll(nameColumn, valueColumn);
 
         for (int i = 0; i < nameKeys.length; i++) {
-            Label nameLabel = new Label(AppLocalization.getText(nameKeys[i]));
+            Label nameLabel = new Label(AppLocalization.getText(nameKeys[i]) + LABEL_SEPARATOR);
             nameLabel.getStyleClass().add(FXStyleClasses.OBSERVATION_NAME_LABEL);
             valueLabels[i].getStyleClass().add(FXStyleClasses.OBSERVATION_VALUE_LABEL);
             valueLabels[i].setMaxWidth(Double.MAX_VALUE);
