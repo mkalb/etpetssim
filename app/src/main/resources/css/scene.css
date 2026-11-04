@@ -29,6 +29,44 @@
     -fx-padding: 4 8 4 8;
 }
 
+/* Context menus of text inputs; the item rules override owner rules like .config-vbox .label */
+.context-menu {
+    -fx-background-color: #263a4d;
+    -fx-background-radius: 4;
+    -fx-background-insets: 0;
+    -fx-border-color: #00eaff;
+    -fx-border-width: 1;
+    -fx-border-radius: 4;
+}
+
+.context-menu .menu-item {
+    -fx-background-color: transparent;
+}
+
+.context-menu .menu-item .label {
+    -fx-text-fill: #aeefff;
+}
+
+.context-menu .menu-item:focused {
+    -fx-background-color: #35516b;
+}
+
+.context-menu .menu-item:focused .label {
+    -fx-text-fill: #00eaff;
+}
+
+.context-menu .menu-item:disabled {
+    -fx-opacity: 1;
+}
+
+.context-menu .menu-item:disabled .label {
+    -fx-text-fill: #667788;
+}
+
+.context-menu .separator-menu-item .line {
+    -fx-border-color: #35516b transparent transparent transparent;
+}
+
 ScrollPane {
     -fx-background-insets: 0;
     -fx-background-radius: 0;
