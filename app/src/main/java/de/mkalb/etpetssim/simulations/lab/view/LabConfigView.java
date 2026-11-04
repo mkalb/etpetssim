@@ -1,8 +1,8 @@
 package de.mkalb.etpetssim.simulations.lab.view;
 
 import de.mkalb.etpetssim.core.AppLocalization;
-import de.mkalb.etpetssim.core.AppLocalizationKeys;
 import de.mkalb.etpetssim.simulations.core.view.AbstractConfigView;
+import de.mkalb.etpetssim.simulations.core.view.SimulationLocalizationKeys;
 import de.mkalb.etpetssim.simulations.lab.model.LabConfig;
 import de.mkalb.etpetssim.simulations.lab.shared.LabColorMode;
 import de.mkalb.etpetssim.simulations.lab.viewmodel.LabConfigViewModel;
@@ -39,14 +39,14 @@ public final class LabConfigView
         var seedControl = createSeedControl();
 
         var initializationPane = createConfigTitledPane(
-                AppLocalization.getText(AppLocalizationKeys.CONFIG_TITLE_INITIALIZATION), false,
+                AppLocalization.getText(SimulationLocalizationKeys.CONFIG_TITLE_INITIALIZATION), false,
                 seedControl);
 
         // Rules
         var neighborhoodModeControl = createNeighborhoodModeControl(viewModel.neighborhoodModeProperty());
 
         var rulesPane = createConfigTitledPane(
-                AppLocalization.getText(AppLocalizationKeys.CONFIG_TITLE_RULES), false,
+                AppLocalization.getText(SimulationLocalizationKeys.CONFIG_TITLE_RULES), false,
                 neighborhoodModeControl);
 
         return createConfigMainBox(structurePane, layoutPane, initializationPane, rulesPane);

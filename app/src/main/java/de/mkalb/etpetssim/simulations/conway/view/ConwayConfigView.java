@@ -1,13 +1,13 @@
 package de.mkalb.etpetssim.simulations.conway.view;
 
 import de.mkalb.etpetssim.core.AppLocalization;
-import de.mkalb.etpetssim.core.AppLocalizationKeys;
 import de.mkalb.etpetssim.engine.CellShape;
 import de.mkalb.etpetssim.simulations.conway.model.ConwayConfig;
 import de.mkalb.etpetssim.simulations.conway.shared.ConwayRulePreset;
 import de.mkalb.etpetssim.simulations.conway.shared.ConwayTransitionRules;
 import de.mkalb.etpetssim.simulations.conway.viewmodel.ConwayConfigViewModel;
 import de.mkalb.etpetssim.simulations.core.view.AbstractConfigView;
+import de.mkalb.etpetssim.simulations.core.view.SimulationLocalizationKeys;
 import de.mkalb.etpetssim.ui.FXComponentFactory;
 import de.mkalb.etpetssim.ui.FXStyleClasses;
 import javafx.beans.binding.Bindings;
@@ -98,7 +98,7 @@ public final class ConwayConfigView
         var densityHintControl = new FXComponentFactory.LabeledControl<>(densityHintEmptyLabel, densityHintLabel);
 
         var initializationPane = createConfigTitledPane(
-                AppLocalization.getText(AppLocalizationKeys.CONFIG_TITLE_INITIALIZATION), true,
+                AppLocalization.getText(SimulationLocalizationKeys.CONFIG_TITLE_INITIALIZATION), true,
                 seedControl, alivePercentControl, densityHintControl);
 
         // Rules
@@ -143,7 +143,7 @@ public final class ConwayConfigView
                 CONWAY_CONFIG_RULES_TOOLTIP);
 
         var rulesPane = createConfigTitledPane(
-                AppLocalization.getText(AppLocalizationKeys.CONFIG_TITLE_RULES), true,
+                AppLocalization.getText(SimulationLocalizationKeys.CONFIG_TITLE_RULES), true,
                 presetTriangleControl, presetSquareControl, presetHexagonControl, inputControl, rulesControl);
 
         return createConfigMainBox(structurePane, layoutPane, initializationPane, rulesPane);

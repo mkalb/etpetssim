@@ -1,7 +1,6 @@
 package de.mkalb.etpetssim.simulations.core.view;
 
 import de.mkalb.etpetssim.core.AppLocalization;
-import de.mkalb.etpetssim.core.AppLocalizationKeys;
 import de.mkalb.etpetssim.simulations.core.shared.SimulationMode;
 import de.mkalb.etpetssim.simulations.core.shared.SimulationStartMode;
 import de.mkalb.etpetssim.simulations.core.shared.SimulationTerminationCheckMode;
@@ -33,10 +32,10 @@ public final class DefaultControlView
 
     @Override
     protected Pane createControlButtonPane() {
-        String textStart = AppLocalization.getText(AppLocalizationKeys.CONTROL_START);
-        String textPause = AppLocalization.getText(AppLocalizationKeys.CONTROL_PAUSE);
-        String textResume = AppLocalization.getText(AppLocalizationKeys.CONTROL_RESUME);
-        String textCancel = AppLocalization.getText(AppLocalizationKeys.CONTROL_CANCEL);
+        String textStart = AppLocalization.getText(SimulationLocalizationKeys.CONTROL_START);
+        String textPause = AppLocalization.getText(SimulationLocalizationKeys.CONTROL_PAUSE);
+        String textResume = AppLocalization.getText(SimulationLocalizationKeys.CONTROL_RESUME);
+        String textCancel = AppLocalization.getText(SimulationLocalizationKeys.CONTROL_CANCEL);
 
         Button actionButton = createControlButton(textStart);
         Button cancelButton = createControlButton(textCancel);
@@ -70,7 +69,7 @@ public final class DefaultControlView
         var simulationModeControl = FXComponentFactory.createLabeledChoiceRadioButtons(viewModel.simulationModeProperty(),
                 FXComponentFactory.createVBox(FXStyleClasses.CONFIG_RADIOBUTTON_BOX),
                 AppLocalization.getText(SimulationMode.labelResourceKey()),
-                AppLocalization.getText(AppLocalizationKeys.CONTROL_SIMULATION_MODE_TOOLTIP),
+                AppLocalization.getText(SimulationLocalizationKeys.CONTROL_SIMULATION_MODE_TOOLTIP),
                 FXStyleClasses.CONFIG_RADIOBUTTON
         );
 
@@ -78,8 +77,8 @@ public final class DefaultControlView
 
         var stepDurationControl = FXComponentFactory.createLabeledIntSlider(
                 viewModel.stepDurationProperty(),
-                AppLocalization.getText(AppLocalizationKeys.CONTROL_STEP_DURATION),
-                AppLocalization.getFormattedText(AppLocalizationKeys.CONTROL_STEP_DURATION_TOOLTIP,
+                AppLocalization.getText(SimulationLocalizationKeys.CONTROL_STEP_DURATION),
+                AppLocalization.getFormattedText(SimulationLocalizationKeys.CONTROL_STEP_DURATION_TOOLTIP,
                         viewModel.stepDurationProperty().min(),
                         viewModel.stepDurationProperty().max()),
                 FXStyleClasses.CONFIG_SLIDER
@@ -88,8 +87,8 @@ public final class DefaultControlView
         bindControlConfigDisabled(stepDurationControl.controlRegion());
 
         var stepCountControl = FXComponentFactory.createLabeledIntSpinner(viewModel.stepCountProperty(),
-                AppLocalization.getText(AppLocalizationKeys.CONTROL_STEP_COUNT),
-                AppLocalization.getFormattedText(AppLocalizationKeys.CONTROL_STEP_COUNT_TOOLTIP,
+                AppLocalization.getText(SimulationLocalizationKeys.CONTROL_STEP_COUNT),
+                AppLocalization.getFormattedText(SimulationLocalizationKeys.CONTROL_STEP_COUNT_TOOLTIP,
                         viewModel.stepCountProperty().min(),
                         viewModel.stepCountProperty().max()),
                 FXStyleClasses.CONFIG_SPINNER);
@@ -99,8 +98,8 @@ public final class DefaultControlView
         var startModeControl = FXComponentFactory.createLabeledChoiceCheckBox(viewModel.startModeProperty(),
                 SimulationStartMode.START_PAUSED,
                 SimulationStartMode.START_IMMEDIATELY,
-                AppLocalization.getText(AppLocalizationKeys.CONTROL_START_PAUSED),
-                AppLocalization.getText(AppLocalizationKeys.CONTROL_START_PAUSED_TOOLTIP),
+                AppLocalization.getText(SimulationLocalizationKeys.CONTROL_START_PAUSED),
+                AppLocalization.getText(SimulationLocalizationKeys.CONTROL_START_PAUSED_TOOLTIP),
                 FXStyleClasses.CONFIG_CHECKBOX
         );
 
@@ -109,8 +108,8 @@ public final class DefaultControlView
         var terminationCheckControl = FXComponentFactory.createLabeledChoiceCheckBox(viewModel.terminationCheckProperty(),
                 SimulationTerminationCheckMode.CHECKED,
                 SimulationTerminationCheckMode.UNCHECKED,
-                AppLocalization.getText(AppLocalizationKeys.CONTROL_TERMINATION_CHECK),
-                AppLocalization.getText(AppLocalizationKeys.CONTROL_TERMINATION_CHECK_TOOLTIP),
+                AppLocalization.getText(SimulationLocalizationKeys.CONTROL_TERMINATION_CHECK),
+                AppLocalization.getText(SimulationLocalizationKeys.CONTROL_TERMINATION_CHECK_TOOLTIP),
                 FXStyleClasses.CONFIG_CHECKBOX
         );
 
@@ -146,7 +145,7 @@ public final class DefaultControlView
 
     @Override
     protected Optional<Pane> createControlObservationPane() {
-        Label stepTitleLabel = new Label(AppLocalization.getText(AppLocalizationKeys.CONTROL_STEP_TITLE));
+        Label stepTitleLabel = new Label(AppLocalization.getText(SimulationLocalizationKeys.CONTROL_STEP_TITLE));
 
         VBox observationBox = new VBox(stepTitleLabel, stepNumberLabel);
         observationBox.getStyleClass().add(FXStyleClasses.CONTROL_OBSERVATION_VBOX);
@@ -155,7 +154,8 @@ public final class DefaultControlView
 
     @Override
     public void setStepCount(int stepCount) {
-        stepNumberLabel.setText(AppLocalization.getFormattedText(AppLocalizationKeys.CONTROL_STEP_NUMBER, stepCount));
+        stepNumberLabel.setText(
+                AppLocalization.getFormattedText(SimulationLocalizationKeys.CONTROL_STEP_NUMBER, stepCount));
     }
 
     private void bindActionButtonDisabled(Button actionButton) {

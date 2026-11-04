@@ -1,8 +1,8 @@
 package de.mkalb.etpetssim.simulations.forest.view;
 
 import de.mkalb.etpetssim.core.AppLocalization;
-import de.mkalb.etpetssim.core.AppLocalizationKeys;
 import de.mkalb.etpetssim.simulations.core.view.AbstractConfigView;
+import de.mkalb.etpetssim.simulations.core.view.SimulationLocalizationKeys;
 import de.mkalb.etpetssim.simulations.forest.model.ForestConfig;
 import de.mkalb.etpetssim.simulations.forest.viewmodel.ForestConfigViewModel;
 import de.mkalb.etpetssim.ui.FXComponentFactory;
@@ -43,7 +43,7 @@ public final class ForestConfigView
         );
 
         var initializationPane = createConfigTitledPane(
-                AppLocalization.getText(AppLocalizationKeys.CONFIG_TITLE_INITIALIZATION), true,
+                AppLocalization.getText(SimulationLocalizationKeys.CONFIG_TITLE_INITIALIZATION), true,
                 seedControl, treeDensityControl);
 
         // Rules
@@ -64,7 +64,7 @@ public final class ForestConfigView
         );
 
         var rulesPane = createConfigTitledPane(
-                AppLocalization.getText(AppLocalizationKeys.CONFIG_TITLE_RULES), true,
+                AppLocalization.getText(SimulationLocalizationKeys.CONFIG_TITLE_RULES), true,
                 neighborhoodModeControl, treeGrowthProbabilityControl, lightningIgnitionProbabilityControl);
 
         return createConfigMainBox(structurePane, layoutPane, initializationPane, rulesPane);

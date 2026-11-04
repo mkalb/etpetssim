@@ -1,8 +1,8 @@
 package de.mkalb.etpetssim.simulations.snake.view;
 
 import de.mkalb.etpetssim.core.AppLocalization;
-import de.mkalb.etpetssim.core.AppLocalizationKeys;
 import de.mkalb.etpetssim.simulations.core.view.AbstractConfigView;
+import de.mkalb.etpetssim.simulations.core.view.SimulationLocalizationKeys;
 import de.mkalb.etpetssim.simulations.snake.model.SnakeConfig;
 import de.mkalb.etpetssim.simulations.snake.shared.SnakeDeathMode;
 import de.mkalb.etpetssim.simulations.snake.viewmodel.SnakeConfigViewModel;
@@ -71,7 +71,7 @@ public final class SnakeConfigView
         );
 
         var initializationPane = createConfigTitledPane(
-                AppLocalization.getText(AppLocalizationKeys.CONFIG_TITLE_INITIALIZATION), true,
+                AppLocalization.getText(SimulationLocalizationKeys.CONFIG_TITLE_INITIALIZATION), true,
                 seedControl, verticalWallsControl, foodCellsControl, snakesControl, initialPendingGrowthControl);
 
         // Rules
@@ -102,7 +102,7 @@ public final class SnakeConfigView
         );
 
         var rulesPane = createConfigTitledPane(
-                AppLocalization.getText(AppLocalizationKeys.CONFIG_TITLE_RULES), true,
+                AppLocalization.getText(SimulationLocalizationKeys.CONFIG_TITLE_RULES), true,
                 deathModeControl, growthPerFoodControl, basePointsPerFoodControl, segmentLengthMultiplierControl);
 
         return createConfigMainBox(structurePane, layoutPane, initializationPane, rulesPane);

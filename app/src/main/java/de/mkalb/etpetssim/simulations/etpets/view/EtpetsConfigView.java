@@ -1,8 +1,8 @@
 package de.mkalb.etpetssim.simulations.etpets.view;
 
 import de.mkalb.etpetssim.core.AppLocalization;
-import de.mkalb.etpetssim.core.AppLocalizationKeys;
 import de.mkalb.etpetssim.simulations.core.view.AbstractConfigView;
+import de.mkalb.etpetssim.simulations.core.view.SimulationLocalizationKeys;
 import de.mkalb.etpetssim.simulations.etpets.model.EtpetsConfig;
 import de.mkalb.etpetssim.simulations.etpets.viewmodel.EtpetsConfigViewModel;
 import de.mkalb.etpetssim.ui.FXComponentFactory;
@@ -69,12 +69,12 @@ public final class EtpetsConfigView
         );
 
         var initializationPane = createConfigTitledPane(
-                AppLocalization.getText(AppLocalizationKeys.CONFIG_TITLE_INITIALIZATION), true,
+                AppLocalization.getText(SimulationLocalizationKeys.CONFIG_TITLE_INITIALIZATION), true,
                 seedControl, rockPercentControl, waterPercentControl, plantPercentControl, insectPercentControl, petCountControl);
 
         // Rules
         var rulesPane = createConfigTitledPane(
-                AppLocalization.getText(AppLocalizationKeys.CONFIG_TITLE_RULES), true);
+                AppLocalization.getText(SimulationLocalizationKeys.CONFIG_TITLE_RULES), true);
 
         return createConfigMainBox(structurePane, layoutPane, initializationPane, rulesPane);
     }

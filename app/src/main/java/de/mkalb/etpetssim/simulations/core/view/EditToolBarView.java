@@ -1,7 +1,6 @@
 package de.mkalb.etpetssim.simulations.core.view;
 
 import de.mkalb.etpetssim.core.AppLocalization;
-import de.mkalb.etpetssim.core.AppLocalizationKeys;
 import de.mkalb.etpetssim.core.AppLogger;
 import de.mkalb.etpetssim.simulations.core.shared.SimulationState;
 import de.mkalb.etpetssim.simulations.core.shared.SimulationUserActionContext;
@@ -101,8 +100,9 @@ final class EditToolBarView<CTX extends SimulationUserActionContext> {
 
         Button editButton = new Button();
         configureEditToolBarButton(editButton);
-        editButton.setText(AppLocalization.getText(AppLocalizationKeys.SIMULATION_TOOLBAR_EDIT));
-        editButton.setTooltip(new Tooltip(AppLocalization.getText(AppLocalizationKeys.SIMULATION_TOOLBAR_EDIT_TOOLTIP)));
+        editButton.setText(AppLocalization.getText(SimulationLocalizationKeys.SIMULATION_TOOLBAR_EDIT));
+        editButton.setTooltip(
+                new Tooltip(AppLocalization.getText(SimulationLocalizationKeys.SIMULATION_TOOLBAR_EDIT_TOOLTIP)));
         editButton.setOnAction(_ -> editModeProperty.set(!editModeProperty.get()));
         editButton.visibleProperty().bind(editModeProperty.not());
         editButton.managedProperty().bind(editModeProperty.not());
@@ -158,9 +158,11 @@ final class EditToolBarView<CTX extends SimulationUserActionContext> {
         Map<Toggle, SimulationUserActionDescriptor<CTX>> descriptorByToggle = new HashMap<>();
 
         if (selectedToolId != null) {
-            selectButton = new ToggleButton(AppLocalization.getText(AppLocalizationKeys.SIMULATION_TOOLBAR_SELECT));
+            selectButton =
+                    new ToggleButton(AppLocalization.getText(SimulationLocalizationKeys.SIMULATION_TOOLBAR_SELECT));
             configureEditToolBarButton(selectButton);
-            selectButton.setTooltip(new Tooltip(AppLocalization.getText(AppLocalizationKeys.SIMULATION_TOOLBAR_SELECT_TOOLTIP)));
+            selectButton.setTooltip(
+                    new Tooltip(AppLocalization.getText(SimulationLocalizationKeys.SIMULATION_TOOLBAR_SELECT_TOOLTIP)));
             selectButton.setToggleGroup(cellActionToggleGroup);
             selectButton.visibleProperty().bind(editModeProperty);
             selectButton.managedProperty().bind(editModeProperty);

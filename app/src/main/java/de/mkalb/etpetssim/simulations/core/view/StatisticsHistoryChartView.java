@@ -1,7 +1,6 @@
 package de.mkalb.etpetssim.simulations.core.view;
 
 import de.mkalb.etpetssim.core.AppLocalization;
-import de.mkalb.etpetssim.core.AppLocalizationKeys;
 import de.mkalb.etpetssim.simulations.core.model.StatisticsChartGroup;
 import de.mkalb.etpetssim.simulations.core.model.StatisticsMetric;
 import de.mkalb.etpetssim.simulations.core.model.StatisticsSample;
@@ -90,7 +89,7 @@ final class StatisticsHistoryChartView {
 
         for (StatisticsChartGroup group : distinctGroups) {
             NumberAxis xAxis = new NumberAxis();
-            xAxis.setLabel(AppLocalization.getText(AppLocalizationKeys.OBSERVATION_CHART_AXIS_STEP));
+            xAxis.setLabel(AppLocalization.getText(SimulationLocalizationKeys.OBSERVATION_CHART_AXIS_STEP));
             xAxis.setAutoRanging(false);
 
             NumberAxis yAxis = new NumberAxis();
@@ -116,7 +115,7 @@ final class StatisticsHistoryChartView {
         }
 
         titledPane = new TitledPane(
-                AppLocalization.getText(AppLocalizationKeys.OBSERVATION_SECTION_CHARTS),
+                AppLocalization.getText(SimulationLocalizationKeys.OBSERVATION_SECTION_CHARTS),
                 chartsBox);
         titledPane.getStyleClass().add(FXStyleClasses.OBSERVATION_CHART_SECTION);
         titledPane.setExpanded(false);

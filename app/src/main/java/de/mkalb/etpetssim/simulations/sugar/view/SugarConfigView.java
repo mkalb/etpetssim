@@ -1,8 +1,8 @@
 package de.mkalb.etpetssim.simulations.sugar.view;
 
 import de.mkalb.etpetssim.core.AppLocalization;
-import de.mkalb.etpetssim.core.AppLocalizationKeys;
 import de.mkalb.etpetssim.simulations.core.view.AbstractConfigView;
+import de.mkalb.etpetssim.simulations.core.view.SimulationLocalizationKeys;
 import de.mkalb.etpetssim.simulations.sugar.model.SugarConfig;
 import de.mkalb.etpetssim.simulations.sugar.viewmodel.SugarConfigViewModel;
 import de.mkalb.etpetssim.ui.FXComponentFactory;
@@ -79,7 +79,7 @@ public final class SugarConfigView
         );
 
         var initializationPane = createConfigTitledPane(
-                AppLocalization.getText(AppLocalizationKeys.CONFIG_TITLE_INITIALIZATION), true,
+                AppLocalization.getText(SimulationLocalizationKeys.CONFIG_TITLE_INITIALIZATION), true,
                 seedControl, agentPercentControl, sugarPeaksControl, sugarRadiusLimitControl, maxSugarAmountControl, agentInitialEnergyControl);
 
         // Rules
@@ -109,7 +109,7 @@ public final class SugarConfigView
         );
 
         var rulesPane = createConfigTitledPane(
-                AppLocalization.getText(AppLocalizationKeys.CONFIG_TITLE_RULES), true,
+                AppLocalization.getText(SimulationLocalizationKeys.CONFIG_TITLE_RULES), true,
                 sugarRegenerationRateControl, agentMetabolismRateControl, agentVisionRangeControl, agentMaxAgeControl);
 
         return createConfigMainBox(structurePane, layoutPane, initializationPane, rulesPane);

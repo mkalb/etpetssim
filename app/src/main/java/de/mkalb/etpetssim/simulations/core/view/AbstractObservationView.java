@@ -1,7 +1,6 @@
 package de.mkalb.etpetssim.simulations.core.view;
 
 import de.mkalb.etpetssim.core.AppLocalization;
-import de.mkalb.etpetssim.core.AppLocalizationKeys;
 import de.mkalb.etpetssim.engine.model.GridCellView;
 import de.mkalb.etpetssim.engine.model.entity.GridEntity;
 import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorRegistry;
@@ -113,9 +112,9 @@ public abstract class AbstractObservationView<
         setUnknownValues(totalCellsLabel);
 
         return createObservationSection(
-                AppLocalizationKeys.OBSERVATION_SECTION_GRID,
+                SimulationLocalizationKeys.OBSERVATION_SECTION_GRID,
                 new String[]{
-                        AppLocalizationKeys.OBSERVATION_GRID_TOTAL_CELLS
+                        SimulationLocalizationKeys.OBSERVATION_GRID_TOTAL_CELLS
                 },
                 new Label[]{
                         totalCellsLabel
@@ -132,9 +131,9 @@ public abstract class AbstractObservationView<
         setUnknownValues(stepCountLabel);
 
         return createObservationSection(
-                AppLocalizationKeys.OBSERVATION_SECTION_STATUS,
+                SimulationLocalizationKeys.OBSERVATION_SECTION_STATUS,
                 new String[]{
-                        AppLocalizationKeys.OBSERVATION_STEP
+                        SimulationLocalizationKeys.OBSERVATION_STEP
                 },
                 new Label[]{
                         stepCountLabel
@@ -247,7 +246,7 @@ public abstract class AbstractObservationView<
      * @param valueLabels one or more labels to reset
      */
     protected final void setUnknownValues(Label... valueLabels) {
-        String unknown = AppLocalization.getText(AppLocalizationKeys.OBSERVATION_VALUE_UNKNOWN);
+        String unknown = AppLocalization.getText(SimulationLocalizationKeys.OBSERVATION_VALUE_UNKNOWN);
         for (Label valueLabel : valueLabels) {
             valueLabel.setText(unknown);
         }
@@ -324,10 +323,10 @@ public abstract class AbstractObservationView<
      */
     protected final VBox createSelectedCellSection() {
         selectedCellSection = createObservationSection(
-                AppLocalizationKeys.OBSERVATION_SECTION_SELECTED_CELL,
+                SimulationLocalizationKeys.OBSERVATION_SECTION_SELECTED_CELL,
                 new String[]{
-                        AppLocalizationKeys.OBSERVATION_COORDINATE,
-                        AppLocalizationKeys.OBSERVATION_CELL_TYPE
+                        SimulationLocalizationKeys.OBSERVATION_COORDINATE,
+                        SimulationLocalizationKeys.OBSERVATION_CELL_TYPE
                 },
                 new Label[]{
                         selectedCellCoordinateLabel,
@@ -350,8 +349,8 @@ public abstract class AbstractObservationView<
      */
     protected final VBox createExtendedSelectedCellSection(String[] extraNameKeys, Label[] extraValueLabels) {
         String[] allNameKeys = new String[2 + extraNameKeys.length];
-        allNameKeys[0] = AppLocalizationKeys.OBSERVATION_COORDINATE;
-        allNameKeys[1] = AppLocalizationKeys.OBSERVATION_CELL_TYPE;
+        allNameKeys[0] = SimulationLocalizationKeys.OBSERVATION_COORDINATE;
+        allNameKeys[1] = SimulationLocalizationKeys.OBSERVATION_CELL_TYPE;
         System.arraycopy(extraNameKeys, 0, allNameKeys, 2, extraNameKeys.length);
 
         Label[] allValueLabels = new Label[2 + extraValueLabels.length];
@@ -360,7 +359,7 @@ public abstract class AbstractObservationView<
         System.arraycopy(extraValueLabels, 0, allValueLabels, 2, extraValueLabels.length);
 
         selectedCellSection = createObservationSection(
-                AppLocalizationKeys.OBSERVATION_SECTION_SELECTED_CELL,
+                SimulationLocalizationKeys.OBSERVATION_SECTION_SELECTED_CELL,
                 allNameKeys,
                 allValueLabels
         );
@@ -397,13 +396,15 @@ public abstract class AbstractObservationView<
         int rowOffset = 0;
         if (hasMin || hasMax) {
             if (hasMin) {
-                Label minHeader = new Label(AppLocalization.getText(AppLocalizationKeys.OBSERVATION_EXTREMUM_MIN));
+                Label minHeader =
+                        new Label(AppLocalization.getText(SimulationLocalizationKeys.OBSERVATION_EXTREMUM_MIN));
                 minHeader.getStyleClass().add(FXStyleClasses.OBSERVATION_EXTREMUM_HEADER_LABEL);
                 grid.add(minHeader, minCol, 0);
                 GridPane.setHalignment(minHeader, HPos.RIGHT);
             }
             if (hasMax) {
-                Label maxHeader = new Label(AppLocalization.getText(AppLocalizationKeys.OBSERVATION_EXTREMUM_MAX));
+                Label maxHeader =
+                        new Label(AppLocalization.getText(SimulationLocalizationKeys.OBSERVATION_EXTREMUM_MAX));
                 maxHeader.getStyleClass().add(FXStyleClasses.OBSERVATION_EXTREMUM_HEADER_LABEL);
                 grid.add(maxHeader, maxCol, 0);
                 GridPane.setHalignment(maxHeader, HPos.RIGHT);
@@ -461,7 +462,7 @@ public abstract class AbstractObservationView<
         VBox section = new VBox();
         section.getStyleClass().add(FXStyleClasses.OBSERVATION_SECTION_VBOX);
 
-        Label titleLabel = new Label(AppLocalization.getText(AppLocalizationKeys.OBSERVATION_SECTION_METRICS));
+        Label titleLabel = new Label(AppLocalization.getText(SimulationLocalizationKeys.OBSERVATION_SECTION_METRICS));
         titleLabel.getStyleClass().add(FXStyleClasses.OBSERVATION_SECTION_TITLE_LABEL);
         section.getChildren().add(titleLabel);
         section.getChildren().add(grid);
@@ -480,8 +481,8 @@ public abstract class AbstractObservationView<
         if ((genericMetrics == null) || (genericMetricLabels == null)) {
             return;
         }
-        String unknown = AppLocalization.getText(AppLocalizationKeys.OBSERVATION_VALUE_UNKNOWN);
-        String atStep = AppLocalization.getText(AppLocalizationKeys.OBSERVATION_EXTREMUM_AT_STEP);
+        String unknown = AppLocalization.getText(SimulationLocalizationKeys.OBSERVATION_VALUE_UNKNOWN);
+        String atStep = AppLocalization.getText(SimulationLocalizationKeys.OBSERVATION_EXTREMUM_AT_STEP);
         for (int i = 0; i < genericMetrics.size(); i++) {
             StatisticsMetric<STA> metric = genericMetrics.get(i);
             MetricLabels rowLabels = genericMetricLabels.get(i);

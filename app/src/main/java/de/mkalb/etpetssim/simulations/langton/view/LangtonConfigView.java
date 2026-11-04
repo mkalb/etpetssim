@@ -1,9 +1,9 @@
 package de.mkalb.etpetssim.simulations.langton.view;
 
 import de.mkalb.etpetssim.core.AppLocalization;
-import de.mkalb.etpetssim.core.AppLocalizationKeys;
 import de.mkalb.etpetssim.engine.CellShape;
 import de.mkalb.etpetssim.simulations.core.view.AbstractConfigView;
+import de.mkalb.etpetssim.simulations.core.view.SimulationLocalizationKeys;
 import de.mkalb.etpetssim.simulations.langton.model.LangtonConfig;
 import de.mkalb.etpetssim.simulations.langton.viewmodel.LangtonConfigViewModel;
 import de.mkalb.etpetssim.ui.FXComponentFactory;
@@ -71,7 +71,7 @@ public final class LangtonConfigView
         );
 
         var rulesPane = createConfigTitledPane(
-                AppLocalization.getText(AppLocalizationKeys.CONFIG_TITLE_RULES), true,
+                AppLocalization.getText(SimulationLocalizationKeys.CONFIG_TITLE_RULES), true,
                 presetTriangleControl, presetSquareControl, presetHexagonControl, ruleControl);
 
         return createConfigMainBox(structurePane, layoutPane, rulesPane);

@@ -1,7 +1,6 @@
 package de.mkalb.etpetssim.simulations.core.view;
 
 import de.mkalb.etpetssim.core.AppLocalization;
-import de.mkalb.etpetssim.core.AppLocalizationKeys;
 import de.mkalb.etpetssim.engine.CellShape;
 import de.mkalb.etpetssim.engine.GridEdgeBehavior;
 import de.mkalb.etpetssim.engine.neighborhood.NeighborhoodMode;
@@ -130,7 +129,7 @@ public abstract class AbstractConfigView<CON extends SimulationConfig, VM extend
             content.add(FXComponentFactory.createLabeledChoiceComboBox(
                     viewModel.cellShapeProperty(),
                     AppLocalization.getText(CellShape.labelResourceKey()),
-                    AppLocalization.getText(AppLocalizationKeys.CONFIG_CELL_SHAPE_TOOLTIP),
+                    AppLocalization.getText(SimulationLocalizationKeys.CONFIG_CELL_SHAPE_TOOLTIP),
                     FXStyleClasses.CONFIG_COMBOBOX
             ));
         }
@@ -140,7 +139,7 @@ public abstract class AbstractConfigView<CON extends SimulationConfig, VM extend
             content.add(FXComponentFactory.createLabeledChoiceComboBox(
                     viewModel.gridEdgeBehaviorProperty(),
                     AppLocalization.getText(GridEdgeBehavior.labelResourceKey()),
-                    AppLocalization.getText(AppLocalizationKeys.CONFIG_GRID_EDGE_BEHAVIOR_TOOLTIP),
+                    AppLocalization.getText(SimulationLocalizationKeys.CONFIG_GRID_EDGE_BEHAVIOR_TOOLTIP),
                     FXStyleClasses.CONFIG_COMBOBOX
             ));
         }
@@ -148,21 +147,23 @@ public abstract class AbstractConfigView<CON extends SimulationConfig, VM extend
         // gridWidthProperty
         content.add(FXComponentFactory.createLabeledIntSpinner(
                 viewModel.gridWidthProperty(),
-                AppLocalization.getText(AppLocalizationKeys.CONFIG_GRID_WIDTH),
-                formatIntRangeTooltip(AppLocalizationKeys.CONFIG_GRID_WIDTH_TOOLTIP, viewModel.gridWidthProperty()),
+                AppLocalization.getText(SimulationLocalizationKeys.CONFIG_GRID_WIDTH),
+                formatIntRangeTooltip(SimulationLocalizationKeys.CONFIG_GRID_WIDTH_TOOLTIP,
+                        viewModel.gridWidthProperty()),
                 FXStyleClasses.CONFIG_SPINNER
         ));
 
         // gridHeightProperty
         content.add(FXComponentFactory.createLabeledIntSpinner(
                 viewModel.gridHeightProperty(),
-                AppLocalization.getText(AppLocalizationKeys.CONFIG_GRID_HEIGHT),
-                formatIntRangeTooltip(AppLocalizationKeys.CONFIG_GRID_HEIGHT_TOOLTIP, viewModel.gridHeightProperty()),
+                AppLocalization.getText(SimulationLocalizationKeys.CONFIG_GRID_HEIGHT),
+                formatIntRangeTooltip(SimulationLocalizationKeys.CONFIG_GRID_HEIGHT_TOOLTIP,
+                        viewModel.gridHeightProperty()),
                 FXStyleClasses.CONFIG_SPINNER
         ));
 
         return createConfigTitledPane(
-                AppLocalization.getText(AppLocalizationKeys.CONFIG_TITLE_STRUCTURE),
+                AppLocalization.getText(SimulationLocalizationKeys.CONFIG_TITLE_STRUCTURE),
                 configControlsEnabledOnlyIfSimulationCanStart,
                 toLabeledControlArray(content)
         );
@@ -174,8 +175,9 @@ public abstract class AbstractConfigView<CON extends SimulationConfig, VM extend
                                                 FXComponentFactory.LabeledControl<? extends Region>... additionalContent) {
         var cellEdgeLengthControl = FXComponentFactory.createLabeledIntSlider(
                 viewModel.cellEdgeLengthProperty(),
-                AppLocalization.getText(AppLocalizationKeys.CONFIG_CELL_EDGE_LENGTH),
-                formatDoubleRangeTooltip(AppLocalizationKeys.CONFIG_CELL_EDGE_LENGTH_TOOLTIP, viewModel.cellEdgeLengthProperty()),
+                AppLocalization.getText(SimulationLocalizationKeys.CONFIG_CELL_EDGE_LENGTH),
+                formatDoubleRangeTooltip(SimulationLocalizationKeys.CONFIG_CELL_EDGE_LENGTH_TOOLTIP,
+                        viewModel.cellEdgeLengthProperty()),
                 FXStyleClasses.CONFIG_SLIDER
         );
 
@@ -186,7 +188,7 @@ public abstract class AbstractConfigView<CON extends SimulationConfig, VM extend
             cellDisplayModeControl = FXComponentFactory.createLabeledChoiceComboBox(
                     viewModel.cellDisplayModeProperty(),
                     AppLocalization.getText(CellDisplayMode.labelResourceKey()),
-                    AppLocalization.getText(AppLocalizationKeys.CONFIG_CELL_DISPLAY_MODE_TOOLTIP),
+                    AppLocalization.getText(SimulationLocalizationKeys.CONFIG_CELL_DISPLAY_MODE_TOOLTIP),
                     FXStyleClasses.CONFIG_COMBOBOX
             );
             baseControls = 2;
@@ -204,7 +206,7 @@ public abstract class AbstractConfigView<CON extends SimulationConfig, VM extend
         }
 
         return createConfigTitledPane(
-                AppLocalization.getText(AppLocalizationKeys.CONFIG_TITLE_LAYOUT),
+                AppLocalization.getText(SimulationLocalizationKeys.CONFIG_TITLE_LAYOUT),
                 configControlsEnabledOnlyIfSimulationCanStart,
                 content
         );
@@ -215,11 +217,11 @@ public abstract class AbstractConfigView<CON extends SimulationConfig, VM extend
                 viewModel.seedProperty().stringProperty(),
                 viewModel.seedProperty().labelProperty(),
                 viewModel.seedProperty().labelProperty(),
-                AppLocalization.getText(AppLocalizationKeys.CONFIG_SEED),
-                AppLocalization.getText(AppLocalizationKeys.CONFIG_SEED_PROMPT),
-                AppLocalization.getText(AppLocalizationKeys.CONFIG_SEED_TOOLTIP),
-                AppLocalization.getText(AppLocalizationKeys.CONFIG_SEED_ADOPT_TOOLTIP),
-                AppLocalization.getText(AppLocalizationKeys.CONFIG_SEED_CLEAR_TOOLTIP),
+                AppLocalization.getText(SimulationLocalizationKeys.CONFIG_SEED),
+                AppLocalization.getText(SimulationLocalizationKeys.CONFIG_SEED_PROMPT),
+                AppLocalization.getText(SimulationLocalizationKeys.CONFIG_SEED_TOOLTIP),
+                AppLocalization.getText(SimulationLocalizationKeys.CONFIG_SEED_ADOPT_TOOLTIP),
+                AppLocalization.getText(SimulationLocalizationKeys.CONFIG_SEED_CLEAR_TOOLTIP),
                 FXStyleClasses.CONFIG_TEXTBOX
         );
     }
@@ -228,7 +230,7 @@ public abstract class AbstractConfigView<CON extends SimulationConfig, VM extend
         return FXComponentFactory.createLabeledChoiceComboBox(
                 neighborhoodModeProperty,
                 AppLocalization.getText(NeighborhoodMode.labelResourceKey()),
-                AppLocalization.getText(AppLocalizationKeys.CONFIG_NEIGHBORHOOD_MODE_TOOLTIP),
+                AppLocalization.getText(SimulationLocalizationKeys.CONFIG_NEIGHBORHOOD_MODE_TOOLTIP),
                 FXStyleClasses.CONFIG_COMBOBOX
         );
     }
