@@ -5,7 +5,7 @@
 <h1 align="center">Extraterrestrial Pets Simulation</h1>
 
 <p align="center">
-  Simple 2D grid simulations (toy models, agent-based models, and cellular automata) built with Java and JavaFX.
+  Simple 2D grid simulations (agent-based models, cellular automata, and toy models) built with Java and JavaFX.
   <br>
   <a href="#simulations">Simulations</a>
   ·
@@ -25,14 +25,14 @@
 ## Overview
 
 Welcome to the **Extraterrestrial Pets Simulation** project (_etpetssim_)!
-This open-source project aims to create various simple 2D simulations (_Toy models_, _Agent-Based Models_, _Cellular
-automata_) with a top-down view.
+This open-source desktop application combines well-known models and new ideas in one place: agent-based models,
+cellular automata, and toy models, all shown from a top-down view.
 The simulation engine organizes the grid into structured cells, each with coordinates and entities, enabling flexible
 modeling and efficient computation.
-Each cell is a regular polygon —triangle, square, or hexagon— with equal sides and angles, ensuring consistent geometry
+Each cell is a regular polygon (triangle, square, or hexagon) with equal sides and angles, ensuring consistent geometry
 and neighbor relationships throughout the grid.
-The grid supports various edge behaviors —blocking, wrapping, or absorbing— and offers flexible modes for
-calculating neighbors, either by shared edges or by both edges and vertices.
+The grid supports various edge behaviors (blocking, wrapping, or absorbing) and offers flexible modes for calculating
+neighbors, either by shared edges or by both edges and vertices.
 
 **Status:** This project is currently under development.
 
@@ -87,36 +87,6 @@ the [Simulation Entity Catalog](docs/simulations/Simulation_Entity_Catalog.md).
 #### Rebounding Entities
 
 ![Rebounding Entities](assets/screenshots/screenshot_rebounding_01.png)
-
-## Goals
-
-- Explore and apply modern Java features in practice.
-- Get to know the JavaFX library and gain some initial experience with it.
-- Enjoy creativity in developing new simulations and adapting well-known models.
-
-## Development Approach
-
-Artificial intelligence (AI) tools are used during development to improve productivity and support code quality. In
-particular, Microsoft Copilot, GitHub Copilot, and Claude Code are used for code generation, documentation support,
-refactoring and optimization tasks, the application icon (SVG), and as a practical aid while learning and applying
-JavaFX and MVVM concepts. These tools also help accelerate exploration of implementation variants and architecture
-options during day-to-day development.
-
-At the same time, all generated content is reviewed and adapted in the context of the project goals, codebase
-consistency, and long-term maintainability. AI support is therefore treated as development assistance, while final
-technical decisions remain project-driven and under maintainer control.
-
-## Feedback and Issues
-
-Bug reports and improvement suggestions are very welcome.
-Please open a [GitHub Issue](https://github.com/mkalb/etpetssim/issues) if you find a problem or have an idea to improve
-the project.
-
-If possible, include:
-
-- clear steps to reproduce (for bugs),
-- expected vs. actual behavior,
-- screenshots or logs.
 
 ## Run the App
 
@@ -206,12 +176,43 @@ The distribution ZIP built by `.\gradlew.bat :app:distZip` can be run without Gr
 .\bin\ExtraterrestrialPetsSimulation.bat --locale=en --log-console
 ```
 
+## Goals
+
+- Explore and apply modern Java features in practice.
+- Get to know the JavaFX library and gain some initial experience with it.
+- Explore the capabilities of AI tools in software development and gain hands-on experience with them.
+- Enjoy creativity in developing new simulations and adapting well-known models.
+
+## Development Approach
+
+Artificial intelligence (AI) tools are used during development to improve productivity and support code quality. In
+particular, Microsoft Copilot, GitHub Copilot, and Claude Code are used for code generation, documentation support,
+refactoring and optimization tasks, the application icon (SVG), and as a practical aid while learning and applying
+JavaFX and MVVM concepts. These tools also help accelerate exploration of implementation variants and architecture
+options during day-to-day development.
+
+At the same time, all generated content is reviewed and adapted in the context of the project goals, codebase
+consistency, and long-term maintainability. AI support is therefore treated as development assistance, while final
+technical decisions remain project-driven and under maintainer control.
+
+## Feedback and Issues
+
+Bug reports and improvement suggestions are very welcome.
+Please open a [GitHub Issue](https://github.com/mkalb/etpetssim/issues) if you find a problem or have an idea to improve
+the project.
+
+If possible, include:
+
+- clear steps to reproduce (for bugs),
+- expected vs. actual behavior,
+- screenshots or logs.
+
 ## Technologies Used
 
 - **Java**: The primary programming language used throughout the project.
 - **JavaFX**: Used to create the graphical user interface.
 - **Gradle**: Build system used for the project, including a Gradle wrapper.
-- **IntelliJ IDEA Community Edition**: The development environment ("IDE") of choice, provided by JetBrains.
+- **IntelliJ IDEA**: The development environment ("IDE") of choice, provided by JetBrains.
 
 This project uses the latest stable versions of all technologies whenever possible.
 
