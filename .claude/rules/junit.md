@@ -62,14 +62,18 @@ Rules for test sources only; repository-wide and Java instructions still apply.
   precede one or more assertions when it explains something important that is not immediately evident; `//noinspection`
   directives are allowed. Do not comment helpers, fixtures, constants, or fields; a better name carries the intent.
 - Prefer one behavior per test; group related checks with `assertAll(...)`.
+- Write variations of one behavior (inputs, boundaries) as one `@ParameterizedTest` instead of copied test methods.
 - Do not write tests that only check what the compiler or `@NullMarked` guarantees (e.g., `assertInstanceOf` on a
   statically typed value, or the implicit `NullPointerException` for `null` passed to a non-null parameter).
 - Use plain `assertThrows(...)` for exception contracts, without an `assertNotNull(...)` wrapper and without checks
   of the exception message unless the message is part of the contract (e.g., `FXTestSupport`); use
   `assertDoesNotThrow(...)` only for meaningful valid-operation checks.
 - Prefer specific assertions; add assertion messages only when the failure would otherwise be ambiguous.
+- Pass the expected value first: `assertEquals(expected, actual)`.
 - Use a delta for floating-point comparisons.
 - Use `@Disabled("reason")` with a concrete reason.
+- Never delete, comment out, disable, or weaken a failing test (looser assertion, larger delta, caught exception) to
+  get a green build; find the cause. Ask before a fix changes the behavior of production code.
 
 ## Javadoc
 
@@ -92,6 +96,8 @@ Rules for test sources only; repository-wide and Java instructions still apply.
   describes; do not use reflection on private members. Reflection on public members, such as the constants that
   `ConstantTestSupport` checks, is allowed.
 - Prefer immutable test data; verify defensive copies and unmodifiable views where they are part of the contract.
+- Keep tests deterministic: create `Random` with a fixed seed, do not use `Thread.sleep`, and do not depend on the
+  default locale, time zone, or the current time.
 - Put test-only nested enums, records, and small fixture types at the bottom of the class.
 - Use method-level `@SuppressWarnings("DataFlowIssue")` for intentional null-passing tests.
 - Use class-level `@SuppressWarnings("MagicNumber")` when test cases use literal domain numbers; in test sources, the

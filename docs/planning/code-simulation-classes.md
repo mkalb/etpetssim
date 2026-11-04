@@ -291,6 +291,16 @@ Notes:
   reserved for special cases that change the state of a class for tests, as in `core`.
 - Proposal: Rename it to the noun-style `charts()` and adapt the test.
 
+#### Optional parameters of AbstractObservationView
+
+- Origin: #41 (rule "Use `Optional` only as a return type" in `java.md`, "Nullability (JSpecify)")
+- Types: `AbstractObservationView`, the nine observation views of category 9 that call the two methods
+- Problem: The protected methods `updateStatusSectionLabel(Optional<STA>)` and
+  `updateGenericMetricSection(Optional<STA>, StatisticsExtrema)` take `Optional` parameters and suppress
+  `OptionalUsedAsFieldOrParameterType`; every caller passes `viewModel.getStatistics()`.
+- Proposal: Remove the `Optional` parameters, e.g., by reading the statistics from the ViewModel inside the methods
+  or by taking a `@Nullable STA`, and remove the suppressions; adapt the callers. An API change.
+
 ## 4. Simulation statistics
 
 One statistics class per simulation in its `model` package.

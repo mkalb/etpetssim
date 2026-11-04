@@ -21,11 +21,16 @@ Rules for all `.java` files; repository-wide instructions still apply.
   before `engine.model.GridModel`). Add new imports at their sorted position and remove imports that a change
   leaves unused; leave the other imports unchanged.
 - Prefer modern Java 27 APIs and language features when they improve clarity; avoid novelty.
+- Use `var` for local variables when the type is evident from the right-hand side (e.g., a constructor, factory, or
+  cast); write the type otherwise.
+- Keep stream operations free of side effects, collect with `toList()` instead of `Collectors.toList()`, and use a
+  loop when it is clearer than a stream. Extract lambdas with several statements into named methods.
 - Use locale-stable normalization for technical text (e.g., `toLowerCase(Locale.ROOT)`).
-- Write exception messages without a final period in one of three forms: `<name> must <condition>, but was: <value>`
-  for rejected values (`in [min, max]` for inclusive ranges, `name=value` pairs for relations between values),
-  `Unable to <action>: <reason or name=value pairs>` for failed operations, and `No <thing> found for <name>: <value>`
-  for failed lookups. Use the exact code name of the checked value, its `toString()`, and string concatenation.
+- Reference localization keys through constants instead of string literals at the call site: app-wide keys in
+  `core.AppLocalizationKeys`, simulation-specific keys in the class that uses them. The key methods of enums
+  (`labelResourceKey()`, `resourceKey()`) may return string literals.
+- Name domain numbers as constants (e.g., in `<Simulation>Constraints` or `<Simulation>Balance`); literals in
+  formulas, geometry, and layout code may stay inline.
 - Do not initialize fields explicitly to their default value (`0`, `false`, `null`); an explicit initializer is for a
   different value, such as the sentinel `Long.MAX_VALUE` of a minimum.
 - Order the members of classes, enums, and records as the IntelliJ default arrangement does: static fields
@@ -37,6 +42,18 @@ Rules for all `.java` files; repository-wide instructions still apply.
   as `junit.md` describes.
 - Order interface members as constants, static methods (including private static helpers), abstract methods, then
   default methods.
+
+## Design Principles
+
+- Prefer composition (fields, strategies, records) over inheritance. Use inheritance only for a shared skeleton or
+  shared state of a closed type family, such as the `Abstract*` and `Base*` classes in `simulations.core` and the
+  entity base classes (e.g., `CreatureBase`).
+- Fail fast: validate arguments and invariants where a value enters a constructor or factory, and throw there instead
+  of storing or correcting an invalid value (see "Exceptions"; null checks follow "Nullability"); `*Config` records
+  are checked with `isValid()` instead (`simulations.md`).
+- Prefer immutability: make fields `final` where possible, model values as records, and expose collections as
+  unmodifiable copies or views. Use mutable state only for types that own changing state, such as agents, grid
+  models, and ViewModels.
 
 ## Naming Conventions
 
@@ -197,6 +214,8 @@ non-null reference return type (from main code or the JDK, e.g. `toString()`), a
 
 - Treat unannotated types as non-null under `@NullMarked`.
 - Use `@org.jspecify.annotations.Nullable` only for intentional nullable contracts, not defensively.
+- Use `Optional` only as a return type; use `@Nullable` or an overload for parameters and fields. Return empty
+  collections instead of `null`.
 - Do not check non-null-by-default parameters with `Objects.requireNonNull(...)`; use it only to assert that a
   `@Nullable` value (e.g., a field or a result) is set at this point.
 - Valid `@Nullable` locations include fields, parameters, return types, and type arguments
@@ -243,6 +262,8 @@ Rules for main sources; `core.md` adds stricter rules for `core`, and test sourc
   limits, and allowed values of ..."), but not with "This class ..." or "Utility class ...".
 - Write the literals `true`, `false`, and `null` as `{@code true}`, `{@code false}`, and `{@code null}`.
 - Describe behavior; avoid implementation detail unless it is contract-relevant.
+- Document only behavior verified in the code, its callers, or its tests; do not invent thread safety, nullability,
+  exceptions, or limits, and leave out what you cannot verify.
 - Use `{@link}` only when the target helps the reader; otherwise write code elements with `{@code}`. Reference
   imported types by simple name and other types by fully qualified name; do not add imports only for Javadoc. Do
   not link to a package that the documented package must not depend on (e.g., from `shared` to `model`); use
@@ -252,6 +273,20 @@ Rules for main sources; `core.md` adds stricter rules for `core`, and test sourc
   `{@snippet}`.
 - Write lists with `<ul>` and `<li>`, not with `- `.
 - `{@snippet}` is welcome for code examples; do not use Markdown documentation comments (`///`).
+
+## Exceptions
+
+- Throw specific JDK exceptions (e.g., `IllegalArgumentException`, `IllegalStateException`), not `RuntimeException`
+  or `Exception`.
+- Write exception messages without a final period in one of three forms: `<name> must <condition>, but was: <value>`
+  for rejected values (`in [min, max]` for inclusive ranges, `name=value` pairs for relations between values),
+  `Unable to <action>: <reason or name=value pairs>` for failed operations, and `No <thing> found for <name>: <value>`
+  for failed lookups. Use the exact code name of the checked value, its `toString()`, and string concatenation.
+- Catch specific exception types. Catch broadly (`RuntimeException`, `Error`) only at top-level boundaries, such as
+  application startup, background tasks, and UI action handlers, and log the exception there (e.g.,
+  `DefaultMainViewModel`).
+- Do not leave a catch block empty, and do not log an exception and rethrow it; handle and log it in one place.
+- Use try-with-resources for `AutoCloseable` resources.
 
 ## Logging with AppLogger
 

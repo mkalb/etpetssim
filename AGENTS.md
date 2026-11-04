@@ -35,6 +35,9 @@ Other locations:
 
 ## Package Boundaries
 
+Separate concerns by layer (Separation of Concerns): the packages may depend on each other only in the directions
+below, and `.claude/rules/simulations.md` applies the same principle to the MVVM layers of each simulation.
+
 - `core` must not depend on `engine`, `ui`, or `simulations`.
 - `engine` may depend on `core`, but not on `ui` or `simulations`.
 - `ui` may depend on `core` and `engine`, but not on `simulations`.
@@ -43,6 +46,7 @@ Other locations:
 ## Priority and Scope
 
 - Keep changes minimal, focused, and convention-preserving; avoid unrelated refactors and formatting-only edits.
+- Mention unrelated problems you notice instead of fixing them.
 - Preserve public APIs unless explicitly asked to change them.
 - Do not invent file paths, package names, class names, symbols, or APIs.
 - Prefer root-cause fixes over surface patches.
@@ -94,8 +98,9 @@ Other locations:
 
 - Do not duplicate business logic; extract shared logic into focused methods or classes (DRY).
 - Prefer the simplest complete solution; keep methods small and single-purpose (KISS).
-- Do not introduce abstractions without clear ongoing value.
-- Use meaningful domain names and keep classes cohesive.
+- Do not introduce abstractions, parameters, or extension points without a current need (YAGNI); the public APIs of
+  `core` and `engine` are an exception (`.claude/rules/core.md` and `.claude/rules/engine.md`).
+- Use meaningful domain names and keep classes cohesive, with a single responsibility (SRP).
 - Remove dead code and outdated comments.
 
 ## Localization and Text
@@ -108,9 +113,6 @@ Other locations:
   quote it verbatim or give a short summary or explanation in the chat language; the user can read the file, diff,
   or issue directly.
 - Keep user-facing text in `i18n.messages` resource bundles.
-- Use constants for localization keys instead of string literals at the call site: app-wide keys in
-  `core.AppLocalizationKeys`, simulation-specific keys as constants in the class that uses them. The key methods
-  of enums (`labelResourceKey()`, `resourceKey()`) may return string literals.
 
 ## Issues and Plans
 
