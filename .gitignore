@@ -22,8 +22,9 @@ bin/
 Thumbs.db
 Desktop.ini
 
-# Ignore Visual Studio Code settings
-.vscode/
+# Ignore Visual Studio Code settings, except shared tasks
+/.vscode/*
+!/.vscode/tasks.json
 
 # Ignore Claude Code personal settings
 .claude/settings.local.json

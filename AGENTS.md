@@ -26,6 +26,9 @@ Other locations:
 - `assets`: screenshots and SVG icons.
 - `.editorconfig`, `.run`, and the shared files in `.idea`: IntelliJ settings, described in
   `docs/development/intellij-setup.md`. Read them as needed, but do not change them.
+- `.vscode/tasks.json`: committed VS Code tasks that mirror the run configurations in `.run`; the rest of `.vscode`
+  is local and ignored. Update the tasks when the commands they call change (e.g., Gradle tasks, application
+  arguments, or skill script paths).
 - `.claude/rules`: path-scoped coding rules; `.claude/skills`: agent skills.
 - `.github/instructions`: GitHub Copilot reference files for IntelliJ that point to `.claude/rules`; when adding or
   renaming a rule, add or update its reference file with a matching `applyTo`.

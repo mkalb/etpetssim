@@ -1,0 +1,97 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "gradle_run_en",
+      "type": "shell",
+      "command": "./gradlew",
+      "windows": {
+        "command": ".\\gradlew.bat"
+      },
+      "args": [
+        "app:run",
+        "--args=--locale=en_US --log-console --log-level=INFO"
+      ],
+      "problemMatcher": []
+    },
+    {
+      "label": "gradle_run_de",
+      "type": "shell",
+      "command": "./gradlew",
+      "windows": {
+        "command": ".\\gradlew.bat"
+      },
+      "args": [
+        "app:run",
+        "--args=--locale=de_DE --log-console --log-level=INFO"
+      ],
+      "problemMatcher": []
+    },
+    {
+      "label": "gradle_run_de_lab",
+      "type": "shell",
+      "command": "./gradlew",
+      "windows": {
+        "command": ".\\gradlew.bat"
+      },
+      "args": [
+        "app:run",
+        "--args=--locale=de_DE --log-console --log-level=INFO --simulation=lab"
+      ],
+      "problemMatcher": []
+    },
+    {
+      "label": "gradle_run_args",
+      "type": "shell",
+      "command": "./gradlew",
+      "windows": {
+        "command": ".\\gradlew.bat"
+      },
+      "args": [
+        "app:run",
+        "--args=${input:appRunArgs}"
+      ],
+      "problemMatcher": []
+    },
+    {
+      "label": "gradle_test",
+      "type": "shell",
+      "command": "./gradlew",
+      "windows": {
+        "command": ".\\gradlew.bat"
+      },
+      "args": [
+        "app:test"
+      ],
+      "group": "test",
+      "problemMatcher": []
+    },
+    {
+      "label": "I18nConsistencyCheck",
+      "type": "shell",
+      "command": "java",
+      "args": [
+        ".claude/skills/i18n-consistency/I18nConsistencyCheck.java",
+        "report"
+      ],
+      "problemMatcher": []
+    },
+    {
+      "label": "JavaCodeInventory",
+      "type": "shell",
+      "command": "java",
+      "args": [
+        ".claude/skills/java-code-inventory/JavaCodeInventory.java"
+      ],
+      "problemMatcher": []
+    }
+  ],
+  "inputs": [
+    {
+      "id": "appRunArgs",
+      "type": "promptString",
+      "description": "Command-line arguments for the app (example: --locale=en_US --log-console --log-level=INFO)",
+      "default": "--locale=en_US --log-console --log-level=INFO"
+    }
+  ]
+}
