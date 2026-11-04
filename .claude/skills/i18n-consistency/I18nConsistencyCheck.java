@@ -498,7 +498,7 @@ public final class I18nConsistencyCheck {
         List<String> missingInEn = missingKeys(deDe, enUs);
 
         if (missingInDe.isEmpty() && missingInEn.isEmpty()) {
-            findings.add(Finding.pass("key parity", "production bundles contain the same keys (.url keys exempt)"));
+            findings.add(Finding.pass("key parity", "production bundles contain the same keys"));
             return findings;
         }
 
@@ -657,7 +657,6 @@ public final class I18nConsistencyCheck {
 
     private static List<String> missingKeys(Bundle source, Bundle target) {
         return source.entries().keySet().stream()
-                .filter(key -> !isUrlKey(key))
                 .filter(key -> !target.entries().containsKey(key))
                 .sorted(KEY_COMPARATOR)
                 .toList();

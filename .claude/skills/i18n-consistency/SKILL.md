@@ -69,9 +69,10 @@ line break (no missing trailing newline, no extra trailing blank lines).
 Alphabetical ordering is case-insensitive as the primary sort key, with a
 case-sensitive tiebreak for keys that differ only by letter case.
 
-Keys ending in `.url` are exempt from the key-parity and placeholder-count
-checks: their values are locale-specific links that may use different `%`
-URL-encoding and may exist in only one bundle.
+Keys ending in `.url` exist in both bundles like all other keys (an empty value
+means that the locale has no link). They are exempt only from the
+placeholder-count check: their values are locale-specific links that may use
+different `%` URL-encoding.
 
 ## After running
 

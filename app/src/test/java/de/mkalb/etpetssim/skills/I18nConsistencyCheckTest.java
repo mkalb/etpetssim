@@ -203,6 +203,31 @@ final class I18nConsistencyCheckTest {
     }
 
     @Test
+    void testReportRequiresUrlKeysInAllBundlesButIgnoresTheirPlaceholderCount() throws Exception {
+        byte[] enUsBytes = bytesWithLineEnding(
+                "\n",
+                "link.url  = https://example.org/a%20b",
+                "other.url = https://example.org/en"
+        );
+        byte[] deDeBytes = bytesWithLineEnding("\n", "link.url = https://example.org/a");
+        writeBundles(enUsBytes, deDeBytes);
+
+        ProcessResult result = runHelper("report");
+
+        assertAll(
+                () -> assertEquals(2, result.exitCode()),
+                () -> assertTrue(result.output().contains(
+                        "FAIL key parity: messages_de_DE.properties (de_DE) is missing keys present in messages_en_US.properties (en_US): other.url"
+                )),
+                () -> assertTrue(result.output().contains(
+                        "PASS placeholder count: shared keys use the same number of '%' characters (.url keys exempt)"
+                )),
+                () -> assertArrayEquals(enUsBytes, Files.readAllBytes(temporaryDirectory.resolve(EN_US_RELATIVE_PATH))),
+                () -> assertArrayEquals(deDeBytes, Files.readAllBytes(temporaryDirectory.resolve(DE_DE_RELATIVE_PATH)))
+        );
+    }
+
+    @Test
     void testFixPrintsPostFixReportAndWritesExactLfAndCrlfBytes() throws Exception {
         byte[] enUsBytes = bytesWithLineEnding(
                 "\n", "\uFEFFgamma = C:\\\\temp", "beta = Caf\\u00E9", "alpha = A\u200BB"
@@ -252,7 +277,7 @@ final class I18nConsistencyCheckTest {
                 "PASS empty bundle: messages_de_DE.properties (de_DE) contains semantic entries",
                 "",
                 "Rule: key parity",
-                "PASS key parity: production bundles contain the same keys (.url keys exempt)",
+                "PASS key parity: production bundles contain the same keys",
                 "",
                 "Rule: alphabetical ordering",
                 "PASS alphabetical ordering: messages_en_US.properties (en_US) is sorted by key",
@@ -333,7 +358,7 @@ final class I18nConsistencyCheckTest {
         assertAll(
                 () -> assertEquals(2, result.exitCode()),
                 () -> assertTrue(result.output().contains(
-                        "PASS key parity: production bundles contain the same keys (.url keys exempt)"
+                        "PASS key parity: production bundles contain the same keys"
                 )),
                 () -> assertTrue(result.output().contains(
                         "FAIL placeholder count: key continued has 1 '%' in en_US but 0 '%' in de_DE"
@@ -361,7 +386,7 @@ final class I18nConsistencyCheckTest {
         assertAll(
                 () -> assertEquals(1, result.exitCode()),
                 () -> assertTrue(result.output().contains(
-                        "PASS key parity: production bundles contain the same keys (.url keys exempt)"
+                        "PASS key parity: production bundles contain the same keys"
                 )),
                 () -> assertTrue(result.output().contains(
                         "PASS Unicode escapes: messages_en_US.properties (en_US) stores localized characters directly"

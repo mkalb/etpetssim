@@ -60,13 +60,13 @@ many files in one shell command.
   `simulation.<name>.url`. Use these exact strings for the document title,
   one-line summary, and the reference link. The title and subtitle values are
   required and must be non-empty; stop and report the missing value if either
-  cannot be resolved. The URL key is optional and may be absent or have an
-  empty value; in either case, omit the **References** section and do not invent
-  a URL. Also resolve every localization key referenced by exposed
-  configuration controls, interactive-edit descriptors, and their option
-  controls, including labels, tooltips, and localized option values. Use those
-  values as the authoritative user-facing names and as supporting evidence for
-  behavior; do not derive UI text from Java identifiers or key names.
+  cannot be resolved. The URL key exists in all bundles, but its value may be
+  empty; in that case, omit the **References** section and do not invent a URL.
+  Also resolve every localization key referenced by exposed configuration
+  controls, interactive-edit descriptors, and their option controls, including
+  labels, tooltips, and localized option values. Use those values as the
+  authoritative user-facing names and as supporting evidence for behavior; do
+  not derive UI text from Java identifiers or key names.
 - **Package:** `app/src/main/java/de/mkalb/etpetssim/simulations/<package>/`.
   `<Name>` is the class prefix found in the simulation's actual file names. Its
   capitalization may differ from the display title (for example, `Etpets`, not
@@ -234,6 +234,5 @@ After validation, report completion:
 - Report a missing README simulation-table row or an incorrect or missing Docs
   link.
 - If a screenshot was missing, note that the Screenshot section was omitted.
-- If the `simulation.<name>.url` value was missing or empty, omit the
-  **References** section entirely (do not leave an empty heading) and note this
-  in your reply.
+- If the `simulation.<name>.url` value was empty, omit the **References**
+  section entirely (do not leave an empty heading) and note this in your reply.
