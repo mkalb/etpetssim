@@ -38,7 +38,6 @@ final class SugarUserActionTest {
         );
     }
 
-    @SuppressWarnings("DataFlowIssue")
     @Test
     void testApplyAddSugarAddsResourceWithSelectedLevel() {
         SugarSimulationManager manager = new SugarSimulationManager(createConfig());
@@ -57,11 +56,11 @@ final class SugarUserActionTest {
                 SugarCell.from(manager.currentGridModel(), coordinate));
 
         ResourceEntity resourceEntity = manager.currentGridModel().resourceModel().getEntity(coordinate);
+        Sugar sugar = assertInstanceOf(Sugar.class, resourceEntity);
         assertAll(
-                () -> assertInstanceOf(Sugar.class, resourceEntity),
                 () -> assertEquals(
                         SugarAddSugarLevel.HIGH.computeSugarAmount(manager.config().maxSugarAmount()),
-                        ((Sugar) resourceEntity).currentAmount()),
+                        sugar.currentAmount()),
                 () -> assertEquals(resourceCellsBefore + 1, manager.statistics().resourceCells())
         );
     }

@@ -23,7 +23,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
-@SuppressWarnings("OverlyStrongTypeCast")
 final class EtpetsUserActionTest {
 
     private static EtpetsConfig createConfig() {
@@ -108,7 +107,6 @@ final class EtpetsUserActionTest {
         assertSame(TerrainConstant.GROUND, manager.currentGridModel().terrainModel().getEntity(coordinate));
     }
 
-    @SuppressWarnings("DataFlowIssue")
     @Test
     void testApplySetResourcePlantUsesDeterministicFullDefaults() {
         EtpetsSimulationManager manager = new EtpetsSimulationManager(createConfig());
@@ -121,15 +119,14 @@ final class EtpetsUserActionTest {
                 EtpetsCell.from(manager.currentGridModel(), coordinate));
 
         ResourceEntity resourceEntity = manager.currentGridModel().resourceModel().getEntity(coordinate);
+        Plant plant = assertInstanceOf(Plant.class, resourceEntity);
         assertAll(
-                () -> assertInstanceOf(Plant.class, resourceEntity),
-                () -> assertEquals(EtpetsBalance.PLANT_MAX_AMOUNT_MAX, ((Plant) resourceEntity).currentAmount()),
-                () -> assertEquals(EtpetsBalance.PLANT_MAX_AMOUNT_MAX, ((Plant) resourceEntity).maxAmount()),
-                () -> assertEquals(EtpetsBalance.PLANT_REGENERATION_PER_STEP_BASE, ((Plant) resourceEntity).regenerationPerStep())
+                () -> assertEquals(EtpetsBalance.PLANT_MAX_AMOUNT_MAX, plant.currentAmount()),
+                () -> assertEquals(EtpetsBalance.PLANT_MAX_AMOUNT_MAX, plant.maxAmount()),
+                () -> assertEquals(EtpetsBalance.PLANT_REGENERATION_PER_STEP_BASE, plant.regenerationPerStep())
         );
     }
 
-    @SuppressWarnings("DataFlowIssue")
     @Test
     void testApplySetResourceInsectUsesDeterministicFullDefaults() {
         EtpetsSimulationManager manager = new EtpetsSimulationManager(createConfig());
@@ -142,11 +139,11 @@ final class EtpetsUserActionTest {
                 EtpetsCell.from(manager.currentGridModel(), coordinate));
 
         ResourceEntity resourceEntity = manager.currentGridModel().resourceModel().getEntity(coordinate);
+        Insect insect = assertInstanceOf(Insect.class, resourceEntity);
         assertAll(
-                () -> assertInstanceOf(Insect.class, resourceEntity),
-                () -> assertEquals(EtpetsBalance.INSECT_MAX_AMOUNT_MAX, ((Insect) resourceEntity).currentAmount()),
-                () -> assertEquals(EtpetsBalance.INSECT_MAX_AMOUNT_MAX, ((Insect) resourceEntity).maxAmount()),
-                () -> assertEquals(EtpetsBalance.INSECT_REGENERATION_PER_STEP_BASE, ((Insect) resourceEntity).regenerationPerStep())
+                () -> assertEquals(EtpetsBalance.INSECT_MAX_AMOUNT_MAX, insect.currentAmount()),
+                () -> assertEquals(EtpetsBalance.INSECT_MAX_AMOUNT_MAX, insect.maxAmount()),
+                () -> assertEquals(EtpetsBalance.INSECT_REGENERATION_PER_STEP_BASE, insect.regenerationPerStep())
         );
     }
 

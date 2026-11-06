@@ -102,7 +102,7 @@ Not counted: the `@SuppressWarnings` text in the test data of `skills/JavaCodeIn
 | test    | `HardcodedLineSeparator`            |     8 | disable for scope "Tests"        | done   |
 | test    | `TextBlockMigration`                |     3 | change code (text blocks)        | done   |
 | test    | `UseOfProcessBuilder`               |     2 | keep                             | open   |
-| test    | `DataFlowIssue`                     |     8 | keep; check each occurrence      | open   |
+| test    | `DataFlowIssue`                     |     8 | keep 5; change code in 3         | done   |
 | test    | `unused`                            |     5 | keep                             | open   |
 | test    | `ResultOfMethodCallIgnored`         |     4 | check each occurrence            | open   |
 | test    | `NumericCastThatLosesPrecision`     |     3 | keep; check each occurrence      | open   |
@@ -203,19 +203,23 @@ The inventory is omitted: all occurrences are removed by the same commit.
 
 ### `DataFlowIssue`
 
-- Count: 8, all at method level as `junit.md` prescribes for intentional null-passing tests.
-- Proposal: keep the rule; check for each occurrence (especially the four added in `f7266596` and the two added
-  later) that it covers an intentional null-passing test and not a nullable result that the test could handle.
-- Decision: open.
+- Count: 8, all at method level; only one is an intentional null-passing test as `junit.md` prescribed. Four modify
+  an unmodifiable collection on purpose (`assertThrows(UnsupportedOperationException.class, ...)`), three cast an
+  entity in `assertAll` after `assertInstanceOf`.
+- Proposal: keep the null-passing test and the four immutability tests, and extend the `junit.md` rule to the
+  immutability tests (rule change). Change code in the three cast tests: use the result of `assertInstanceOf`
+  instead of the casts, and remove the suppressions.
+- Decision: as proposed (maintainer, 2026-11-06). The code change also removes the casts that the class-level
+  `OverlyStrongTypeCast` suppression of `EtpetsUserActionTest` covered; that suppression is removed in the same
+  commit.
+
+Remaining suppressions:
 
 - `core/AppArgsTest.java`: `testKeys()`
 - `core/AppManifestTest.java`: `testParseMainAttributes()`
 - `simulations/core/model/StatisticsHistoryTest.java`: `testToListReturnsImmutableSnapshot()`
-- `simulations/etpets/model/EtpetsUserActionTest.java`: `testApplySetResourceInsectUsesDeterministicFullDefaults()`,
-  `testApplySetResourcePlantUsesDeterministicFullDefaults()`
 - `simulations/snake/model/strategy/NamedMoveStrategyTest.java`: `testDecideMove()`
 - `simulations/snake/model/strategy/SnakeMoveStrategiesTest.java`: `testStrategies()`
-- `simulations/sugar/model/SugarUserActionTest.java`: `testApplyAddSugarAddsResourceWithSelectedLevel()`
 
 ### `unused`
 
@@ -286,7 +290,8 @@ One occurrence each; decide per occurrence.
 - `FieldNamingConvention`: `testsupport/FXTestSupport.java`, variable `started`. Proposal: check the name against the
   naming rules; rename or keep.
 - `OverlyStrongTypeCast`: `simulations/etpets/model/EtpetsUserActionTest.java`, class level. Proposal: narrow the scope
-  to the affected method or change the cast.
+  to the affected method or change the cast. Decision: removed together with the `DataFlowIssue` code change, which
+  removes the casts (2026-11-06).
 - `UnusedReturnValue`: `simulations/core/viewmodel/SimulationUserActionDescriptorTest.java`, `createDescriptor()`.
   Proposal: check whether the method can return `void`; otherwise keep.
 

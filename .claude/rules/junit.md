@@ -99,7 +99,8 @@ Rules for test sources only; repository-wide and Java instructions still apply.
 - Keep tests deterministic: create `Random` with a fixed seed, do not use `Thread.sleep`, and do not depend on the
   default locale, time zone, or the current time.
 - Put test-only nested enums, records, and small fixture types at the bottom of the class.
-- Use method-level `@SuppressWarnings("DataFlowIssue")` for intentional null-passing tests.
+- Use method-level `@SuppressWarnings("DataFlowIssue")` for intentional null-passing tests and for tests that modify
+  an unmodifiable collection on purpose (e.g., `assertThrows(UnsupportedOperationException.class, ...)`).
 - Prefix test resources with `test_` (e.g., `css/test_style.css`, `i18n/test_messages_en_US.properties`) so they
   never shadow main resources inside the patched module; prefer main resources when a test does not need special
   content.
