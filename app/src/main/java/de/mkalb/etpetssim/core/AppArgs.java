@@ -281,8 +281,9 @@ public final class AppArgs {
         }
 
         private static String formatHelpArguments(Function<String, String> textLookup) {
-            StringBuilder help = new StringBuilder();
-            for (Key key : values()) {
+            Key[] keys = values();
+            StringBuilder help = new StringBuilder(INITIAL_BUILDER_CAPACITY * keys.length);
+            for (Key key : keys) {
                 help.append(String.format(Locale.ROOT, "--%s: %s%s%n",
                         key.key(),
                         textLookup.apply(key.descriptionKey()),
