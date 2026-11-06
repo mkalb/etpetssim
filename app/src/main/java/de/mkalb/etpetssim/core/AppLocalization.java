@@ -28,7 +28,6 @@ public final class AppLocalization {
      */
     public static final String PLACEHOLDER_FOR_EXCEPTIONS = "########";
 
-    @SuppressWarnings("FieldNamingConvention")
     private static volatile @Nullable LocalizationState state;
 
     private AppLocalization() {

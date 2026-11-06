@@ -538,14 +538,14 @@ One occurrence each; decide per occurrence.
 - `ExtractMethodRecommender`: check the recommendations; change code or keep.
 - `FieldNamingConvention`: `CompassDirection` has one-letter constants (`N`, `E`, `S`, `W`), shorter than the
   minimum length 2 of the constant naming convention in the profile: set the minimum length to 1 or keep.
-  `AppLocalization.state`: check the name against the naming rules; rename or keep.
+  `AppLocalization.state`: done; the camelCase convention for non-final static fields (see the test decision)
+  removes the suppression (maintainer, 2026-11-06).
 - `OptionalUsedAsFieldOrParameterType`: check whether the callers can pass the value or `null` instead; otherwise
   keep.
 - `OverloadedMethodsWithSameNumberOfParameters`: change code: give the two private `clampToMapRange` methods
   distinct names.
 - Decision: open.
 
-- `core/AppLocalization.java`: variable `state`
 - `engine/neighborhood/CompassDirection.java`: enum `CompassDirection`
 - `simulations/core/view/AbstractObservationView.java`: `updateGenericMetricSection()`, `updateStatusSectionLabel()`
 - `simulations/etpets/view/EtpetsMainView.java`: `clampToMapRange()` (2x)
