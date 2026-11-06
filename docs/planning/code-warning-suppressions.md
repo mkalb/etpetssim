@@ -72,6 +72,14 @@ annotation with two names counts twice. There are no `//noinspection` comments.
 | main    |          126 |    78 |               21 |
 | test    |          117 |    78 |               16 |
 
+Updated on 2026-11-06 (`8256df4c`) by counting the sources; the inventory below reflects this state. The new
+suppressions have not been checked with "Redundant suppression" yet.
+
+| Sources | Suppressions | Files | Inspection types |
+|---------|-------------:|------:|-----------------:|
+| main    |          126 |    77 |               22 |
+| test    |          129 |    81 |               16 |
+
 Not counted: the `@SuppressWarnings` text in the test data of `skills/JavaCodeInventoryTest.java`.
 
 ## Inspection profile
@@ -87,21 +95,22 @@ Not counted: the `@SuppressWarnings` text in the test data of `skills/JavaCodeIn
 
 | Sources | Inspection type                     | Count | Proposal                         | Status |
 |---------|-------------------------------------|------:|----------------------------------|--------|
-| test    | `MagicNumber`                       |    50 | disable for scope "Tests"        | open   |
+| test    | `MagicNumber`                       |    51 | disable for scope "Tests"        | open   |
 | test    | `SameParameterValue`                |    17 | disable for scope "Tests"        | open   |
-| test    | `TestMethodWithoutAssertion`        |    17 | configure assertion methods      | open   |
-| test    | `HardcodedLineSeparator`            |     4 | disable for scope "Tests"        | open   |
+| test    | `TestMethodWithoutAssertion`        |    20 | configure assertion methods      | open   |
+| test    | `HardcodedLineSeparator`            |     8 | disable for scope "Tests"        | open   |
 | test    | `UseOfProcessBuilder`               |     2 | disable for scope "Tests"        | open   |
-| test    | `DataFlowIssue`                     |     7 | keep; check each occurrence      | open   |
+| test    | `DataFlowIssue`                     |     9 | keep; check each occurrence      | open   |
 | test    | `unused`                            |     5 | keep                             | open   |
 | test    | `ResultOfMethodCallIgnored`         |     4 | check each occurrence            | open   |
+| test    | `NumericCastThatLosesPrecision`     |     3 | keep; check each occurrence      | open   |
 | test    | `ConstantValue`                     |     2 | narrow scope                     | open   |
 | test    | `InsertLiteralUnderscores`          |     2 | change code                      | open   |
 | test    | `SpellCheckingInspection`           |     2 | dictionary                       | open   |
-| test    | other types (5)                     |     5 | per occurrence                   | open   |
+| test    | other types (4)                     |     4 | per occurrence                   | open   |
 | main    | `MarkerInterface`                   |     9 | disable                          | open   |
 | main    | `InterfaceMayBeAnnotatedFunctional` |     5 | disable                          | open   |
-| main    | `SpellCheckingInspection`           |     9 | dictionary                       | open   |
+| main    | `SpellCheckingInspection`           |     8 | dictionary                       | open   |
 | main    | `unchecked`                         |    11 | change code in `ArrayGridModel`  | open   |
 | main    | `ConstantValue`                     |     9 | change code (list cells, equals) | open   |
 | main    | `DataFlowIssue`                     |     8 | change code (list cells)         | open   |
@@ -110,7 +119,7 @@ Not counted: the `@SuppressWarnings` text in the test data of `skills/JavaCodeIn
 | main    | `SameParameterValue`                |    13 | per occurrence                   | open   |
 | main    | `NumericCastThatLosesPrecision`     |    12 | keep; check each occurrence      | open   |
 | main    | types with two occurrences (5)      |    10 | per occurrence                   | open   |
-| main    | other types (6)                     |     6 | per occurrence                   | open   |
+| main    | other types (7)                     |     7 | per occurrence                   | open   |
 
 ## Cross-type decisions
 
@@ -122,8 +131,8 @@ Not counted: the `@SuppressWarnings` text in the test data of `skills/JavaCodeIn
 
 ### `MagicNumber`
 
-- Count: 50, all at class level as `junit.md` prescribes.
-- Proposal: disable the inspection for the scope "Tests", remove all 50 suppressions, and remove the `MagicNumber`
+- Count: 51, all at class level as `junit.md` prescribes.
+- Proposal: disable the inspection for the scope "Tests", remove all 51 suppressions, and remove the `MagicNumber`
   bullet from `junit.md` (rule change).
 - Decision: disable for the scope "Tests" (maintainer, 2026-10-30); removing the suppressions and the rule change are
   part of the same commit.
@@ -156,10 +165,10 @@ The inventory is omitted: every occurrence is a class-level annotation and is re
 
 ### `TestMethodWithoutAssertion`
 
-- Count: 17. The tests delegate their assertions to helpers: `ConstantTestSupport.assert*` and, in
+- Count: 20. The tests delegate their assertions to helpers: `ConstantTestSupport.assert*` and, in
   `FXGridCanvasPainterTest`, test-local `assert*` methods inside the lambda of `FXTestSupport.runAndWait`.
 - Proposal: register the helper methods as assertion methods in the options of the inspection (class and method name
-  pattern) and remove all 17 suppressions. Check in IntelliJ that the option also covers the assertions inside the
+  pattern) and remove all 20 suppressions. Check in IntelliJ that the option also covers the assertions inside the
   lambda; otherwise keep those 8 suppressions.
 - Decision: open.
 
@@ -167,6 +176,8 @@ The inventory is omitted: every occurrence is a class-level annotation and is re
   `testConstantsAreUniqueAndNonBlank()`, `testConstantsExistInAllBundles()`
 - `simulations/conway/view/ConwayStyleClassesTest.java`: `testConstantNamesAreAlphabeticallySorted()`,
   `testConstantsAreUniqueAndNonBlank()`, `testConstantsUseCssTokenFormat()`
+- `simulations/core/view/SimulationLocalizationKeysTest.java`: `testConstantNamesAreAlphabeticallySorted()`,
+  `testConstantsAreUniqueAndNonBlank()`, `testConstantsExistInAllBundles()`
 - `ui/FXGridCanvasPainterTest.java`: `testDrawCell()`, `testDrawCellBoundingBox()`, `testDrawCellInnerCircle()`,
   `testDrawCircle()`, `testDrawPolygon()`, `testDrawRectangle()`, `testDrawScaledCell()`, `testFillCanvasBackground()`
 - `ui/FXStyleClassesTest.java`: `testConstantNamesAreAlphabeticallySorted()`, `testConstantsAreUniqueAndNonBlank()`,
@@ -174,10 +185,15 @@ The inventory is omitted: every occurrence is a class-level annotation and is re
 
 ### `HardcodedLineSeparator`
 
-- Count: 4, all at class level, in the tests of skill scripts and in helper classes that build text output.
+- Count: 8, all at class level, in tests that build or compare text (skill scripts, files, command-line arguments,
+  and dialog texts) and in a helper class that builds text output.
 - Proposal: disable for the scope "Tests"; tests compare text with fixed line separators on purpose.
 - Decision: open.
 
+- `ExtraterrestrialPetsSimulationTest.java`: class `ExtraterrestrialPetsSimulationTest`
+- `core/AppArgsTest.java`: class `AppArgsTest`
+- `core/AppManifestTest.java`: class `AppManifestTest`
+- `core/AppSettingsTest.java`: class `AppSettingsTest`
 - `simulations/core/model/ExtremaGoldenValueAnalyzer.java`: class `ExtremaGoldenValueAnalyzer`
 - `skills/I18nConsistencyCheckTest.java`: class `I18nConsistencyCheckTest`
 - `skills/JavaCodeInventoryTest.java`: class `JavaCodeInventoryTest`
@@ -194,12 +210,13 @@ The inventory is omitted: every occurrence is a class-level annotation and is re
 
 ### `DataFlowIssue`
 
-- Count: 7, all at method level as `junit.md` prescribes for intentional null-passing tests.
-- Proposal: keep the rule; check for each occurrence (especially the four added in `f7266596`) that it covers an
-  intentional null-passing test and not a nullable result that the test could handle.
+- Count: 9, all at method level as `junit.md` prescribes for intentional null-passing tests.
+- Proposal: keep the rule; check for each occurrence (especially the four added in `f7266596` and the two added
+  later) that it covers an intentional null-passing test and not a nullable result that the test could handle.
 - Decision: open.
 
 - `core/AppArgsTest.java`: `testKeys()`
+- `core/AppManifestTest.java`: `testParseMainAttributes()`, `testReadMainAttributes()`
 - `simulations/core/model/StatisticsHistoryTest.java`: `testToListReturnsImmutableSnapshot()`
 - `simulations/etpets/model/EtpetsUserActionTest.java`: `testApplySetResourceInsectUsesDeterministicFullDefaults()`,
   `testApplySetResourcePlantUsesDeterministicFullDefaults()`
@@ -227,6 +244,16 @@ The inventory is omitted: every occurrence is a class-level annotation and is re
 - `simulations/core/viewmodel/DefaultMainViewModelTest.java`:
   `testShutdownSimulationSuppressesStaleInitializationCompletion()`
 - `testsupport/FXTestSupportTest.java`: `testSupplyAndWaitRestoresInterruptedStatus()`
+
+### `NumericCastThatLosesPrecision` (tests)
+
+- Count: 3, casts that build invalid bytes on purpose.
+- Proposal: keep; check each occurrence.
+- Decision: open.
+
+- `core/AppSettingsTest.java`: `testReadLocaleWithFileReturnsEmptyForUnreadableContent()`,
+  `testWriteLocaleWithFileReplacesUnreadableContent()`
+- `skills/I18nConsistencyCheckTest.java`: `testFixRejectsMalformedUtf8InSecondBundleWithoutChangingEitherBundle()`
 
 ### `ConstantValue`
 
@@ -265,9 +292,6 @@ One occurrence each; decide per occurrence.
   Proposal: keep.
 - `FieldNamingConvention`: `testsupport/FXTestSupport.java`, variable `started`. Proposal: check the name against the
   naming rules; rename or keep.
-- `NumericCastThatLosesPrecision`: `skills/I18nConsistencyCheckTest.java`,
-  `testFixRejectsMalformedUtf8InSecondBundleWithoutChangingEitherBundle()`. Proposal: keep (the cast builds invalid
-  bytes on purpose; to check).
 - `OverlyStrongTypeCast`: `simulations/etpets/model/EtpetsUserActionTest.java`, class level. Proposal: narrow the scope
   to the affected method or change the cast.
 - `UnusedReturnValue`: `simulations/core/viewmodel/SimulationUserActionDescriptorTest.java`, `createDescriptor()`.
@@ -305,7 +329,7 @@ One occurrence each; decide per occurrence.
 
 ### `SpellCheckingInspection`
 
-- Count: 9, all at class level (constants, style classes, rule presets, and patterns).
+- Count: 8, all at class level (constants, style classes, rule presets, and patterns).
 - Proposal: add real domain words to the project dictionary and remove the suppressions; for artificial tokens (rule
   strings, pattern data), keep a suppression narrowed to the affected fields.
 - Decision: open.
@@ -317,7 +341,6 @@ One occurrence each; decide per occurrence.
 - `simulations/core/SimulationType.java`: enum `SimulationType`
 - `simulations/langton/shared/LangtonRulePresetHexagon.java`: enum `LangtonRulePresetHexagon`
 - `simulations/langton/shared/LangtonRulePresetSquare.java`: enum `LangtonRulePresetSquare`
-- `simulations/wator/view/WatorConfigView.java`: class `WatorConfigView`
 - `ui/FXStyleClasses.java`: class `FXStyleClasses`
 
 ### `unchecked`
@@ -476,6 +499,9 @@ One occurrence each; decide per occurrence.
 - `ClassReferencesSubclass`: `engine/model/entity/GridEntity.java`, `isConstant()`. Proposal: keep.
 - `ExtractMethodRecommender`: `ui/FXComponentFactory.java`, `createLabeledIntSlider()`. Proposal: check the
   recommendation; change code or keep.
+- `HardcodedLineSeparator`: `ExtraterrestrialPetsSimulation.java`, `formatUnexpectedErrorContent()` (text of the
+  error alert). Proposal: check whether the alert needs `\n`; change code or keep. Decided as a single case,
+  independent of the profile decision for the tests (maintainer, 2026-11-06).
 - `ParameterHidesMemberVariable`: `simulations/core/view/AbstractDefaultMainView.java`, `drawSimulation()`. Proposal:
   rename the parameter or keep.
 - `SwitchExpressionCanBePushedDown`: `simulations/langton/model/LangtonStepRunner.java`,
