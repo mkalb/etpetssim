@@ -6,7 +6,6 @@ package de.mkalb.etpetssim.simulations.conway.view;
  * <p>Each value is a lower-kebab-case style class name with the prefix {@code conway-}; the constant name is the
  * value in upper snake case. The constants are sorted alphabetically by name.
  */
-@SuppressWarnings("SpellCheckingInspection")
 public final class ConwayStyleClasses {
 
     public static final String CONWAY_DENSITY_HINT_LABEL = "conway-density-hint-label";

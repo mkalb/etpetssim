@@ -3,11 +3,19 @@
     <words>
       <w>ETPETS</w>
       <w>Etpets</w>
+      <w>GRIDPANE</w>
+      <w>HBOX</w>
       <w>LANGTON</w>
+      <w>LANGTONS</w>
       <w>Langton</w>
       <w>Langton's</w>
+      <w>SCROLLPANE</w>
+      <w>SPLITPANE</w>
+      <w>STACKPANE</w>
       <w>Startscreen</w>
       <w>Sugarscape</w>
+      <w>TITLEDPANE</w>
+      <w>TRANSITIONRULES</w>
       <w>VBox</w>
       <w>WATOR</w>
       <w>Wator</w>
@@ -17,6 +25,7 @@
       <w>errorf</w>
       <w>etpetssim</w>
       <w>forestfire</w>
+      <w>forestfiremodel</w>
       <w>infof</w>
       <w>mkalb</w>
       <w>reboundingentities</w>

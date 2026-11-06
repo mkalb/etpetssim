@@ -116,7 +116,7 @@ The test sources were done on 2026-11-06: 52 suppressions in 22 files and 9 insp
 | test    | other types (4)                     |     4 | per occurrence                   | done   |
 | main    | `MarkerInterface`                   |     9 | disable                          | done   |
 | main    | `InterfaceMayBeAnnotatedFunctional` |     5 | disable                          | done   |
-| main    | `SpellCheckingInspection`           |     8 | dictionary                       | open   |
+| main    | `SpellCheckingInspection`           |     8 | dictionary                       | done   |
 | main    | `unchecked`                         |    11 | change code in `ArrayGridModel`  | open   |
 | main    | `ConstantValue`                     |     9 | change code (list cells, equals) | open   |
 | main    | `DataFlowIssue`                     |    11 | change code (list cells)         | open   |
@@ -350,17 +350,24 @@ The inventory is omitted: all occurrences are removed by the same commit.
 - Proposal: add real domain words to the project dictionary and remove the suppressions; for artificial tokens (rule
   strings, pattern data), keep a suppression narrowed to the affected fields.
 - Decision: as proposed; the maintainer removes the class-level suppressions in IntelliJ, adds domain words to the
-  dictionary, and narrows the rest to fields or methods (maintainer, 2026-11-06). `AppLocalizationKeys` is done: the dictionary words added for the tests cover its keys, and the
-  maintainer removed the suppression (2026-11-06). A later run of the spelling inspection reported `eggCoord` in
-  `EtpetsAgentLogic.collectActionCandidates()`; the variable is renamed to `eggCoordinate` instead of suppressed.
+  dictionary, and narrows the rest to fields or methods (maintainer, 2026-11-06).
+    - `AppLocalizationKeys`: the dictionary words added for the tests cover its keys; suppression removed.
+    - `EtpetsAgentLogic.collectActionCandidates()`: a later run of the spelling inspection reported `eggCoord`; the
+      variable is renamed to `eggCoordinate` instead of suppressed.
+    - `ConwayStyleClasses`, `FXStyleClasses`: the JavaFX layout class names (e.g., `GRIDPANE`, `HBOX`) and
+      `TRANSITIONRULES` are added to the dictionary; suppressions removed.
+    - `SimulationType`: `forestfiremodel` and `LANGTONS` are added to the dictionary; the suppression is narrowed to
+      the enum constants `CONWAYS_LIFE` and `LANGTONS_ANT`, whose CLI codes are artificial tokens.
+    - `ConwayPatterns`, `ConwayRulePresetSquare`, `LangtonRulePresetHexagon`, `LangtonRulePresetSquare`: keep the
+      class-level suppressions; most of their values are artificial tokens (pattern data and rule strings).
+
+Remaining suppressions (6):
 
 - `simulations/conway/model/ConwayPatterns.java`: class `ConwayPatterns`
 - `simulations/conway/shared/ConwayRulePresetSquare.java`: enum `ConwayRulePresetSquare`
-- `simulations/conway/view/ConwayStyleClasses.java`: class `ConwayStyleClasses`
-- `simulations/core/SimulationType.java`: enum `SimulationType`
+- `simulations/core/SimulationType.java`: enum constants `CONWAYS_LIFE`, `LANGTONS_ANT`
 - `simulations/langton/shared/LangtonRulePresetHexagon.java`: enum `LangtonRulePresetHexagon`
 - `simulations/langton/shared/LangtonRulePresetSquare.java`: enum `LangtonRulePresetSquare`
-- `ui/FXStyleClasses.java`: class `FXStyleClasses`
 
 ### `unchecked`
 

@@ -17,7 +17,6 @@ import java.util.Optional;
  *
  * <p>The declaration order defines the order of the simulations on the start screen.
  */
-@SuppressWarnings("SpellCheckingInspection")
 public enum SimulationType {
 
     /**
@@ -75,6 +74,7 @@ public enum SimulationType {
     /**
      * <a href="https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life">Conway's Game of Life</a>.
      */
+    @SuppressWarnings("SpellCheckingInspection")
     CONWAYS_LIFE(
             true,
             true,
@@ -88,6 +88,7 @@ public enum SimulationType {
     /**
      * <a href="https://en.wikipedia.org/wiki/Langton%27s_ant">Langton's ant</a>.
      */
+    @SuppressWarnings("SpellCheckingInspection")
     LANGTONS_ANT(
             true,
             true,

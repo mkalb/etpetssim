@@ -7,7 +7,6 @@ package de.mkalb.etpetssim.ui;
  * constants are sorted alphabetically by name, so the name prefix shows the usage context (e.g., {@code CONFIG_},
  * {@code CONTROL_}, {@code OBSERVATION_}, {@code SIMULATION_}).
  */
-@SuppressWarnings("SpellCheckingInspection")
 public final class FXStyleClasses {
 
     public static final String ABOUT_CONTENT_VBOX = "about-content-vbox";
