@@ -273,6 +273,8 @@ public final class FXGridCanvasPainter {
      * @param fillColor          the color used to fill the triangle, or {@code null} if no fill is desired
      * @param strokeColor        the color used to draw the triangle's border, or {@code null} if no border is desired
      * @param strokeLineWidth    the width of the stroke line in pixels
+     * @throws IllegalArgumentException if {@code triangleEdgeLength} is outside
+     *                                  [{@link GridGeometry#MIN_EDGE_LENGTH}, {@link GridGeometry#MAX_EDGE_LENGTH}]
      */
     public void drawTriangle(GridCoordinate coordinate, double triangleEdgeLength,
                              @Nullable Paint fillColor, @Nullable Paint strokeColor,
@@ -293,6 +295,8 @@ public final class FXGridCanvasPainter {
      * @param fillColor       the color used to fill the triangle, or {@code null} if no fill is desired
      * @param strokeColor     the color used to draw the triangle's border, or {@code null} if no border is desired
      * @param strokeLineWidth the width of the stroke line in pixels
+     * @throws IllegalArgumentException if the converted edge length is outside
+     *                                  [{@link GridGeometry#MIN_EDGE_LENGTH}, {@link GridGeometry#MAX_EDGE_LENGTH}]
      */
     public void drawTriangleMatchingCellWidth(GridCoordinate coordinate,
                                               @Nullable Paint fillColor, @Nullable Paint strokeColor,
@@ -311,6 +315,8 @@ public final class FXGridCanvasPainter {
      * @param fillColor         the color used to fill the hexagon, or {@code null} if no fill is desired
      * @param strokeColor       the color used to draw the hexagon's border, or {@code null} if no border is desired
      * @param strokeLineWidth   the width of the stroke line in pixels
+     * @throws IllegalArgumentException if {@code hexagonEdgeLength} is outside
+     *                                  [{@link GridGeometry#MIN_EDGE_LENGTH}, {@link GridGeometry#MAX_EDGE_LENGTH}]
      */
     public void drawHexagon(GridCoordinate coordinate, double hexagonEdgeLength,
                             @Nullable Paint fillColor, @Nullable Paint strokeColor,
@@ -330,6 +336,8 @@ public final class FXGridCanvasPainter {
      * @param fillColor       the color used to fill the hexagon, or {@code null} if no fill is desired
      * @param strokeColor     the color used to draw the hexagon's border, or {@code null} if no border is desired
      * @param strokeLineWidth the width of the stroke line in pixels
+     * @throws IllegalArgumentException if the converted edge length is outside
+     *                                  [{@link GridGeometry#MIN_EDGE_LENGTH}, {@link GridGeometry#MAX_EDGE_LENGTH}]
      */
     public void drawHexagonMatchingCellWidth(GridCoordinate coordinate,
                                              @Nullable Paint fillColor, @Nullable Paint strokeColor,
