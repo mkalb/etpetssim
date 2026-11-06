@@ -83,6 +83,9 @@ no warnings. The inventory below reflects this state.
 
 Not counted: the `@SuppressWarnings` text in the test data of `skills/JavaCodeInventoryTest.java`.
 
+The test sources were done on 2026-11-06: 52 suppressions in 22 files and 9 inspection types remain, all decided as
+"keep".
+
 ## Inspection profile
 
 - The shared profile "Project Default" lists only the inspections whose settings differ from the IntelliJ defaults;
@@ -99,10 +102,10 @@ Not counted: the `@SuppressWarnings` text in the test data of `skills/JavaCodeIn
 |---------|-------------------------------------|------:|----------------------------------|--------|
 | test    | `MagicNumber`                       |    51 | disable for scope "Tests"        | done   |
 | test    | `SameParameterValue`                |    17 | disable for scope "Tests"        | done   |
-| test    | `TestMethodWithoutAssertion`        |    20 | configure assertion methods      | open   |
+| test    | `TestMethodWithoutAssertion`        |    20 | keep                             | done   |
 | test    | `HardcodedLineSeparator`            |     8 | disable for scope "Tests"        | done   |
 | test    | `TextBlockMigration`                |     3 | change code (text blocks)        | done   |
-| test    | `UseOfProcessBuilder`               |     2 | keep                             | open   |
+| test    | `UseOfProcessBuilder`               |     2 | keep                             | done   |
 | test    | `DataFlowIssue`                     |     8 | keep 5; change code in 3         | done   |
 | test    | `unused`                            |     5 | keep                             | done   |
 | test    | `ResultOfMethodCallIgnored`         |     4 | keep                             | done   |
@@ -162,8 +165,9 @@ The inventory is omitted: all occurrences are removed by the same commit.
   `FXGridCanvasPainterTest`, test-local `assert*` methods inside the lambda of `FXTestSupport.runAndWait`.
 - Proposal: register the helper methods as assertion methods in the options of the inspection (class and method name
   pattern) and remove all 20 suppressions. Check in IntelliJ that the option also covers the assertions inside the
-  lambda; otherwise keep those 8 suppressions.
-- Decision: open.
+  lambda; otherwise keep those 8 suppressions. Alternative for the 12 constant tests: call the helpers through static
+  imports, as the enum tests do, which IntelliJ does not report.
+- Decision: keep all 20 suppressions (maintainer, 2026-11-06).
 
 - `core/AppLocalizationKeysTest.java`: `testConstantNamesAreAlphabeticallySorted()`,
   `testConstantsAreUniqueAndNonBlank()`, `testConstantsExistInAllBundles()`
