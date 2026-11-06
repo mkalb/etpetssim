@@ -184,7 +184,6 @@ final class SimulationConfigTest {
         );
     }
 
-    @SuppressWarnings("SameParameterValue")
     private record TestSimulationConfig(
             CellShape cellShape,
             GridEdgeBehavior gridEdgeBehavior,

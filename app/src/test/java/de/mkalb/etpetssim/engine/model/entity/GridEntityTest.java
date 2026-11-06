@@ -23,7 +23,6 @@ final class GridEntityTest {
         assertEquals("[DYNAMIC]", new TestEntity("dynamic").toDisplayString());
     }
 
-    @SuppressWarnings("SameParameterValue")
     private record TestEntity(String descriptorId) implements GridEntity {
 
         @NonNull
@@ -34,7 +33,6 @@ final class GridEntityTest {
 
     }
 
-    @SuppressWarnings("SameParameterValue")
     private record TestConstantEntity(String descriptorId) implements ConstantGridEntity {
     }
 

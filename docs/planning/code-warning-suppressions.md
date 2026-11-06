@@ -97,7 +97,7 @@ Not counted: the `@SuppressWarnings` text in the test data of `skills/JavaCodeIn
 | Sources | Inspection type                     | Count | Proposal                         | Status |
 |---------|-------------------------------------|------:|----------------------------------|--------|
 | test    | `MagicNumber`                       |    51 | disable for scope "Tests"        | done   |
-| test    | `SameParameterValue`                |    17 | disable for scope "Tests"        | open   |
+| test    | `SameParameterValue`                |    17 | disable for scope "Tests"        | done   |
 | test    | `TestMethodWithoutAssertion`        |    20 | configure assertion methods      | open   |
 | test    | `HardcodedLineSeparator`            |     8 | disable for scope "Tests"        | open   |
 | test    | `TextBlockMigration`                |     3 | change code (text blocks)        | open   |
@@ -153,22 +153,7 @@ The inventory is omitted: all occurrences are removed by the same commit.
   the warning rarely points to a problem there. Otherwise, narrow the class-level scopes to the affected methods.
 - Decision: disable for the scope "Tests" and remove all 17 suppressions (maintainer, 2026-11-06).
 
-- `engine/model/GridCellViewTest.java`: record `TestCellView`
-- `engine/model/entity/GridEntityTest.java`: record `TestConstantEntity`, record `TestEntity`
-- `engine/support/GridInitializersTest.java`: class `GridInitializersTest`
-- `simulations/conway/model/ConwayUserActionTest.java`: class `ConwayUserActionTest`
-- `simulations/core/model/SimulationConfigTest.java`: record `TestSimulationConfig`
-- `simulations/core/viewmodel/DefaultObservationViewModelTest.java`: record `TestStatistics`
-- `simulations/etpets/model/EtpetsGridModelTest.java`: class `EtpetsGridModelTest`
-- `simulations/etpets/model/entity/PetGenomeTest.java`: class `StubRandom`
-- `simulations/langton/model/LangtonGridModelTest.java`: class `LangtonGridModelTest`
-- `simulations/langton/viewmodel/LangtonEditToolBarViewModelTest.java`: class `LangtonEditToolBarViewModelTest`
-- `simulations/snake/model/strategy/NamedMoveStrategyTest.java`: record `TestMoveDecision`
-- `simulations/sugar/model/SugarGridModelTest.java`: class `SugarGridModelTest`
-- `testsupport/FXTestSupport.java`: `awaitLatch()`
-- `ui/GridGeometryTest.java`: class `GridGeometryTest`
-- `ui/InputDoubleIntRangePropertyTest.java`: class `InputDoubleIntRangePropertyTest`
-- `ui/InputDoublePropertyTest.java`: class `InputDoublePropertyTest`
+The inventory is omitted: all occurrences are removed by the same commit.
 
 ### `TestMethodWithoutAssertion`
 

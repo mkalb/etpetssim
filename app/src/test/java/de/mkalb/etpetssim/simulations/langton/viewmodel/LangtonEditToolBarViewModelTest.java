@@ -13,7 +13,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@SuppressWarnings("SameParameterValue")
 final class LangtonEditToolBarViewModelTest {
 
     private static LangtonConfig createConfig(CellShape cellShape) {

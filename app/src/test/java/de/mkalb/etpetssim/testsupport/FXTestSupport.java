@@ -53,7 +53,6 @@ public final class FXTestSupport {
         }
     }
 
-    @SuppressWarnings("SameParameterValue")
     private static void awaitLatch(CountDownLatch latch, long timeoutSeconds, String timeoutMessage) {
         try {
             if (!latch.await(timeoutSeconds, TimeUnit.SECONDS)) {

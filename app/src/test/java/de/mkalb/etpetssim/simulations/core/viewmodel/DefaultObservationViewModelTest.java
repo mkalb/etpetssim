@@ -248,7 +248,6 @@ final class DefaultObservationViewModelTest {
             DefaultObservationViewModel<ConwayEntity, GridCell<ConwayEntity>, TestStatistics> viewModel) {
     }
 
-    @SuppressWarnings("SameParameterValue")
     private record TestStatistics(int stepCount) implements SimulationStatistics {
 
         @NonNull

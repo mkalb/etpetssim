@@ -21,7 +21,6 @@ final class GridCellViewTest {
         assertEquals("(4, 5) [WALL]", cell.toDisplayString());
     }
 
-    @SuppressWarnings("SameParameterValue")
     private record TestCellView(GridCoordinate coordinate, TestEntity entity) implements GridCellView<TestEntity> {
     }
 
