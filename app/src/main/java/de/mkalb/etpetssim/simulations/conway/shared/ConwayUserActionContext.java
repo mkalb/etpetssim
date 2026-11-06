@@ -5,7 +5,6 @@ import de.mkalb.etpetssim.simulations.core.shared.SimulationUserActionContext;
 /**
  * Identifies which Conway edit action should be applied.
  */
-@SuppressWarnings("MarkerInterface")
 public sealed interface ConwayUserActionContext extends SimulationUserActionContext
         permits ConwayUserActionContext.FixedAction, ConwayUserActionContext.PlacePattern {
 

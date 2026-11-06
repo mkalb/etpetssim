@@ -6,7 +6,6 @@ import de.mkalb.etpetssim.simulations.core.shared.SimulationUserActionContext;
 /**
  * Identifies which Rebounding edit action should be applied.
  */
-@SuppressWarnings("MarkerInterface")
 public sealed interface ReboundingUserActionContext extends SimulationUserActionContext
         permits ReboundingUserActionContext.FixedAction, ReboundingUserActionContext.AddRebounder {
 

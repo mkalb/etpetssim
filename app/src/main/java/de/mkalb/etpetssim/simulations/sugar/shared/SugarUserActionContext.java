@@ -5,7 +5,6 @@ import de.mkalb.etpetssim.simulations.core.shared.SimulationUserActionContext;
 /**
  * Identifies which Sugar edit action should be applied.
  */
-@SuppressWarnings("MarkerInterface")
 public sealed interface SugarUserActionContext extends SimulationUserActionContext
         permits SugarUserActionContext.FixedAction, SugarUserActionContext.AddSugar {
 

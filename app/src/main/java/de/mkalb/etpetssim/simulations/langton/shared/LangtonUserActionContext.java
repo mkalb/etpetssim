@@ -6,7 +6,6 @@ import de.mkalb.etpetssim.simulations.core.shared.SimulationUserActionContext;
 /**
  * Identifies which Langton edit action should be applied.
  */
-@SuppressWarnings("MarkerInterface")
 public sealed interface LangtonUserActionContext extends SimulationUserActionContext
         permits LangtonUserActionContext.FixedAction, LangtonUserActionContext.AddAnt {
 

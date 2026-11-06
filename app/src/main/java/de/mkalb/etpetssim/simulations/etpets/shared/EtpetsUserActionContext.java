@@ -5,7 +5,6 @@ import de.mkalb.etpetssim.simulations.core.shared.SimulationUserActionContext;
 /**
  * Identifies which ET Pets edit action should be applied.
  */
-@SuppressWarnings("MarkerInterface")
 public sealed interface EtpetsUserActionContext extends SimulationUserActionContext
         permits EtpetsUserActionContext.SetTerrain, EtpetsUserActionContext.SetResource {
 

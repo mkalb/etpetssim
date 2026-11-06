@@ -114,7 +114,7 @@ The test sources were done on 2026-11-06: 52 suppressions in 22 files and 9 insp
 | test    | `InsertLiteralUnderscores`          |     2 | change code                      | done   |
 | test    | `SpellCheckingInspection`           |     2 | dictionary                       | done   |
 | test    | other types (4)                     |     4 | per occurrence                   | done   |
-| main    | `MarkerInterface`                   |     9 | disable                          | open   |
+| main    | `MarkerInterface`                   |     9 | disable                          | done   |
 | main    | `InterfaceMayBeAnnotatedFunctional` |     5 | disable                          | open   |
 | main    | `SpellCheckingInspection`           |     8 | dictionary                       | open   |
 | main    | `unchecked`                         |    11 | change code in `ArrayGridModel`  | open   |
@@ -330,23 +330,16 @@ One occurrence each; decide per occurrence.
 
 - Count: 9, all sealed or base marker interfaces on purpose (mainly the `*UserActionContext` family).
 - Proposal: disable the inspection in the profile, where it is enabled explicitly; remove all 9 suppressions.
-- Decision: open.
+- Decision: as proposed (maintainer, 2026-11-06). The maintainer removed the entry from the profile; the
+  inspection is disabled by default.
 
-- `engine/model/entity/ConstantGridEntity.java`: interface `ConstantGridEntity`
-- `simulations/conway/shared/ConwayUserActionContext.java`: interface `ConwayUserActionContext`
-- `simulations/core/shared/SimulationUserActionContext.java`: interface `SimulationUserActionContext`
-- `simulations/etpets/shared/EtpetsUserActionContext.java`: interface `EtpetsUserActionContext`
-- `simulations/langton/model/entity/AntEntity.java`: interface `AntEntity`
-- `simulations/langton/shared/LangtonUserActionContext.java`: interface `LangtonUserActionContext`
-- `simulations/rebounding/shared/ReboundingUserActionContext.java`: interface `ReboundingUserActionContext`
-- `simulations/snake/shared/SnakeUserActionContext.java`: interface `SnakeUserActionContext`
-- `simulations/sugar/shared/SugarUserActionContext.java`: interface `SugarUserActionContext`
+The inventory is omitted: all occurrences are removed by the same commit.
 
 ### `InterfaceMayBeAnnotatedFunctional`
 
 - Count: 5, interfaces with one abstract method that are not meant as lambda targets.
 - Proposal: disable the inspection; remove all 5 suppressions.
-- Decision: open.
+- Decision: as proposed (maintainer, 2026-11-06).
 
 - `engine/model/entity/ConstantGridEntity.java`: interface `ConstantGridEntity`
 - `engine/model/entity/ConstantGridEntityDescriptorProvider.java`: interface `ConstantGridEntityDescriptorProvider`
@@ -359,7 +352,8 @@ One occurrence each; decide per occurrence.
 - Count: 8, all at class level (constants, style classes, rule presets, and patterns); 7 remain.
 - Proposal: add real domain words to the project dictionary and remove the suppressions; for artificial tokens (rule
   strings, pattern data), keep a suppression narrowed to the affected fields.
-- Decision: open. `AppLocalizationKeys` is done: the dictionary words added for the tests cover its keys, and the
+- Decision: as proposed; the maintainer removes the class-level suppressions in IntelliJ, adds domain words to the
+  dictionary, and narrows the rest to fields or methods (maintainer, 2026-11-06). `AppLocalizationKeys` is done: the dictionary words added for the tests cover its keys, and the
   maintainer removed the suppression (2026-11-06). A later run of the spelling inspection reported `eggCoord` in
   `EtpetsAgentLogic.collectActionCandidates()`; the variable is renamed to `eggCoordinate` instead of suppressed.
 
@@ -542,7 +536,9 @@ One occurrence each; decide per occurrence.
 
 - `ExtractMethodRecommender`: check the recommendations; change code or keep.
 - `FieldNamingConvention`: `CompassDirection` has one-letter constants (`N`, `E`, `S`, `W`), shorter than the
-  minimum length 2 of the constant naming convention in the profile: set the minimum length to 1 or keep.
+  minimum length 2 of the constant naming convention in the profile: set the minimum length to 1 or keep. Decision:
+  set the minimum length of the enum constant naming convention to 1 and remove the suppression (maintainer,
+  2026-11-06).
   `AppLocalization.state`: done; the camelCase convention for non-final static fields (see the test decision)
   removes the suppression (maintainer, 2026-11-06).
 - `OptionalUsedAsFieldOrParameterType`: check whether the callers can pass the value or `null` instead; otherwise

@@ -6,7 +6,6 @@ import de.mkalb.etpetssim.simulations.snake.model.strategy.SnakeMoveStrategy;
 /**
  * Identifies which Snake edit action should be applied.
  */
-@SuppressWarnings("MarkerInterface")
 public sealed interface SnakeUserActionContext extends SimulationUserActionContext
         permits SnakeUserActionContext.FixedAction, SnakeUserActionContext.AddSnake {
 
