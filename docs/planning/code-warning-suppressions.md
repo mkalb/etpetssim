@@ -106,7 +106,7 @@ Not counted: the `@SuppressWarnings` text in the test data of `skills/JavaCodeIn
 | test    | `unused`                            |     5 | keep                             | done   |
 | test    | `ResultOfMethodCallIgnored`         |     4 | keep                             | done   |
 | test    | `NumericCastThatLosesPrecision`     |     3 | profile option                   | done   |
-| test    | `ConstantValue`                     |     2 | narrow scope                     | open   |
+| test    | `ConstantValue`                     |     2 | narrow scope                     | done   |
 | test    | `InsertLiteralUnderscores`          |     2 | change code                      | done   |
 | test    | `SpellCheckingInspection`           |     2 | dictionary                       | open   |
 | test    | other types (4)                     |     4 | per occurrence                   | open   |
@@ -260,10 +260,12 @@ The inventory is omitted: all occurrences are removed by the same commit.
 - Count: 2; the annotation on `EtpetsBalanceTest` is at class level.
 - Proposal: keep; narrow the class-level scope of `EtpetsBalanceTest` to the methods that check constants.
 - Decision: keep `WorkCheckpointsTest`; narrow `EtpetsBalanceTest` to the methods that IntelliJ reports after the
-  class-level suppression is removed (maintainer, 2026-11-06).
+  class-level suppression is removed (maintainer, 2026-11-06). Only one method is reported.
+
+Remaining suppressions:
 
 - `engine/support/WorkCheckpointsTest.java`: `testCancellationCheckInterval()`
-- `simulations/etpets/model/EtpetsBalanceTest.java`: class `EtpetsBalanceTest`
+- `simulations/etpets/model/EtpetsBalanceTest.java`: `testInitialCurrentEnergyReductionKeepsMinimumEnergy()`
 
 ### `InsertLiteralUnderscores`
 
