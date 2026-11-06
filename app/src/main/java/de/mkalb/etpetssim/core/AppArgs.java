@@ -27,7 +27,7 @@ public final class AppArgs {
     /**
      * Regular expression pattern to match command-line arguments in the format --key=value or --flag.
      */
-    private static final Pattern ARGUMENT_PATTERN = Pattern.compile("--([a-zA-Z0-9\\-]+)(=(.*))?");
+    private static final Pattern ARGUMENT_PATTERN = Pattern.compile("--([a-zA-Z0-9\\-]+)(=(.*))?", Pattern.DOTALL);
     private static final int INITIAL_BUILDER_CAPACITY = 128;
 
     private final EnumMap<Key, String> arguments = new EnumMap<>(Key.class);

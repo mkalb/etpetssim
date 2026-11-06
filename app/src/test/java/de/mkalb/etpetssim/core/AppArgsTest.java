@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Execution(ExecutionMode.SAME_THREAD)
-@SuppressWarnings("MagicNumber")
+@SuppressWarnings({"MagicNumber", "HardcodedLineSeparator"})
 final class AppArgsTest {
 
     @BeforeAll
@@ -124,8 +124,14 @@ final class AppArgsTest {
     }
 
     @Test
+    void testConstructorParsesValueWithLineTerminators() {
+        assertEquals(Optional.of("first\nsecond"),
+                parse("--simulation=\r\nfirst\nsecond\n").getValue(AppArgs.Key.SIMULATION));
+    }
+
+    @Test
     void testConstructorIgnoresBlankValue() {
-        assertTrue(parse("--simulation=   ", "--simulation=\t", "--help= ").keys().isEmpty());
+        assertTrue(parse("--simulation=   ", "--simulation=\t", "--simulation=\n", "--help= ").keys().isEmpty());
     }
 
     @Test
