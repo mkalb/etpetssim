@@ -136,6 +136,7 @@ Supported application arguments:
 | Argument              | Description                                                                                                                |
 |-----------------------|----------------------------------------------------------------------------------------------------------------------------|
 | `--help`              | Prints the list of arguments in English and exits                                                                          |
+| `--version`           | Prints the application version and exits                                                                                   |
 | `--locale=<locale>`   | Sets the UI language: `en`, `de`, `en_US`, or `de_DE` (case-sensitive); default: saved language, system locale, or `en_US` |
 | `--log-console`       | Enables logging to the console                                                                                             |
 | `--log-file`          | Enables logging to the file `ExtraterrestrialPetsSimulation.log` in the application's log directory                        |

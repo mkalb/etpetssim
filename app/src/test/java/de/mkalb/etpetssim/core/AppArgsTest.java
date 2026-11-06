@@ -239,10 +239,11 @@ final class AppArgsTest {
 
     @Test
     void testIsFlagActive() {
-        AppArgs cli = parse("--help", "--log-console=false");
+        AppArgs cli = parse("--help", "--version", "--log-console=false");
 
         assertAll(
                 () -> assertTrue(cli.isFlagActive(AppArgs.Key.HELP)),
+                () -> assertTrue(cli.isFlagActive(AppArgs.Key.VERSION)),
                 () -> assertFalse(cli.isFlagActive(AppArgs.Key.LOG_CONSOLE)),
                 () -> assertFalse(cli.isFlagActive(AppArgs.Key.LOG_FILE))
         );
@@ -312,6 +313,7 @@ final class AppArgsTest {
         assertArrayEquals(
                 new AppArgs.Key[]{
                         AppArgs.Key.HELP,
+                        AppArgs.Key.VERSION,
                         AppArgs.Key.LOCALE,
                         AppArgs.Key.LOG_CONSOLE,
                         AppArgs.Key.LOG_FILE,
@@ -327,6 +329,7 @@ final class AppArgsTest {
         assertAll(
                 () -> assertEquals(Optional.of(AppArgs.Key.HELP), AppArgs.Key.fromKeyName("help")),
                 () -> assertEquals(Optional.of(AppArgs.Key.HELP), AppArgs.Key.fromKeyName("HELP")),
+                () -> assertEquals(Optional.of(AppArgs.Key.VERSION), AppArgs.Key.fromKeyName("Version")),
                 () -> assertEquals(Optional.of(AppArgs.Key.LOCALE), AppArgs.Key.fromKeyName("Locale")),
                 () -> assertEquals(Optional.of(AppArgs.Key.LOG_CONSOLE), AppArgs.Key.fromKeyName("Log-Console")),
                 () -> assertEquals(Optional.of(AppArgs.Key.LOG_FILE), AppArgs.Key.fromKeyName("log-file")),
@@ -361,6 +364,8 @@ final class AppArgsTest {
                 () -> assertTrue(result.startsWith("List of available command-line arguments:" + lineSeparator)),
                 () -> assertTrue(result.contains(
                         "--help: Prints the list of arguments in English and exits (flag)" + lineSeparator)),
+                () -> assertTrue(result.contains("--version: Prints the application version and exits (flag)"
+                        + lineSeparator)),
                 () -> assertTrue(result.contains(
                         "--log-level: " + bundle.getString(AppLocalizationKeys.ARGS_LOG_LEVEL) + lineSeparator)),
                 () -> assertTrue(Arrays.stream(AppArgs.Key.values()).allMatch(key ->
@@ -389,6 +394,7 @@ final class AppArgsTest {
     void testKey() {
         assertAll(
                 () -> assertEquals("help", AppArgs.Key.HELP.key()),
+                () -> assertEquals("version", AppArgs.Key.VERSION.key()),
                 () -> assertEquals("locale", AppArgs.Key.LOCALE.key()),
                 () -> assertEquals("log-console", AppArgs.Key.LOG_CONSOLE.key()),
                 () -> assertEquals("log-file", AppArgs.Key.LOG_FILE.key()),
@@ -406,6 +412,7 @@ final class AppArgsTest {
     void testIsFlag() {
         assertAll(
                 () -> assertTrue(AppArgs.Key.HELP.isFlag()),
+                () -> assertTrue(AppArgs.Key.VERSION.isFlag()),
                 () -> assertFalse(AppArgs.Key.LOCALE.isFlag()),
                 () -> assertTrue(AppArgs.Key.LOG_CONSOLE.isFlag()),
                 () -> assertTrue(AppArgs.Key.LOG_FILE.isFlag()),

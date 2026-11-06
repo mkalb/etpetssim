@@ -42,6 +42,7 @@ public final class AppLocalizationKeys {
     public static final String ARGS_LOG_FILE = "args.logfile";
     public static final String ARGS_LOG_LEVEL = "args.loglevel";
     public static final String ARGS_SIMULATION = "args.simulation";
+    public static final String ARGS_VERSION = "args.version";
     public static final String HEADER_ABOUT_LINK = "header.about.link";
     public static final String HEADER_STARTSCREEN_LINK = "header.startscreen.link";
     public static final String WINDOW_TITLE = "window.title";

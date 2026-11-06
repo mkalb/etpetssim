@@ -3,7 +3,7 @@ package de.mkalb.etpetssim.ui;
 import de.mkalb.etpetssim.core.AppArgs;
 import de.mkalb.etpetssim.core.AppLocalization;
 import de.mkalb.etpetssim.core.AppLocalizationKeys;
-import de.mkalb.etpetssim.core.AppLogger;
+import de.mkalb.etpetssim.core.AppManifest;
 import de.mkalb.etpetssim.core.AppResources;
 import javafx.application.HostServices;
 import javafx.scene.Node;
@@ -22,16 +22,10 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
-import java.util.jar.Attributes;
-import java.util.jar.Manifest;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -45,19 +39,18 @@ public final class AboutDialog {
 
     private static final String REPOSITORY_URL = "https://github.com/mkalb/etpetssim";
     private static final String ISSUES_URL = REPOSITORY_URL + "/issues";
-    private static final String IMPLEMENTATION_VERSION = "Implementation-Version";
     private static final double HEADER_ICON_SIZE = 64.0d;
     private static final int DEFAULT_TEXT_AREA_COLUMNS = 120;
     private static final int DEFAULT_TEXT_AREA_ROWS = 30;
     private static final int MANIFEST_LINE_CAPACITY_HINT = 64;
     private static final List<ManifestLine> MANIFEST_LINES = List.of(
-            new ManifestLine("Implementation-Title", AppLocalizationKeys.ABOUT_MANIFEST_TITLE),
-            new ManifestLine(IMPLEMENTATION_VERSION, AppLocalizationKeys.ABOUT_MANIFEST_VERSION),
-            new ManifestLine("Build-Revision", AppLocalizationKeys.ABOUT_MANIFEST_REVISION),
-            new ManifestLine("Build-Commit-Date", AppLocalizationKeys.ABOUT_MANIFEST_COMMIT_DATE),
-            new ManifestLine("Build-Jdk-Spec", AppLocalizationKeys.ABOUT_MANIFEST_BUILD_JDK),
-            new ManifestLine("Implementation-Vendor", AppLocalizationKeys.ABOUT_MANIFEST_VENDOR),
-            new ManifestLine("Implementation-URL", AppLocalizationKeys.ABOUT_MANIFEST_URL));
+            new ManifestLine(AppManifest.IMPLEMENTATION_TITLE, AppLocalizationKeys.ABOUT_MANIFEST_TITLE),
+            new ManifestLine(AppManifest.IMPLEMENTATION_VERSION, AppLocalizationKeys.ABOUT_MANIFEST_VERSION),
+            new ManifestLine(AppManifest.BUILD_REVISION, AppLocalizationKeys.ABOUT_MANIFEST_REVISION),
+            new ManifestLine(AppManifest.BUILD_COMMIT_DATE, AppLocalizationKeys.ABOUT_MANIFEST_COMMIT_DATE),
+            new ManifestLine(AppManifest.BUILD_JDK_SPEC, AppLocalizationKeys.ABOUT_MANIFEST_BUILD_JDK),
+            new ManifestLine(AppManifest.IMPLEMENTATION_VENDOR, AppLocalizationKeys.ABOUT_MANIFEST_VENDOR),
+            new ManifestLine(AppManifest.IMPLEMENTATION_URL, AppLocalizationKeys.ABOUT_MANIFEST_URL));
     private static final Pattern README_FIRST_SECTION_PATTERN = Pattern.compile("^## ", Pattern.MULTILINE);
 
     private final List<Image> icons;
@@ -104,7 +97,7 @@ public final class AboutDialog {
      * Shows the About dialog and waits until it is closed.
      */
     public void show() {
-        Map<String, String> manifestInfo = readManifestInfo();
+        Map<String, String> manifestInfo = AppManifest.readMainAttributes();
 
         Tab tabManifest = createTextAreaTab(
                 AppLocalization.getText(AppLocalizationKeys.ABOUT_TAB_VERSION),
@@ -142,7 +135,7 @@ public final class AboutDialog {
     private Node createHeader(Map<String, String> manifestInfo) {
         String title = AppLocalization.getText(AppLocalizationKeys.ABOUT_HEADER_TITLE);
         String version = AppLocalization.getFormattedText(AppLocalizationKeys.ABOUT_MANIFEST_VERSION,
-                resolveManifestValue(manifestInfo, IMPLEMENTATION_VERSION));
+                resolveManifestValue(manifestInfo, AppManifest.IMPLEMENTATION_VERSION));
         VBox titleBox = new VBox(
                 FXComponentFactory.createLabel(title, FXStyleClasses.ABOUT_TITLE_LABEL),
                 FXComponentFactory.createLabel(version, FXStyleClasses.ABOUT_VERSION_LABEL));
@@ -199,7 +192,7 @@ public final class AboutDialog {
      *
      * <p>Attributes missing from the manifest are shown as a localized placeholder.
      *
-     * @param manifestInfo manifest attributes read by {@link #readManifestInfo()}
+     * @param manifestInfo manifest attributes read by {@link AppManifest#readMainAttributes()}
      * @return formatted manifest summary text
      */
     private String formatManifestSummary(Map<String, String> manifestInfo) {
@@ -216,40 +209,13 @@ public final class AboutDialog {
     /**
      * Resolves a manifest attribute value, with a localized placeholder if the attribute is missing.
      *
-     * @param manifestInfo  manifest attributes read by {@link #readManifestInfo()}
+     * @param manifestInfo  manifest attributes read by {@link AppManifest#readMainAttributes()}
      * @param attributeName name of the manifest attribute
      * @return attribute value, or the localized "unknown" placeholder
      */
     private String resolveManifestValue(Map<String, String> manifestInfo, String attributeName) {
         return manifestInfo.getOrDefault(attributeName,
                 AppLocalization.getText(AppLocalizationKeys.ABOUT_MANIFEST_UNKNOWN));
-    }
-
-    /**
-     * Reads the displayed attributes from {@code META-INF/MANIFEST.MF}.
-     *
-     * @return map of manifest attribute names to values, or an empty map if unavailable
-     */
-    private Map<String, String> readManifestInfo() {
-        Optional<InputStream> resource = AppResources.getResourceAsStream("META-INF/MANIFEST.MF");
-        if (resource.isEmpty()) {
-            return Map.of();
-        }
-        try (InputStream is = resource.get()) {
-            Manifest manifest = new Manifest(is);
-            Attributes attributes = manifest.getMainAttributes();
-            Map<String, String> manifestInfo = HashMap.newHashMap(MANIFEST_LINES.size());
-            for (ManifestLine line : MANIFEST_LINES) {
-                String value = attributes.getValue(line.attributeName());
-                if ((value != null) && !value.isBlank()) {
-                    manifestInfo.put(line.attributeName(), value);
-                }
-            }
-            return manifestInfo;
-        } catch (IOException e) {
-            AppLogger.error(e, "AboutDialog: Failed to read MANIFEST.MF");
-            return Map.of();
-        }
     }
 
     /**

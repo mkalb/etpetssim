@@ -3,6 +3,7 @@ package de.mkalb.etpetssim;
 import de.mkalb.etpetssim.core.AppArgs;
 import de.mkalb.etpetssim.core.AppLocalization;
 import de.mkalb.etpetssim.core.AppLogger;
+import de.mkalb.etpetssim.core.AppManifest;
 import de.mkalb.etpetssim.core.AppSettings;
 import de.mkalb.etpetssim.core.AppStorage;
 import javafx.application.Application;
@@ -31,28 +32,34 @@ public final class AppLauncher {
      * @param args command-line arguments passed to the application
      */
     static void main(String[] args) {
-        var arguments = parseArgumentsAndHandleHelp(args);
+        var arguments = parseArgumentsAndHandleInformation(args);
         initializeAppLogger(arguments);
         initializeAppLocalization(arguments);
 
-        AppLogger.infof("AppLauncher: Launching application with arguments: %s", arguments.toArgumentString());
+        AppLogger.infof("AppLauncher: Launching %s with arguments: %s", AppManifest.formatVersionLine(),
+                arguments.toArgumentString());
         Application.launch(ExtraterrestrialPetsSimulation.class, args);
     }
 
     /**
-     * Parses command-line arguments and handles the help flag.
+     * Parses command-line arguments and handles the information flags.
      *
-     * <p>If {@link AppArgs.Key#HELP} is active, usage information is written to {@link System#out} and the process
-     * exits with status code {@code 0}.
+     * <p>If {@link AppArgs.Key#HELP} is active, usage information is written to {@link System#out}; otherwise, if
+     * {@link AppArgs.Key#VERSION} is active, the version line of {@link AppManifest#formatVersionLine()} is written.
+     * In both cases the process exits with status code {@code 0}.
      *
      * @param args command-line arguments; may be empty
      * @return parsed {@link AppArgs} instance
      */
     @SuppressWarnings("CallToSystemExit")
-    private static AppArgs parseArgumentsAndHandleHelp(String[] args) {
+    private static AppArgs parseArgumentsAndHandleInformation(String[] args) {
         AppArgs arguments = new AppArgs(args);
         if (arguments.isFlagActive(AppArgs.Key.HELP)) {
             AppArgs.Key.printHelp(System.out);
+            System.exit(0);
+        }
+        if (arguments.isFlagActive(AppArgs.Key.VERSION)) {
+            System.out.println(AppManifest.formatVersionLine());
             System.exit(0);
         }
         return arguments;

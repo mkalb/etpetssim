@@ -216,6 +216,7 @@ public final class AppArgs {
      */
     public enum Key {
         HELP("help", AppLocalizationKeys.ARGS_HELP, true),
+        VERSION("version", AppLocalizationKeys.ARGS_VERSION, true),
         LOCALE("locale", AppLocalizationKeys.ARGS_LOCALE, false),
         LOG_CONSOLE("log-console", AppLocalizationKeys.ARGS_LOG_CONSOLE, true),
         LOG_FILE("log-file", AppLocalizationKeys.ARGS_LOG_FILE, true),
