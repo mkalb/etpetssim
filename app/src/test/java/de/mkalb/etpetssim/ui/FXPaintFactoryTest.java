@@ -49,10 +49,21 @@ final class FXPaintFactoryTest {
     }
 
     @Test
+    void testComputeBrightnessVariantsMapCoversRangeEndingAtMaxValue() {
+        Map<Integer, Color> variants = FXPaintFactory.computeBrightnessVariantsMap(
+                BASE_COLOR, Integer.MAX_VALUE - 2, Integer.MAX_VALUE, 2, 1.0d);
+
+        assertEquals(Set.of(Integer.MAX_VALUE - 2, Integer.MAX_VALUE - 1, Integer.MAX_VALUE), variants.keySet());
+    }
+
+    @Test
     void testComputeBrightnessVariantsMapRejectsInvalidArguments() {
         assertAll(
                 () -> assertThrows(IllegalArgumentException.class,
                         () -> FXPaintFactory.computeBrightnessVariantsMap(BASE_COLOR, 3, 1, 1, 0.0d)),
+                () -> assertThrows(IllegalArgumentException.class,
+                        () -> FXPaintFactory.computeBrightnessVariantsMap(BASE_COLOR, Integer.MIN_VALUE,
+                                Integer.MAX_VALUE, 1, 0.0d)),
                 () -> assertThrows(IllegalArgumentException.class,
                         () -> FXPaintFactory.computeBrightnessVariantsMap(BASE_COLOR, 1, 3, 0, 0.0d)),
                 () -> assertThrows(IllegalArgumentException.class,

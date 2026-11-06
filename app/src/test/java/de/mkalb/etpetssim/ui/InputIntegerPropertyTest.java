@@ -30,6 +30,8 @@ final class InputIntegerPropertyTest {
     private static final int EXPECTED_STEP_MID = 15;
     private static final int ABOVE_MAX = 25;
     private static final int BELOW_MIN = -5;
+    private static final int WIDE_MIN = -2_000_000_000;
+    private static final int WIDE_MAX = 2_000_000_000;
 
     @BeforeAll
     static void setUpBeforeAll() {
@@ -92,6 +94,13 @@ final class InputIntegerPropertyTest {
     }
 
     @Test
+    void testConstructorAcceptsWideRange() {
+        InputIntegerProperty property = createRecord(WIDE_MAX, WIDE_MIN, WIDE_MAX, STEP);
+
+        assertEquals(WIDE_MAX, property.getValue());
+    }
+
+    @Test
     void testOf() {
         InputIntegerProperty property = createProperty();
 
@@ -110,7 +119,9 @@ final class InputIntegerPropertyTest {
                 () -> assertFalse(InputIntegerProperty.isInvalidValue(MAX_VALUE, MIN_VALUE, MAX_VALUE, STEP)),
                 () -> assertTrue(InputIntegerProperty.isInvalidValue(OFF_STEP_MID, MIN_VALUE, MAX_VALUE, STEP)),
                 () -> assertTrue(InputIntegerProperty.isInvalidValue(ABOVE_MAX, MIN_VALUE, MAX_VALUE, STEP)),
-                () -> assertTrue(InputIntegerProperty.isInvalidValue(BELOW_MIN, MIN_VALUE, MAX_VALUE, STEP))
+                () -> assertTrue(InputIntegerProperty.isInvalidValue(BELOW_MIN, MIN_VALUE, MAX_VALUE, STEP)),
+                () -> assertFalse(InputIntegerProperty.isInvalidValue(WIDE_MAX, WIDE_MIN, WIDE_MAX, STEP)),
+                () -> assertTrue(InputIntegerProperty.isInvalidValue(WIDE_MAX - 1, WIDE_MIN, WIDE_MAX, STEP))
         );
     }
 
@@ -182,6 +193,18 @@ final class InputIntegerPropertyTest {
                 () -> assertEquals(MAX_VALUE, property.adjustValue(OFF_STEP_HIGHER)),
                 () -> assertEquals(MAX_VALUE, property.adjustValue(ABOVE_MAX)),
                 () -> assertEquals(MIN_VALUE, property.adjustValue(BELOW_MIN))
+        );
+    }
+
+    @Test
+    void testAdjustValueReturnsBoundsForWideRange() {
+        InputIntegerProperty property = createRecord(WIDE_MIN, WIDE_MIN, WIDE_MAX, STEP);
+
+        assertAll(
+                () -> assertEquals(WIDE_MIN, property.adjustValue(WIDE_MIN)),
+                () -> assertEquals(WIDE_MIN, property.adjustValue(Integer.MIN_VALUE)),
+                () -> assertEquals(WIDE_MAX, property.adjustValue(WIDE_MAX)),
+                () -> assertEquals(WIDE_MAX, property.adjustValue(Integer.MAX_VALUE))
         );
     }
 

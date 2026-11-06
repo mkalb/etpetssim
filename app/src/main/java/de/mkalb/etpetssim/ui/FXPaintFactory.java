@@ -39,8 +39,9 @@ public final class FXPaintFactory {
      * @param groupCount     the number of brightness groups
      * @param maxFactorDelta the total brightness change (positive to brighten, negative to darken)
      * @return a map from integer value to color variant
-     * @throws IllegalArgumentException if the range is invalid, groupCount is less than 1,
-     *                                  or maxFactorDelta is outside the range [-1.0, 10.0]
+     * @throws IllegalArgumentException if the range is invalid or contains more than {@code Integer.MAX_VALUE}
+     *                                  values, groupCount is less than 1, or maxFactorDelta is outside the range
+     *                                  [-1.0, 10.0]
      */
     @SuppressWarnings("MagicNumber")
     public static Map<Integer, Color> computeBrightnessVariantsMap(
@@ -49,11 +50,16 @@ public final class FXPaintFactory {
             int maxInclusive,
             int groupCount,
             double maxFactorDelta) {
-        int range = (maxInclusive - minInclusive) + 1;
-        if (range < 1) {
+        long valueCount = ((long) maxInclusive - minInclusive) + 1;
+        if (valueCount < 1) {
             throw new IllegalArgumentException("maxInclusive must be >= minInclusive, but was: minInclusive="
                     + minInclusive + ", maxInclusive=" + maxInclusive);
         }
+        if (valueCount > Integer.MAX_VALUE) {
+            throw new IllegalArgumentException("maxInclusive - minInclusive must be < Integer.MAX_VALUE, but was: "
+                    + "minInclusive=" + minInclusive + ", maxInclusive=" + maxInclusive);
+        }
+        int range = Math.toIntExact(valueCount);
         if (groupCount < 1) {
             throw new IllegalArgumentException("groupCount must be >= 1, but was: " + groupCount);
         }
@@ -73,10 +79,8 @@ public final class FXPaintFactory {
             Color groupColor = adjustBrightness(baseColor, groupIndexFactor);
 
             int currentGroupSize = baseGroupSize + ((groupIndex < remainder) ? 1 : 0);
-            int groupEnd = Math.min((groupStart + currentGroupSize) - 1, maxInclusive);
-
-            for (int value = groupStart; value <= groupEnd; value++) {
-                map.put(value, groupColor);
+            for (int offset = 0; offset < currentGroupSize; offset++) {
+                map.put(groupStart + offset, groupColor);
             }
             groupStart += currentGroupSize;
         }

@@ -40,7 +40,7 @@ public record InputIntegerProperty(IntegerProperty property, int min, int max, i
         if (step <= 0) {
             throw new IllegalArgumentException("step must be > 0, but was: " + step);
         }
-        if (((max - min) % step) != 0) {
+        if ((((long) max - min) % step) != 0) {
             throw new IllegalArgumentException("max - min must be a multiple of step, but was: min=" + min
                     + ", max=" + max + ", step=" + step);
         }
@@ -87,7 +87,7 @@ public record InputIntegerProperty(IntegerProperty property, int min, int max, i
      * @return {@code true} if the value is invalid, {@code false} otherwise
      */
     static boolean isInvalidValue(int value, int min, int max, int step) {
-        return (value < min) || (value > max) || (((value - min) % step) != 0);
+        return (value < min) || (value > max) || ((((long) value - min) % step) != 0);
     }
 
     /**
@@ -134,14 +134,14 @@ public record InputIntegerProperty(IntegerProperty property, int min, int max, i
      */
     public int adjustValue(int newValue) {
         int clamped = Math.clamp(newValue, min, max);
-        int delta = clamped - min;
-        int lowerOffset = (delta / step) * step;
-        int upperOffset = Math.min(lowerOffset + step, max - min);
+        long delta = (long) clamped - min;
+        long lowerOffset = (delta / step) * step;
+        long upperOffset = Math.min(lowerOffset + step, (long) max - min);
 
         if ((delta - lowerOffset) <= (upperOffset - delta)) {
-            return min + lowerOffset;
+            return Math.toIntExact(min + lowerOffset);
         }
-        return min + upperOffset;
+        return Math.toIntExact(min + upperOffset);
     }
 
 }
