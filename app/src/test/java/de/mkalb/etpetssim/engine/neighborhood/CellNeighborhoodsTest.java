@@ -28,7 +28,6 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@SuppressWarnings("MagicNumber")
 final class CellNeighborhoodsTest {
 
     private static final List<GridCoordinate> INSIDE_COORDINATES =

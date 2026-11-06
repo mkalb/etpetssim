@@ -96,7 +96,7 @@ Not counted: the `@SuppressWarnings` text in the test data of `skills/JavaCodeIn
 
 | Sources | Inspection type                     | Count | Proposal                         | Status |
 |---------|-------------------------------------|------:|----------------------------------|--------|
-| test    | `MagicNumber`                       |    51 | disable for scope "Tests"        | open   |
+| test    | `MagicNumber`                       |    51 | disable for scope "Tests"        | done   |
 | test    | `SameParameterValue`                |    17 | disable for scope "Tests"        | open   |
 | test    | `TestMethodWithoutAssertion`        |    20 | configure assertion methods      | open   |
 | test    | `HardcodedLineSeparator`            |     8 | disable for scope "Tests"        | open   |
@@ -138,13 +138,13 @@ Not counted: the `@SuppressWarnings` text in the test data of `skills/JavaCodeIn
 
 ### `MagicNumber`
 
-- Count: 51, all at class level as `junit.md` prescribes.
+- Count: 51; 50 at class level as `junit.md` prescribed, 1 at method level (`AppResourcesTest.testGetImage()`).
 - Proposal: disable the inspection for the scope "Tests", remove all 51 suppressions, and remove the `MagicNumber`
   bullet from `junit.md` (rule change).
 - Decision: disable for the scope "Tests" (maintainer, 2026-10-30); removing the suppressions and the rule change are
   part of the same commit.
 
-The inventory is omitted: every occurrence is a class-level annotation and is removed by the same commit.
+The inventory is omitted: all occurrences are removed by the same commit.
 
 ### `SameParameterValue`
 

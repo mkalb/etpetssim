@@ -12,7 +12,6 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@SuppressWarnings("MagicNumber")
 final class ReboundingUserActionTest {
 
     private static ReboundingConfig createConfig(int verticalWalls, double movingEntityPercent) {

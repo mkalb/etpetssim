@@ -100,8 +100,6 @@ Rules for test sources only; repository-wide and Java instructions still apply.
   default locale, time zone, or the current time.
 - Put test-only nested enums, records, and small fixture types at the bottom of the class.
 - Use method-level `@SuppressWarnings("DataFlowIssue")` for intentional null-passing tests.
-- Use class-level `@SuppressWarnings("MagicNumber")` when test cases use literal domain numbers; in test sources, the
-  class is the intended scope.
 - Prefix test resources with `test_` (e.g., `css/test_style.css`, `i18n/test_messages_en_US.properties`) so they
   never shadow main resources inside the patched module; prefer main resources when a test does not need special
   content.

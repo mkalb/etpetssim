@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@SuppressWarnings({"MagicNumber", "SameParameterValue"})
+@SuppressWarnings("SameParameterValue")
 final class GridInitializersTest {
 
     private static final GridStructure STRUCTURE = new GridStructure(

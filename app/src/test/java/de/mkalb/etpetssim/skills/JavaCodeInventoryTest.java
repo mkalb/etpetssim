@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Tag("skill")
-@SuppressWarnings({"MagicNumber", "HardcodedLineSeparator"})
+@SuppressWarnings("HardcodedLineSeparator")
 final class JavaCodeInventoryTest {
 
     private static final Path MEMBER_OUTPUT_PATH = Path.of("docs", "generated", "JavaMethodInventory.csv");

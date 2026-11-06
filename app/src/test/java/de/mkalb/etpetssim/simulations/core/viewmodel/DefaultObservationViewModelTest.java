@@ -28,7 +28,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
-@SuppressWarnings("MagicNumber")
 @Execution(ExecutionMode.SAME_THREAD)
 final class DefaultObservationViewModelTest {
 

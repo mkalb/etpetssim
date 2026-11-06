@@ -51,7 +51,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
-@SuppressWarnings("MagicNumber")
 final class SimulationManagerTest {
 
     private static ConwayConfig createConwayConfig() {

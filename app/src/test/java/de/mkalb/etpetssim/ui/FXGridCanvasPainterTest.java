@@ -30,7 +30,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Execution(ExecutionMode.SAME_THREAD)
-@SuppressWarnings("MagicNumber")
 final class FXGridCanvasPainterTest {
 
     private static final double CANVAS_SIZE = 120.0d;

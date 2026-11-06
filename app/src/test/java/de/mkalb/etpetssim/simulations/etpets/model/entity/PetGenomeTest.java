@@ -8,7 +8,6 @@ import java.util.Random;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@SuppressWarnings("MagicNumber")
 final class PetGenomeTest {
 
     private static final double TOLERANCE = 1.0e-9d;

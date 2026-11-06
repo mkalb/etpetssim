@@ -69,7 +69,6 @@ final class AppResourcesTest {
         assertTrue(AppResources.getCssUrl("missing.css").isEmpty());
     }
 
-    @SuppressWarnings("MagicNumber")
     @Test
     void testGetImage() {
         Optional<Image> image = AppResources.getImage("etpetssim16.png");

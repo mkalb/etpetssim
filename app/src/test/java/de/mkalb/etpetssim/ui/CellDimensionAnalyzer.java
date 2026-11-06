@@ -10,7 +10,6 @@ import java.util.Locale;
  * for various edge lengths and cell shapes to support iterative optimization and comparison
  * of {@code GridGeometry} calculations and {@code CellDimension} derived values.
  */
-@SuppressWarnings("MagicNumber")
 public final class CellDimensionAnalyzer {
 
     private static final String HEADER_CELL_DIMENSIONS = "=== CELL DIMENSIONS ===";

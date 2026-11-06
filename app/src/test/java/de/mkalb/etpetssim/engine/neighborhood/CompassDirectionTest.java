@@ -11,7 +11,6 @@ import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@SuppressWarnings("MagicNumber")
 final class CompassDirectionTest {
 
     private static final List<CompassDirection> CLOCKWISE_FROM_N = List.of(

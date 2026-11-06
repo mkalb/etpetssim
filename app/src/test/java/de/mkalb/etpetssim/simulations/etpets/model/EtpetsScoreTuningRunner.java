@@ -9,7 +9,6 @@ import java.util.Locale;
  * to support iterative refinement of {@code EtpetsScoreMath} calculations
  * and {@code EtpetsBalance} configuration values.
  */
-@SuppressWarnings("MagicNumber")
 public final class EtpetsScoreTuningRunner {
 
     private static final String HEADER_MOVE_SCORE = "=== MOVE SCORE (RAW) ===";

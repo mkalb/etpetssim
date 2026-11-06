@@ -19,7 +19,6 @@ import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@SuppressWarnings("MagicNumber")
 final class StatisticsMetricLayoutTest {
 
     private static void assertMetricLayout(

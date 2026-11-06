@@ -14,7 +14,6 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@SuppressWarnings("MagicNumber")
 final class FXPaintFactoryTest {
 
     private static final double DELTA = 0.000_001d;

@@ -6,7 +6,6 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@SuppressWarnings("MagicNumber")
 final class EtpetsScoreMathTest {
 
     private static final double DELTA = 1.0e-9d;

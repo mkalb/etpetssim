@@ -31,7 +31,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Execution(ExecutionMode.SAME_THREAD)
-@SuppressWarnings("MagicNumber")
 final class FXComponentFactoryTest {
 
     private static final String STYLE_CLASS = "test-style";
