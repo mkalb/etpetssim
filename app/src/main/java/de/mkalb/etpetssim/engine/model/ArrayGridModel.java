@@ -53,10 +53,9 @@ public final class ArrayGridModel<ENT extends GridEntity> implements WritableGri
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public ENT getEntity(GridCoordinate coordinate) {
         checkCoordinate(coordinate);
-        return (ENT) data[coordinate.y()][coordinate.x()];
+        return entityAt(coordinate.x(), coordinate.y());
     }
 
     @Override
@@ -77,8 +76,7 @@ public final class ArrayGridModel<ENT extends GridEntity> implements WritableGri
         long count = 0;
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
-                @SuppressWarnings("unchecked")
-                ENT entity = (ENT) data[y][x];
+                ENT entity = entityAt(x, y);
                 if (entityPredicate.test(entity)) {
                     count++;
                 }
@@ -94,8 +92,7 @@ public final class ArrayGridModel<ENT extends GridEntity> implements WritableGri
         Set<GridCoordinate> result = new HashSet<>();
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
-                @SuppressWarnings("unchecked")
-                ENT entity = (ENT) data[y][x];
+                ENT entity = entityAt(x, y);
                 if (!entity.equals(defaultEntity)) {
                     result.add(new GridCoordinate(x, y));
                 }
@@ -113,8 +110,7 @@ public final class ArrayGridModel<ENT extends GridEntity> implements WritableGri
         List<GridCoordinate> result = new ArrayList<>(width * height);
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
-                @SuppressWarnings("unchecked")
-                ENT entity = (ENT) data[y][x];
+                ENT entity = entityAt(x, y);
                 if (entityPredicate.test(entity)) {
                     result.add(new GridCoordinate(x, y));
                 }
@@ -133,8 +129,7 @@ public final class ArrayGridModel<ENT extends GridEntity> implements WritableGri
         int count = 0;
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
-                @SuppressWarnings("unchecked")
-                ENT entity = (ENT) data[y][x];
+                ENT entity = entityAt(x, y);
                 if (entity.equals(defaultEntity)) {
                     count++;
                     // Replace current candidate with probability 1/count.
@@ -157,8 +152,7 @@ public final class ArrayGridModel<ENT extends GridEntity> implements WritableGri
         List<GridCell<ENT>> result = new ArrayList<>(width * height);
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
-                @SuppressWarnings("unchecked")
-                ENT entity = (ENT) data[y][x];
+                ENT entity = entityAt(x, y);
                 result.add(new GridCell<>(new GridCoordinate(x, y), entity));
             }
         }
@@ -174,8 +168,7 @@ public final class ArrayGridModel<ENT extends GridEntity> implements WritableGri
         List<GridCell<ENT>> result = new ArrayList<>();
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
-                @SuppressWarnings("unchecked")
-                ENT entity = (ENT) data[y][x];
+                ENT entity = entityAt(x, y);
                 if (!entity.equals(defaultEntity)) {
                     result.add(new GridCell<>(new GridCoordinate(x, y), entity));
                 }
@@ -193,8 +186,7 @@ public final class ArrayGridModel<ENT extends GridEntity> implements WritableGri
         List<GridCell<ENT>> result = new ArrayList<>(width * height);
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
-                @SuppressWarnings("unchecked")
-                ENT entity = (ENT) data[y][x];
+                ENT entity = entityAt(x, y);
                 if (entityPredicate.test(entity)) {
                     result.add(new GridCell<>(new GridCoordinate(x, y), entity));
                 }
@@ -289,6 +281,11 @@ public final class ArrayGridModel<ENT extends GridEntity> implements WritableGri
             throw new IndexOutOfBoundsException(
                     "coordinate must be valid for structure " + structure + ", but was: " + coordinate);
         }
+    }
+
+    @SuppressWarnings("unchecked")
+    private ENT entityAt(int x, int y) {
+        return (ENT) data[y][x];
     }
 
 }

@@ -117,7 +117,7 @@ The test sources were done on 2026-11-06: 52 suppressions in 22 files and 9 insp
 | main    | `MarkerInterface`                   |     9 | disable                          | done   |
 | main    | `InterfaceMayBeAnnotatedFunctional` |     5 | disable                          | done   |
 | main    | `SpellCheckingInspection`           |     8 | dictionary                       | done   |
-| main    | `unchecked`                         |    11 | change code in `ArrayGridModel`  | open   |
+| main    | `unchecked`                         |    11 | change code in `ArrayGridModel`  | done   |
 | main    | `ConstantValue`                     |     9 | change code (list cells, equals) | open   |
 | main    | `DataFlowIssue`                     |    11 | change code (list cells)         | open   |
 | main    | `SameReturnValue`                   |    13 | keep                             | open   |
@@ -373,10 +373,14 @@ Remaining suppressions (6):
 
 - Count: 11; 8 of them in `ArrayGridModel`, which casts the entries of its `Object` array to `ENT`.
 - Proposal: change code in `ArrayGridModel`: a private method reads and casts an entry, with one method-level
-  suppression (8 to 1). Keep the 3 suppressions for generic arrays in `AbstractConfigView` and `FXComponentFactory`.
-- Decision: open.
+  suppression (8 to 1). Keep the 3 suppressions for generic arrays in `AbstractConfigView` and the casts of the
+  toggle user data in `FXComponentFactory`.
+- Decision: as proposed (maintainer, 2026-11-06). `ArrayGridModel` reads all entries through the private method
+  `entityAt(int, int)`.
 
-- `engine/model/ArrayGridModel.java`: `getEntity()`, variable `entity` (7x)
+Remaining suppressions (4):
+
+- `engine/model/ArrayGridModel.java`: `entityAt()`
 - `simulations/core/view/AbstractConfigView.java`: `createLayoutPane()`, `toLabeledControlArray()`
 - `ui/FXComponentFactory.java`: `createLabeledChoiceRadioButtons()`
 
