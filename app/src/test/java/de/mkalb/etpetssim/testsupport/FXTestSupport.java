@@ -24,8 +24,7 @@ public final class FXTestSupport {
      */
     public static final long DEFAULT_TIMEOUT_SECONDS = 10;
 
-    @SuppressWarnings("FieldNamingConvention")
-    private static volatile boolean started = false;
+    private static volatile boolean started;
 
     private FXTestSupport() {
     }

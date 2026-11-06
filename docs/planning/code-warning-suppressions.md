@@ -110,7 +110,7 @@ Not counted: the `@SuppressWarnings` text in the test data of `skills/JavaCodeIn
 | test    | `ConstantValue`                     |     2 | narrow scope                     | done   |
 | test    | `InsertLiteralUnderscores`          |     2 | change code                      | done   |
 | test    | `SpellCheckingInspection`           |     2 | dictionary                       | done   |
-| test    | other types (4)                     |     4 | per occurrence                   | open   |
+| test    | other types (4)                     |     4 | per occurrence                   | done   |
 | main    | `MarkerInterface`                   |     9 | disable                          | open   |
 | main    | `InterfaceMayBeAnnotatedFunctional` |     5 | disable                          | open   |
 | main    | `SpellCheckingInspection`           |     8 | dictionary                       | open   |
@@ -306,14 +306,19 @@ Remaining suppressions (12):
 One occurrence each; decide per occurrence.
 
 - `EqualsWithItself`: `simulations/core/SimulationTerminationHandleTest.java`, `testCompletedReturnsSameInstance()`.
-  Proposal: keep.
+  Proposal: keep. Decision: keep; comparing the singleton with itself is the purpose of the test (maintainer,
+  2026-11-06).
 - `FieldNamingConvention`: `testsupport/FXTestSupport.java`, variable `started`. Proposal: check the name against the
-  naming rules; rename or keep.
+  naming rules; rename or keep. Decision: the profile required `[A-Z][A-Z_\d]*` for non-final static fields
+  ("StaticVariableNamingConvention"); change it to camelCase `[a-z][A-Za-z\d]*`, remove the suppression, and remove
+  the explicit default initializer `= false` (`java.md`). The same profile change resolves `AppLocalization.state` in
+  main sources, in a separate commit (maintainer, 2026-11-06).
 - `OverlyStrongTypeCast`: `simulations/etpets/model/EtpetsUserActionTest.java`, class level. Proposal: narrow the scope
   to the affected method or change the cast. Decision: removed together with the `DataFlowIssue` code change, which
   removes the casts (2026-11-06).
 - `UnusedReturnValue`: `simulations/core/viewmodel/SimulationUserActionDescriptorTest.java`, `createDescriptor()`.
-  Proposal: check whether the method can return `void`; otherwise keep.
+  Proposal: check whether the method can return `void`; otherwise keep. Decision: keep; a `create...` helper returns
+  the created object (maintainer, 2026-11-06).
 
 ## 2. Main sources
 
