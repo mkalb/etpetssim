@@ -52,7 +52,7 @@ final class ExtraterrestrialPetsSimulationTest {
         String content = ExtraterrestrialPetsSimulation.formatUnexpectedErrorContent(
                 new IllegalStateException("Boom"), 0);
 
-        assertEquals("Boom\n\nDetails are in the application log.", content);
+        assertEquals("Boom\n\nDetails are in the application log if logging is enabled (--log-file).", content);
     }
 
     @Test
@@ -60,7 +60,8 @@ final class ExtraterrestrialPetsSimulationTest {
         String content = ExtraterrestrialPetsSimulation.formatUnexpectedErrorContent(
                 new IllegalStateException(), 0);
 
-        assertEquals("IllegalStateException\n\nDetails are in the application log.", content);
+        assertEquals("IllegalStateException\n\n"
+                + "Details are in the application log if logging is enabled (--log-file).", content);
     }
 
     @Test
@@ -68,7 +69,8 @@ final class ExtraterrestrialPetsSimulationTest {
         String content = ExtraterrestrialPetsSimulation.formatUnexpectedErrorContent(
                 new IllegalArgumentException("  "), 0);
 
-        assertEquals("IllegalArgumentException\n\nDetails are in the application log.", content);
+        assertEquals("IllegalArgumentException\n\n"
+                + "Details are in the application log if logging is enabled (--log-file).", content);
     }
 
     @Test
@@ -76,7 +78,8 @@ final class ExtraterrestrialPetsSimulationTest {
         String content = ExtraterrestrialPetsSimulation.formatUnexpectedErrorContent(
                 new IllegalStateException("Boom"), 3);
 
-        assertEquals("Boom\n\nDetails are in the application log.\nFurther errors since this alert: 3", content);
+        assertEquals("Boom\n\nDetails are in the application log if logging is enabled (--log-file).\n"
+                + "Further errors since this alert: 3", content);
     }
 
     @Test
