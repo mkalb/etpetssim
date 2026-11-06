@@ -84,6 +84,13 @@ final class AppSettingsTest {
     }
 
     @Test
+    void testReadLocaleWithFileReturnsEmptyForMalformedEscape() throws IOException {
+        Files.writeString(settingsFile(), "locale=\\uXYZ\n");
+
+        assertEquals(Optional.empty(), AppSettings.readLocale(settingsFile()));
+    }
+
+    @Test
     void testReadLocaleWithFileReturnsEmptyForDirectory() throws IOException {
         Path directory = Files.createDirectory(tempDir.resolve("directory"));
 

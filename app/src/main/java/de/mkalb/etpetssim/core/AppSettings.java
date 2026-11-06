@@ -92,7 +92,7 @@ public final class AppSettings {
         try (Writer writer = Files.newBufferedWriter(file, StandardCharsets.UTF_8)) {
             properties.store(writer, null);
             return true;
-        } catch (IOException | RuntimeException e) {
+        } catch (IOException e) {
             AppLogger.warnf("AppSettings: Failed to write %s: %s", file, e);
             return false;
         }
@@ -101,7 +101,7 @@ public final class AppSettings {
     private static Optional<Path> resolveSettingsFile() {
         try {
             return Optional.of(AppStorage.getAppDataFile(FILE_NAME, AppStorage.OperatingSystem.detect()));
-        } catch (IOException | RuntimeException e) {
+        } catch (IOException | IllegalArgumentException e) {
             AppLogger.warnf("AppSettings: Failed to resolve %s: %s", FILE_NAME, e);
             return Optional.empty();
         }
@@ -112,7 +112,7 @@ public final class AppSettings {
         try (Reader reader = Files.newBufferedReader(file, StandardCharsets.UTF_8)) {
             properties.load(reader);
             return Optional.of(properties);
-        } catch (IOException | RuntimeException e) {
+        } catch (IOException | IllegalArgumentException e) {
             AppLogger.warnf("AppSettings: Failed to read %s: %s", file, e);
             return Optional.empty();
         }
