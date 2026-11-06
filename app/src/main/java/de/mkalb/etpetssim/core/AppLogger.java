@@ -3,6 +3,8 @@ package de.mkalb.etpetssim.core;
 import org.jspecify.annotations.Nullable;
 
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -357,7 +359,7 @@ public final class AppLogger {
 
     /**
      * Formatter for the log records of {@link AppLogger}: time, log level, thread name, message, and the stack trace of
-     * an attached exception.
+     * an attached exception, including its causes and suppressed exceptions.
      */
     static final class AppLogFormatter extends Formatter {
 
@@ -381,10 +383,11 @@ public final class AppLogger {
 
             Throwable throwable = record.getThrown();
             if (throwable != null) {
-                sb.append(throwable).append(System.lineSeparator());
-                for (StackTraceElement element : throwable.getStackTrace()) {
-                    sb.append("\tat ").append(element).append(System.lineSeparator());
+                StringWriter stackTrace = new StringWriter();
+                try (PrintWriter writer = new PrintWriter(stackTrace)) {
+                    throwable.printStackTrace(writer);
                 }
+                sb.append(stackTrace);
             }
 
             return sb.toString();

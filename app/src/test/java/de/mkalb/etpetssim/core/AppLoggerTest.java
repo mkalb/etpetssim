@@ -341,6 +341,24 @@ final class AppLoggerTest {
         );
     }
 
+    @Test
+    void testFormatAppendsCauseAndSuppressedExceptions() {
+        IOException cause = new IOException("Cause exception");
+        IllegalStateException suppressed = new IllegalStateException("Suppressed exception");
+        RuntimeException thrown = new RuntimeException("Outer exception", cause);
+        thrown.addSuppressed(suppressed);
+        LogRecord record = new LogRecord(Level.SEVERE, "Error message");
+        record.setThrown(thrown);
+
+        String formatted = new AppLogger.AppLogFormatter().format(record);
+
+        assertAll(
+                () -> assertTrue(formatted.contains(thrown.toString())),
+                () -> assertTrue(formatted.contains("Caused by: " + cause)),
+                () -> assertTrue(formatted.contains("Suppressed: " + suppressed))
+        );
+    }
+
     private static final class RecordingHandler extends Handler {
 
         private final List<LogRecord> records = new ArrayList<>();
