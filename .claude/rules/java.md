@@ -274,6 +274,9 @@ Rules for main sources; `core.md` adds stricter rules for `core`, and test sourc
   first word (`<p>Text`); do not write `</p>`, and do not put `<p>` before block elements such as `<ul>`, `<pre>`, or
   `{@snippet}`.
 - Write lists with `<ul>` and `<li>`, not with `- `.
+- Align block tags as the IntelliJ formatter does: align the descriptions of the `@param` tags in one column and
+  those of the `@throws` tags in one column, and indent their continuation lines to that column; start the
+  continuation lines of `@return` directly after `* `, without extra indentation.
 - `{@snippet}` is welcome for code examples; do not use Markdown documentation comments (`///`).
 
 ## Exceptions
