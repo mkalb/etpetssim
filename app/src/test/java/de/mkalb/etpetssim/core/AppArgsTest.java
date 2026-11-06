@@ -19,7 +19,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Execution(ExecutionMode.SAME_THREAD)
-@SuppressWarnings("HardcodedLineSeparator")
 final class AppArgsTest {
 
     @BeforeAll

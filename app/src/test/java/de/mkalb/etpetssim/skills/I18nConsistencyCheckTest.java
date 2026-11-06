@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Tag("skill")
-@SuppressWarnings({"HardcodedLineSeparator", "SpellCheckingInspection"})
+@SuppressWarnings("SpellCheckingInspection")
 final class I18nConsistencyCheckTest {
 
     private static final Path EN_US_RELATIVE_PATH = Path.of(

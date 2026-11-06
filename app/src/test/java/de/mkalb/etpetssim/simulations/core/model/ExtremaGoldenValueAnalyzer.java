@@ -21,7 +21,6 @@ import java.util.Locale;
  * to refresh the hard-coded expectations in {@code SimulationManagerTest}
  * ({@code testStatisticsExtremaFor<Simulation>MatchesGoldenValues}).
  */
-@SuppressWarnings("HardcodedLineSeparator")
 public final class ExtremaGoldenValueAnalyzer {
 
     private static final long SEED = 1L;

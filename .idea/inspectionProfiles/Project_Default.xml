@@ -119,7 +119,9 @@
       <option name="ignoreTrivialFinalizers" value="false" />
     </inspection_tool>
     <inspection_tool class="FloatingPointEquality" enabled="true" level="WARNING" enabled_by_default="true" />
-    <inspection_tool class="HardcodedLineSeparators" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="HardcodedLineSeparators" enabled="true" level="WARNING" enabled_by_default="true">
+      <scope name="Tests" level="WARNING" enabled="false" />
+    </inspection_tool>
     <inspection_tool class="HashCodeUsesNonFinalVariable" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="HtmlTagCanBeJavadocTag" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="IfCanBeSwitch" enabled="true" level="WARNING" enabled_by_default="true">

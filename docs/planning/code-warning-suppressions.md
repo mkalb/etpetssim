@@ -99,7 +99,7 @@ Not counted: the `@SuppressWarnings` text in the test data of `skills/JavaCodeIn
 | test    | `MagicNumber`                       |    51 | disable for scope "Tests"        | done   |
 | test    | `SameParameterValue`                |    17 | disable for scope "Tests"        | done   |
 | test    | `TestMethodWithoutAssertion`        |    20 | configure assertion methods      | open   |
-| test    | `HardcodedLineSeparator`            |     8 | disable for scope "Tests"        | open   |
+| test    | `HardcodedLineSeparator`            |     8 | disable for scope "Tests"        | done   |
 | test    | `TextBlockMigration`                |     3 | change code (text blocks)        | open   |
 | test    | `UseOfProcessBuilder`               |     2 | keep                             | open   |
 | test    | `DataFlowIssue`                     |     8 | keep; check each occurrence      | open   |
@@ -182,14 +182,7 @@ The inventory is omitted: all occurrences are removed by the same commit.
 - Proposal: disable for the scope "Tests"; tests compare text with fixed line separators on purpose.
 - Decision: disable for the scope "Tests" and remove all 8 suppressions (maintainer, 2026-11-06).
 
-- `ExtraterrestrialPetsSimulationTest.java`: class `ExtraterrestrialPetsSimulationTest`
-- `core/AppArgsTest.java`: class `AppArgsTest`
-- `core/AppManifestTest.java`: class `AppManifestTest`
-- `core/AppSettingsTest.java`: class `AppSettingsTest`
-- `simulations/core/model/ExtremaGoldenValueAnalyzer.java`: class `ExtremaGoldenValueAnalyzer`
-- `skills/I18nConsistencyCheckTest.java`: class `I18nConsistencyCheckTest`
-- `skills/JavaCodeInventoryTest.java`: class `JavaCodeInventoryTest`
-- `ui/AboutDialogTest.java`: class `AboutDialogTest`
+The inventory is omitted: all occurrences are removed by the same commit.
 
 ### `TextBlockMigration`
 
