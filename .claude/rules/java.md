@@ -211,11 +211,16 @@ The module declaration `module-info.java` uses `@NullMarked` to establish non-nu
 add `package-info.java` files. IntelliJ does not apply the module-level `@NullMarked` to test sources, which are
 patched into the module only by Gradle; test code is therefore unspecified, while calls into main code are still
 checked. Do not use `@Nullable` in test sources. When a method declared in test sources overrides a method with a
-non-null reference return type (from main code or the JDK, e.g. `toString()`), annotate it with
-`@org.jspecify.annotations.NonNull` on its own line before `@Override`.
+non-null reference return type (from main code or the JDK, e.g. `toString()`), annotate it with `@NonNull`
+(imported from `org.jspecify.annotations`) on its own line before `@Override`. When it overrides a method of main code,
+also annotate each parameter that is non-null there with `@NonNull` directly before its type (`@NonNull TimeUnit unit`).
+
+Only IntelliJ checks these contracts; the Gradle build and the tests do not. Check your own code against the rules
+below.
 
 - Treat unannotated types as non-null under `@NullMarked`.
-- Use `@org.jspecify.annotations.Nullable` only for intentional nullable contracts, not defensively.
+- Use `@Nullable` (imported from `org.jspecify.annotations`) only for intentional nullable contracts, not
+  defensively.
 - Use `Optional` only as a return type; use `@Nullable` or an overload for parameters and fields. Return empty
   collections instead of `null`.
 - Do not check non-null-by-default parameters with `Objects.requireNonNull(...)`; use it only to assert that a
@@ -224,6 +229,16 @@ non-null reference return type (from main code or the JDK, e.g. `toString()`), a
   (`ObjectProperty<@Nullable GC>`).
 - Place `@Nullable` directly before the annotated type on the same line (`@Nullable String emojiKey()`), because it is
   a type-use annotation.
+- Handle `null` before dereferencing a `@Nullable` field, parameter, or result.
+- Do not pass `null` or a `@Nullable` value to a non-null parameter, assign it to a non-null field, or return it from
+  a method with a non-null return type.
+- Keep overrides compatible: an override may make a parameter `@Nullable`, but not its return type if the overridden
+  return type is non-null.
+- Handle `null` from JDK methods documented to return it (e.g., `Map.get` for a missing key); `@NullMarked` does not
+  cover JDK types.
+- When adding or removing `@Nullable` on an existing contract, update all callers, overrides, and implementations.
+- Name added or removed `@Nullable` contracts in your final summary, so that the maintainer can check them in
+  IntelliJ.
 
 ## Javadoc
 

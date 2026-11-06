@@ -276,7 +276,7 @@ final class ExtraterrestrialPetsSimulationTest {
         }
 
         @Override
-        public boolean awaitTermination(long timeout, TimeUnit unit) throws InterruptedException {
+        public boolean awaitTermination(long timeout, @NonNull TimeUnit unit) throws InterruptedException {
             awaitCount.incrementAndGet();
             awaitedTimeoutNanos.set(unit.toNanos(timeout));
             if (awaitDelayNanos > 0L) {

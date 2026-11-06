@@ -135,12 +135,11 @@ public abstract class AbstractDefaultMainView<
      * @return the color variants by value, or {@code null} if the descriptor color is not a {@link Color}
      * @see FXPaintFactory#computeBrightnessVariantsMap(Color, int, int, int, double)
      */
-    @Nullable
-    protected final Map<Integer, Color> computeBrightnessVariantsMap(GridEntityDescriptor descriptor,
-                                                                     int min,
-                                                                     int max,
-                                                                     int groupCount,
-                                                                     double maxFactorDelta) {
+    protected final @Nullable Map<Integer, Color> computeBrightnessVariantsMap(GridEntityDescriptor descriptor,
+                                                                               int min,
+                                                                               int max,
+                                                                               int groupCount,
+                                                                               double maxFactorDelta) {
         if (!(descriptor.color() instanceof Color baseColor)) {
             return null;
         }
