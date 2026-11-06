@@ -100,7 +100,7 @@ Not counted: the `@SuppressWarnings` text in the test data of `skills/JavaCodeIn
 | test    | `SameParameterValue`                |    17 | disable for scope "Tests"        | done   |
 | test    | `TestMethodWithoutAssertion`        |    20 | configure assertion methods      | open   |
 | test    | `HardcodedLineSeparator`            |     8 | disable for scope "Tests"        | done   |
-| test    | `TextBlockMigration`                |     3 | change code (text blocks)        | open   |
+| test    | `TextBlockMigration`                |     3 | change code (text blocks)        | done   |
 | test    | `UseOfProcessBuilder`               |     2 | keep                             | open   |
 | test    | `DataFlowIssue`                     |     8 | keep; check each occurrence      | open   |
 | test    | `unused`                            |     5 | keep                             | open   |
@@ -190,9 +190,7 @@ The inventory is omitted: all occurrences are removed by the same commit.
 - Proposal: change code: write the expected strings as text blocks and remove the suppressions.
 - Decision: change code (maintainer, 2026-11-06).
 
-- `ExtraterrestrialPetsSimulationTest.java`: `testFormatUnexpectedErrorContentReturnsClassNameForBlankMessage()`,
-  `testFormatUnexpectedErrorContentReturnsClassNameForNullMessage()`,
-  `testFormatUnexpectedErrorContentReturnsCounterLineForPositiveCount()`
+The inventory is omitted: all occurrences are removed by the same commit.
 
 ### `UseOfProcessBuilder`
 
