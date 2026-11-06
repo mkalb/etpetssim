@@ -21,6 +21,7 @@ import de.mkalb.etpetssim.ui.CellDimension;
 import de.mkalb.etpetssim.ui.FXGridCanvasPainter;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.StrokeType;
+import javafx.scene.text.Font;
 import org.jspecify.annotations.Nullable;
 
 import java.util.List;
@@ -59,7 +60,6 @@ public final class ForestMainView
                 entityDescriptorRegistry);
     }
 
-    @SuppressWarnings("DataFlowIssue")
     @Override
     protected void initializeSimulation(CanvasPainters painters, ForestConfig config, CellDimension cellDimension, WritableGridModel<ForestEntity> model) {
         Color backgroundColor = entityDescriptorRegistry
@@ -97,7 +97,8 @@ public final class ForestMainView
                             strokeLineWidth,
                             StrokeType.INSIDE);
             case CellDisplayMode.EMOJI -> {
-                if (cellEmojiFont == null) {
+                Font emojiFont = cellEmojiFont;
+                if (emojiFont == null) {
                     yield (descriptor, painter, cell, _) ->
                             painter.drawCellInnerCircle(
                                     cell.coordinate(),
@@ -111,7 +112,7 @@ public final class ForestMainView
                                 cell.coordinate(),
                                 descriptor.emojiAsOptional().orElse("#"),
                                 descriptor.colorOrFallback(),
-                                cellEmojiFont);
+                                emojiFont);
             }
         };
     }
@@ -130,10 +131,10 @@ public final class ForestMainView
         }
     }
 
-    @SuppressWarnings("DataFlowIssue")
     @Override
     protected void drawSimulation(CanvasPainters painters, WritableGridModel<ForestEntity> currentGridModel, int stepCount, int lastDrawnStepCount) {
-        if (cellDrawer == null) {
+        CellDrawer<ForestEntity> drawer = cellDrawer;
+        if (drawer == null) {
             AppLogger.warn("CellDrawer is not initialized, cannot draw canvas.");
             return;
         }
@@ -141,7 +142,7 @@ public final class ForestMainView
         painters.dynamic().clearCanvasBackground();
 
         // small helper lambda to avoid code duplication when drawing different entity types
-        Consumer<GridCell<ForestEntity>> drawCell = cell -> cellDrawer.draw(
+        Consumer<GridCell<ForestEntity>> drawCell = cell -> drawer.draw(
                 entityDescriptorRegistry.requireByDescriptorId(cell.descriptorId()),
                 painters.dynamic(), cell, stepCount);
 

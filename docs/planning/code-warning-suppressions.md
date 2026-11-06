@@ -119,7 +119,7 @@ The test sources were done on 2026-11-06: 52 suppressions in 22 files and 9 insp
 | main    | `SpellCheckingInspection`           |     8 | dictionary                       | done   |
 | main    | `unchecked`                         |    11 | change code in `ArrayGridModel`  | done   |
 | main    | `ConstantValue`                     |     9 | change code (list cells, equals) | done   |
-| main    | `DataFlowIssue`                     |    11 | change code (list cells)         | open   |
+| main    | `DataFlowIssue`                     |    11 | change code (list cells)         | done   |
 | main    | `SameReturnValue`                   |    13 | keep                             | open   |
 | main    | `MagicNumber`                       |    21 | per occurrence                   | open   |
 | main    | `SameParameterValue`                |    14 | per occurrence                   | open   |
@@ -412,11 +412,16 @@ Remaining suppressions (1):
 - Proposal: decided together with `ConstantValue`; check `DefaultMainViewModel.applyUserAction()` and the
   `ForestMainView` and `WatorMainView` overrides separately.
 - Decision: the `updateItem()` overrides are decided together with `ConstantValue`; 6 of 7 are removed (maintainer,
-  2026-11-06). The other 4 are open.
+  2026-11-06). Change code in the other 4 (maintainer, 2026-11-06):
+    - `DefaultMainViewModel.applyUserAction()`: the error log passed the possibly `null` manager to the varargs of
+      `AppLogger.errorf(..)`; it logs `managerActive=true|false` instead. `@Nullable` is not used on local variables
+      (`java.md`, "Nullability").
+    - `ForestMainView`, `WatorMainView`: the lambdas read the `@Nullable` fields `cellEmojiFont` and `cellDrawer`
+      after a null check, which IntelliJ does not carry into the lambda; copy the field into a local variable before
+      the check.
 
-- `simulations/core/viewmodel/DefaultMainViewModel.java`: `applyUserAction()`
-- `simulations/forest/view/ForestMainView.java`: `drawSimulation()`, `initializeSimulation()`
-- `simulations/wator/view/WatorMainView.java`: `initializeSimulation()`
+Remaining suppressions (1):
+
 - `ui/FXComponentFactory.java`: `updateItem()` in `createTextListCell()`
 
 ### `SameReturnValue`

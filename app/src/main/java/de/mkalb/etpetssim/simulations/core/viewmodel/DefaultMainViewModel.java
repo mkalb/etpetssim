@@ -817,7 +817,6 @@ public final class DefaultMainViewModel<
      * @return {@code true} if the user action was applied, which does not mean that the model changed; {@code false} if
      * no active manager exists or the simulation is not paused
      */
-    @SuppressWarnings("DataFlowIssue")
     public boolean applyUserAction(CTX context) {
         var manager = simulationManager;
         if ((manager != null)
@@ -831,11 +830,12 @@ public final class DefaultMainViewModel<
             }
             return true;
         } else {
-            AppLogger.errorf("%s: Simulation is not in a valid state for applying user action. thread=%s, state=%s, manager=%s",
+            AppLogger.errorf("%s: Simulation is not in a valid state for applying user action. "
+                            + "thread=%s, state=%s, managerActive=%s",
                     LOG_COMPONENT,
                     Thread.currentThread().getName(),
                     getSimulationState(),
-                    manager);
+                    manager != null);
             return false;
         }
     }
