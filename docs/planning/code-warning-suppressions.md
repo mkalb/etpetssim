@@ -120,7 +120,7 @@ The test sources were done on 2026-11-06: 52 suppressions in 22 files and 9 insp
 | main    | `unchecked`                         |    11 | change code in `ArrayGridModel`  | done   |
 | main    | `ConstantValue`                     |     9 | change code (list cells, equals) | done   |
 | main    | `DataFlowIssue`                     |    11 | change code (list cells)         | done   |
-| main    | `SameReturnValue`                   |    13 | keep                             | open   |
+| main    | `SameReturnValue`                   |    13 | disable                          | done   |
 | main    | `MagicNumber`                       |    21 | per occurrence                   | open   |
 | main    | `SameParameterValue`                |    14 | per occurrence                   | open   |
 | main    | `NumericCastThatLosesPrecision`     |    12 | keep; check each occurrence      | open   |
@@ -430,21 +430,12 @@ Remaining suppressions (1):
   "Localization and Text").
 - Proposal: keep. Check `GridStructure.minCoordinateInclusive()` and `SimulationTerminationHandle.completed()` (a
   singleton factory); keep them if the method is part of a consistent API.
-- Decision: open.
+- Decision: disable the inspection in the profile and remove all 13 suppressions (maintainer, 2026-11-06). All
+  occurrences are intended: the key methods return literals as `java.md` prescribes, `minCoordinateInclusive()` is
+  the counterpart of `maxCoordinateExclusive()` in the engine API, and `completed()` is a singleton factory; every new
+  choice enum would need another suppression.
 
-- `engine/CellShape.java`: `labelResourceKey()`
-- `engine/EdgeBehavior.java`: `labelResourceKey()`
-- `engine/GridEdgeBehavior.java`: `labelResourceKey()`
-- `engine/GridStructure.java`: `minCoordinateInclusive()`
-- `engine/neighborhood/CellConnectionType.java`: `labelResourceKey()`
-- `engine/neighborhood/CompassDirection.java`: `labelResourceKey()`
-- `engine/neighborhood/NeighborhoodMode.java`: `labelResourceKey()`
-- `simulations/core/SimulationTerminationHandle.java`: `completed()`
-- `simulations/core/SimulationType.java`: `labelResourceKey()`
-- `simulations/core/shared/CellDisplayMode.java`: `labelResourceKey()`
-- `simulations/core/shared/SimulationMode.java`: `labelResourceKey()`
-- `simulations/lab/shared/LabColorMode.java`: `labelResourceKey()`
-- `simulations/snake/shared/SnakeDeathMode.java`: `labelResourceKey()`
+The inventory is omitted: all occurrences are removed by the same commit.
 
 ### `MagicNumber`
 

@@ -32,7 +32,6 @@ public enum CellConnectionType {
      *
      * @return the resource key of the type label
      */
-    @SuppressWarnings("SameReturnValue")
     public static String labelResourceKey() {
         return "cellconnectiontype.label";
     }

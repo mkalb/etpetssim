@@ -88,7 +88,6 @@ public record GridStructure(GridTopology topology, GridSize size) {
      *
      * @return the inclusive minimum coordinate of the grid
      */
-    @SuppressWarnings("SameReturnValue")
     public GridCoordinate minCoordinateInclusive() {
         return GridCoordinate.ORIGIN;
     }
