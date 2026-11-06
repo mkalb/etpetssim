@@ -312,7 +312,6 @@ final class I18nConsistencyCheckTest {
         );
     }
 
-    @SuppressWarnings("NumericCastThatLosesPrecision")
     @Test
     void testFixRejectsMalformedUtf8InSecondBundleWithoutChangingEitherBundle() throws Exception {
         byte[] enUsBytes = "alpha = valid\n".getBytes(StandardCharsets.UTF_8);

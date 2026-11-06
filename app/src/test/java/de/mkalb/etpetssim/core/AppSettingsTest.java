@@ -74,7 +74,6 @@ final class AppSettingsTest {
         );
     }
 
-    @SuppressWarnings("NumericCastThatLosesPrecision")
     @Test
     void testReadLocaleWithFileReturnsEmptyForUnreadableContent() throws IOException {
         Files.write(settingsFile(), new byte[]{'l', 'o', 'c', 'a', 'l', 'e', '=', (byte) 0xFF, (byte) 0xFE});
@@ -128,7 +127,6 @@ final class AppSettingsTest {
         );
     }
 
-    @SuppressWarnings("NumericCastThatLosesPrecision")
     @Test
     void testWriteLocaleWithFileReplacesUnreadableContent() throws IOException {
         Files.write(settingsFile(), new byte[]{'o', 't', 'h', 'e', 'r', '=', (byte) 0xFF, (byte) 0xFE});

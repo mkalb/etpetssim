@@ -105,7 +105,7 @@ Not counted: the `@SuppressWarnings` text in the test data of `skills/JavaCodeIn
 | test    | `DataFlowIssue`                     |     8 | keep 5; change code in 3         | done   |
 | test    | `unused`                            |     5 | keep                             | done   |
 | test    | `ResultOfMethodCallIgnored`         |     4 | keep                             | done   |
-| test    | `NumericCastThatLosesPrecision`     |     3 | profile option                   | open   |
+| test    | `NumericCastThatLosesPrecision`     |     3 | profile option                   | done   |
 | test    | `ConstantValue`                     |     2 | narrow scope                     | open   |
 | test    | `InsertLiteralUnderscores`          |     2 | change code                      | done   |
 | test    | `SpellCheckingInspection`           |     2 | dictionary                       | open   |
@@ -250,11 +250,10 @@ Remaining suppressions:
 - Proposal: enable the option "Ignore overflowing byte casts" of the inspection (`ignoreOverflowingByteCasts` of
   `CastThatLosesPrecision`, set to `false` in the profile); it applies to main and test sources, and main sources have
   no such casts. Remove the 3 suppressions.
-- Decision: as proposed (maintainer, 2026-11-06).
+- Decision: as proposed; the maintainer also enabled "Ignore integer char casts" (`ignoreIntegerCharCasts`)
+  (maintainer, 2026-11-06).
 
-- `core/AppSettingsTest.java`: `testReadLocaleWithFileReturnsEmptyForUnreadableContent()`,
-  `testWriteLocaleWithFileReplacesUnreadableContent()`
-- `skills/I18nConsistencyCheckTest.java`: `testFixRejectsMalformedUtf8InSecondBundleWithoutChangingEitherBundle()`
+The inventory is omitted: all occurrences are removed by the same commit.
 
 ### `ConstantValue`
 
