@@ -535,7 +535,8 @@ The inventory is omitted: all occurrences are removed by the same commit.
 - `FieldNamingConvention`: `CompassDirection` has one-letter constants (`N`, `E`, `S`, `W`), shorter than the
   minimum length 2 of the constant naming convention in the profile: set the minimum length to 1 or keep. Decision:
   set the minimum length of the enum constant naming convention to 1 and remove the suppression (maintainer,
-  2026-11-06).
+  2026-11-06). The maintainer set the minimum length to 1 for all four field naming conventions (constants,
+  constants with a mutable type, enum constants, and static variables). Done.
   `AppLocalization.state`: done; the camelCase convention for non-final static fields (see the test decision)
   removes the suppression (maintainer, 2026-11-06).
 - `OptionalUsedAsFieldOrParameterType`: check whether the callers can pass the value or `null` instead; otherwise
@@ -544,7 +545,6 @@ The inventory is omitted: all occurrences are removed by the same commit.
   distinct names.
 - Decision: open.
 
-- `engine/neighborhood/CompassDirection.java`: enum `CompassDirection`
 - `simulations/core/view/AbstractObservationView.java`: `updateGenericMetricSection()`, `updateStatusSectionLabel()`
 - `simulations/etpets/view/EtpetsMainView.java`: `clampToMapRange()` (2x)
 - `ui/FXComponentFactory.java`: `createLabeledIntSlider()`

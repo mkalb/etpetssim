@@ -18,7 +18,6 @@ import java.util.stream.Stream;
  * and 2 for secondary intercardinal directions (e.g., NNE, ENE). In everyday terms,
  * a lower level means a more general direction, while a higher level is more specific.
  */
-@SuppressWarnings("FieldNamingConvention")
 public enum CompassDirection {
 
     /**
