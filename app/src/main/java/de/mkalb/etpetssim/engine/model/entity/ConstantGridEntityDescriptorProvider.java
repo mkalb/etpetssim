@@ -4,7 +4,6 @@ package de.mkalb.etpetssim.engine.model.entity;
  * Convenience interface for constant grid entities that expose descriptor metadata
  * through a {@link GridEntityDescriptorSpec}.
  */
-@SuppressWarnings("InterfaceMayBeAnnotatedFunctional")
 public interface ConstantGridEntityDescriptorProvider
         extends ConstantGridEntity, SpecBackedGridEntityDescriptorProvider {
 

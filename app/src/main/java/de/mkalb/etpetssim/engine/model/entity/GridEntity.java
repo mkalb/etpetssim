@@ -6,7 +6,6 @@ package de.mkalb.etpetssim.engine.model.entity;
  * <p>Every entity exposes a {@linkplain #descriptorId() descriptor ID} that resolves its
  * {@link GridEntityDescriptor}. Entities whose state does not change implement {@link ConstantGridEntity}.
  */
-@SuppressWarnings("InterfaceMayBeAnnotatedFunctional")
 public interface GridEntity {
 
     /**

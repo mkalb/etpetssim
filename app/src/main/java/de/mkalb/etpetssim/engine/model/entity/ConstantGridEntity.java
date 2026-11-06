@@ -5,6 +5,5 @@ package de.mkalb.etpetssim.engine.model.entity;
  *
  * @see GridEntity#isConstant(GridEntity)
  */
-@SuppressWarnings("InterfaceMayBeAnnotatedFunctional")
 public interface ConstantGridEntity extends GridEntity {
 }

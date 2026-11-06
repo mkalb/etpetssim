@@ -5,7 +5,6 @@ import javafx.scene.layout.Region;
 /**
  * Contract for building the simulation configuration region.
  */
-@SuppressWarnings("InterfaceMayBeAnnotatedFunctional")
 public interface SimulationConfigView {
 
     /**

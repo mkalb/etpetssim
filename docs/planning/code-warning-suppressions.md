@@ -115,7 +115,7 @@ The test sources were done on 2026-11-06: 52 suppressions in 22 files and 9 insp
 | test    | `SpellCheckingInspection`           |     2 | dictionary                       | done   |
 | test    | other types (4)                     |     4 | per occurrence                   | done   |
 | main    | `MarkerInterface`                   |     9 | disable                          | done   |
-| main    | `InterfaceMayBeAnnotatedFunctional` |     5 | disable                          | open   |
+| main    | `InterfaceMayBeAnnotatedFunctional` |     5 | disable                          | done   |
 | main    | `SpellCheckingInspection`           |     8 | dictionary                       | open   |
 | main    | `unchecked`                         |    11 | change code in `ArrayGridModel`  | open   |
 | main    | `ConstantValue`                     |     9 | change code (list cells, equals) | open   |
@@ -339,13 +339,10 @@ The inventory is omitted: all occurrences are removed by the same commit.
 
 - Count: 5, interfaces with one abstract method that are not meant as lambda targets.
 - Proposal: disable the inspection; remove all 5 suppressions.
-- Decision: as proposed (maintainer, 2026-11-06).
+- Decision: as proposed (maintainer, 2026-11-06). The maintainer removed the entry from the profile; the
+  inspection is disabled by default.
 
-- `engine/model/entity/ConstantGridEntity.java`: interface `ConstantGridEntity`
-- `engine/model/entity/ConstantGridEntityDescriptorProvider.java`: interface `ConstantGridEntityDescriptorProvider`
-- `engine/model/entity/GridEntity.java`: interface `GridEntity`
-- `engine/model/entity/SpecBackedGridEntityDescriptorProvider.java`: interface `SpecBackedGridEntityDescriptorProvider`
-- `simulations/core/view/SimulationConfigView.java`: interface `SimulationConfigView`
+The inventory is omitted: all occurrences are removed by the same commit.
 
 ### `SpellCheckingInspection`
 

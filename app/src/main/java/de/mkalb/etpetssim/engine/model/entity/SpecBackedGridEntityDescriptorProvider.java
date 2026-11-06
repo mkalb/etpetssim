@@ -10,7 +10,6 @@ import org.jspecify.annotations.Nullable;
  * <p>Implementations provide one {@link GridEntityDescriptorSpec} and reuse the default
  * descriptor accessors from this interface.
  */
-@SuppressWarnings("InterfaceMayBeAnnotatedFunctional")
 public interface SpecBackedGridEntityDescriptorProvider extends GridEntityDescriptorProvider {
 
     /**
