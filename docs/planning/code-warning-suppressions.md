@@ -356,12 +356,13 @@ One occurrence each; decide per occurrence.
 
 ### `SpellCheckingInspection`
 
-- Count: 8, all at class level (constants, style classes, rule presets, and patterns).
+- Count: 8, all at class level (constants, style classes, rule presets, and patterns); 7 remain.
 - Proposal: add real domain words to the project dictionary and remove the suppressions; for artificial tokens (rule
   strings, pattern data), keep a suppression narrowed to the affected fields.
-- Decision: open.
+- Decision: open. `AppLocalizationKeys` is done: the dictionary words added for the tests cover its keys, and the
+  maintainer removed the suppression (2026-11-06). A later run of the spelling inspection reported `eggCoord` in
+  `EtpetsAgentLogic.collectActionCandidates()`; the variable is renamed to `eggCoordinate` instead of suppressed.
 
-- `core/AppLocalizationKeys.java`: class `AppLocalizationKeys`
 - `simulations/conway/model/ConwayPatterns.java`: class `ConwayPatterns`
 - `simulations/conway/shared/ConwayRulePresetSquare.java`: enum `ConwayRulePresetSquare`
 - `simulations/conway/view/ConwayStyleClasses.java`: class `ConwayStyleClasses`

@@ -244,7 +244,8 @@ public final class EtpetsAgentLogic {
             // REPRODUCE candidates adjacent to the current position (ring 0).
             if (canSelfReproduce && isValidReproductionPartner(pet, cell, stepIndex)) {
                 findEggPlacementCoordinate(structure, currentCoordinate, coordinate, snapshotCellsByCoordinate)
-                        .ifPresent(eggCoord -> ring0ReproductionOptions.add(new ReproductionOption(cell, eggCoord)));
+                        .ifPresent(eggCoordinate -> ring0ReproductionOptions.add(
+                                new ReproductionOption(cell, eggCoordinate)));
             }
 
             // MOVE candidates: only walkable ring-1 cells.

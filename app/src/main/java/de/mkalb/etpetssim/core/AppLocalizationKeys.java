@@ -6,7 +6,6 @@ package de.mkalb.etpetssim.core;
  * <p>Each key maps to an entry in every {@code i18n/messages_*.properties} bundle. The constants are sorted
  * alphabetically by name.
  */
-@SuppressWarnings("SpellCheckingInspection")
 public final class AppLocalizationKeys {
 
     public static final String ABOUT_HEADER_TITLE = "about.header.title";
