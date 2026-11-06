@@ -59,6 +59,7 @@ public final class ForestMainView
                 entityDescriptorRegistry);
     }
 
+    @SuppressWarnings("DataFlowIssue")
     @Override
     protected void initializeSimulation(CanvasPainters painters, ForestConfig config, CellDimension cellDimension, WritableGridModel<ForestEntity> model) {
         Color backgroundColor = entityDescriptorRegistry
@@ -129,6 +130,7 @@ public final class ForestMainView
         }
     }
 
+    @SuppressWarnings("DataFlowIssue")
     @Override
     protected void drawSimulation(CanvasPainters painters, WritableGridModel<ForestEntity> currentGridModel, int stepCount, int lastDrawnStepCount) {
         if (cellDrawer == null) {

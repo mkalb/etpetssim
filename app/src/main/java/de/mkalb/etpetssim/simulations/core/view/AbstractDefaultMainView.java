@@ -321,6 +321,7 @@ public abstract class AbstractDefaultMainView<
         skipOverlayActive = false;
     }
 
+    @SuppressWarnings("unused")
     protected abstract void initializeSimulation(CanvasPainters painters, CON config, CellDimension cellDimension, GM model);
 
     /**

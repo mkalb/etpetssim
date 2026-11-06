@@ -72,13 +72,14 @@ annotation with two names counts twice. There are no `//noinspection` comments.
 | main    |          126 |    78 |               21 |
 | test    |          117 |    78 |               16 |
 
-Updated on 2026-11-06 (`8256df4c`) by counting the sources; the inventory below reflects this state. The new
-suppressions have not been checked with "Redundant suppression" yet.
+Updated on 2026-11-06 (after `791c5f71`), after the maintainer ran the inspections again on main and test and added
+a suppression for every remaining warning except proofreading, grammar, spelling, and style; IntelliJ then reported
+no warnings. The inventory below reflects this state.
 
 | Sources | Suppressions | Files | Inspection types |
 |---------|-------------:|------:|-----------------:|
-| main    |          126 |    77 |               22 |
-| test    |          129 |    81 |               16 |
+| main    |          144 |    86 |               27 |
+| test    |          131 |    81 |               17 |
 
 Not counted: the `@SuppressWarnings` text in the test data of `skills/JavaCodeInventoryTest.java`.
 
@@ -99,8 +100,9 @@ Not counted: the `@SuppressWarnings` text in the test data of `skills/JavaCodeIn
 | test    | `SameParameterValue`                |    17 | disable for scope "Tests"        | open   |
 | test    | `TestMethodWithoutAssertion`        |    20 | configure assertion methods      | open   |
 | test    | `HardcodedLineSeparator`            |     8 | disable for scope "Tests"        | open   |
-| test    | `UseOfProcessBuilder`               |     2 | disable for scope "Tests"        | open   |
-| test    | `DataFlowIssue`                     |     9 | keep; check each occurrence      | open   |
+| test    | `TextBlockMigration`                |     3 | change code (text blocks)        | open   |
+| test    | `UseOfProcessBuilder`               |     2 | keep                             | open   |
+| test    | `DataFlowIssue`                     |     8 | keep; check each occurrence      | open   |
 | test    | `unused`                            |     5 | keep                             | open   |
 | test    | `ResultOfMethodCallIgnored`         |     4 | check each occurrence            | open   |
 | test    | `NumericCastThatLosesPrecision`     |     3 | keep; check each occurrence      | open   |
@@ -113,19 +115,24 @@ Not counted: the `@SuppressWarnings` text in the test data of `skills/JavaCodeIn
 | main    | `SpellCheckingInspection`           |     8 | dictionary                       | open   |
 | main    | `unchecked`                         |    11 | change code in `ArrayGridModel`  | open   |
 | main    | `ConstantValue`                     |     9 | change code (list cells, equals) | open   |
-| main    | `DataFlowIssue`                     |     8 | change code (list cells)         | open   |
+| main    | `DataFlowIssue`                     |    11 | change code (list cells)         | open   |
 | main    | `SameReturnValue`                   |    13 | keep                             | open   |
 | main    | `MagicNumber`                       |    21 | per occurrence                   | open   |
-| main    | `SameParameterValue`                |    13 | per occurrence                   | open   |
+| main    | `SameParameterValue`                |    14 | per occurrence                   | open   |
 | main    | `NumericCastThatLosesPrecision`     |    12 | keep; check each occurrence      | open   |
-| main    | types with two occurrences (5)      |    10 | per occurrence                   | open   |
-| main    | other types (7)                     |     7 | per occurrence                   | open   |
+| main    | `unused`                            |     6 | per occurrence                   | open   |
+| main    | `CommentedOutCode`                  |     4 | keep                             | open   |
+| main    | `ObjectEquality`                    |     3 | per occurrence                   | open   |
+| main    | types with two occurrences (4)      |     8 | per occurrence                   | open   |
+| main    | other types (10)                    |    10 | per occurrence                   | open   |
 
 ## Cross-type decisions
 
 - Work on this plan before `code-simulation-classes.md` (maintainer, 2026-10-30).
 - `MagicNumber` is disabled for the scope "Tests" in the inspection profile instead of being suppressed per test class
   (maintainer, 2026-10-30).
+- The suppressions that the maintainer added on 2026-11-06 are committed as a baseline before the types are worked
+  on (maintainer, 2026-11-06).
 
 ## 1. Test sources
 
@@ -144,7 +151,7 @@ The inventory is omitted: every occurrence is a class-level annotation and is re
 - Count: 17; 16 at type level (9 test classes and 7 nested fixture types), 1 at method level.
 - Proposal: disable for the scope "Tests". Test helpers and fixture records are often called with the same values, and
   the warning rarely points to a problem there. Otherwise, narrow the class-level scopes to the affected methods.
-- Decision: open.
+- Decision: disable for the scope "Tests" and remove all 17 suppressions (maintainer, 2026-11-06).
 
 - `engine/model/GridCellViewTest.java`: record `TestCellView`
 - `engine/model/entity/GridEntityTest.java`: record `TestConstantEntity`, record `TestEntity`
@@ -188,7 +195,7 @@ The inventory is omitted: every occurrence is a class-level annotation and is re
 - Count: 8, all at class level, in tests that build or compare text (skill scripts, files, command-line arguments,
   and dialog texts) and in a helper class that builds text output.
 - Proposal: disable for the scope "Tests"; tests compare text with fixed line separators on purpose.
-- Decision: open.
+- Decision: disable for the scope "Tests" and remove all 8 suppressions (maintainer, 2026-11-06).
 
 - `ExtraterrestrialPetsSimulationTest.java`: class `ExtraterrestrialPetsSimulationTest`
 - `core/AppArgsTest.java`: class `AppArgsTest`
@@ -199,24 +206,34 @@ The inventory is omitted: every occurrence is a class-level annotation and is re
 - `skills/JavaCodeInventoryTest.java`: class `JavaCodeInventoryTest`
 - `ui/AboutDialogTest.java`: class `AboutDialogTest`
 
+### `TextBlockMigration`
+
+- Count: 3, expected strings with `\n` in the tests of `formatUnexpectedErrorContent()`.
+- Proposal: change code: write the expected strings as text blocks and remove the suppressions.
+- Decision: change code (maintainer, 2026-11-06).
+
+- `ExtraterrestrialPetsSimulationTest.java`: `testFormatUnexpectedErrorContentReturnsClassNameForBlankMessage()`,
+  `testFormatUnexpectedErrorContentReturnsClassNameForNullMessage()`,
+  `testFormatUnexpectedErrorContentReturnsCounterLineForPositiveCount()`
+
 ### `UseOfProcessBuilder`
 
 - Count: 2, in the helpers that start skill scripts.
 - Proposal: disable for the scope "Tests"; starting processes is the purpose of these tests.
-- Decision: open.
+- Decision: keep the inspection and both method-level suppressions (maintainer, 2026-11-06).
 
 - `skills/I18nConsistencyCheckTest.java`: `runHelper()`
 - `skills/JavaCodeInventoryTest.java`: `runHelper()`
 
 ### `DataFlowIssue`
 
-- Count: 9, all at method level as `junit.md` prescribes for intentional null-passing tests.
+- Count: 8, all at method level as `junit.md` prescribes for intentional null-passing tests.
 - Proposal: keep the rule; check for each occurrence (especially the four added in `f7266596` and the two added
   later) that it covers an intentional null-passing test and not a nullable result that the test could handle.
 - Decision: open.
 
 - `core/AppArgsTest.java`: `testKeys()`
-- `core/AppManifestTest.java`: `testParseMainAttributes()`, `testReadMainAttributes()`
+- `core/AppManifestTest.java`: `testParseMainAttributes()`
 - `simulations/core/model/StatisticsHistoryTest.java`: `testToListReturnsImmutableSnapshot()`
 - `simulations/etpets/model/EtpetsUserActionTest.java`: `testApplySetResourceInsectUsesDeterministicFullDefaults()`,
   `testApplySetResourcePlantUsesDeterministicFullDefaults()`
@@ -373,16 +390,20 @@ One occurrence each; decide per occurrence.
 
 ### `DataFlowIssue`
 
-- Count: 8; seven are the `updateItem()` overrides (see `ConstantValue`).
-- Proposal: decided together with `ConstantValue`; check `DefaultMainViewModel.applyUserAction()` separately.
+- Count: 11; seven are the `updateItem()` overrides (see `ConstantValue`), three are `initializeSimulation()` and
+  `drawSimulation()` overrides of `ForestMainView` and `WatorMainView`.
+- Proposal: decided together with `ConstantValue`; check `DefaultMainViewModel.applyUserAction()` and the
+  `ForestMainView` and `WatorMainView` overrides separately.
 - Decision: open.
 
 - `simulations/conway/view/ConwayMainView.java`: `updateItem()`
 - `simulations/core/viewmodel/DefaultMainViewModel.java`: `applyUserAction()`
 - `simulations/etpets/view/EtpetsMainView.java`: `updateItem()` (2x)
+- `simulations/forest/view/ForestMainView.java`: `drawSimulation()`, `initializeSimulation()`
 - `simulations/langton/view/LangtonMainView.java`: `updateItem()`
 - `simulations/rebounding/view/ReboundingMainView.java`: `updateItem()`
 - `simulations/sugar/view/SugarMainView.java`: `updateItem()`
+- `simulations/wator/view/WatorMainView.java`: `initializeSimulation()`
 - `ui/FXComponentFactory.java`: `updateItem()`
 
 ### `SameReturnValue`
@@ -433,11 +454,12 @@ One occurrence each; decide per occurrence.
 
 ### `SameParameterValue`
 
-- Count: 13; 10 are constructors of enums and entity classes.
+- Count: 14; 10 are constructors of enums and entity classes.
 - Proposal: per occurrence: remove the parameter where it is not needed (change code), otherwise keep.
 - Decision: open.
 
 - `simulations/conway/model/entity/ConwayEntity.java`: `ConwayEntity()`
+- `simulations/conway/view/ConwayConfigView.java`: `createTransitionRulesControl()`
 - `simulations/core/SimulationType.java`: `SimulationType()`
 - `simulations/core/view/AbstractConfigView.java`: `formatDoubleRangeTooltip()`
 - `simulations/etpets/model/entity/EntityDescriptors.java`: `EntityDescriptors()`
@@ -468,26 +490,61 @@ One occurrence each; decide per occurrence.
 - `ui/FXGridCanvasPainter.java`: `isOnCanvas()`
 - `ui/GridGeometry.java`: `estimateGridCoordinate()`
 
+### `unused` (main)
+
+- Count: 6; five are on overridable methods whose parameters some implementations ignore, one is the private helper
+  `formatActionCandidates()`, which only a commented-out diagnostic log call uses.
+- Proposal: per occurrence: keep the suppressions on the overridable methods (parameters that implementations or
+  overrides may ignore); for `formatActionCandidates()`, keep it together with the commented-out `AppLogger` call
+  (`java.md`, "Logging with AppLogger") or remove both.
+- Decision: open.
+
+- `engine/executor/SynchronousStepLogic.java`: `performSynchronousStep()`
+- `simulations/core/model/SimulationUserAction.java`: `apply()`
+- `simulations/core/view/AbstractDefaultMainView.java`: `initializeSimulation()`
+- `simulations/core/view/AbstractMainView.java`: `createEditToolBarOptionPanel()`, `handleMouseClickedCoordinate()`
+- `simulations/etpets/model/EtpetsAgentLogic.java`: `formatActionCandidates()`
+
+### `CommentedOutCode`
+
+- Count: 4, commented-out diagnostic code in the Etpets model ("Only for testing / debugging" blocks and
+  `AppLogger` calls).
+- Proposal: keep; `java.md` ("Logging with AppLogger") allows commented-out `AppLogger` calls as diagnostic traces.
+  Check whether the other commented-out blocks are still needed; otherwise remove them (change code).
+- Decision: open.
+
+- `simulations/etpets/model/EtpetsAgentLogic.java`: `selectAndApplyAction()`
+- `simulations/etpets/model/EtpetsSimulationManager.java`: `initializePets()`, `initializeResources()`,
+  `initializeTerrain()`
+
+### `ObjectEquality`
+
+- Count: 3.
+- Proposal: `GridCoordinate` compares with its own constant on purpose; keep, or use `equals` if equally fast. Check
+  `EtpetsAgentLogic.apply()` separately.
+- Decision: open.
+
+- `engine/GridCoordinate.java`: `isIllegal()`, `toDisplayString()`
+- `simulations/etpets/model/EtpetsAgentLogic.java`: `apply()`
+
 ### Main inspection types with two occurrences
 
+- `ExtractMethodRecommender`: check the recommendations; change code or keep.
 - `FieldNamingConvention`: `CompassDirection` has one-letter constants (`N`, `E`, `S`, `W`), shorter than the
   minimum length 2 of the constant naming convention in the profile: set the minimum length to 1 or keep.
   `AppLocalization.state`: check the name against the naming rules; rename or keep.
-- `ObjectEquality`: `GridCoordinate` compares with its own constant on purpose; keep, or use `equals` if equally fast.
 - `OptionalUsedAsFieldOrParameterType`: check whether the callers can pass the value or `null` instead; otherwise
   keep.
 - `OverloadedMethodsWithSameNumberOfParameters`: change code: give the two private `clampToMapRange` methods
   distinct names.
-- `unused`: keep (parameters that implementations or overrides may ignore).
 - Decision: open.
 
 - `core/AppLocalization.java`: variable `state`
 - `engine/neighborhood/CompassDirection.java`: enum `CompassDirection`
-- `engine/GridCoordinate.java`: `isIllegal()`, `toDisplayString()`
 - `simulations/core/view/AbstractObservationView.java`: `updateGenericMetricSection()`, `updateStatusSectionLabel()`
 - `simulations/etpets/view/EtpetsMainView.java`: `clampToMapRange()` (2x)
-- `simulations/core/model/SimulationUserAction.java`: `apply()`
-- `simulations/core/view/AbstractMainView.java`: `createEditToolBarOptionPanel()`
+- `ui/FXComponentFactory.java`: `createLabeledIntSlider()`
+- `ui/FXPaintFactory.java`: `computeBrightnessVariantsMap()`
 
 ### Other main inspection types
 
@@ -495,17 +552,23 @@ One occurrence each; decide per occurrence.
 
 - `BooleanMethodIsAlwaysInverted`: `simulations/etpets/model/entity/Pet.java`, `hasReachedAgingEffectsAge()`.
   Proposal: change code (invert the method and its name) or keep.
-- `CallToSystemExit`: `AppLauncher.java`, `parseArgumentsAndHandleHelp()`. Proposal: keep.
+- `CallToSystemExit`: `AppLauncher.java`, `parseArgumentsAndHandleInformation()`. Proposal: keep.
 - `ClassReferencesSubclass`: `engine/model/entity/GridEntity.java`, `isConstant()`. Proposal: keep.
-- `ExtractMethodRecommender`: `ui/FXComponentFactory.java`, `createLabeledIntSlider()`. Proposal: check the
-  recommendation; change code or keep.
+- `CollectionDeclaredAsConcreteClass`: `core/AppManifest.java`, `parseMainAttributes()`. Proposal: check the local
+  `HashMap` declaration; change code or keep.
 - `HardcodedLineSeparator`: `ExtraterrestrialPetsSimulation.java`, `formatUnexpectedErrorContent()` (text of the
   error alert). Proposal: check whether the alert needs `\n`; change code or keep. Decided as a single case,
   independent of the profile decision for the tests (maintainer, 2026-11-06).
+- `OptionalIsPresent`: `simulations/core/viewmodel/DefaultMainViewModel.java`,
+  `applyUserAction(SimulationUserActionDescriptor)`. Proposal: check the functional rewrite; change code or keep.
 - `ParameterHidesMemberVariable`: `simulations/core/view/AbstractDefaultMainView.java`, `drawSimulation()`. Proposal:
   rename the parameter or keep.
+- `StringBufferWithoutInitialCapacity`: `ui/AboutDialog.java`, `formatFilePaths()`. Proposal: check whether an
+  initial capacity is useful for at most two lines; change code or keep.
 - `SwitchExpressionCanBePushedDown`: `simulations/langton/model/LangtonStepRunner.java`,
   `computeNewAntDirection()`. Proposal: check the rewrite; change code or keep.
+- `UnusedReturnValue`: `core/AppSettings.java`, `writeLocale(CountryLocale)`. Proposal: check whether a caller
+  should use the result or the method can return `void` (public API of `core`); otherwise keep.
 
 ## Deferred findings
 

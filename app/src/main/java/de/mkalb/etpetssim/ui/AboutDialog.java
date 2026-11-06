@@ -106,6 +106,7 @@ public final class AboutDialog {
      *
      * @return one line per file path; empty if no path is available
      */
+    @SuppressWarnings("StringBufferWithoutInitialCapacity")
     private static String formatFilePaths() {
         String lineSeparator = System.lineSeparator();
         StringBuilder paths = new StringBuilder();

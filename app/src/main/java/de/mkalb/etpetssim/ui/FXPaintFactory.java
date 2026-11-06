@@ -43,7 +43,7 @@ public final class FXPaintFactory {
      *                                  values, groupCount is less than 1, or maxFactorDelta is outside the range
      *                                  [-1.0, 10.0]
      */
-    @SuppressWarnings("MagicNumber")
+    @SuppressWarnings({"MagicNumber", "ExtractMethodRecommender"})
     public static Map<Integer, Color> computeBrightnessVariantsMap(
             Color baseColor,
             int minInclusive,

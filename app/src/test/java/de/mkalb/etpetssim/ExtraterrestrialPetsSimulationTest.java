@@ -55,6 +55,7 @@ final class ExtraterrestrialPetsSimulationTest {
         assertEquals("Boom\n\nDetails are in the application log if logging is enabled (--log-file).", content);
     }
 
+    @SuppressWarnings("TextBlockMigration")
     @Test
     void testFormatUnexpectedErrorContentReturnsClassNameForNullMessage() {
         String content = ExtraterrestrialPetsSimulation.formatUnexpectedErrorContent(
@@ -64,6 +65,7 @@ final class ExtraterrestrialPetsSimulationTest {
                 + "Details are in the application log if logging is enabled (--log-file).", content);
     }
 
+    @SuppressWarnings("TextBlockMigration")
     @Test
     void testFormatUnexpectedErrorContentReturnsClassNameForBlankMessage() {
         String content = ExtraterrestrialPetsSimulation.formatUnexpectedErrorContent(
@@ -73,6 +75,7 @@ final class ExtraterrestrialPetsSimulationTest {
                 + "Details are in the application log if logging is enabled (--log-file).", content);
     }
 
+    @SuppressWarnings("TextBlockMigration")
     @Test
     void testFormatUnexpectedErrorContentReturnsCounterLineForPositiveCount() {
         String content = ExtraterrestrialPetsSimulation.formatUnexpectedErrorContent(

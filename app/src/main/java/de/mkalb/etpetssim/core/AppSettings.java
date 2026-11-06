@@ -73,6 +73,7 @@ public final class AppSettings {
      * @param locale the locale to save
      * @return {@code true} if the setting was written; otherwise {@code false}
      */
+    @SuppressWarnings("UnusedReturnValue")
     public static boolean writeLocale(CountryLocale locale) {
         return resolveSettingsFile().map(file -> writeLocale(file, locale)).orElse(false);
     }

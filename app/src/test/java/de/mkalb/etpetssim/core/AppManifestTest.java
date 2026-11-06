@@ -36,7 +36,6 @@ final class AppManifestTest {
         return new ByteArrayInputStream(content.getBytes(StandardCharsets.UTF_8));
     }
 
-    @SuppressWarnings("DataFlowIssue")
     @Test
     void testReadMainAttributes() {
         Map<String, String> attributes = AppManifest.readMainAttributes();

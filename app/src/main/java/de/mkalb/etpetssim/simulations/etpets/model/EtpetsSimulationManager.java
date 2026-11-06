@@ -79,6 +79,7 @@ public final class EtpetsSimulationManager
         }
     }
 
+    @SuppressWarnings("CommentedOutCode")
     private void initializeTerrain(EtpetsGridModel model, Random random, SimulationInitializationCancellation cancellation) {
         int totalCells = structure.cellCount();
         int rockCount = computePercentCount(totalCells, config().rockPercent());
@@ -116,6 +117,7 @@ public final class EtpetsSimulationManager
         }
     }
 
+    @SuppressWarnings("CommentedOutCode")
     private void initializeResources(EtpetsGridModel model, Random random, SimulationInitializationCancellation cancellation) {
         int totalCells = structure.cellCount();
         int plantCount = computePercentCount(totalCells, config().plantPercent());
@@ -164,6 +166,7 @@ public final class EtpetsSimulationManager
         }
     }
 
+    @SuppressWarnings("CommentedOutCode")
     private void initializePets(EtpetsGridModel model,
                                 Random random,
                                 EtpetsIdSequence idSequence,

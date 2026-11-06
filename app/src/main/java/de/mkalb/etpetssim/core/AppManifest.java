@@ -107,6 +107,7 @@ public final class AppManifest {
      * @return an unmodifiable map of attribute names to values, without attributes with a blank value
      * @throws IOException if the manifest cannot be read
      */
+    @SuppressWarnings("CollectionDeclaredAsConcreteClass")
     static Map<String, String> parseMainAttributes(InputStream stream) throws IOException {
         Attributes attributes = new Manifest(stream).getMainAttributes();
         Map<String, String> result = HashMap.newHashMap(attributes.size());

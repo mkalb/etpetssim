@@ -846,6 +846,7 @@ public final class DefaultMainViewModel<
      * @param descriptor descriptor whose current context should be resolved and applied
      * @return {@code true} if the action context resolved and the action was applied; {@code false} otherwise
      */
+    @SuppressWarnings("OptionalIsPresent")
     public boolean applyUserAction(SimulationUserActionDescriptor<CTX> descriptor) {
         var context = descriptor.resolveContext();
         if (context.isEmpty()) {

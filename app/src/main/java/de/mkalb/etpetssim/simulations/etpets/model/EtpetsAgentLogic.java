@@ -71,6 +71,7 @@ public final class EtpetsAgentLogic {
      * @param stepIndex  the index of the current step
      * @param statistics the statistics to update with the changed cell counts
      */
+    @SuppressWarnings("ObjectEquality")
     public static void apply(EtpetsGridModel gridModel,
                              Random random,
                              EtpetsIdSequence idSequence,
@@ -151,6 +152,7 @@ public final class EtpetsAgentLogic {
         statistics.adjustCellCounts(activePetCountChange, eggCountChange, cumulativeDeadPetCountChange);
     }
 
+    @SuppressWarnings("CommentedOutCode")
     private static ActionEffect selectAndApplyAction(Pet pet,
                                                      GridCoordinate currentCoordinate,
                                                      EtpetsGridModel gridModel,
@@ -703,6 +705,7 @@ public final class EtpetsAgentLogic {
                 mortalityChance);
     }
 
+    @SuppressWarnings("unused")
     private static String formatActionCandidates(List<ActionCandidate> actionCandidates) {
         StringBuilder sb = new StringBuilder(actionCandidates.size() * DISPLAY_STRING_CAPACITY_HINT);
         for (int i = 0; i < actionCandidates.size(); i++) {

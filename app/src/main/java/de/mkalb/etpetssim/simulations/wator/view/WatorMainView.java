@@ -87,6 +87,7 @@ public final class WatorMainView
         return Math.max(config.sharkBirthEnergy(), config.sharkMinReproductionEnergy()) * MAX_COLOR_SHARK_ENERGY_FACTOR;
     }
 
+    @SuppressWarnings("DataFlowIssue")
     @Override
     protected void initializeSimulation(CanvasPainters painters, WatorConfig config, CellDimension cellDimension, WritableGridModel<WatorEntity> model) {
         Color backgroundColor = entityDescriptorRegistry

@@ -158,6 +158,7 @@ public final class ConwayConfigView
         return label;
     }
 
+    @SuppressWarnings("SameParameterValue")
     private FXComponentFactory.LabeledControl<GridPane> createTransitionRulesControl(List<BooleanProperty> surviveProperties,
                                                                                      List<BooleanProperty> birthProperties,
                                                                                      ObjectProperty<ConwayTransitionRules> transitionRulesProperty,

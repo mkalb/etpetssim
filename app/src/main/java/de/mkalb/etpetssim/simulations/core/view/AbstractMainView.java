@@ -209,6 +209,7 @@ public abstract class AbstractMainView<
         });
     }
 
+    @SuppressWarnings("unused")
     protected abstract void handleMouseClickedCoordinate(Point2D mousePoint, GridCoordinate mouseCoordinate, FXGridCanvasPainter painter);
 
     private void registerNotificationListener() {
