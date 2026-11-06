@@ -21,8 +21,9 @@ Rules for all `.java` files; repository-wide instructions still apply.
   before `engine.model.GridModel`). Add new imports at their sorted position and remove imports that a change
   leaves unused; leave the other imports unchanged.
 - Prefer modern Java 27 APIs and language features when they improve clarity; avoid novelty.
-- Use `var` for local variables when the type is evident from the right-hand side (e.g., a constructor, factory, or
-  cast); write the type otherwise.
+- `var` is allowed for local variables when the type is evident from the right-hand side (e.g., a constructor,
+  factory, or cast); write the type otherwise. Do not change existing declarations between `var` and an explicit
+  type, and do not report them in reviews.
 - Keep stream operations free of side effects, collect with `toList()` instead of `Collectors.toList()`, and use a
   loop when it is clearer than a stream. Extract lambdas with several statements into named methods.
 - Use locale-stable normalization for technical text (e.g., `toLowerCase(Locale.ROOT)`).
