@@ -66,9 +66,9 @@ public record CellDimension(
                     + formatValues(edgeLength, width, height, halfEdgeLength, halfWidth, halfHeight, innerRadius,
                     outerRadius, columnWidth, rowHeight));
         }
-        if ((Math.abs(edgeLength - (2 * halfEdgeLength)) > DOUBLE_COMPARE_EPSILON)
-                || (Math.abs(width - (2 * halfWidth)) > DOUBLE_COMPARE_EPSILON)
-                || (Math.abs(height - (2 * halfHeight)) > DOUBLE_COMPARE_EPSILON)) {
+        if ((Math.abs(edgeLength - (2 * halfEdgeLength)) > (DOUBLE_COMPARE_EPSILON * edgeLength))
+                || (Math.abs(width - (2 * halfWidth)) > (DOUBLE_COMPARE_EPSILON * width))
+                || (Math.abs(height - (2 * halfHeight)) > (DOUBLE_COMPARE_EPSILON * height))) {
             throw new IllegalArgumentException("all half values must be half of their full values, but was: "
                     + formatValues(edgeLength, width, height, halfEdgeLength, halfWidth, halfHeight, innerRadius,
                     outerRadius, columnWidth, rowHeight));

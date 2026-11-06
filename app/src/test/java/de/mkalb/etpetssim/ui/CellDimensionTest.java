@@ -34,6 +34,7 @@ final class CellDimensionTest {
     private static final double INVALID_NEGATIVE = -1.0d;
     private static final double HALF_FACTOR = 2.0d;
     private static final double HALF_DIMENSION_OFFSET = 0.25d;
+    private static final double TINY_EDGE_LENGTH = 1.0e-10d;
     private static final double DISPLAY_EDGE_LENGTH = 1_234.5d;
     private static final double DISPLAY_WIDTH = 2_345.6d;
     private static final double DISPLAY_HEIGHT = 3_456.7d;
@@ -162,6 +163,17 @@ final class CellDimensionTest {
                         HALF_EDGE_LENGTH,
                         HALF_WIDTH,
                         HALF_HEIGHT + HALF_DIMENSION_OFFSET,
+                        INNER_RADIUS,
+                        OUTER_RADIUS,
+                        COLUMN_WIDTH,
+                        ROW_HEIGHT)),
+                () -> assertThrows(IllegalArgumentException.class, () -> new CellDimension(
+                        TINY_EDGE_LENGTH,
+                        WIDTH,
+                        HEIGHT,
+                        -TINY_EDGE_LENGTH,
+                        HALF_WIDTH,
+                        HALF_HEIGHT,
                         INNER_RADIUS,
                         OUTER_RADIUS,
                         COLUMN_WIDTH,
