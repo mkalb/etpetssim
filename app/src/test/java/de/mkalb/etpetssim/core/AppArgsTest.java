@@ -372,6 +372,7 @@ final class AppArgsTest {
         );
     }
 
+    @SuppressWarnings("SpellCheckingInspection")
     @Test
     void testFormatHelpArguments() {
         AppLocalization.resetForTesting();

@@ -22,7 +22,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Execution(ExecutionMode.SAME_THREAD)
-@SuppressWarnings("SpellCheckingInspection")
 final class SimulationTypeTest {
 
     @BeforeAll
@@ -100,6 +99,7 @@ final class SimulationTypeTest {
         assertFalse(SimulationType.SIMULATION_LAB.isShownOnStartScreen());
     }
 
+    @SuppressWarnings("SpellCheckingInspection")
     @Test
     void testCliArgumentsReturnsExpectedValues() {
         assertEquals(List.of("startscreen", "start"), SimulationType.STARTSCREEN.cliArguments());

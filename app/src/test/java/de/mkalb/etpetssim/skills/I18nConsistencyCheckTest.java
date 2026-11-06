@@ -17,7 +17,6 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Tag("skill")
-@SuppressWarnings("SpellCheckingInspection")
 final class I18nConsistencyCheckTest {
 
     private static final Path EN_US_RELATIVE_PATH = Path.of(
@@ -328,6 +327,7 @@ final class I18nConsistencyCheckTest {
         );
     }
 
+    @SuppressWarnings("SpellCheckingInspection")
     @Test
     void testReportParsesPropertiesGrammarWithDecodedKeysValuesAndSourceLines() throws Exception {
         byte[] enUsBytes = bytesWithLineEnding(
@@ -402,6 +402,7 @@ final class I18nConsistencyCheckTest {
         );
     }
 
+    @SuppressWarnings("SpellCheckingInspection")
     @Test
     void testDuplicateDecodedKeysInBothLocalesAreReportedAndBlockFix() throws Exception {
         byte[] enUsBytes = bytesWithLineEnding("\n", "alpha = first", "beta = shared", "\\u0061lpha = override");
@@ -428,6 +429,7 @@ final class I18nConsistencyCheckTest {
         );
     }
 
+    @SuppressWarnings("SpellCheckingInspection")
     @Test
     void testMalformedUnicodeEscapesAreReportedWithSourceLinesAndBlockFix() throws Exception {
         byte[] enUsBytes = bytesWithLineEnding(
@@ -466,6 +468,7 @@ final class I18nConsistencyCheckTest {
         );
     }
 
+    @SuppressWarnings("SpellCheckingInspection")
     @Test
     void testFixCanonicalizesValidNonCanonicalSyntaxAndIsIdempotent() throws Exception {
         byte[] enUsBytes = bytesWithLineEnding("\n", "alpha: value", "beta = continued\\", "    value");
@@ -558,6 +561,7 @@ final class I18nConsistencyCheckTest {
         );
     }
 
+    @SuppressWarnings("SpellCheckingInspection")
     @Test
     void testFixDoesNotCreateEscapesWhenRemovingLiteralInvisibleCharacters() throws Exception {
         byte[] bundleBytes = bytesWithLineEnding(
@@ -672,6 +676,7 @@ final class I18nConsistencyCheckTest {
         );
     }
 
+    @SuppressWarnings("SpellCheckingInspection")
     @Test
     void testReportWarnsAboutValidUnicodeEscapesInKeys() throws Exception {
         byte[] bundleBytes = bytesWithLineEnding(
@@ -720,6 +725,7 @@ final class I18nConsistencyCheckTest {
         );
     }
 
+    @SuppressWarnings("SpellCheckingInspection")
     @Test
     void testFixCanonicalizesUnicodeEscapesInKeys() throws Exception {
         byte[] bundleBytes = bytesWithLineEnding("\n", "\\u0061lpha = value", "plain = value");

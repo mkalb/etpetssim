@@ -47,6 +47,7 @@ final class LangtonMovementRulesTest {
         assertThrows(IllegalArgumentException.class, () -> new LangtonMovementRules(turns));
     }
 
+    @SuppressWarnings("SpellCheckingInspection")
     @Test
     void testParse() {
         assertEquals(List.of(AntTurn.LEFT2, AntTurn.RIGHT2, AntTurn.LEFT, AntTurn.RIGHT, AntTurn.NONE, AntTurn.U_TURN),
@@ -86,6 +87,7 @@ final class LangtonMovementRulesTest {
         assertEquals(3, LangtonMovementRules.parse("L2RU").ruleCount());
     }
 
+    @SuppressWarnings("SpellCheckingInspection")
     @Test
     void testIsValidForCellShape() {
         LangtonMovementRules triangleRules = LangtonMovementRules.parse("LRU");
@@ -102,6 +104,7 @@ final class LangtonMovementRulesTest {
         );
     }
 
+    @SuppressWarnings("SpellCheckingInspection")
     @Test
     void testToDisplayString() {
         assertAll(

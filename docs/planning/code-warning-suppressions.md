@@ -90,7 +90,8 @@ Not counted: the `@SuppressWarnings` text in the test data of `skills/JavaCodeIn
 - The profile already limits one inspection by scope: `IllegalDependencyOnInternalPackage` is disabled for the scope
   "Tests". The same mechanism can adjust inspections for test sources only. The scope "Tests" covers all classes in
   the test source root, including the helper classes that are not tests (e.g., `EtpetsScoreTuningRunner`).
-- The project dictionary contains only `mkalb`.
+- The project dictionary (`.idea/dictionaries/project.xml`) contains the owner login, the simulation and project
+  names, their CLI codes, and the `AppLogger` method names.
 
 ## Summary
 
@@ -108,7 +109,7 @@ Not counted: the `@SuppressWarnings` text in the test data of `skills/JavaCodeIn
 | test    | `NumericCastThatLosesPrecision`     |     3 | profile option                   | done   |
 | test    | `ConstantValue`                     |     2 | narrow scope                     | done   |
 | test    | `InsertLiteralUnderscores`          |     2 | change code                      | done   |
-| test    | `SpellCheckingInspection`           |     2 | dictionary                       | open   |
+| test    | `SpellCheckingInspection`           |     2 | dictionary                       | done   |
 | test    | other types (4)                     |     4 | per occurrence                   | open   |
 | main    | `MarkerInterface`                   |     9 | disable                          | open   |
 | main    | `InterfaceMayBeAnnotatedFunctional` |     5 | disable                          | open   |
@@ -282,10 +283,23 @@ The inventory is omitted: all occurrences are removed by the same commit.
 - Count: 2, both at class level.
 - Proposal: add real domain words to the project dictionary and remove the suppressions; keep a narrowed suppression
   only for artificial test strings.
-- Decision: open.
+- Decision: as proposed (maintainer, 2026-11-06). The maintainer added the CLI codes of the simulations and
+  `etpetssim` to the project dictionary and moved the suppressions to the methods with artificial test strings. The
+  spelling inspection was not part of the baseline, so this also adds method-level suppressions in two classes that
+  had none.
 
-- `simulations/core/SimulationTypeTest.java`: class `SimulationTypeTest`
-- `skills/I18nConsistencyCheckTest.java`: class `I18nConsistencyCheckTest`
+Remaining suppressions (12):
+
+- `core/AppArgsTest.java`: `testFormatHelpArguments()`
+- `simulations/core/SimulationTypeTest.java`: `testCliArgumentsReturnsExpectedValues()`
+- `simulations/langton/shared/LangtonMovementRulesTest.java`: `testIsValidForCellShape()`, `testParse()`,
+  `testToDisplayString()`
+- `skills/I18nConsistencyCheckTest.java`: `testDuplicateDecodedKeysInBothLocalesAreReportedAndBlockFix()`,
+  `testFixCanonicalizesUnicodeEscapesInKeys()`, `testFixCanonicalizesValidNonCanonicalSyntaxAndIsIdempotent()`,
+  `testFixDoesNotCreateEscapesWhenRemovingLiteralInvisibleCharacters()`,
+  `testMalformedUnicodeEscapesAreReportedWithSourceLinesAndBlockFix()`,
+  `testReportParsesPropertiesGrammarWithDecodedKeysValuesAndSourceLines()`,
+  `testReportWarnsAboutValidUnicodeEscapesInKeys()`
 
 ### Other test inspection types
 
