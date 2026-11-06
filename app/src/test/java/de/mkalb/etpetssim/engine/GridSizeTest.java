@@ -111,13 +111,12 @@ final class GridSizeTest {
         );
     }
 
-    @SuppressWarnings("InsertLiteralUnderscores")
     @Test
     void testAspectRatio() {
         assertAll(
-                () -> assertEquals(1.0d, new GridSize(32, 32).aspectRatio(), 0.00001d),
-                () -> assertEquals(2.0d, new GridSize(64, 32).aspectRatio(), 0.00001d),
-                () -> assertEquals(0.5d, new GridSize(32, 64).aspectRatio(), 0.00001d)
+                () -> assertEquals(1.0d, new GridSize(32, 32).aspectRatio(), 1.0e-5d),
+                () -> assertEquals(2.0d, new GridSize(64, 32).aspectRatio(), 1.0e-5d),
+                () -> assertEquals(0.5d, new GridSize(32, 64).aspectRatio(), 1.0e-5d)
         );
     }
 

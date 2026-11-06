@@ -66,12 +66,11 @@ final class GridOffsetTest {
         );
     }
 
-    @SuppressWarnings("InsertLiteralUnderscores")
     @Test
     void testEuclideanLength() {
         assertAll(
-                () -> assertEquals(5.0, new GridOffset(3, 4).euclideanLength(), 0.00001),
-                () -> assertEquals(Math.sqrt(13), new GridOffset(2, 3).euclideanLength(), 0.00001)
+                () -> assertEquals(5.0, new GridOffset(3, 4).euclideanLength(), 1.0e-5),
+                () -> assertEquals(Math.sqrt(13), new GridOffset(2, 3).euclideanLength(), 1.0e-5)
         );
     }
 

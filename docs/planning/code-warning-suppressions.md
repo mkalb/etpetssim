@@ -103,11 +103,11 @@ Not counted: the `@SuppressWarnings` text in the test data of `skills/JavaCodeIn
 | test    | `TextBlockMigration`                |     3 | change code (text blocks)        | done   |
 | test    | `UseOfProcessBuilder`               |     2 | keep                             | open   |
 | test    | `DataFlowIssue`                     |     8 | keep 5; change code in 3         | done   |
-| test    | `unused`                            |     5 | keep                             | open   |
-| test    | `ResultOfMethodCallIgnored`         |     4 | check each occurrence            | open   |
-| test    | `NumericCastThatLosesPrecision`     |     3 | keep; check each occurrence      | open   |
+| test    | `unused`                            |     5 | keep                             | done   |
+| test    | `ResultOfMethodCallIgnored`         |     4 | keep                             | done   |
+| test    | `NumericCastThatLosesPrecision`     |     3 | profile option                   | open   |
 | test    | `ConstantValue`                     |     2 | narrow scope                     | open   |
-| test    | `InsertLiteralUnderscores`          |     2 | change code                      | open   |
+| test    | `InsertLiteralUnderscores`          |     2 | change code                      | done   |
 | test    | `SpellCheckingInspection`           |     2 | dictionary                       | open   |
 | test    | other types (4)                     |     4 | per occurrence                   | open   |
 | main    | `MarkerInterface`                   |     9 | disable                          | open   |
@@ -225,16 +225,18 @@ Remaining suppressions:
 
 - Count: 5, fixture classes whose constants are only read by reflection.
 - Proposal: keep.
-- Decision: open.
+- Decision: keep (maintainer, 2026-11-06).
 
 - `testsupport/ConstantTestSupportTest.java`: class `BlankConstants`, class `DuplicateConstants`, class
   `NoStringConstants`, class `SortedConstants`, class `UnsortedConstants`
 
 ### `ResultOfMethodCallIgnored`
 
-- Count: 4, in tests of interrupt handling.
+- Count: 4, in tests of interrupt handling. Each ignores the result of `Thread.interrupted()`, which clears the
+  interrupt status: three in a `finally` block, one in a fixture lambda.
 - Proposal: check each occurrence: assert the result where it is meaningful (change code), otherwise keep.
-- Decision: open.
+- Decision: keep all 4; clearing the interrupt status with `Thread.interrupted()` is the usual idiom, and no result
+  is meaningful to assert (maintainer, 2026-11-06).
 
 - `ExtraterrestrialPetsSimulationTest.java`: `testStopInterruptionEscalatesEveryPendingTermination()`,
   `testStopInterruptsTerminationWaitAndRestoresInterruptStatus()`
@@ -244,9 +246,11 @@ Remaining suppressions:
 
 ### `NumericCastThatLosesPrecision` (tests)
 
-- Count: 3, casts that build invalid bytes on purpose.
-- Proposal: keep; check each occurrence.
-- Decision: open.
+- Count: 3, casts such as `(byte) 0xFF` that build invalid bytes on purpose.
+- Proposal: enable the option "Ignore overflowing byte casts" of the inspection (`ignoreOverflowingByteCasts` of
+  `CastThatLosesPrecision`, set to `false` in the profile); it applies to main and test sources, and main sources have
+  no such casts. Remove the 3 suppressions.
+- Decision: as proposed (maintainer, 2026-11-06).
 
 - `core/AppSettingsTest.java`: `testReadLocaleWithFileReturnsEmptyForUnreadableContent()`,
   `testWriteLocaleWithFileReplacesUnreadableContent()`
@@ -256,20 +260,21 @@ Remaining suppressions:
 
 - Count: 2; the annotation on `EtpetsBalanceTest` is at class level.
 - Proposal: keep; narrow the class-level scope of `EtpetsBalanceTest` to the methods that check constants.
-- Decision: open.
+- Decision: keep `WorkCheckpointsTest`; narrow `EtpetsBalanceTest` to the methods that IntelliJ reports after the
+  class-level suppression is removed (maintainer, 2026-11-06).
 
 - `engine/support/WorkCheckpointsTest.java`: `testCancellationCheckInterval()`
 - `simulations/etpets/model/EtpetsBalanceTest.java`: class `EtpetsBalanceTest`
 
 ### `InsertLiteralUnderscores`
 
-- Count: 2; a weak warning.
+- Count: 2; a weak warning, on the assertion delta `0.00001`.
 - Proposal: change code (insert the underscores) and remove the suppressions, unless the literals are expected values
   that are easier to read without underscores.
-- Decision: open.
+- Decision: change code: write the deltas as `1.0e-5`, like the `DELTA` constants of other tests, and remove the
+  suppressions (maintainer, 2026-11-06).
 
-- `engine/GridOffsetTest.java`: `testEuclideanLength()`
-- `engine/GridSizeTest.java`: `testAspectRatio()`
+The inventory is omitted: all occurrences are removed by the same commit.
 
 ### `SpellCheckingInspection`
 
