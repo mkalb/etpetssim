@@ -114,6 +114,36 @@ final class AppLoggerTest {
     }
 
     @Test
+    void testActiveLogFile(@TempDir Path tempDir) {
+        Path logPath = tempDir.resolve(AppLogger.LOG_FILE_NAME);
+
+        AppLogger.initialize(AppLogger.LogLevel.INFO, false, logPath);
+        Optional<Path> activeLogFile = AppLogger.activeLogFile();
+        AppLogger.resetForTesting();
+
+        assertAll(
+                () -> assertEquals(Optional.of(logPath.toAbsolutePath()), activeLogFile),
+                () -> assertEquals(Optional.empty(), AppLogger.activeLogFile())
+        );
+    }
+
+    @Test
+    void testActiveLogFileReturnsEmptyWithoutFileLogging() {
+        AppLogger.initialize(AppLogger.LogLevel.INFO, true, null);
+
+        assertEquals(Optional.empty(), AppLogger.activeLogFile());
+    }
+
+    @Test
+    void testActiveLogFileReturnsEmptyWhenLogFileCannotBeOpened(@TempDir Path tempDir) {
+        Path logPath = tempDir.resolve("missing").resolve(AppLogger.LOG_FILE_NAME);
+
+        AppLogger.initialize(AppLogger.LogLevel.INFO, true, logPath);
+
+        assertEquals(Optional.empty(), AppLogger.activeLogFile());
+    }
+
+    @Test
     void testInitializeForTesting() {
         AppLogger.initializeForTesting();
 
@@ -134,6 +164,15 @@ final class AppLoggerTest {
                 () -> assertFalse(AppLogger.isInitialized()),
                 () -> assertEquals(0, AppLogger.handlerCountForTesting())
         );
+    }
+
+    @Test
+    void testShutdownClearsActiveLogFile(@TempDir Path tempDir) {
+        AppLogger.initialize(AppLogger.LogLevel.INFO, false, tempDir.resolve(AppLogger.LOG_FILE_NAME));
+
+        AppLogger.shutdown();
+
+        assertEquals(Optional.empty(), AppLogger.activeLogFile());
     }
 
     @Test

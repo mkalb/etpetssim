@@ -98,7 +98,16 @@ public final class AppSettings {
         }
     }
 
-    private static Optional<Path> resolveSettingsFile() {
+    /**
+     * Resolves the absolute path of the settings file in the application data directory.
+     *
+     * <p>The file itself may not exist yet; it is created when a setting is saved for the first time. Resolving the path
+     * creates the application data directory if it is missing.
+     *
+     * @return the path of the settings file, or empty if the application data directory cannot be resolved; the
+     * failure is logged
+     */
+    public static Optional<Path> resolveSettingsFile() {
         try {
             return Optional.of(AppStorage.getAppDataFile(FILE_NAME, AppStorage.OperatingSystem.detect()));
         } catch (IOException | IllegalArgumentException e) {

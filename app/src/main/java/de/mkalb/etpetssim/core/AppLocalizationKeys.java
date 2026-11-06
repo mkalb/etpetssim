@@ -23,6 +23,9 @@ public final class AppLocalizationKeys {
     public static final String ABOUT_MANIFEST_URL = "about.manifest.url";
     public static final String ABOUT_MANIFEST_VENDOR = "about.manifest.vendor";
     public static final String ABOUT_MANIFEST_VERSION = "about.manifest.version";
+    public static final String ABOUT_PATH_LOG_FILE = "about.path.logfile";
+    public static final String ABOUT_PATH_SETTINGS_FILE = "about.path.settingsfile";
+    public static final String ABOUT_PATH_SETTINGS_FILE_NOT_CREATED = "about.path.settingsfilenotcreated";
     public static final String ABOUT_RESOURCE_NOT_FOUND = "about.resource.notfound";
     public static final String ABOUT_TAB_HELP = "about.tab.help";
     public static final String ABOUT_TAB_LICENSE = "about.tab.license";

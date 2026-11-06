@@ -149,4 +149,15 @@ final class AppSettingsTest {
         assertFalse(AppSettings.writeLocale(directory, CountryLocale.DE_DE));
     }
 
+    @Test
+    void testResolveSettingsFile() {
+        Path file = AppSettings.resolveSettingsFile().orElseThrow();
+
+        assertAll(
+                () -> assertTrue(file.isAbsolute()),
+                () -> assertEquals(AppSettings.FILE_NAME, file.getFileName().toString()),
+                () -> assertTrue(Files.isDirectory(file.getParent()))
+        );
+    }
+
 }

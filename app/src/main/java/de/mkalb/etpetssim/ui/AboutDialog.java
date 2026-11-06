@@ -3,8 +3,10 @@ package de.mkalb.etpetssim.ui;
 import de.mkalb.etpetssim.core.AppArgs;
 import de.mkalb.etpetssim.core.AppLocalization;
 import de.mkalb.etpetssim.core.AppLocalizationKeys;
+import de.mkalb.etpetssim.core.AppLogger;
 import de.mkalb.etpetssim.core.AppManifest;
 import de.mkalb.etpetssim.core.AppResources;
+import de.mkalb.etpetssim.core.AppSettings;
 import javafx.application.HostServices;
 import javafx.scene.Node;
 import javafx.scene.control.ButtonType;
@@ -23,6 +25,8 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -33,7 +37,8 @@ import java.util.regex.Pattern;
  * Displays the application's About dialog.
  *
  * <p>The dialog shows the application icon, title, and version in its header, links to the GitHub repository and its
- * issues, and tabs with build metadata, help, the README, the project license, and third-party license information.
+ * issues, and tabs with build metadata and the paths of the settings and log files, help, the README, the project
+ * license, and third-party license information.
  */
 public final class AboutDialog {
 
@@ -94,6 +99,32 @@ public final class AboutDialog {
     }
 
     /**
+     * Formats the paths of the settings file and the active log file.
+     *
+     * <p>A settings file that does not exist yet is marked with a localized note. A path that cannot be resolved and
+     * the log file without active file logging are omitted.
+     *
+     * @return one line per file path; empty if no path is available
+     */
+    private static String formatFilePaths() {
+        String lineSeparator = System.lineSeparator();
+        StringBuilder paths = new StringBuilder();
+        AppSettings.resolveSettingsFile().ifPresent(file ->
+                paths.append(formatSettingsFilePath(file)).append(lineSeparator));
+        AppLogger.activeLogFile().ifPresent(file ->
+                paths.append(AppLocalization.getFormattedText(AppLocalizationKeys.ABOUT_PATH_LOG_FILE, file))
+                        .append(lineSeparator));
+        return paths.toString();
+    }
+
+    private static String formatSettingsFilePath(Path file) {
+        String key = Files.exists(file)
+                ? AppLocalizationKeys.ABOUT_PATH_SETTINGS_FILE
+                : AppLocalizationKeys.ABOUT_PATH_SETTINGS_FILE_NOT_CREATED;
+        return AppLocalization.getFormattedText(key, file);
+    }
+
+    /**
      * Shows the About dialog and waits until it is closed.
      */
     public void show() {
@@ -101,7 +132,7 @@ public final class AboutDialog {
 
         Tab tabManifest = createTextAreaTab(
                 AppLocalization.getText(AppLocalizationKeys.ABOUT_TAB_VERSION),
-                formatManifestSummary(manifestInfo));
+                formatManifestSummary(manifestInfo) + System.lineSeparator() + formatFilePaths());
         Tab tabHelp = createTextAreaTab(
                 AppLocalization.getText(AppLocalizationKeys.ABOUT_TAB_HELP),
                 formatHelpText());

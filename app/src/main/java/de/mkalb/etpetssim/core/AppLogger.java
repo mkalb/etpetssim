@@ -47,6 +47,7 @@ public final class AppLogger {
 
     private final Logger logger;
     private boolean initialized;
+    private @Nullable Path logFile;
 
     private AppLogger() {
         // Root logger for the application.
@@ -78,6 +79,16 @@ public final class AppLogger {
     }
 
     /**
+     * Returns the log file that the active file logging writes to.
+     *
+     * @return the absolute path of the log file, or empty if logging is not initialized, file logging is disabled, or
+     * the log file could not be opened
+     */
+    public static synchronized Optional<Path> activeLogFile() {
+        return Optional.ofNullable(APP_LOGGER.logFile);
+    }
+
+    /**
      * Initializes logging for tests if not already initialized.
      *
      * <p>Tests that run production code which logs call this method once before their tests; it logs at
@@ -96,6 +107,7 @@ public final class AppLogger {
     public static synchronized void shutdown() {
         debug("AppLogger: Shutting down logger.");
         APP_LOGGER.initialized = false;
+        APP_LOGGER.logFile = null;
         APP_LOGGER.removeHandlers(true);
     }
 
@@ -239,6 +251,7 @@ public final class AppLogger {
         if (isInitialized()) {
             debug("AppLogger: Reset logger for testing.");
             APP_LOGGER.initialized = false;
+            APP_LOGGER.logFile = null;
             APP_LOGGER.logger.setLevel(DEFAULT_LOG_LEVEL.toJavaLogLevel());
             APP_LOGGER.logger.setUseParentHandlers(true);
             APP_LOGGER.removeHandlers(true);
@@ -284,6 +297,7 @@ public final class AppLogger {
                     fileHandler.setEncoding(StandardCharsets.UTF_8.name());
                     fileHandler.setLevel(level);
                     logHandlers.add(fileHandler);
+                    logFile = logPath.toAbsolutePath();
                 } else {
                     logger.severe("AppLogger: Parent directory for log file does not exist or is not writable: "
                             + logPath);
