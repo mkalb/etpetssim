@@ -525,35 +525,11 @@ public final class EtpetsMainView extends AbstractDefaultMainView<
     }
 
     private ListCell<EtpetsTerrainChoice> createTerrainChoiceCell() {
-        return new ListCell<>() {
-            @SuppressWarnings({"ConstantValue", "DataFlowIssue"})
-            @Override
-            protected void updateItem(@Nullable EtpetsTerrainChoice item, boolean empty) {
-                super.updateItem(item, empty);
-                if (empty || (item == null)) {
-                    setText(null);
-                    setGraphic(null);
-                } else {
-                    setText(AppLocalization.getText(item.labelKey()));
-                }
-            }
-        };
+        return FXComponentFactory.createTextListCell(choice -> AppLocalization.getText(choice.labelKey()));
     }
 
     private ListCell<EtpetsResourceChoice> createResourceChoiceCell() {
-        return new ListCell<>() {
-            @SuppressWarnings({"ConstantValue", "DataFlowIssue"})
-            @Override
-            protected void updateItem(@Nullable EtpetsResourceChoice item, boolean empty) {
-                super.updateItem(item, empty);
-                if (empty || (item == null)) {
-                    setText(null);
-                    setGraphic(null);
-                } else {
-                    setText(AppLocalization.getText(item.labelKey()));
-                }
-            }
-        };
+        return FXComponentFactory.createTextListCell(choice -> AppLocalization.getText(choice.labelKey()));
     }
 
 }

@@ -118,7 +118,7 @@ The test sources were done on 2026-11-06: 52 suppressions in 22 files and 9 insp
 | main    | `InterfaceMayBeAnnotatedFunctional` |     5 | disable                          | done   |
 | main    | `SpellCheckingInspection`           |     8 | dictionary                       | done   |
 | main    | `unchecked`                         |    11 | change code in `ArrayGridModel`  | done   |
-| main    | `ConstantValue`                     |     9 | change code (list cells, equals) | open   |
+| main    | `ConstantValue`                     |     9 | change code (list cells, equals) | done   |
 | main    | `DataFlowIssue`                     |    11 | change code (list cells)         | open   |
 | main    | `SameReturnValue`                   |    13 | keep                             | open   |
 | main    | `MagicNumber`                       |    21 | per occurrence                   | open   |
@@ -391,15 +391,19 @@ Remaining suppressions (4):
 - Proposal: change code: a shared cell factory in `ui` replaces the six copies, so one suppression pair remains (DRY).
   `CreatureBase.equals()`: declare the parameter `@Nullable Object` or use an `instanceof` pattern as in
   `RadiusRingCell`, and remove the suppression. `FXComponentFactory.createLabeledChoiceComboBox()`: check.
-- Decision: open.
+- Decision (maintainer, 2026-11-06):
+    - The new public method `FXComponentFactory.createTextListCell(Function<T, String>)` replaces the private
+      `createDisplayNameListCell(..)` and the anonymous cells of the six views (API change in `ui`, approved); the
+      private `create...Cell()` methods of the views delegate to it. One `ConstantValue`/`DataFlowIssue` pair remains.
+    - `CreatureBase.equals(@Nullable Object)`; the `getClass()` check stays, because an `instanceof` pattern would
+      make a fish and a shark with the same id equal.
+    - `createLabeledChoiceComboBox()`: the selection listener is a `ChangeListener<@Nullable T>`, because the
+      selection can be cleared; the listener of the `InputChoiceProperty` drops its null check, because the value is
+      never `null`.
 
-- `simulations/conway/view/ConwayMainView.java`: `updateItem()`
-- `simulations/etpets/view/EtpetsMainView.java`: `updateItem()` (2x)
-- `simulations/langton/view/LangtonMainView.java`: `updateItem()`
-- `simulations/rebounding/view/ReboundingMainView.java`: `updateItem()`
-- `simulations/sugar/view/SugarMainView.java`: `updateItem()`
-- `simulations/wator/model/entity/CreatureBase.java`: `equals()`
-- `ui/FXComponentFactory.java`: `createLabeledChoiceComboBox()`, `updateItem()`
+Remaining suppressions (1):
+
+- `ui/FXComponentFactory.java`: `updateItem()` in `createTextListCell()`
 
 ### `DataFlowIssue`
 
@@ -407,17 +411,13 @@ Remaining suppressions (4):
   `drawSimulation()` overrides of `ForestMainView` and `WatorMainView`.
 - Proposal: decided together with `ConstantValue`; check `DefaultMainViewModel.applyUserAction()` and the
   `ForestMainView` and `WatorMainView` overrides separately.
-- Decision: open.
+- Decision: the `updateItem()` overrides are decided together with `ConstantValue`; 6 of 7 are removed (maintainer,
+  2026-11-06). The other 4 are open.
 
-- `simulations/conway/view/ConwayMainView.java`: `updateItem()`
 - `simulations/core/viewmodel/DefaultMainViewModel.java`: `applyUserAction()`
-- `simulations/etpets/view/EtpetsMainView.java`: `updateItem()` (2x)
 - `simulations/forest/view/ForestMainView.java`: `drawSimulation()`, `initializeSimulation()`
-- `simulations/langton/view/LangtonMainView.java`: `updateItem()`
-- `simulations/rebounding/view/ReboundingMainView.java`: `updateItem()`
-- `simulations/sugar/view/SugarMainView.java`: `updateItem()`
 - `simulations/wator/view/WatorMainView.java`: `initializeSimulation()`
-- `ui/FXComponentFactory.java`: `updateItem()`
+- `ui/FXComponentFactory.java`: `updateItem()` in `createTextListCell()`
 
 ### `SameReturnValue`
 

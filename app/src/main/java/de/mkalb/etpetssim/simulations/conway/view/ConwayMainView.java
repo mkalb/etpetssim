@@ -250,20 +250,7 @@ public final class ConwayMainView
     }
 
     private ListCell<ConwayPatternChoice> createPatternChoiceCell() {
-        return new ListCell<>() {
-            @SuppressWarnings({"ConstantValue", "DataFlowIssue"})
-            @Override
-            protected void updateItem(@Nullable ConwayPatternChoice item, boolean empty) {
-                // Follow the JavaFX Cell#updateItem(...) contract: call super first and clear the cell for empty or null items.
-                super.updateItem(item, empty);
-                if (empty || (item == null)) {
-                    setText(null);
-                    setGraphic(null);
-                } else {
-                    setText(AppLocalization.getText(item.labelKey()));
-                }
-            }
-        };
+        return FXComponentFactory.createTextListCell(choice -> AppLocalization.getText(choice.labelKey()));
     }
 
 }

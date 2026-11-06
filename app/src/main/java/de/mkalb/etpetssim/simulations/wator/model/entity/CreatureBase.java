@@ -1,5 +1,7 @@
 package de.mkalb.etpetssim.simulations.wator.model.entity;
 
+import org.jspecify.annotations.Nullable;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -30,9 +32,8 @@ public abstract sealed class CreatureBase implements WatorEntity, Comparable<Cre
         return descriptorId;
     }
 
-    @SuppressWarnings("ConstantValue")
     @Override
-    public final boolean equals(Object obj) {
+    public final boolean equals(@Nullable Object obj) {
         if ((obj == null) || (getClass() != obj.getClass())) {
             return false;
         }

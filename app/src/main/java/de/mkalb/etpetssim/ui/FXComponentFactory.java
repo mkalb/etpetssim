@@ -237,7 +237,6 @@ public final class FXComponentFactory {
      * @param <T>                 the choice value type
      * @return a LabeledControl containing the label and the combo box
      */
-    @SuppressWarnings("ConstantValue")
     public static <T> LabeledControl<ComboBox<T>> createLabeledChoiceComboBox(
             InputChoiceProperty<T> inputChoiceProperty,
             String labelFormatString,
@@ -252,22 +251,19 @@ public final class FXComponentFactory {
         ComboBox<T> comboBox = new ComboBox<>();
         comboBox.getItems().addAll(inputChoiceProperty.validValues());
         comboBox.setValue(inputChoiceProperty.getValue());
-        comboBox.setCellFactory(_ -> createDisplayNameListCell(displayNames));
-        comboBox.setButtonCell(createDisplayNameListCell(displayNames));
+        Function<T, String> textProvider = item -> displayNames.getOrDefault(item, item.toString());
+        comboBox.setCellFactory(_ -> createTextListCell(textProvider));
+        comboBox.setButtonCell(createTextListCell(textProvider));
         comboBox.getStyleClass().add(styleClass);
 
-        ChangeListener<T> comboBoxSelectionListener = (_, _, newVal) -> {
+        ChangeListener<@Nullable T> comboBoxSelectionListener = (_, _, newVal) -> {
             if (newVal != null) {
                 inputChoiceProperty.setValue(newVal);
             }
         };
         comboBox.getSelectionModel().selectedItemProperty().addListener(comboBoxSelectionListener);
 
-        ChangeListener<T> inputChoicePropertyListener = (_, _, newVal) -> {
-            if (newVal != null) {
-                comboBox.setValue(newVal);
-            }
-        };
+        ChangeListener<T> inputChoicePropertyListener = (_, _, newVal) -> comboBox.setValue(newVal);
         inputChoiceProperty.property().addListener(inputChoicePropertyListener);
 
         var labelTextBinding = inputChoiceProperty.asStringBinding(labelFormatString);
@@ -566,16 +562,16 @@ public final class FXComponentFactory {
     }
 
     /**
-     * Creates a ListCell for displaying values using their display names.
+     * Creates a list cell that shows a text for its item, e.g., for the cell factory and the button cell of a
+     * {@link ComboBox}.
      *
-     * <p>The cell uses the provided map to look up display names for each value.
-     * If a display name is not found, the value's toString() value is used as a fallback.
+     * <p>An empty cell or a cell with a {@code null} item shows neither text nor graphic.
      *
-     * @param displayNames a map from values to their display names
-     * @param <T>          the value type
-     * @return a ListCell that displays the display name for each value
+     * @param textProvider returns the text for a non-null item
+     * @param <T>          the item type
+     * @return a new list cell
      */
-    private static <T> ListCell<T> createDisplayNameListCell(Map<T, String> displayNames) {
+    public static <T> ListCell<T> createTextListCell(Function<T, String> textProvider) {
         return new ListCell<>() {
             @SuppressWarnings({"ConstantValue", "DataFlowIssue"})
             @Override
@@ -587,7 +583,7 @@ public final class FXComponentFactory {
                     setText(null);
                     setGraphic(null);
                 } else {
-                    setText(displayNames.getOrDefault(item, item.toString()));
+                    setText(textProvider.apply(item));
                 }
             }
         };

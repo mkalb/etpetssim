@@ -4,10 +4,13 @@ import de.mkalb.etpetssim.core.AppLogger;
 import de.mkalb.etpetssim.testsupport.FXTestSupport;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import javafx.collections.FXCollections;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListCell;
+import javafx.scene.control.ListView;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.Slider;
 import javafx.scene.control.Spinner;
@@ -26,6 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -426,6 +430,26 @@ final class FXComponentFactoryTest {
                     () -> assertEquals("", inputProperty.get()),
                     () -> assertEquals("Label: label", control.label().getText()),
                     () -> assertSame(textField, control.label().getLabelFor())
+            );
+        });
+    }
+
+    @Test
+    void testCreateTextListCell() {
+        FXTestSupport.runAndWait(() -> {
+            ListView<TestMode> listView = new ListView<>(FXCollections.observableArrayList(TestMode.BETA));
+            ListCell<TestMode> cell = FXComponentFactory.createTextListCell(mode -> "Mode " + mode.name());
+            cell.updateListView(listView);
+
+            cell.updateIndex(0);
+            String textForItem = cell.getText();
+            cell.updateIndex(-1);
+
+            assertAll(
+                    () -> assertEquals("Mode BETA", textForItem),
+                    () -> assertTrue(cell.isEmpty()),
+                    () -> assertNull(cell.getText()),
+                    () -> assertNull(cell.getGraphic())
             );
         });
     }

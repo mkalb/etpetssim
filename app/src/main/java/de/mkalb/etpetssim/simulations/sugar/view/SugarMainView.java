@@ -304,19 +304,7 @@ public final class SugarMainView
     }
 
     private ListCell<SugarAddSugarLevel> createAddSugarLevelCell() {
-        return new ListCell<>() {
-            @SuppressWarnings({"ConstantValue", "DataFlowIssue"})
-            @Override
-            protected void updateItem(@Nullable SugarAddSugarLevel item, boolean empty) {
-                super.updateItem(item, empty);
-                if (empty || (item == null)) {
-                    setText(null);
-                    setGraphic(null);
-                } else {
-                    setText(AppLocalization.getText(item.labelKey()));
-                }
-            }
-        };
+        return FXComponentFactory.createTextListCell(level -> AppLocalization.getText(level.labelKey()));
     }
 
 }
