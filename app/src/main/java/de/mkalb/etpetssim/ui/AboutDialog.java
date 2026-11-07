@@ -48,6 +48,7 @@ public final class AboutDialog {
     private static final int DEFAULT_TEXT_AREA_COLUMNS = 120;
     private static final int DEFAULT_TEXT_AREA_ROWS = 30;
     private static final int MANIFEST_LINE_CAPACITY_HINT = 64;
+    private static final int FILE_PATHS_CAPACITY_HINT = 256;
     private static final List<ManifestLine> MANIFEST_LINES = List.of(
             new ManifestLine(AppManifest.IMPLEMENTATION_TITLE, AppLocalizationKeys.ABOUT_MANIFEST_TITLE),
             new ManifestLine(AppManifest.IMPLEMENTATION_VERSION, AppLocalizationKeys.ABOUT_MANIFEST_VERSION),
@@ -106,10 +107,9 @@ public final class AboutDialog {
      *
      * @return one line per file path; empty if no path is available
      */
-    @SuppressWarnings("StringBufferWithoutInitialCapacity")
     private static String formatFilePaths() {
         String lineSeparator = System.lineSeparator();
-        StringBuilder paths = new StringBuilder();
+        StringBuilder paths = new StringBuilder(FILE_PATHS_CAPACITY_HINT);
         AppSettings.resolveSettingsFile().ifPresent(file ->
                 paths.append(formatSettingsFilePath(file)).append(lineSeparator));
         AppLogger.activeLogFile().ifPresent(file ->

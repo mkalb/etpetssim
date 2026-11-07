@@ -5,7 +5,6 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
-import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 
 /**
@@ -107,9 +106,8 @@ public final class AppManifest {
      * @return an unmodifiable map of attribute names to values, without attributes with a blank value
      * @throws IOException if the manifest cannot be read
      */
-    @SuppressWarnings("CollectionDeclaredAsConcreteClass")
     static Map<String, String> parseMainAttributes(InputStream stream) throws IOException {
-        Attributes attributes = new Manifest(stream).getMainAttributes();
+        Map<Object, Object> attributes = new Manifest(stream).getMainAttributes();
         Map<String, String> result = HashMap.newHashMap(attributes.size());
         for (Map.Entry<Object, Object> entry : attributes.entrySet()) {
             String value = entry.getValue().toString();

@@ -86,6 +86,11 @@ Not counted: the `@SuppressWarnings` text in the test data of `skills/JavaCodeIn
 The test sources were done on 2026-11-06: 52 suppressions in 22 files and 9 inspection types remain, all decided as
 "keep".
 
+The main sources were done on 2026-11-07: 53 suppressions in 38 files and 19 inspection types remain, all decided as
+"keep". Five of them are removed later by other work: the two `OptionalUsedAsFieldOrParameterType` by the finding
+in `code-simulation-classes.md` (category 3), and the three `CommentedOutCode` blocks of `EtpetsSimulationManager`
+by the optimization of ET Pets.
+
 ## Inspection profile
 
 - The shared profile "Project Default" lists only the inspections whose settings differ from the IntelliJ defaults;
@@ -128,7 +133,7 @@ The test sources were done on 2026-11-06: 52 suppressions in 22 files and 9 insp
 | main    | `CommentedOutCode`                  |     4 | keep                             | done        |
 | main    | `ObjectEquality`                    |     3 | change code; keep 1 (narrowed)   | done        |
 | main    | types with two occurrences (4)      |     8 | keep 5; change code in 1         | done        |
-| main    | other types (10)                    |    10 | per occurrence                   | open        |
+| main    | other types (10)                    |    10 | keep 7; change code in 3         | done        |
 
 ## Cross-type decisions
 
@@ -594,27 +599,40 @@ Remaining suppressions (5):
 
 ### Other main inspection types
 
-One occurrence each; decide per occurrence.
+One occurrence each; decided per occurrence (maintainer, 2026-11-07). Three are changed, seven are kept.
 
 - `BooleanMethodIsAlwaysInverted`: `simulations/etpets/model/entity/Pet.java`, `hasReachedAgingEffectsAge()`.
-  Proposal: change code (invert the method and its name) or keep.
-- `CallToSystemExit`: `AppLauncher.java`, `parseArgumentsAndHandleInformation()`. Proposal: keep.
-- `ClassReferencesSubclass`: `engine/model/entity/GridEntity.java`, `isConstant()`. Proposal: keep.
+  Proposal: change code (invert the method and its name) or keep. Decision: keep; `java.md` names the method as an
+  example of a `has...` query, and an inverted name would be less clear.
+- `CallToSystemExit`: `AppLauncher.java`, `parseArgumentsAndHandleInformation()`. Proposal: keep. Decision: keep;
+  `--help` and `--version` end the program on purpose.
+- `ClassReferencesSubclass`: `engine/model/entity/GridEntity.java`, `isConstant()`. Proposal: keep. Decision: keep;
+  engine API that `engine.md` names.
 - `CollectionDeclaredAsConcreteClass`: `core/AppManifest.java`, `parseMainAttributes()`. Proposal: check the local
-  `HashMap` declaration; change code or keep.
+  `HashMap` declaration; change code or keep. Decision: change code; IntelliJ reports the local variable of the
+  concrete map class `Attributes`, which is now declared as `Map<Object, Object>`; `var` does not fit, because the
+  type is not evident from a getter call (`java.md`, "Code Style"). Suppression removed.
 - `HardcodedLineSeparator`: `ExtraterrestrialPetsSimulation.java`, `formatUnexpectedErrorContent()` (text of the
   error alert). Proposal: check whether the alert needs `\n`; change code or keep. Decided as a single case,
-  independent of the profile decision for the tests (maintainer, 2026-11-06).
+  independent of the profile decision for the tests (maintainer, 2026-11-06). Decision: keep; JavaFX text uses `\n`
+  on all platforms, and the tests expect it.
 - `OptionalIsPresent`: `simulations/core/viewmodel/DefaultMainViewModel.java`,
   `applyUserAction(SimulationUserActionDescriptor)`. Proposal: check the functional rewrite; change code or keep.
+  Decision: keep; `map(..)` would hide an action with side effects, and the early return is clearer.
 - `ParameterHidesMemberVariable`: `simulations/core/view/AbstractDefaultMainView.java`, `drawSimulation()`. Proposal:
-  rename the parameter or keep.
+  rename the parameter or keep. Decision: keep; the parameter passes the value of the private field
+  `lastDrawnStepCount` to the subclasses, and its Javadoc describes it.
 - `StringBufferWithoutInitialCapacity`: `ui/AboutDialog.java`, `formatFilePaths()`. Proposal: check whether an
-  initial capacity is useful for at most two lines; change code or keep.
+  initial capacity is useful for at most two lines; change code or keep. Decision: change code; the builder gets the
+  capacity constant `FILE_PATHS_CAPACITY_HINT`, as all other builders in main sources do. Suppression removed.
 - `SwitchExpressionCanBePushedDown`: `simulations/langton/model/LangtonStepRunner.java`,
-  `computeNewAntDirection()`. Proposal: check the rewrite; change code or keep.
+  `computeNewAntDirection()`. Proposal: check the rewrite; change code or keep. Decision: change code; the outer
+  `switch` statement becomes a switch expression assigned to `newDirection`, and the exception message follows
+  `java.md` ("Exceptions"): `Unable to compute ant direction: currentDirection=..., turn=..., cellShape=...`.
+  Suppression removed.
 - `UnusedReturnValue`: `core/AppSettings.java`, `writeLocale(CountryLocale)`. Proposal: check whether a caller
-  should use the result or the method can return `void` (public API of `core`); otherwise keep.
+  should use the result or the method can return `void` (public API of `core`); otherwise keep. Decision: keep;
+  the result is part of the public `core` API (`core.md`).
 
 ## Deferred findings
 

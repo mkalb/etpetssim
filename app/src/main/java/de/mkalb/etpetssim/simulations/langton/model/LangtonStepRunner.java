@@ -98,13 +98,11 @@ public final class LangtonStepRunner
         return terrainEntity;
     }
 
-    @SuppressWarnings("SwitchExpressionCanBePushedDown")
     CompassDirection computeNewAntDirection(CompassDirection currentDirection, int ruleIndex) {
         LangtonMovementRules.AntTurn turn = config.movementRules().turnForState(ruleIndex);
 
-        CompassDirection newDirection = null;
-        switch (structure.cellShape()) {
-            case SQUARE -> newDirection = switch (turn) {
+        CompassDirection newDirection = switch (structure.cellShape()) {
+            case SQUARE -> switch (turn) {
                 case LEFT -> switch (currentDirection) {
                     case CompassDirection.N -> CompassDirection.W;
                     case CompassDirection.E -> CompassDirection.N;
@@ -134,7 +132,7 @@ public final class LangtonStepRunner
                     default -> null;
                 };
             };
-            case HEXAGON -> newDirection = switch (turn) {
+            case HEXAGON -> switch (turn) {
                 case LEFT -> switch (currentDirection) {
                     case CompassDirection.N -> CompassDirection.NW;
                     case CompassDirection.NE -> CompassDirection.N;
@@ -182,7 +180,7 @@ public final class LangtonStepRunner
                     default -> null;
                 };
             };
-            case TRIANGLE -> newDirection = switch (turn) {
+            case TRIANGLE -> switch (turn) {
                 case LEFT -> switch (currentDirection) {
                     case CompassDirection.N -> CompassDirection.NW;
                     case CompassDirection.NE -> CompassDirection.N;
@@ -212,10 +210,11 @@ public final class LangtonStepRunner
                 };
                 case LEFT2, RIGHT2, NONE -> null;
             };
-        }
+        };
 
         if (newDirection == null) {
-            throw new IllegalStateException("Could not compute new direction for currentDirection=" + currentDirection + " and turn=" + turn);
+            throw new IllegalStateException("Unable to compute ant direction: currentDirection=" + currentDirection
+                    + ", turn=" + turn + ", cellShape=" + structure.cellShape());
         }
         return newDirection;
     }
