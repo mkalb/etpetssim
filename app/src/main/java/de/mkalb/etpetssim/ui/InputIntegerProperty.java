@@ -67,7 +67,7 @@ public record InputIntegerProperty(IntegerProperty property, int min, int max, i
             @Override
             public void set(int newValue) {
                 if (isInvalidValue(newValue, min, max, step)) {
-                    AppLogger.errorf("InputIntegerProperty: Invalid value set: %d (min=%d, max=%d, step=%d)",
+                    AppLogger.errorf("InputIntegerProperty: Invalid value set: %d, min: %d, max: %d, step: %d",
                             newValue, min, max, step);
                 }
                 // The value is set even if it is invalid.

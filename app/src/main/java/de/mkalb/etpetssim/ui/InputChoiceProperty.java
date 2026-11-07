@@ -73,7 +73,7 @@ public record InputChoiceProperty<T>(ObjectProperty<T> property,
             @Override
             public void set(T newValue) {
                 if (isInvalidValue(newValue, copiedValidValues)) {
-                    AppLogger.errorf("InputChoiceProperty: Invalid value set: %s. Valid values are: %s",
+                    AppLogger.errorf("InputChoiceProperty: Invalid value set: %s, valid values: %s",
                             newValue, copiedValidValues);
                 }
                 // The value is set even if it is invalid.

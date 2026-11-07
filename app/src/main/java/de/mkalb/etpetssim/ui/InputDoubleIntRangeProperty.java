@@ -57,7 +57,7 @@ public record InputDoubleIntRangeProperty(DoubleProperty property, int min, int 
             @Override
             public void set(double newValue) {
                 if (isInvalidValue(newValue, min, max)) {
-                    AppLogger.errorf("InputDoubleIntRangeProperty: Invalid value set: %s (min=%d, max=%d)",
+                    AppLogger.errorf("InputDoubleIntRangeProperty: Invalid value set: %s, min: %d, max: %d",
                             newValue, min, max);
                 }
                 // The value is set even if it is invalid.
