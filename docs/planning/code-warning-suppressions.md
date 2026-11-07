@@ -445,8 +445,8 @@ The inventory is omitted: all occurrences are removed by the same commit.
 - Decision: disable the inspection in the profile and remove all 21 suppressions (maintainer, 2026-11-07). All
   occurrences are literals in formulas, geometry, and layout code (halving with `2.0d`, font and stroke factors,
   percent scaling, rounding thresholds), which `java.md` allows inline; domain numbers are named in `*Constraints`
-  and `*Balance`. The maintainer disabled the entry in the profile; its scope setting for
-  "Tests" remains but has no effect.
+  and `*Balance`. The maintainer removed the entry from the profile, including its scope setting for "Tests"; the
+  inspection is disabled by default.
 
 The inventory is omitted: all occurrences are removed by the same commit.
 
