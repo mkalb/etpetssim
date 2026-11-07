@@ -143,16 +143,14 @@ public final class GridInitializers {
                                                                                   Runnable cancellationCheck) {
         checkFraction(percent, "percent");
         return model -> {
-            cancellationCheck.run();
             int gridArea = model.structure().size().area();
+            int entityCount = Math.toIntExact(Math.round(percent * gridArea));
             if (percent <= 0.8d) {
-                int entityCount = Math.toIntExact(Math.round(percent * gridArea));
                 fillCells(model, () -> fallback, cancellationCheck);
                 placeRandomCount(model, entityCount, entitySupplier, fallback::equals, random, cancellationCheck);
             } else {
-                int fallbackCount = Math.toIntExact(Math.round((1.0d - percent) * gridArea));
                 fillCells(model, entitySupplier, cancellationCheck);
-                placeRandomCount(model, fallbackCount,
+                placeRandomCount(model, gridArea - entityCount,
                         () -> fallback, Predicate.not(fallback::equals), random, cancellationCheck);
             }
         };
@@ -183,6 +181,9 @@ public final class GridInitializers {
      *
      * <p>Each pattern entry is placed at the anchor plus its offset. Entries whose target coordinate lies outside
      * the grid are skipped, and existing entities at valid target coordinates are overwritten.
+     *
+     * <p>The offsets are added to the anchor unchanged; on triangle and hexagon grids, a pattern keeps its shape only
+     * at anchors with the same column and row parity as the anchor it was designed for.
      *
      * @param pattern the pattern of entities to place
      * @param anchor  the coordinate at which the origin of the pattern is placed
@@ -238,12 +239,14 @@ public final class GridInitializers {
      * @param random             the random number generator
      * @param <ENT>              the type of grid entity
      * @return a grid initializer that places the entities at random cells
-     * @throws IllegalStateException if an entity cannot be placed within the maximum number of attempts
+     * @throws IllegalArgumentException if {@code count} is negative
+     * @throws IllegalStateException    if an entity cannot be placed within the maximum number of attempts
      */
     public static <ENT extends GridEntity> GridInitializer<ENT> placeRandomCount(int count,
                                                                                  Supplier<ENT> entitySupplier,
                                                                                  Predicate<ENT> canReplaceExisting,
                                                                                  Random random) {
+        checkNonNegative(count, "count");
         return model -> placeRandomCount(model, count, entitySupplier, canReplaceExisting, random, () -> {});
     }
 
@@ -287,14 +290,16 @@ public final class GridInitializers {
      * @param cancellationCheck  the check that may stop the initialization
      * @param <ENT>              the type of grid entity
      * @return a grid initializer that places the entities at shuffled cells
-     * @throws IllegalStateException if fewer cells than {@code count} may be replaced; the entities placed so far
-     *                               stay
+     * @throws IllegalArgumentException if {@code count} is negative
+     * @throws IllegalStateException    if fewer cells than {@code count} may be replaced; the entities placed so far
+     *                                  stay
      */
     public static <ENT extends GridEntity> GridInitializer<ENT> placeShuffledCount(int count,
                                                                                    Supplier<ENT> entitySupplier,
                                                                                    Predicate<ENT> canReplaceExisting,
                                                                                    Random random,
                                                                                    Runnable cancellationCheck) {
+        checkNonNegative(count, "count");
         return model -> {
             int placed = 0;
             if (count > 0) {
@@ -368,6 +373,13 @@ public final class GridInitializers {
     private static void checkFraction(double value, String name) {
         if ((value < 0.0d) || (value > 1.0d)) {
             throw new IllegalArgumentException(name + " must be in [0.0, 1.0], but was: " + value);
+        }
+    }
+
+    @SuppressWarnings("SameParameterValue")
+    private static void checkNonNegative(int value, String name) {
+        if (value < 0) {
+            throw new IllegalArgumentException(name + " must be >= 0, but was: " + value);
         }
     }
 

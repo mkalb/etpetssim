@@ -114,20 +114,6 @@ final class GridPatternsTest {
         );
     }
 
-    @Test
-    void testCircleOutline() {
-        assertAll(
-                () -> assertEquals(firstAt(0, 0), GridPatterns.circleOutline(TestEntity.FIRST, 0).offsetMap()),
-                () -> assertEquals(firstAt(0, 1, 0, 2, 0, 3, 1, 0, 1, 4, 2, 0, 2, 4, 3, 0, 3, 4, 4, 1, 4, 2, 4, 3),
-                        GridPatterns.circleOutline(TestEntity.FIRST, 2).offsetMap())
-        );
-    }
-
-    @Test
-    void testCircleOutlineRejectsNegativeRadius() {
-        assertThrows(IllegalArgumentException.class, () -> GridPatterns.circleOutline(TestEntity.FIRST, -1));
-    }
-
     private enum TestEntity implements GridEntity {
         FIRST,
         SECOND;

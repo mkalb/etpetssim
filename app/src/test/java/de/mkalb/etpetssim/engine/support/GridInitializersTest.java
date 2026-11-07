@@ -190,14 +190,14 @@ final class GridInitializersTest {
     }
 
     @Test
-    void testFillRandomPercentRoundsFallbackCountAboveThreshold() {
+    void testFillRandomPercentRoundsEntityCountAboveThreshold() {
         SparseGridModel<TestEntity> model = createModel(10, 11);
 
         GridInitializers.fillRandomPercent(0.95d, () -> TestEntity.FILLED, TestEntity.EMPTY, new Random(42L), () -> {})
                 .initialize(model);
 
-        // 110 - round((1.0 - 0.95) * 110) = 110 - 6, not round(0.95 * 110) = 105
-        assertEquals(104, count(model, TestEntity.FILLED));
+        // round(0.95 * 110) = 105 as below the threshold, not 110 - round((1.0 - 0.95) * 110) = 110 - 6
+        assertEquals(105, count(model, TestEntity.FILLED));
     }
 
     @Test
@@ -341,6 +341,12 @@ final class GridInitializersTest {
     }
 
     @Test
+    void testPlaceRandomCountRejectsNegativeCount() {
+        assertThrows(IllegalArgumentException.class, () -> GridInitializers.placeRandomCount(
+                -1, () -> TestEntity.FILLED, TestEntity.EMPTY::equals, new Random(42L)));
+    }
+
+    @Test
     void testPlaceRandomPercent() {
         SparseGridModel<TestEntity> model = createSmallModel();
         model.setEntity(new GridCoordinate(0, 0), TestEntity.OTHER);
@@ -385,6 +391,12 @@ final class GridInitializersTest {
 
         assertThrows(IllegalStateException.class, () -> GridInitializers.placeShuffledCount(
                 64, () -> TestEntity.FILLED, TestEntity.EMPTY::equals, new Random(42L), () -> {}).initialize(model));
+    }
+
+    @Test
+    void testPlaceShuffledCountRejectsNegativeCount() {
+        assertThrows(IllegalArgumentException.class, () -> GridInitializers.placeShuffledCount(
+                -1, () -> TestEntity.FILLED, TestEntity.EMPTY::equals, new Random(42L), () -> {}));
     }
 
     @Test

@@ -21,6 +21,10 @@ import java.util.function.Function;
  * {@code mapValues}) compute their result immediately and return unmodifiable patterns that are independent of this
  * pattern; {@code normalized} returns this pattern if it is already normalized.
  *
+ * <p>The offsets are transformed as on square cells. On triangle and hexagon grids, the meaning of an offset depends
+ * on the position of the cell (see {@link GridOffset}), so a flipped or rotated pattern keeps its shape only on square
+ * grids.
+ *
  * @param <ENT> the type of {@link GridEntity} contained in the pattern
  */
 @FunctionalInterface
@@ -242,7 +246,7 @@ public interface GridPattern<ENT extends GridEntity> {
      * @param <R>    the type of the resulting entities
      * @return a new pattern with mapped entities and the same offsets as this pattern
      */
-    default <R extends GridEntity> GridPattern<R> mapValues(Function<ENT, R> mapper) {
+    default <R extends GridEntity> GridPattern<R> mapValues(Function<? super ENT, ? extends R> mapper) {
         Map<GridOffset, R> mapped = new HashMap<>();
         for (var entry : offsetMap().entrySet()) {
             mapped.put(entry.getKey(), mapper.apply(entry.getValue()));

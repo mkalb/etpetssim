@@ -16,8 +16,8 @@ logic contracts, termination conditions, and step results).
 
 - Keep the complete public API of all engine packages, also members without a current caller (e.g.,
   `GridOffset.manhattanLength()`, `ReadableGridModel.isSparse()`, `GridEntity.isConstant(..)`,
-  `CompassDirection.listClockwise()`, `GridPatterns.circleOutline(..)`, or `SimulationTerminationCondition.negate()`);
-  they form the vocabulary of all grid code.
+  `CompassDirection.listClockwise()`, or `SimulationTerminationCondition.negate()`); they form the vocabulary of all
+  grid code.
 - Depend only on the JDK, JSpecify, `core`, and the base types of `engine`; never on `ui` or `simulations`.
 - Do not use JavaFX, except `javafx.scene.paint.Color` for the rendering hints of entity descriptors in
   `engine.model.entity`.

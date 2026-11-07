@@ -7,10 +7,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * Static factories for {@link GridPattern} instances: basic patterns from given offsets, the combination of
@@ -148,48 +146,6 @@ public final class GridPatterns {
                 if ((y == 0) || (y == (height - 1)) || (x == 0) || (x == (width - 1))) {
                     offsets.add(new GridOffset(x, y));
                 }
-            }
-        }
-        return of(entity, offsets);
-    }
-
-    /**
-     * Returns the outline of a circle of the given entity around the offset (radius, radius), computed with the
-     * midpoint circle algorithm.
-     *
-     * <p>The algorithm assumes square cells; on other cell shapes, the outline is a distorted ring. A radius of
-     * {@code 0} returns a single entity at (0, 0).
-     *
-     * @param entity the entity of the outline
-     * @param radius the radius in cells, at least 0
-     * @param <ENT>  the type of grid entity
-     * @return a normalized pattern of the outline
-     * @throws IllegalArgumentException if {@code radius} is negative
-     */
-    public static <ENT extends GridEntity> GridPattern<ENT> circleOutline(ENT entity, int radius) {
-        if (radius < 0) {
-            throw new IllegalArgumentException("radius must be >= 0, but was: " + radius);
-        }
-        Set<GridOffset> offsets = new HashSet<>();
-        int x = radius;
-        int y = 0;
-        int err = 0;
-        while (x >= y) {
-            offsets.add(new GridOffset(radius + x, radius + y));
-            offsets.add(new GridOffset(radius + y, radius + x));
-            offsets.add(new GridOffset(radius - y, radius + x));
-            offsets.add(new GridOffset(radius - x, radius + y));
-            offsets.add(new GridOffset(radius - x, radius - y));
-            offsets.add(new GridOffset(radius - y, radius - x));
-            offsets.add(new GridOffset(radius + y, radius - x));
-            offsets.add(new GridOffset(radius + x, radius - y));
-
-            y++;
-            if (err <= 0) {
-                err += (2 * y) + 1;
-            } else {
-                x--;
-                err -= (2 * x) + 1;
             }
         }
         return of(entity, offsets);
