@@ -4,6 +4,7 @@ import de.mkalb.etpetssim.engine.CellShape;
 import de.mkalb.etpetssim.engine.EdgeBehavior;
 import de.mkalb.etpetssim.engine.GridCoordinate;
 import de.mkalb.etpetssim.engine.GridOffset;
+import de.mkalb.etpetssim.engine.GridSize;
 import de.mkalb.etpetssim.engine.GridStructure;
 
 import java.util.ArrayDeque;
@@ -22,7 +23,6 @@ import java.util.SortedMap;
 import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -68,10 +68,22 @@ public final class CellNeighborhoods {
                     CompassDirection.S, CompassDirection.SW, CompassDirection.NW
             );
 
-    private static final int INITIAL_CACHE_CAPACITY = 32;
-
-    private static final Map<String, List<CellNeighborConnection>> CACHE =
-            new ConcurrentHashMap<>(INITIAL_CACHE_CAPACITY);
+    private static final List<CellNeighborConnection> TRIANGLE_DOWN_EDGES_ONLY_CONNECTIONS =
+            computeTriangleCellNeighborConnections(NeighborhoodMode.EDGES_ONLY, true);
+    private static final List<CellNeighborConnection> TRIANGLE_UP_EDGES_ONLY_CONNECTIONS =
+            computeTriangleCellNeighborConnections(NeighborhoodMode.EDGES_ONLY, false);
+    private static final List<CellNeighborConnection> TRIANGLE_DOWN_EDGES_AND_VERTICES_CONNECTIONS =
+            computeTriangleCellNeighborConnections(NeighborhoodMode.EDGES_AND_VERTICES, true);
+    private static final List<CellNeighborConnection> TRIANGLE_UP_EDGES_AND_VERTICES_CONNECTIONS =
+            computeTriangleCellNeighborConnections(NeighborhoodMode.EDGES_AND_VERTICES, false);
+    private static final List<CellNeighborConnection> SQUARE_EDGES_ONLY_CONNECTIONS =
+            computeSquareCellNeighborConnections(NeighborhoodMode.EDGES_ONLY);
+    private static final List<CellNeighborConnection> SQUARE_EDGES_AND_VERTICES_CONNECTIONS =
+            computeSquareCellNeighborConnections(NeighborhoodMode.EDGES_AND_VERTICES);
+    private static final List<CellNeighborConnection> HEXAGON_Y_OFFSET_CONNECTIONS =
+            computeHexagonCellNeighborConnections(true);
+    private static final List<CellNeighborConnection> HEXAGON_NO_Y_OFFSET_CONNECTIONS =
+            computeHexagonCellNeighborConnections(false);
 
     private CellNeighborhoods() {
     }
@@ -100,29 +112,25 @@ public final class CellNeighborhoods {
      * Returns the maximum possible number of neighbors for a cell with the given shape,
      * neighborhood mode, and radius, ignoring grid boundaries.
      *
-     * <p>The result is used as an upper bound for sizing internal collections and does not
-     * represent an exact neighbor count for all configurations.
-     * For {@code radius == 1}, the returned value equals the direct neighbor count from
-     * {@link #maxNeighborCount(NeighborhoodMode, CellShape)}.
-     * For larger radii, this method returns {@code 1 + ((degree * radius * (radius + 1)) / 2)} with the direct
-     * neighbor count as {@code degree}, a conservative value that also covers the start cell.
+     * <p>The result is an upper bound for the number of cells within the radius, excluding the start cell, and is
+     * used for sizing internal collections; it is not an exact neighbor count for all configurations.
+     * This method returns {@code (degree * radius * (radius + 1)) / 2} with the direct neighbor count from
+     * {@link #maxNeighborCount(NeighborhoodMode, CellShape)} as {@code degree}; for {@code radius == 1}, the result
+     * equals that direct neighbor count.
      *
      * <p>If {@code radius <= 0}, this method returns {@code 0}.
      *
      * @param neighborhoodMode the neighborhood mode (edges only or edges and vertices)
      * @param cellShape        the geometric shape of the cell (TRIANGLE, SQUARE, HEXAGON)
      * @param radius           the neighborhood radius
-     * @return the maximum possible number of neighbors within the given radius (or {@code 0} if {@code radius <= 0})
+     * @return the maximum possible number of neighbors within the given radius, excluding the start cell (or
+     * {@code 0} if {@code radius <= 0})
      */
     public static int maxNeighborCount(NeighborhoodMode neighborhoodMode, CellShape cellShape, int radius) {
         if (radius <= 0) {
             return 0;
         }
-        int degree = maxNeighborCount(neighborhoodMode, cellShape);
-        if (radius == 1) {
-            return degree;
-        }
-        return 1 + ((degree * radius * (radius + 1)) / 2);
+        return (maxNeighborCount(neighborhoodMode, cellShape) * radius * (radius + 1)) / 2;
     }
 
     /**
@@ -280,7 +288,7 @@ public final class CellNeighborhoods {
                                                                          NeighborhoodMode neighborhoodMode,
                                                                          CellShape cellShape) {
         List<CellNeighborConnection> cellNeighborConnections =
-                getOrComputeCellNeighborConnections(startCoordinate, neighborhoodMode, cellShape);
+                cellNeighborConnections(startCoordinate, neighborhoodMode, cellShape);
 
         return cellNeighborConnections.stream()
                 .map(neighborConnection -> new CellNeighbor(
@@ -297,36 +305,34 @@ public final class CellNeighborhoods {
      *
      * <p>Determines the theoretical neighbor in the given direction (based on cell shape and neighborhood mode),
      * applies the grid's edge behavior to the neighbor coordinate, and returns a record describing the relationship
-     * and edge behavior outcome. If no neighbor exists in the specified direction, an empty {@link Optional} is
-     * returned.
+     * and edge behavior outcome. If the start coordinate is not valid within the grid structure or no neighbor exists
+     * in the specified direction, an empty {@link Optional} is returned.
      *
      * @param startCoordinate  the coordinate of the cell whose neighbor is to be determined
      * @param neighborhoodMode the neighborhood mode (edges only or edges and vertices)
      * @param structure        the grid structure defining size, boundaries, and edge behavior
      * @param direction        the compass direction of the desired neighbor
      * @return an {@link Optional} containing the {@link CellNeighborWithEdgeBehavior} for the neighbor in the given
-     * direction, or an empty {@link Optional} if no such neighbor exists
+     * direction, or an empty {@link Optional} if the start coordinate is not valid within the grid structure or no such
+     * neighbor exists
      */
     public static Optional<CellNeighborWithEdgeBehavior> cellNeighborWithEdgeBehavior(GridCoordinate startCoordinate,
                                                                                       NeighborhoodMode neighborhoodMode,
                                                                                       GridStructure structure,
                                                                                       CompassDirection direction) {
+        if (!structure.isCoordinateValid(startCoordinate)) {
+            return Optional.empty();
+        }
         List<CellNeighborConnection> cellNeighborConnections =
-                getOrComputeCellNeighborConnections(startCoordinate, neighborhoodMode, structure.cellShape());
+                cellNeighborConnections(startCoordinate, neighborhoodMode, structure.cellShape());
 
         for (CellNeighborConnection neighborConnection : cellNeighborConnections) {
             if (neighborConnection.direction() == direction) {
                 GridCoordinate neighborCoordinate = startCoordinate.offset(neighborConnection.offset());
-                EdgeBehaviorResult edgeResult = applyEdgeBehaviorToCoordinate(neighborCoordinate, structure);
-
-                return Optional.of(new CellNeighborWithEdgeBehavior(
-                        startCoordinate,
-                        neighborConnection.direction(),
-                        neighborConnection.connection(),
-                        neighborCoordinate,
-                        edgeResult.mapped(),
-                        edgeResult.action()
-                ));
+                CellNeighbor neighbor = new CellNeighbor(startCoordinate, neighborConnection.direction(),
+                        neighborConnection.connection(), neighborCoordinate);
+                return Optional.of(CellNeighborWithEdgeBehavior.of(neighbor,
+                        applyEdgeBehaviorToCoordinate(neighborCoordinate, structure)));
             }
         }
         return Optional.empty();
@@ -339,14 +345,16 @@ public final class CellNeighborhoods {
      * <p>For each theoretical neighbor (see {@link #cellNeighborsIgnoringEdgeBehavior}), the grid's edge behavior is
      * applied. The resulting {@link CellNeighborWithEdgeBehavior} records contain the original and the mapped
      * neighbor coordinate and the edge behavior action. All actions are included, also {@code BLOCKED} and
-     * {@code ABSORBED}, so that the simulation can distinguish between the edge behavior outcomes; several neighbors
-     * can share a mapped coordinate, e.g., when a small grid wraps.
+     * {@code ABSORBED}, so that the simulation can distinguish between the edge behavior outcomes. For grids of at
+     * least {@link GridSize#MIN_SIZE} cells per side, every list contains exactly one entry; the grouping only guards
+     * against shared mapped coordinates.
      *
      * @param startCoordinate  the coordinate of the cell whose neighbors are to be determined
      * @param neighborhoodMode the neighborhood mode (edges only or edges and vertices)
      * @param structure        the grid structure defining size, boundaries, and edge behavior
-     * @return an unmodifiable map from the mapped neighbor coordinates to their {@link CellNeighborWithEdgeBehavior}
-     * records, or an empty map if the start coordinate is not valid within the grid structure
+     * @return an unmodifiable map from the mapped neighbor coordinates to unmodifiable lists of their
+     * {@link CellNeighborWithEdgeBehavior} records, or an empty map if the start coordinate is not valid within the grid
+     * structure
      */
     public static Map<GridCoordinate, List<CellNeighborWithEdgeBehavior>> cellNeighborsWithEdgeBehavior(
             GridCoordinate startCoordinate,
@@ -359,7 +367,8 @@ public final class CellNeighborhoods {
                 .map(neighbor -> CellNeighborWithEdgeBehavior.of(neighbor,
                         applyEdgeBehaviorToCoordinate(neighbor.neighborCoordinate(), structure)))
                 .collect(Collectors.collectingAndThen(
-                        Collectors.groupingBy(CellNeighborWithEdgeBehavior::mappedNeighborCoordinate),
+                        Collectors.groupingBy(CellNeighborWithEdgeBehavior::mappedNeighborCoordinate,
+                                Collectors.toUnmodifiableList()),
                         Collections::unmodifiableMap));
     }
 
@@ -403,17 +412,15 @@ public final class CellNeighborhoods {
         }
 
         SortedMap<Integer, SortedMap<GridCoordinate, RadiusRingCell<C>>> radiusRings = new TreeMap<>();
-        Set<GridCoordinate> visitedCoordinates =
-                HashSet.newHashSet(1 + maxNeighborCount(neighborhoodMode, structure.cellShape(), radius));
-        Set<GridCoordinate> currentRingCoordinates = HashSet.newHashSet(1);
-
+        Set<GridCoordinate> visitedCoordinates = HashSet.newHashSet(Math.min(
+                1 + maxNeighborCount(neighborhoodMode, structure.cellShape(), radius), structure.size().area()));
         visitedCoordinates.add(startCoordinate);
-        currentRingCoordinates.add(startCoordinate);
 
         SortedMap<GridCoordinate, RadiusRingCell<C>> ring0 = new TreeMap<>();
         ring0.put(startCoordinate,
                 new RadiusRingCell<>(0, startCoordinate, cellFactory.apply(startCoordinate), new TreeSet<>()));
         radiusRings.put(0, Collections.unmodifiableSortedMap(ring0));
+        Collection<GridCoordinate> currentRingCoordinates = ring0.keySet();
 
         for (int currentRadius = 1; currentRadius <= radius; currentRadius++) {
             SortedMap<GridCoordinate, SortedSet<GridCoordinate>> nextRingAccumulator = new TreeMap<>();
@@ -447,8 +454,7 @@ public final class CellNeighborhoods {
             }
 
             visitedCoordinates.addAll(currentRing.keySet());
-            currentRingCoordinates = HashSet.newHashSet(currentRing.size());
-            currentRingCoordinates.addAll(currentRing.keySet());
+            currentRingCoordinates = currentRing.keySet();
 
             radiusRings.put(currentRadius, Collections.unmodifiableSortedMap(currentRing));
         }
@@ -523,7 +529,7 @@ public final class CellNeighborhoods {
     public static Set<CompassDirection> cellNeighborDirections(GridCoordinate startCoordinate,
                                                                NeighborhoodMode neighborhoodMode,
                                                                CellShape cellShape) {
-        return getOrComputeCellNeighborConnections(startCoordinate, neighborhoodMode, cellShape)
+        return cellNeighborConnections(startCoordinate, neighborhoodMode, cellShape)
                 .stream()
                 .map(CellNeighborConnection::direction)
                 .collect(Collectors.toCollection(() -> EnumSet.noneOf(CompassDirection.class)));
@@ -567,66 +573,39 @@ public final class CellNeighborhoods {
     }
 
     /**
-     * Returns cached neighbor connection definitions for the specified configuration.
+     * Returns the precomputed relative neighbor connections for the specified configuration.
      *
-     * <p>The cache key is generated by {@link #computeCacheKey(GridCoordinate, NeighborhoodMode, CellShape)}
-     * and includes only parity/offset information that affects the geometry.
+     * <p>Only the properties that influence adjacency select the list: the triangle orientation and the neighborhood
+     * mode for triangles, the neighborhood mode for squares, and the column-based vertical offset for hexagons. The
+     * result contains only geometric neighbor relations, without boundary checks or edge behavior mapping.
      *
      * @param startCoordinate  the source coordinate (used for parity/offset-dependent shapes)
      * @param neighborhoodMode the neighborhood mode to evaluate
      * @param cellShape        the cell shape to evaluate
      * @return an immutable list of relative neighbor connections for the configuration
      */
-    static List<CellNeighborConnection> getOrComputeCellNeighborConnections(GridCoordinate startCoordinate,
-                                                                            NeighborhoodMode neighborhoodMode,
-                                                                            CellShape cellShape) {
-        return CACHE.computeIfAbsent(
-                computeCacheKey(startCoordinate, neighborhoodMode, cellShape),
-                _ -> computeCellNeighborConnections(startCoordinate, neighborhoodMode, cellShape));
-    }
-
-    /**
-     * Generates the cache key for a neighbor-connection configuration.
-     *
-     * <p>The key contains only shape-specific properties that influence adjacency:
-     * triangle orientation for triangles, no coordinate component for squares,
-     * and column-based vertical offset for hexagons.
-     *
-     * @param startCoordinate  the source coordinate (used only where relevant)
-     * @param neighborhoodMode the neighborhood mode
-     * @param cellShape        the cell shape
-     * @return a deterministic cache key for the given configuration
-     */
-    static String computeCacheKey(GridCoordinate startCoordinate,
-                                  NeighborhoodMode neighborhoodMode,
-                                  CellShape cellShape) {
+    static List<CellNeighborConnection> cellNeighborConnections(GridCoordinate startCoordinate,
+                                                                NeighborhoodMode neighborhoodMode,
+                                                                CellShape cellShape) {
         return switch (cellShape) {
-            case TRIANGLE -> cellShape + "::" + neighborhoodMode + "::" + startCoordinate.isTriangleCellPointingDown();
-            case SQUARE -> cellShape + "::" + neighborhoodMode;
-            case HEXAGON -> cellShape + "::" + startCoordinate.hasHexagonCellYOffset();
-        };
-    }
-
-    /**
-     * Computes the relative neighbor connections for the given configuration.
-     *
-     * <p>Performs shape-specific dispatch and returns only geometric neighbor
-     * relations (without boundary checks or edge behavior mapping).
-     *
-     * @param startCoordinate  the source coordinate (used for parity/offset-dependent shapes)
-     * @param neighborhoodMode the neighborhood mode
-     * @param cellShape        the cell shape
-     * @return a list of relative neighbor connections
-     */
-    static List<CellNeighborConnection> computeCellNeighborConnections(GridCoordinate startCoordinate,
-                                                                       NeighborhoodMode neighborhoodMode,
-                                                                       CellShape cellShape) {
-        return switch (cellShape) {
-            case TRIANGLE -> computeTriangleCellNeighborConnections(
-                    neighborhoodMode,
-                    startCoordinate.isTriangleCellPointingDown());
-            case SQUARE -> computeSquareCellNeighborConnections(neighborhoodMode);
-            case HEXAGON -> computeHexagonCellNeighborConnections(startCoordinate.hasHexagonCellYOffset());
+            case TRIANGLE -> {
+                boolean pointingDown = startCoordinate.isTriangleCellPointingDown();
+                yield switch (neighborhoodMode) {
+                    case EDGES_ONLY -> pointingDown
+                            ? TRIANGLE_DOWN_EDGES_ONLY_CONNECTIONS
+                            : TRIANGLE_UP_EDGES_ONLY_CONNECTIONS;
+                    case EDGES_AND_VERTICES -> pointingDown
+                            ? TRIANGLE_DOWN_EDGES_AND_VERTICES_CONNECTIONS
+                            : TRIANGLE_UP_EDGES_AND_VERTICES_CONNECTIONS;
+                };
+            }
+            case SQUARE -> switch (neighborhoodMode) {
+                case EDGES_ONLY -> SQUARE_EDGES_ONLY_CONNECTIONS;
+                case EDGES_AND_VERTICES -> SQUARE_EDGES_AND_VERTICES_CONNECTIONS;
+            };
+            case HEXAGON -> startCoordinate.hasHexagonCellYOffset()
+                    ? HEXAGON_Y_OFFSET_CONNECTIONS
+                    : HEXAGON_NO_Y_OFFSET_CONNECTIONS;
         };
     }
 
@@ -761,7 +740,8 @@ public final class CellNeighborhoods {
     }
 
     /**
-     * Relative offset, compass direction, and connection type of one neighbor of a cell, cached per configuration.
+     * Relative offset, compass direction, and connection type of one neighbor of a cell, precomputed per
+     * configuration.
      *
      * @param offset     the relative offset to the neighbor cell
      * @param direction  the compass direction to the neighbor

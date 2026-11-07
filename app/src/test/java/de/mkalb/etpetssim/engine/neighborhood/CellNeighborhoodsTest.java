@@ -25,6 +25,7 @@ import java.util.function.Function;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -155,19 +156,19 @@ final class CellNeighborhoodsTest {
             }
         }
         assertAll(
-                () -> assertEquals(10,
+                () -> assertEquals(9,
                         CellNeighborhoods.maxNeighborCount(NeighborhoodMode.EDGES_ONLY, CellShape.TRIANGLE, 2)),
-                () -> assertEquals(37,
+                () -> assertEquals(36,
                         CellNeighborhoods.maxNeighborCount(NeighborhoodMode.EDGES_AND_VERTICES, CellShape.TRIANGLE, 2)),
-                () -> assertEquals(13,
+                () -> assertEquals(12,
                         CellNeighborhoods.maxNeighborCount(NeighborhoodMode.EDGES_ONLY, CellShape.SQUARE, 2)),
-                () -> assertEquals(25,
+                () -> assertEquals(24,
                         CellNeighborhoods.maxNeighborCount(NeighborhoodMode.EDGES_AND_VERTICES, CellShape.SQUARE, 2)),
-                () -> assertEquals(19,
+                () -> assertEquals(18,
                         CellNeighborhoods.maxNeighborCount(NeighborhoodMode.EDGES_ONLY, CellShape.HEXAGON, 2)),
-                () -> assertEquals(19,
+                () -> assertEquals(18,
                         CellNeighborhoods.maxNeighborCount(NeighborhoodMode.EDGES_AND_VERTICES, CellShape.HEXAGON, 2)),
-                () -> assertEquals(1 + ((4 * 100 * 101) / 2), CellNeighborhoods.maxNeighborCount(
+                () -> assertEquals((4 * 100 * 101) / 2, CellNeighborhoods.maxNeighborCount(
                         NeighborhoodMode.EDGES_ONLY, CellShape.SQUARE, CellNeighborhoods.MAX_RADIUS))
         );
     }
@@ -366,7 +367,9 @@ final class CellNeighborhoodsTest {
                         CellConnectionType.EDGE, coordinate(-1, 0), coordinate(7, 0),
                         EdgeBehaviorAction.WRAPPED)), west),
                 () -> assertTrue(CellNeighborhoods.cellNeighborWithEdgeBehavior(
-                        origin, NeighborhoodMode.EDGES_ONLY, structure, CompassDirection.NE).isEmpty())
+                        origin, NeighborhoodMode.EDGES_ONLY, structure, CompassDirection.NE).isEmpty()),
+                () -> assertTrue(CellNeighborhoods.cellNeighborWithEdgeBehavior(
+                        coordinate(8, 0), NeighborhoodMode.EDGES_ONLY, structure, CompassDirection.W).isEmpty())
         );
     }
 
@@ -385,6 +388,8 @@ final class CellNeighborhoodsTest {
                 () -> assertEquals(EdgeBehaviorAction.WRAPPED,
                         neighbors.get(coordinate(7, 0)).getFirst().edgeBehaviorAction()),
                 () -> assertThrows(UnsupportedOperationException.class, neighbors::clear),
+                () -> assertThrows(UnsupportedOperationException.class,
+                        () -> neighbors.get(coordinate(1, 0)).clear()),
                 () -> assertTrue(CellNeighborhoods.cellNeighborsWithEdgeBehavior(
                         coordinate(8, 0), NeighborhoodMode.EDGES_ONLY, structure).isEmpty())
         );
@@ -613,97 +618,34 @@ final class CellNeighborhoodsTest {
     }
 
     @Test
-    void testGetOrComputeCellNeighborConnections() {
-        for (int x = 0; x < 10; x++) {
-            for (int y = 0; y < 10; y++) {
-                GridCoordinate coordinate = coordinate(x, y);
-                for (NeighborhoodMode neighborhoodMode : NeighborhoodMode.values()) {
-                    for (CellShape cellShape : CellShape.values()) {
-                        assertEquals(
-                                CellNeighborhoods.computeCellNeighborConnections(
-                                        coordinate, neighborhoodMode, cellShape),
-                                CellNeighborhoods.getOrComputeCellNeighborConnections(
-                                        coordinate, neighborhoodMode, cellShape));
-                    }
-                }
-            }
-        }
-    }
-
-    @Test
-    void testComputeCacheKey() {
-        NeighborhoodMode edges = NeighborhoodMode.EDGES_ONLY;
-        NeighborhoodMode vertices = NeighborhoodMode.EDGES_AND_VERTICES;
-
-        assertAll(
-                () -> assertEquals("SQUARE::EDGES_ONLY",
-                        CellNeighborhoods.computeCacheKey(coordinate(2, 2), edges, CellShape.SQUARE)),
-                () -> assertEquals("SQUARE::EDGES_AND_VERTICES",
-                        CellNeighborhoods.computeCacheKey(coordinate(3, 5), vertices, CellShape.SQUARE)),
-
-                () -> assertEquals("HEXAGON::false",
-                        CellNeighborhoods.computeCacheKey(coordinate(2, 2), edges, CellShape.HEXAGON)),
-                () -> assertEquals("HEXAGON::false",
-                        CellNeighborhoods.computeCacheKey(coordinate(2, 2), vertices, CellShape.HEXAGON)),
-                () -> assertEquals("HEXAGON::true",
-                        CellNeighborhoods.computeCacheKey(coordinate(3, 2), edges, CellShape.HEXAGON)),
-                () -> assertEquals("HEXAGON::true",
-                        CellNeighborhoods.computeCacheKey(coordinate(3, 2), vertices, CellShape.HEXAGON)),
-                () -> assertEquals("HEXAGON::false",
-                        CellNeighborhoods.computeCacheKey(coordinate(2, 5), edges, CellShape.HEXAGON)),
-                () -> assertEquals("HEXAGON::false",
-                        CellNeighborhoods.computeCacheKey(coordinate(2, 5), vertices, CellShape.HEXAGON)),
-                () -> assertEquals("HEXAGON::true",
-                        CellNeighborhoods.computeCacheKey(coordinate(3, 5), edges, CellShape.HEXAGON)),
-                () -> assertEquals("HEXAGON::true",
-                        CellNeighborhoods.computeCacheKey(coordinate(3, 5), vertices, CellShape.HEXAGON)),
-
-                () -> assertEquals("TRIANGLE::EDGES_ONLY::true",
-                        CellNeighborhoods.computeCacheKey(coordinate(2, 2), edges, CellShape.TRIANGLE)),
-                () -> assertEquals("TRIANGLE::EDGES_AND_VERTICES::true",
-                        CellNeighborhoods.computeCacheKey(coordinate(2, 2), vertices, CellShape.TRIANGLE)),
-                () -> assertEquals("TRIANGLE::EDGES_ONLY::true",
-                        CellNeighborhoods.computeCacheKey(coordinate(3, 5), edges, CellShape.TRIANGLE)),
-                () -> assertEquals("TRIANGLE::EDGES_AND_VERTICES::true",
-                        CellNeighborhoods.computeCacheKey(coordinate(3, 5), vertices, CellShape.TRIANGLE)),
-
-                () -> assertEquals("TRIANGLE::EDGES_ONLY::false",
-                        CellNeighborhoods.computeCacheKey(coordinate(2, 3), edges, CellShape.TRIANGLE)),
-                () -> assertEquals("TRIANGLE::EDGES_AND_VERTICES::false",
-                        CellNeighborhoods.computeCacheKey(coordinate(2, 3), vertices, CellShape.TRIANGLE)),
-                () -> assertEquals("TRIANGLE::EDGES_ONLY::false",
-                        CellNeighborhoods.computeCacheKey(coordinate(3, 4), edges, CellShape.TRIANGLE)),
-                () -> assertEquals("TRIANGLE::EDGES_AND_VERTICES::false",
-                        CellNeighborhoods.computeCacheKey(coordinate(3, 4), vertices, CellShape.TRIANGLE))
-        );
-    }
-
-    @Test
-    void testComputeCellNeighborConnections() {
+    void testCellNeighborConnections() {
         NeighborhoodMode edges = NeighborhoodMode.EDGES_ONLY;
         NeighborhoodMode vertices = NeighborhoodMode.EDGES_AND_VERTICES;
 
         assertAll(
                 () -> assertEquals(CellNeighborhoods.computeTriangleCellNeighborConnections(edges, true),
-                        CellNeighborhoods.computeCellNeighborConnections(coordinate(2, 2), edges, CellShape.TRIANGLE)),
+                        CellNeighborhoods.cellNeighborConnections(coordinate(2, 2), edges, CellShape.TRIANGLE)),
                 () -> assertEquals(CellNeighborhoods.computeTriangleCellNeighborConnections(vertices, true),
-                        CellNeighborhoods.computeCellNeighborConnections(coordinate(2, 2), vertices,
-                                CellShape.TRIANGLE)),
+                        CellNeighborhoods.cellNeighborConnections(coordinate(2, 2), vertices, CellShape.TRIANGLE)),
                 () -> assertEquals(CellNeighborhoods.computeTriangleCellNeighborConnections(edges, false),
-                        CellNeighborhoods.computeCellNeighborConnections(coordinate(3, 2), edges, CellShape.TRIANGLE)),
+                        CellNeighborhoods.cellNeighborConnections(coordinate(3, 2), edges, CellShape.TRIANGLE)),
                 () -> assertEquals(CellNeighborhoods.computeTriangleCellNeighborConnections(vertices, false),
-                        CellNeighborhoods.computeCellNeighborConnections(coordinate(3, 2), vertices,
-                                CellShape.TRIANGLE)),
+                        CellNeighborhoods.cellNeighborConnections(coordinate(3, 2), vertices, CellShape.TRIANGLE)),
 
                 () -> assertEquals(CellNeighborhoods.computeSquareCellNeighborConnections(edges),
-                        CellNeighborhoods.computeCellNeighborConnections(coordinate(2, 2), edges, CellShape.SQUARE)),
+                        CellNeighborhoods.cellNeighborConnections(coordinate(2, 2), edges, CellShape.SQUARE)),
                 () -> assertEquals(CellNeighborhoods.computeSquareCellNeighborConnections(vertices),
-                        CellNeighborhoods.computeCellNeighborConnections(coordinate(2, 2), vertices, CellShape.SQUARE)),
+                        CellNeighborhoods.cellNeighborConnections(coordinate(2, 2), vertices, CellShape.SQUARE)),
 
                 () -> assertEquals(CellNeighborhoods.computeHexagonCellNeighborConnections(false),
-                        CellNeighborhoods.computeCellNeighborConnections(coordinate(2, 2), edges, CellShape.HEXAGON)),
+                        CellNeighborhoods.cellNeighborConnections(coordinate(2, 2), edges, CellShape.HEXAGON)),
+                () -> assertEquals(CellNeighborhoods.computeHexagonCellNeighborConnections(false),
+                        CellNeighborhoods.cellNeighborConnections(coordinate(2, 2), vertices, CellShape.HEXAGON)),
                 () -> assertEquals(CellNeighborhoods.computeHexagonCellNeighborConnections(true),
-                        CellNeighborhoods.computeCellNeighborConnections(coordinate(3, 2), edges, CellShape.HEXAGON))
+                        CellNeighborhoods.cellNeighborConnections(coordinate(3, 2), edges, CellShape.HEXAGON)),
+
+                () -> assertSame(CellNeighborhoods.cellNeighborConnections(coordinate(2, 2), edges, CellShape.SQUARE),
+                        CellNeighborhoods.cellNeighborConnections(coordinate(5, 3), edges, CellShape.SQUARE))
         );
     }
 

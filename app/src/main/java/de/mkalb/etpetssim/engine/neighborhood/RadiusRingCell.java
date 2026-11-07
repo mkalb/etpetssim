@@ -17,6 +17,9 @@ import java.util.TreeSet;
  * This allows instances to be used as map keys when a coordinate should be treated as
  * globally unique across all radius rings.
  *
+ * <p>The record holds the cell value without copying it; later changes to a mutable cell value are visible through
+ * the record. Only the predecessor set is copied.
+ *
  * @param <C>                     the generic cell value type
  * @param ring                    the radius ring index of this cell (0 for the start coordinate)
  * @param coordinate              the coordinate of this cell within the grid
