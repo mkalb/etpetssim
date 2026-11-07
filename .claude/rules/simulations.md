@@ -221,6 +221,18 @@ Use `CellDrawer` from `simulations.core.view`:
   (`hasExpectedSelection(..)`), selection lists (`isAllowedSelection(..)`), the private `hasValidRanges()` and
   `hasValidCombinedRanges()`, then rule objects (e.g., `hasValidTransitionRules()`).
 
+## Model Initialization
+
+- A simulation manager constructor calls `SimulationInitializationCancellation.checkCanceled()` directly before and
+  after the grid initialization; loops do not call it directly.
+- A loop gets a cancellation checkpoint (`WorkCheckpoints.isCancellationCheckpoint(..)`) when its total iteration
+  count can exceed `CANCELLATION_CHECK_INTERVAL` within the limits of the `*Constraints` of its simulation (e.g.,
+  loops over all cells or a share of them). Nested loops count their iterations with one running index across all
+  levels. Loops with a lower maximum (e.g., over walls, peaks, or a fixed number of agents) get no checkpoint.
+- Use the `GridInitializers` methods with a `cancellationCheck` parameter for loops that reach this criterion. When a
+  simulation needs such an initializer without one, add an overload with a `cancellationCheck` instead of calling
+  the variant without it.
+
 ## Lifecycle
 
 - Implement `initializeSimulation(...)` for view-specific setup in `AbstractDefaultMainView` subclasses.

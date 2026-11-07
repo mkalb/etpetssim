@@ -149,21 +149,21 @@ public final class SugarSimulationManager
 
         // Initialize peaks first
         for (GridCoordinate peak : peakCoordinates) {
-            cancellation.checkCanceled();
             visited.add(peak);
             queue.add(peak);
             sugarMap.put(peak, maxSugarAmount);
         }
 
         int radiusLevel = 1;
+        int index = 0;
 
         while (!queue.isEmpty() && (radiusLevel <= radiusLimit)) {
-            cancellation.checkCanceled();
             int levelSize = queue.size();
             for (int i = 0; i < levelSize; i++) {
-                if (isCancellationCheckpoint(i)) {
+                if (isCancellationCheckpoint(index)) {
                     cancellation.checkCanceled();
                 }
+                index++;
                 GridCoordinate current = queue.remove();
                 for (var result : CellNeighborhoods.neighborEdgeBehaviorResults(current, config.neighborhoodMode(), structure)) {
                     if ((result.action() == EdgeBehaviorAction.VALID) || (result.action() == EdgeBehaviorAction.WRAPPED)) {

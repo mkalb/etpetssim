@@ -86,11 +86,13 @@ public final class ReboundingSimulationManager
                 && ((movingEntityCount + wallEntityCount) <= structure.size().area())) {
             Set<Integer> wallXPositions = computeWallXPositions(width, wallCount);
             List<GridCell<ReboundingEntity>> cells = new ArrayList<>();
+            int index = 0;
             for (int x : wallXPositions) {
                 for (int y = 0; y < height; y++) {
-                    if (isCancellationCheckpoint(y)) {
+                    if (isCancellationCheckpoint(index)) {
                         cancellation.checkCanceled();
                     }
+                    index++;
                     cells.add(new GridCell<>(new GridCoordinate(x, y), TerrainConstant.WALL));
                 }
             }

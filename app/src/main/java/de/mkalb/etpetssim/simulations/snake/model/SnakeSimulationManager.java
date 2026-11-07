@@ -121,17 +121,18 @@ public final class SnakeSimulationManager
 
             // Calculate wall y-positions and create wall cells
             List<GridCell<SnakeEntity>> cells = new ArrayList<>();
+            int index = 0;
             for (int x : wallXPositions) {
-                cancellation.checkCanceled();
                 int yStart = random.nextInt(height);
                 int maxLength = Math.min(height - WALL_HEIGHT_MARGIN, height - yStart);
                 int length = random.nextInt(maxLength);
                 int yEnd = yStart + length;
 
                 for (int y = yStart; y <= yEnd; y++) {
-                    if (isCancellationCheckpoint(y)) {
+                    if (isCancellationCheckpoint(index)) {
                         cancellation.checkCanceled();
                     }
+                    index++;
                     cells.add(new GridCell<>(new GridCoordinate(x, y), TerrainConstant.WALL));
                 }
             }
@@ -147,9 +148,6 @@ public final class SnakeSimulationManager
             var strategies = SnakeMoveStrategies.strategies();
             List<SnakeEntity> snakeHeads = new ArrayList<>(config.snakes());
             for (int i = 0; i < config.snakes(); i++) {
-                if (isCancellationCheckpoint(i)) {
-                    cancellation.checkCanceled();
-                }
                 SnakeMoveStrategy strategy = strategies.get(i % strategies.size());
                 snakeHeads.add(new SnakeHead(i, strategy, config.initialPendingGrowth(), -1));
             }

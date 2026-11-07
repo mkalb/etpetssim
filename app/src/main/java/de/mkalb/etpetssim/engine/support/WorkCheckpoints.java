@@ -2,6 +2,12 @@ package de.mkalb.etpetssim.engine.support;
 
 /**
  * Cooperative cancellation checkpoints for long-running loops.
+ *
+ * <p>A loop gets a checkpoint when its total iteration count can exceed {@link #CANCELLATION_CHECK_INTERVAL} within
+ * the configuration limits of its simulation, e.g., a loop over all cells or a share of them. Nested loops count their
+ * iterations with one running index across all levels. Loops with a lower maximum get no checkpoint; the cancellation
+ * checks before and after the whole initialization cover them. Loops check for cancellation only at the checkpoints
+ * of {@link #isCancellationCheckpoint(int)}, never in every iteration.
  */
 public final class WorkCheckpoints {
 

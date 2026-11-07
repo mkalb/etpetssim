@@ -198,9 +198,6 @@ public final class EtpetsSimulationManager
         int initialAgeRange = (EtpetsBalance.PET_INITIAL_AGE_MAX - EtpetsBalance.PET_INITIAL_AGE_MIN) + 1;
 
         for (int i = 0; i < config().petCount(); i++) {
-            if (isCancellationCheckpoint(i)) {
-                cancellation.checkCanceled();
-            }
             int maxEnergy = EtpetsBalance.PET_TRAITS_MAX_ENERGY_MIN + random.nextInt(maxEnergyRange);
             int initialAge = EtpetsBalance.PET_INITIAL_AGE_MIN + random.nextInt(initialAgeRange);
             int stepIndexOfBirth = -1 - initialAge;
