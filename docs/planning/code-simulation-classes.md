@@ -102,6 +102,12 @@ in all later categories:
 - Section line comments in views and ViewModels (e.g., `// Rules - NeighborhoodMode` in `WatorConfigViewModel`):
   align them with the four groups of the configs (`// Structure`, `// Layout`, `// Initialization`, `// Rules`) where
   the class follows the config components.
+- Log messages: check them and align them with `core`, `ui`, and the root package where possible and sensible
+  (aligned on 2026-11-07): the class name as prefix, no final period, values after a colon as `name: value` pairs,
+  `Ignoring ...` for ignored input, and `Failed to ...` for failures. Some messages are deliberately different and
+  may keep their form, e.g., the shared views and ViewModels prefix them with the simulation type (`"%s: ..."`) and
+  append diagnostic `name=value` pairs, and the commented-out diagnostic traces of the step logic (e.g.,
+  `WatorStepLogic`) stay as `java.md` ("Logging with AppLogger") allows.
 
 ### Steps per category
 
