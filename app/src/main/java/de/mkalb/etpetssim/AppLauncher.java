@@ -78,15 +78,15 @@ public final class AppLauncher {
                 .flatMap(AppLogger.LogLevel::fromLevelName)
                 .orElse(AppLogger.DEFAULT_LOG_LEVEL);
         boolean useConsole = arguments.getBoolean(AppArgs.Key.LOG_CONSOLE, false);
+        boolean useFile = arguments.getBoolean(AppArgs.Key.LOG_FILE, false);
         try {
-            boolean useFile = arguments.getBoolean(AppArgs.Key.LOG_FILE, false);
             Path logPath = useFile
                     ? AppStorage.getLogFile(AppLogger.LOG_FILE_NAME, AppStorage.OperatingSystem.detect())
                     : null;
             AppLogger.initialize(logLevel, useConsole, logPath);
         } catch (IOException e) {
             AppLogger.initialize(logLevel, useConsole, null);
-            AppLogger.error(e, "AppLauncher: Failed to initialize log file.");
+            AppLogger.error(e, "AppLauncher: Failed to initialize log file");
         }
     }
 

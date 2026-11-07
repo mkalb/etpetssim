@@ -45,10 +45,10 @@ import java.util.concurrent.TimeUnit;
 public final class EtpetssimApplication extends Application {
 
     /**
-     * The application icon image paths used in the JavaFX application.
-     * They are loaded from the resources and set on the application stage.
-     * It contains the small and large window icon sizes for display scaling from 100% to 200%
-     * (16x16 to 64x64 pixels) and 128x128 pixels.
+     * Resource paths of the application icons, which are set on the primary stage and the dialogs.
+     *
+     * <p>The sizes cover the small and large window icons for display scaling from 100% to 200% (16x16 to 64x64
+     * pixels), plus 128x128 pixels.
      */
     private static final String[] APP_ICON_PATHS = {
             "etpetssim16.png",
@@ -127,26 +127,27 @@ public final class EtpetssimApplication extends Application {
     /**
      * Starts the JavaFX application.
      *
-     * <p>Installs uncaught-exception handling, resolves the requested
-     * simulation type, and shows the primary stage.
+     * <p>Installs uncaught-exception handling, resolves the requested simulation type, registers the shutdown of the
+     * current simulation on a close request, and shows the primary stage.
      *
      * @param primaryStage primary stage created by JavaFX
      */
     @Override
     public void start(Stage primaryStage) {
         Thread.setDefaultUncaughtExceptionHandler((thread, throwable) -> {
-            AppLogger.errorf(throwable, "Application: Uncaught exception in thread %s", thread.getName());
+            AppLogger.errorf(throwable, "EtpetssimApplication: Uncaught exception in thread: %s", thread.getName());
             Platform.runLater(() -> handleUncaughtException(throwable));
         });
 
-        AppArgs arguments = new AppArgs(getParameters().getRaw().toArray(new String[0]));
+        AppArgs arguments = new AppArgs(getParameters().getRaw().toArray(String[]::new));
         SimulationType type = resolveSimulationType(arguments).orElse(SimulationType.STARTSCREEN);
-        AppLogger.infof("Application: Starting with simulation type: %s", type.name());
+        AppLogger.infof("EtpetssimApplication: Starting with simulation type: %s", type.name());
 
         updateStageIcons(primaryStage);
+        primaryStage.setOnCloseRequest(_ -> shutdownCurrentSimulation());
         switchToSimulation(primaryStage, type);
         primaryStage.show();
-        AppLogger.info("Application: Application started successfully. Primary stage is now visible.");
+        AppLogger.info("EtpetssimApplication: Started and showed primary stage");
     }
 
     /**
@@ -157,7 +158,7 @@ public final class EtpetssimApplication extends Application {
      */
     @Override
     public void stop() {
-        AppLogger.info("Application: Shutting down.");
+        AppLogger.info("EtpetssimApplication: Shutting down");
         shutdownCurrentSimulation();
         awaitPendingTerminations();
         AppLogger.shutdown();
@@ -188,11 +189,12 @@ public final class EtpetssimApplication extends Application {
 
         currentSimulationInstance = null;
         try {
-            AppLogger.infof("Application: Shutting down simulation instance: %s", simulationInstance.simulationType());
+            AppLogger.infof("EtpetssimApplication: Shutting down simulation: %s",
+                    simulationInstance.simulationType());
             simulationInstance.region().setDisable(true);
             pendingTerminationHandles.add(simulationInstance.simulationMainView().shutdownSimulation());
-        } catch (Exception e) {
-            AppLogger.errorf(e, "Application: Error during simulation shutdown: %s",
+        } catch (RuntimeException e) {
+            AppLogger.errorf(e, "EtpetssimApplication: Failed to shut down simulation: %s",
                     simulationInstance.simulationType());
         }
     }
@@ -205,7 +207,7 @@ public final class EtpetssimApplication extends Application {
     private void updateStageIcons(Stage stage) {
         appIcons = AppResources.getImages(APP_ICON_PATHS);
         if (appIcons.isEmpty()) {
-            AppLogger.error("Application: Failed to load application icons. Icons will not be set.");
+            AppLogger.error("EtpetssimApplication: Failed to load application icons");
         } else {
             stage.getIcons().addAll(appIcons);
         }
@@ -229,7 +231,7 @@ public final class EtpetssimApplication extends Application {
                 openAlert.setContentText(formatUnexpectedErrorContent(shownThrowable, furtherErrorCount));
                 openAlert.getDialogPane().getScene().getWindow().sizeToScene();
             } catch (RuntimeException e) {
-                AppLogger.error(e, "Application: Unable to update the unexpected error alert");
+                AppLogger.error(e, "EtpetssimApplication: Failed to update unexpected error alert");
             }
         } else {
             showUnexpectedErrorAlert(throwable);
@@ -254,11 +256,10 @@ public final class EtpetssimApplication extends Application {
             alert.setGraphic(null);
             unexpectedErrorAlert = alert;
             unexpectedErrorThrowable = throwable;
-            furtherErrorCount = 0;
             alert.setContentText(formatUnexpectedErrorContent(throwable, 0));
             alert.showAndWait();
         } catch (RuntimeException e) {
-            AppLogger.error(e, "Application: Unable to show the unexpected error alert");
+            AppLogger.error(e, "EtpetssimApplication: Failed to show unexpected error alert");
         } finally {
             unexpectedErrorAlert = null;
             unexpectedErrorThrowable = null;
@@ -270,14 +271,14 @@ public final class EtpetssimApplication extends Application {
      * Switches the primary stage to a simulation.
      *
      * <p>The current simulation is shut down, a new simulation instance is created, the scene content is replaced, and
-     * the stage title, stylesheets, shutdown handling, and layout are updated. The {@link SimulationFactory} receives
+     * the stage title, stylesheets, and layout are updated. The {@link SimulationFactory} receives
      * this method as a callback, so that a simulation (e.g., the start screen) can switch to another one.
      *
      * @param stage          primary application stage
      * @param simulationType simulation type to display
      */
     private void switchToSimulation(Stage stage, SimulationType simulationType) {
-        AppLogger.infof("Application: Updating stage scene to simulation: %s", simulationType);
+        AppLogger.infof("EtpetssimApplication: Switching to simulation: %s", simulationType);
         shutdownCurrentSimulation();
 
         var simulationInstance = SimulationFactory.createInstance(simulationType, stage, this::switchToSimulation);
@@ -306,7 +307,6 @@ public final class EtpetssimApplication extends Application {
         scene.getStylesheets().setAll(styles);
 
         stage.setTitle(AppLocalization.getFormattedText(AppLocalizationKeys.WINDOW_TITLE, simulationType.title()));
-        stage.setOnCloseRequest(_ -> shutdownCurrentSimulation());
 
         // Adjust stage size and position to fit the screen. Run later to ensure layout is calculated.
         Platform.runLater(() -> adjustStageLayoutToScreen(stage, root));
@@ -332,8 +332,7 @@ public final class EtpetssimApplication extends Application {
             try {
                 if ((remainingNanos <= 0L)
                         || !terminationHandle.awaitTermination(remainingNanos, TimeUnit.NANOSECONDS)) {
-                    AppLogger.warn(
-                            "Application: Simulation executor did not terminate before application shutdown timeout.");
+                    AppLogger.warn("EtpetssimApplication: Simulation did not terminate within shutdown timeout");
                     terminationHandle.shutdownNow();
                 }
             } catch (InterruptedException e) {
@@ -365,13 +364,13 @@ public final class EtpetssimApplication extends Application {
         if (stage.isIconified()) {
             root.setDisable(false); // Enable now. No adjustments needed.
 
-            AppLogger.info("Application: Stage is minimized. No adjustments made.");
+            AppLogger.info("EtpetssimApplication: Stage is minimized, layout not adjusted");
             return;
         }
 
         Screen screen = resolveScreenContainingStage(stage);
         Rectangle2D visualBounds = screen.getVisualBounds();
-        AppLogger.infof("Application: Found screen and using visual bounds: %s", visualBounds);
+        AppLogger.infof("EtpetssimApplication: Using visual bounds of screen: %s", visualBounds);
 
         if (stage.isFullScreen()) {
             root.setMaxWidth(visualBounds.getWidth());
@@ -383,7 +382,7 @@ public final class EtpetssimApplication extends Application {
 
             root.setDisable(false); // Enable now after all adjustments are done
 
-            AppLogger.info("Application: Stage is fullscreen.");
+            AppLogger.info("EtpetssimApplication: Stage is full screen, root size limited to visual bounds");
             return;
         }
 
@@ -410,7 +409,7 @@ public final class EtpetssimApplication extends Application {
                 stage.setMaximized(true);
                 root.setDisable(false); // Enable now after all adjustments are done
 
-                AppLogger.info("Application: Stage maximized");
+                AppLogger.info("EtpetssimApplication: Stage maximized to visual bounds");
             });
         } else {
             double prefWidth = Math.max(0, root.prefWidth(-1));
@@ -443,7 +442,7 @@ public final class EtpetssimApplication extends Application {
             root.setDisable(false); // Enable now after all adjustments are done
 
             AppLogger.infof(
-                    "Application: Stage adjusted to size: %.1fx%.1f at position: (%.1f, %.1f)",
+                    "EtpetssimApplication: Stage adjusted to size: %.1fx%.1f at position: (%.1f, %.1f)",
                     stage.getWidth(),
                     stage.getHeight(),
                     stage.getX(),
@@ -478,7 +477,8 @@ public final class EtpetssimApplication extends Application {
                     AppLocalization.getText(AppLocalizationKeys.HEADER_STARTSCREEN_LINK));
             startScreenLink.getStyleClass().add(FXStyleClasses.HEADER_URL_HYPERLINK);
             startScreenLink.setOnAction(_ -> {
-                AppLogger.infof("Application: Switching to start screen from simulation: %s", simulationType);
+                AppLogger.infof("EtpetssimApplication: Switching to start screen from simulation: %s",
+                        simulationType);
                 switchToSimulation(stage, SimulationType.STARTSCREEN);
             });
             linkBox.getChildren().add(startScreenLink);
