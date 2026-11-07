@@ -295,23 +295,12 @@ public final class FXComponentFactory {
      * @param styleClass                  the CSS style class to apply to the slider
      * @return a LabeledControl containing the label and the slider
      */
-    @SuppressWarnings("ExtractMethodRecommender")
     public static LabeledControl<Slider> createLabeledIntSlider(
             InputDoubleIntRangeProperty inputDoubleIntRangeProperty,
             String labelFormatString,
             String tooltip,
             String styleClass) {
-
-        Slider slider = new Slider(inputDoubleIntRangeProperty.min(), inputDoubleIntRangeProperty.max(),
-                inputDoubleIntRangeProperty.getValue());
-        slider.setShowTickLabels(true);
-        slider.setShowTickMarks(true);
-        slider.setMajorTickUnit(inputDoubleIntRangeProperty.max() - inputDoubleIntRangeProperty.min());
-        slider.setMinorTickCount(inputDoubleIntRangeProperty.max() - inputDoubleIntRangeProperty.min() - 1);
-        slider.setBlockIncrement(1.0d);
-        slider.setSnapToTicks(true);
-        slider.getStyleClass().add(styleClass);
-        slider.valueProperty().bindBidirectional(inputDoubleIntRangeProperty.property());
+        Slider slider = createIntSlider(inputDoubleIntRangeProperty, styleClass);
 
         Label label = createBoundLabel(inputDoubleIntRangeProperty.asStringBinding(labelFormatString), slider, tooltip,
                 slider);
@@ -678,6 +667,20 @@ public final class FXComponentFactory {
         slider.valueProperty().bindBidirectional(inputDoubleProperty.property());
         slider.valueProperty().addListener((_, _, newValue) ->
                 slider.setValue(Math.round(newValue.doubleValue() * factor) / factor));
+        return slider;
+    }
+
+    private static Slider createIntSlider(InputDoubleIntRangeProperty inputDoubleIntRangeProperty, String styleClass) {
+        Slider slider = new Slider(inputDoubleIntRangeProperty.min(), inputDoubleIntRangeProperty.max(),
+                inputDoubleIntRangeProperty.getValue());
+        slider.setShowTickLabels(true);
+        slider.setShowTickMarks(true);
+        slider.setMajorTickUnit(inputDoubleIntRangeProperty.max() - inputDoubleIntRangeProperty.min());
+        slider.setMinorTickCount(inputDoubleIntRangeProperty.max() - inputDoubleIntRangeProperty.min() - 1);
+        slider.setBlockIncrement(1.0d);
+        slider.setSnapToTicks(true);
+        slider.getStyleClass().add(styleClass);
+        slider.valueProperty().bindBidirectional(inputDoubleIntRangeProperty.property());
         return slider;
     }
 

@@ -127,7 +127,7 @@ The test sources were done on 2026-11-06: 52 suppressions in 22 files and 9 insp
 | main    | `unused`                            |     6 | keep 4; remove 2 parameters      | done        |
 | main    | `CommentedOutCode`                  |     4 | keep                             | done        |
 | main    | `ObjectEquality`                    |     3 | change code; keep 1 (narrowed)   | done        |
-| main    | types with two occurrences (4)      |     8 | per occurrence                   | open        |
+| main    | types with two occurrences (4)      |     8 | keep 5; change code in 1         | done        |
 | main    | other types (10)                    |    10 | per occurrence                   | open        |
 
 ## Cross-type decisions
@@ -567,7 +567,11 @@ Remaining suppressions (1):
 
 ### Main inspection types with two occurrences
 
-- `ExtractMethodRecommender`: check the recommendations; change code or keep.
+- `ExtractMethodRecommender`: check the recommendations; change code or keep. Decision (maintainer, 2026-11-07):
+  `FXComponentFactory.createLabeledIntSlider(..)` builds its slider through the new private method
+  `createIntSlider(..)`, like its siblings through `createRoundingSlider(..)`; suppression removed.
+  `FXPaintFactory.computeBrightnessVariantsMap(..)` keeps its suppression: checking the arguments and then computing
+  in one method is the usual fail-fast pattern.
 - `FieldNamingConvention`: `CompassDirection` has one-letter constants (`N`, `E`, `S`, `W`), shorter than the
   minimum length 2 of the constant naming convention in the profile: set the minimum length to 1 or keep. Decision:
   set the minimum length of the enum constant naming convention to 1 and remove the suppression (maintainer,
@@ -576,14 +580,16 @@ Remaining suppressions (1):
   `AppLocalization.state`: done; the camelCase convention for non-final static fields (see the test decision)
   removes the suppression (maintainer, 2026-11-06).
 - `OptionalUsedAsFieldOrParameterType`: check whether the callers can pass the value or `null` instead; otherwise
-  keep.
+  keep. Decision: keep for now (maintainer, 2026-11-07); the finding "Optional parameters of
+  AbstractObservationView" in `code-simulation-classes.md` (category 3) removes the parameters and the suppressions.
 - `OverloadedMethodsWithSameNumberOfParameters`: change code: give the two private `clampToMapRange` methods
-  distinct names.
-- Decision: open.
+  distinct names. Decision: keep (maintainer, 2026-11-07); the callers pass clearly an `int` or a `double`, and the
+  `int` overload states that it only clamps, without the `NaN` check and rounding of the `double` overload.
+
+Remaining suppressions (5):
 
 - `simulations/core/view/AbstractObservationView.java`: `updateGenericMetricSection()`, `updateStatusSectionLabel()`
 - `simulations/etpets/view/EtpetsMainView.java`: `clampToMapRange()` (2x)
-- `ui/FXComponentFactory.java`: `createLabeledIntSlider()`
 - `ui/FXPaintFactory.java`: `computeBrightnessVariantsMap()`
 
 ### Other main inspection types
