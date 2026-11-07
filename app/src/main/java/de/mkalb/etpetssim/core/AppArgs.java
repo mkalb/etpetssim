@@ -104,8 +104,8 @@ public final class AppArgs {
         try {
             return Integer.parseInt(value);
         } catch (NumberFormatException e) {
-            AppLogger.warn("AppArgs: Invalid integer value for key '" + key.key() + "': '" + value
-                    + "'. Using default value " + defaultValue);
+            AppLogger.warn("AppArgs: Ignoring invalid integer value for argument '" + key.key() + "': '" + value
+                    + "', default value: " + defaultValue);
             return defaultValue;
         }
     }
@@ -183,25 +183,23 @@ public final class AppArgs {
     private void parseArgument(String arg) {
         Matcher matcher = ARGUMENT_PATTERN.matcher(arg);
         if (!matcher.matches() || ((matcher.group(3) != null) && matcher.group(3).isBlank())) {
-            AppLogger.warn("AppArgs: Invalid argument format: '" + arg
-                    + "'. Expected format is --key=value or --flag.");
+            AppLogger.warn("AppArgs: Ignoring invalid argument format: '" + arg
+                    + "', expected: --key=value or --flag");
             return;
         }
         Optional<Key> key = Key.fromKeyName(matcher.group(1));
         if (key.isEmpty()) {
-            AppLogger.warn("AppArgs: Unknown argument: '" + matcher.group(1)
-                    + "'. Please check the command-line arguments.");
+            AppLogger.warn("AppArgs: Ignoring unknown argument: '" + matcher.group(1) + "'");
             return;
         }
         Optional<String> value = Optional.ofNullable(matcher.group(3)).map(String::strip);
         if (!key.get().isFlag() && value.isEmpty()) {
-            AppLogger.warn("AppArgs: Missing value for argument: '" + key.get().key()
-                    + "'. Expected format is --key=value.");
+            AppLogger.warn("AppArgs: Ignoring argument without value: '" + key.get().key()
+                    + "', expected: --key=value");
             return;
         }
         if (arguments.containsKey(key.get())) {
-            AppLogger.warn("AppArgs: Duplicate argument: '" + key.get().key()
-                    + "'. Previous value will be overwritten.");
+            AppLogger.warn("AppArgs: Overwriting duplicate argument: '" + key.get().key() + "'");
         }
         String storedValue = key.get().isFlag()
                 ? Boolean.toString(value.map(v -> parseBooleanValue(v, true)).orElse(true))

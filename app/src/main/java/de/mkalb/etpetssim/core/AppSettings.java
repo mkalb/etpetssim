@@ -62,7 +62,7 @@ public final class AppSettings {
         }
         Optional<CountryLocale> locale = CountryLocale.fromLocaleCode(code);
         if (locale.isEmpty()) {
-            AppLogger.warnf("AppSettings: Ignoring unknown locale code '%s' in %s", code, file);
+            AppLogger.warnf("AppSettings: Ignoring unknown locale code in %s: '%s'", file, code);
         }
         return locale;
     }

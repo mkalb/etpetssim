@@ -107,7 +107,7 @@ public final class AppLogger {
     public static synchronized void initializeForTesting() {
         if (!isInitialized()) {
             APP_LOGGER.initializeLogger(LogLevel.DEBUG, true, null);
-            debug("AppLogger: Logger initialized for testing with level: DEBUG and console output.");
+            debug("AppLogger: Logger initialized for testing with level: DEBUG, console output: true");
         }
     }
 
@@ -115,7 +115,7 @@ public final class AppLogger {
      * Shuts down logging and closes and removes all handlers.
      */
     public static synchronized void shutdown() {
-        debug("AppLogger: Shutting down logger.");
+        debug("AppLogger: Shutting down logger");
         APP_LOGGER.initialized = false;
         APP_LOGGER.logFile = null;
         APP_LOGGER.removeHandlers(true);
@@ -259,7 +259,7 @@ public final class AppLogger {
      */
     static synchronized void resetForTesting() {
         if (isInitialized()) {
-            debug("AppLogger: Reset logger for testing.");
+            debug("AppLogger: Resetting logger for testing");
             APP_LOGGER.initialized = false;
             APP_LOGGER.logFile = null;
             APP_LOGGER.logger.setLevel(DEFAULT_LOG_LEVEL.toJavaLogLevel());
@@ -273,7 +273,7 @@ public final class AppLogger {
      *
      * @return number of active handlers
      */
-    static synchronized int handlerCountForTesting() {
+    static synchronized int handlerCount() {
         return APP_LOGGER.logger.getHandlers().length;
     }
 
@@ -328,7 +328,7 @@ public final class AppLogger {
 
         if (logHandlers.isEmpty()) {
             // Warn through the existing handlers before they are removed.
-            logger.warning("AppLogger: No logging handlers were created.");
+            logger.warning("AppLogger: No logging handlers created, logging disabled");
             removeHandlers(false);
             logger.setLevel(Level.OFF);
         } else {

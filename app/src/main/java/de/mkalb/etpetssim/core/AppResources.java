@@ -57,7 +57,7 @@ public final class AppResources {
         try {
             return Optional.of(ResourceBundle.getBundle(baseName, locale));
         } catch (MissingResourceException e) {
-            AppLogger.error(e, "AppResources: Resource bundle not found: " + baseName + " for locale " + locale);
+            AppLogger.error(e, "AppResources: Resource bundle not found: " + baseName + ", locale: " + locale);
             return Optional.empty();
         }
     }

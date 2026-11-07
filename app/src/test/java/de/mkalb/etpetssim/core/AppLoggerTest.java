@@ -67,7 +67,7 @@ final class AppLoggerTest {
 
         assertAll(
                 () -> assertTrue(AppLogger.isInitialized()),
-                () -> assertEquals(1, AppLogger.handlerCountForTesting()),
+                () -> assertEquals(1, AppLogger.handlerCount()),
                 () -> assertEquals(Level.WARNING, Logger.getLogger("").getLevel())
         );
     }
@@ -106,7 +106,7 @@ final class AppLoggerTest {
 
         assertAll(
                 () -> assertTrue(AppLogger.isInitialized()),
-                () -> assertEquals(0, AppLogger.handlerCountForTesting()),
+                () -> assertEquals(0, AppLogger.handlerCount()),
                 () -> assertEquals(Level.OFF, Logger.getLogger("").getLevel()),
                 () -> assertFalse(Files.exists(logPath))
         );
@@ -164,7 +164,7 @@ final class AppLoggerTest {
 
         assertAll(
                 () -> assertTrue(AppLogger.isInitialized()),
-                () -> assertEquals(1, AppLogger.handlerCountForTesting()),
+                () -> assertEquals(1, AppLogger.handlerCount()),
                 () -> assertEquals(Level.FINE, Logger.getLogger("").getLevel())
         );
     }
@@ -177,7 +177,7 @@ final class AppLoggerTest {
 
         assertAll(
                 () -> assertFalse(AppLogger.isInitialized()),
-                () -> assertEquals(0, AppLogger.handlerCountForTesting())
+                () -> assertEquals(0, AppLogger.handlerCount())
         );
     }
 
@@ -345,7 +345,7 @@ final class AppLoggerTest {
 
         assertAll(
                 () -> assertFalse(AppLogger.isInitialized()),
-                () -> assertEquals(0, AppLogger.handlerCountForTesting()),
+                () -> assertEquals(0, AppLogger.handlerCount()),
                 () -> assertEquals(AppLogger.DEFAULT_LOG_LEVEL.toJavaLogLevel(), Logger.getLogger("").getLevel())
         );
     }
