@@ -89,7 +89,7 @@ public final class GridGeometry {
      * Computes the dimensions of a cell based on its edge length and shape.
      *
      * @param edgeLength the length of each edge of the cell in pixels, must be between {@link #MIN_EDGE_LENGTH}
-     *                   and  {@link #MAX_EDGE_LENGTH}
+     *                   and {@link #MAX_EDGE_LENGTH}
      * @param cellShape  the shape of the cell
      * @return a CellDimension object representing the dimensions of the cell
      * @throws IllegalArgumentException if {@code edgeLength} is outside the inclusive range
@@ -169,7 +169,7 @@ public final class GridGeometry {
      *
      * @param gridSize   the size of the grid in terms of columns and rows
      * @param edgeLength the length of each edge of the cell in pixels, must be between {@link #MIN_EDGE_LENGTH}
-     *                   and  {@link #MAX_EDGE_LENGTH}
+     *                   and {@link #MAX_EDGE_LENGTH}
      * @param cellShape  the shape of the cells in the grid
      * @return a Dimension2D object representing the total width and height of the grid area
      * @see #computeCellDimension(double, CellShape)

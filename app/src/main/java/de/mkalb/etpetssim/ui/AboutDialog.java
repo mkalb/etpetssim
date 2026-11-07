@@ -125,6 +125,64 @@ public final class AboutDialog {
         return AppLocalization.getFormattedText(key, file);
     }
 
+    private static Tab createTextAreaTab(String tabTitle, String text) {
+        TextArea textArea = new TextArea(text);
+        textArea.setEditable(false);
+        textArea.setWrapText(true);
+        textArea.setPrefColumnCount(DEFAULT_TEXT_AREA_COLUMNS);
+        textArea.setPrefRowCount(DEFAULT_TEXT_AREA_ROWS);
+
+        Tab tab = new Tab(tabTitle);
+        tab.setContent(textArea);
+        tab.setClosable(false);
+
+        return tab;
+    }
+
+    /**
+     * Formats a textual summary of selected manifest attributes.
+     *
+     * <p>Attributes missing from the manifest are shown as a localized placeholder.
+     *
+     * @param manifestInfo manifest attributes read by {@link AppManifest#readMainAttributes()}
+     * @return formatted manifest summary text
+     */
+    private static String formatManifestSummary(Map<String, String> manifestInfo) {
+        String lineSeparator = System.lineSeparator();
+        StringBuilder summary = new StringBuilder(MANIFEST_LINES.size() * MANIFEST_LINE_CAPACITY_HINT);
+        for (ManifestLine line : MANIFEST_LINES) {
+            String value = resolveManifestValue(manifestInfo, line.attributeName());
+            summary.append(AppLocalization.getFormattedText(line.localizationKey(), value))
+                    .append(lineSeparator);
+        }
+        return summary.toString();
+    }
+
+    /**
+     * Resolves a manifest attribute value, with a localized placeholder if the attribute is missing.
+     *
+     * @param manifestInfo  manifest attributes read by {@link AppManifest#readMainAttributes()}
+     * @param attributeName name of the manifest attribute
+     * @return attribute value, or the localized "unknown" placeholder
+     */
+    private static String resolveManifestValue(Map<String, String> manifestInfo, String attributeName) {
+        return manifestInfo.getOrDefault(attributeName,
+                AppLocalization.getText(AppLocalizationKeys.ABOUT_MANIFEST_UNKNOWN));
+    }
+
+    /**
+     * Loads a text resource using UTF-8.
+     *
+     * @param resourceRelativePath resource path relative to the application module root
+     * @return resource content, or a fallback message if the resource cannot be read
+     */
+    private static String getResourceAsString(String resourceRelativePath) {
+        return AppResources.getResourceAsString(resourceRelativePath, StandardCharsets.UTF_8)
+                .orElse(AppLocalization.getFormattedText(
+                        AppLocalizationKeys.ABOUT_RESOURCE_NOT_FOUND,
+                        resourceRelativePath));
+    }
+
     /**
      * Shows the About dialog and waits until it is closed.
      */
@@ -203,64 +261,6 @@ public final class AboutDialog {
         link.setTooltip(new Tooltip(url));
         link.setOnAction(_ -> hostServices.showDocument(url));
         return link;
-    }
-
-    private Tab createTextAreaTab(String tabTitle, String text) {
-        TextArea textArea = new TextArea(text);
-        textArea.setEditable(false);
-        textArea.setWrapText(true);
-        textArea.setPrefColumnCount(DEFAULT_TEXT_AREA_COLUMNS);
-        textArea.setPrefRowCount(DEFAULT_TEXT_AREA_ROWS);
-
-        Tab tab = new Tab(tabTitle);
-        tab.setContent(textArea);
-        tab.setClosable(false);
-
-        return tab;
-    }
-
-    /**
-     * Formats a textual summary of selected manifest attributes.
-     *
-     * <p>Attributes missing from the manifest are shown as a localized placeholder.
-     *
-     * @param manifestInfo manifest attributes read by {@link AppManifest#readMainAttributes()}
-     * @return formatted manifest summary text
-     */
-    private String formatManifestSummary(Map<String, String> manifestInfo) {
-        String lineSeparator = System.lineSeparator();
-        StringBuilder summary = new StringBuilder(MANIFEST_LINES.size() * MANIFEST_LINE_CAPACITY_HINT);
-        for (ManifestLine line : MANIFEST_LINES) {
-            String value = resolveManifestValue(manifestInfo, line.attributeName());
-            summary.append(AppLocalization.getFormattedText(line.localizationKey(), value))
-                    .append(lineSeparator);
-        }
-        return summary.toString();
-    }
-
-    /**
-     * Resolves a manifest attribute value, with a localized placeholder if the attribute is missing.
-     *
-     * @param manifestInfo  manifest attributes read by {@link AppManifest#readMainAttributes()}
-     * @param attributeName name of the manifest attribute
-     * @return attribute value, or the localized "unknown" placeholder
-     */
-    private String resolveManifestValue(Map<String, String> manifestInfo, String attributeName) {
-        return manifestInfo.getOrDefault(attributeName,
-                AppLocalization.getText(AppLocalizationKeys.ABOUT_MANIFEST_UNKNOWN));
-    }
-
-    /**
-     * Loads a text resource using UTF-8.
-     *
-     * @param resourceRelativePath resource path relative to the application module root
-     * @return resource content, or a fallback message if the resource cannot be read
-     */
-    private String getResourceAsString(String resourceRelativePath) {
-        return AppResources.getResourceAsString(resourceRelativePath, StandardCharsets.UTF_8)
-                .orElse(AppLocalization.getFormattedText(
-                        AppLocalizationKeys.ABOUT_RESOURCE_NOT_FOUND,
-                        resourceRelativePath));
     }
 
     private record ManifestLine(String attributeName, String localizationKey) {

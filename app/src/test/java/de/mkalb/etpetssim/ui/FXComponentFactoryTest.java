@@ -309,6 +309,22 @@ final class FXComponentFactoryTest {
     }
 
     @Test
+    void testCreateLabeledIntSpinnerUpdatesSpinnerWhenPropertyChanges() {
+        FXTestSupport.runAndWait(() -> {
+            InputIntegerProperty property = InputIntegerProperty.of(10, 0, 20, 5);
+            Spinner<Integer> spinner = FXComponentFactory.createLabeledIntSpinner(
+                    property,
+                    "%d items",
+                    TOOLTIP,
+                    STYLE_CLASS).controlRegion();
+
+            property.setValue(5);
+
+            assertEquals(Integer.valueOf(5), spinner.getValueFactory().getValue());
+        });
+    }
+
+    @Test
     void testCreateLabeledPercentSlider() {
         FXTestSupport.runAndWait(() -> {
             InputDoubleProperty property = InputDoubleProperty.of(0.255d, 0.0d, 1.0d);
@@ -331,6 +347,23 @@ final class FXComponentFactoryTest {
                     () -> assertEquals(9, slider.getMinorTickCount()),
                     () -> assertEquals(0.01d, slider.getBlockIncrement(), 0.000_001d),
                     () -> assertSame(slider, control.label().getLabelFor())
+            );
+        });
+    }
+
+    @Test
+    void testCreateLabeledPercentSliderRoundsRangeInward() {
+        FXTestSupport.runAndWait(() -> {
+            Slider offGridSlider = FXComponentFactory.createLabeledPercentSlider(
+                    InputDoubleProperty.of(0.5d, 0.004d, 0.996d), "%.0f %%", TOOLTIP, STYLE_CLASS).controlRegion();
+            Slider onGridSlider = FXComponentFactory.createLabeledPercentSlider(
+                    InputDoubleProperty.of(0.5d, 0.07d, 0.57d), "%.0f %%", TOOLTIP, STYLE_CLASS).controlRegion();
+
+            assertAll(
+                    () -> assertEquals(0.01d, offGridSlider.getMin(), 0.000_001d),
+                    () -> assertEquals(0.99d, offGridSlider.getMax(), 0.000_001d),
+                    () -> assertEquals(0.07d, onGridSlider.getMin(), 0.000_001d),
+                    () -> assertEquals(0.57d, onGridSlider.getMax(), 0.000_001d)
             );
         });
     }
@@ -359,6 +392,24 @@ final class FXComponentFactoryTest {
                     () -> assertEquals(String.format("%.2f", 0.33d), control.label().getText()),
                     () -> assertEquals(0.01d, slider.getBlockIncrement(), 0.000_001d),
                     () -> assertSame(slider, control.label().getLabelFor())
+            );
+        });
+    }
+
+    @Test
+    void testCreateLabeledDoubleSliderClampsRoundedValueToRange() {
+        FXTestSupport.runAndWait(() -> {
+            InputDoubleProperty property = InputDoubleProperty.of(0.5d, 0.123d, 0.877d);
+            Slider slider = FXComponentFactory.createLabeledDoubleSlider(
+                    property, 2, "%.2f", TOOLTIP, STYLE_CLASS).controlRegion();
+
+            slider.setValue(0.0d);
+            double valueAtMin = property.getValue();
+            slider.setValue(1.0d);
+
+            assertAll(
+                    () -> assertEquals(0.123d, valueAtMin, 0.000_001d),
+                    () -> assertEquals(0.877d, property.getValue(), 0.000_001d)
             );
         });
     }

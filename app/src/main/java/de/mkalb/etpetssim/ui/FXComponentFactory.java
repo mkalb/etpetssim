@@ -350,9 +350,10 @@ public final class FXComponentFactory {
         });
         spinner.getEditor().setTextFormatter(formatter);
 
-        inputIntegerProperty.asObjectProperty().addListener((_, _, newVal) -> {
-            if (!spinner.getValueFactory().getValue().equals(newVal)) {
-                spinner.getValueFactory().setValue(newVal);
+        inputIntegerProperty.property().addListener((_, _, newVal) -> {
+            int newValue = newVal.intValue();
+            if (spinner.getValueFactory().getValue() != newValue) {
+                spinner.getValueFactory().setValue(newValue);
             }
         });
 
@@ -378,8 +379,8 @@ public final class FXComponentFactory {
      * the provided format string. Both the label and the slider share the same tooltip for improved accessibility.
      *
      * <p>This method is suitable for percent values between 0.0 and 1.0 (inclusive).
-     * The range is limited to 0.0..1.0 and rounded to two decimal places. As a side effect, the current
-     * value of the property is rounded and clamped to this range.
+     * The range is limited to 0.0..1.0 and rounded inward to whole percent, so that the slider stays within the range
+     * of the property. As a side effect, the current value of the property is rounded and clamped to this range.
      *
      * @param inputDoubleProperty the InputDoubleProperty defining range and value binding
      * @param labelFormatString   the format string for the label (e.g., "%.2f %%")
@@ -392,11 +393,11 @@ public final class FXComponentFactory {
             String labelFormatString,
             String tooltip,
             String styleClass) {
-        double minRounded = Math.max(0.0d, Math.round(inputDoubleProperty.min() * 100.0d) / 100.0d);
-        double maxRounded = Math.min(1.0d, Math.round(inputDoubleProperty.max() * 100.0d) / 100.0d);
-        int range = Math.toIntExact(Math.round(maxRounded * 100.0d) - Math.round(minRounded * 100.0d));
+        long minPercent = Math.max(0L, roundInwardToPercent(inputDoubleProperty.min(), true));
+        long maxPercent = Math.min(100L, roundInwardToPercent(inputDoubleProperty.max(), false));
+        int range = Math.toIntExact(maxPercent - minPercent);
 
-        Slider slider = createRoundingSlider(inputDoubleProperty, minRounded, maxRounded, 100.0d,
+        Slider slider = createRoundingSlider(inputDoubleProperty, minPercent / 100.0d, maxPercent / 100.0d, 100.0d,
                 computeMinorTickCountForPercentSlider(range), styleClass);
 
         Label label = createBoundLabel(inputDoubleProperty.property().multiply(100).asString(labelFormatString), slider,
@@ -653,7 +654,7 @@ public final class FXComponentFactory {
      */
     private static Slider createRoundingSlider(InputDoubleProperty inputDoubleProperty, double min, double max,
                                                double factor, int minorTickCount, String styleClass) {
-        double value = Math.clamp(Math.round(inputDoubleProperty.getValue() * factor) / factor, min, max);
+        double value = roundAndClamp(inputDoubleProperty.getValue(), factor, min, max);
         inputDoubleProperty.setValue(value);
 
         Slider slider = new Slider(min, max, value);
@@ -665,9 +666,32 @@ public final class FXComponentFactory {
         slider.setSnapToTicks(false);
         slider.getStyleClass().add(styleClass);
         slider.valueProperty().bindBidirectional(inputDoubleProperty.property());
+        // Clamping keeps a rounded value inside the range; otherwise the slider would clamp it back and loop.
         slider.valueProperty().addListener((_, _, newValue) ->
-                slider.setValue(Math.round(newValue.doubleValue() * factor) / factor));
+                slider.setValue(roundAndClamp(newValue.doubleValue(), factor, min, max)));
         return slider;
+    }
+
+    private static double roundAndClamp(double value, double factor, double min, double max) {
+        return Math.clamp(Math.round(value * factor) / factor, min, max);
+    }
+
+    /**
+     * Rounds a fraction to whole percent toward the inside of a range, so that the result does not leave the range.
+     *
+     * @param fraction   the range bound as fraction (e.g., {@code 0.25} for 25 percent)
+     * @param lowerBound {@code true} to round a lower bound up, {@code false} to round an upper bound down
+     * @return the rounded bound in whole percent
+     */
+    private static long roundInwardToPercent(double fraction, boolean lowerBound) {
+        // Round first and correct afterward; ceil and floor would move exact bounds such as 0.07 (7.000000000000001).
+        long percent = Math.round(fraction * 100.0d);
+        if (lowerBound && ((percent / 100.0d) < fraction)) {
+            percent++;
+        } else if (!lowerBound && ((percent / 100.0d) > fraction)) {
+            percent--;
+        }
+        return percent;
     }
 
     private static Slider createIntSlider(InputDoubleIntRangeProperty inputDoubleIntRangeProperty, String styleClass) {

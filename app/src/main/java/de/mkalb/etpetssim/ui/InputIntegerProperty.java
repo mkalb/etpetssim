@@ -93,6 +93,9 @@ public record InputIntegerProperty(IntegerProperty property, int min, int max, i
     /**
      * Returns the property as an {@link ObjectProperty}.
      *
+     * <p>Each call returns a new wrapper that is bidirectionally bound to the property. JavaFX holds such bindings
+     * only weakly, so the caller must keep the wrapper referenced as long as it uses it, e.g., for a listener.
+     *
      * @return the property as an {@link ObjectProperty}
      */
     public ObjectProperty<Integer> asObjectProperty() {

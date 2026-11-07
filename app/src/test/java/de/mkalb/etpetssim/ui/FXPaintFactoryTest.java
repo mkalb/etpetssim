@@ -43,7 +43,8 @@ final class FXPaintFactoryTest {
                 () -> assertColorEquals(BASE_COLOR, unevenGroups.get(1)),
                 () -> assertColorEquals(BASE_COLOR, unevenGroups.get(3)),
                 () -> assertColorEquals(darkened, unevenGroups.get(4)),
-                () -> assertColorEquals(darkened, unevenGroups.get(5))
+                () -> assertColorEquals(darkened, unevenGroups.get(5)),
+                () -> assertThrows(UnsupportedOperationException.class, variants::clear)
         );
     }
 

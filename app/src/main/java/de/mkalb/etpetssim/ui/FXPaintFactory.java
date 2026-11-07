@@ -7,6 +7,7 @@ import javafx.scene.paint.Paint;
 import javafx.scene.paint.RadialGradient;
 import javafx.scene.paint.Stop;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -38,7 +39,7 @@ public final class FXPaintFactory {
      * @param maxInclusive   the upper bound (inclusive)
      * @param groupCount     the number of brightness groups
      * @param maxFactorDelta the total brightness change (positive to brighten, negative to darken)
-     * @return a map from integer value to color variant
+     * @return an unmodifiable map from integer value to color variant
      * @throws IllegalArgumentException if the range is invalid or contains more than {@code Integer.MAX_VALUE}
      *                                  values, groupCount is less than 1, or maxFactorDelta is outside the range
      *                                  [-1.0, 10.0]
@@ -85,7 +86,7 @@ public final class FXPaintFactory {
             groupStart += currentGroupSize;
         }
 
-        return map;
+        return Collections.unmodifiableMap(map);
     }
 
     /**
