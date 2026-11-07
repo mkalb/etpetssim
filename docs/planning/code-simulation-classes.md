@@ -317,6 +317,17 @@ Notes:
   `SimulationLocalizationKeys`), or create the four buttons through one helper that sets text and tooltip (e.g., in
   `EditToolBarView`, or a new method in `FXComponentFactory`, which would be an API change).
 
+#### Range tooltip overload for integer bounds
+
+- Origin: `code-warning-suppressions.md` (#68), `SameParameterValue` in main sources (2026-11-07)
+- Types: `AbstractConfigView`
+- Problem: The protected overload `formatDoubleRangeTooltip(String, InputDoubleIntRangeProperty)` has only one
+  caller, `createLayoutPane(..)` of the same class, always with `CONFIG_CELL_EDGE_LENGTH_TOOLTIP`, which IntelliJ
+  reports as `SameParameterValue` (suppressed). No subclass calls it; the overload for `InputDoubleProperty` is used
+  by the config views of Forest and Snake.
+- Proposal: Decide whether the overload stays `protected` as the counterpart for subclasses or becomes `private`;
+  then check whether the suppression is still needed. An API change if it becomes `private`.
+
 ## 4. Simulation statistics
 
 One statistics class per simulation in its `model` package.

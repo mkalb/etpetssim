@@ -138,9 +138,7 @@ public final class ConwayConfigView
         var rulesControl = createTransitionRulesControl(viewModel.getSurviveProperties(),
                 viewModel.getBirthProperties(),
                 viewModel.transitionRulesProperty(),
-                viewModel.maxNeighborCountProperty(),
-                CONWAY_CONFIG_RULES,
-                CONWAY_CONFIG_RULES_TOOLTIP);
+                viewModel.maxNeighborCountProperty());
 
         var rulesPane = createConfigTitledPane(
                 AppLocalization.getText(SimulationLocalizationKeys.CONFIG_TITLE_RULES), true,
@@ -158,22 +156,21 @@ public final class ConwayConfigView
         return label;
     }
 
-    @SuppressWarnings("SameParameterValue")
     private FXComponentFactory.LabeledControl<GridPane> createTransitionRulesControl(List<BooleanProperty> surviveProperties,
                                                                                      List<BooleanProperty> birthProperties,
                                                                                      ObjectProperty<ConwayTransitionRules> transitionRulesProperty,
-                                                                                     IntegerProperty maxNeighborCountProperty,
-                                                                                     String labelKey,
-                                                                                     String tooltipKey) {
+                                                                                     IntegerProperty maxNeighborCountProperty) {
         Label label = new Label();
         label.textProperty().bind(Bindings.createStringBinding(
-                () -> AppLocalization.getFormattedText(labelKey, transitionRulesProperty.get().toDisplayString()),
+                () -> AppLocalization.getFormattedText(CONWAY_CONFIG_RULES,
+                        transitionRulesProperty.get().toDisplayString()),
                 transitionRulesProperty
         ));
         Tooltip tooltip = new Tooltip();
         tooltip.textProperty().bind(
                 Bindings.createStringBinding(
-                        () -> AppLocalization.getFormattedText(tooltipKey, maxNeighborCountProperty.get()),
+                        () -> AppLocalization.getFormattedText(CONWAY_CONFIG_RULES_TOOLTIP,
+                                maxNeighborCountProperty.get()),
                         maxNeighborCountProperty
                 )
         );

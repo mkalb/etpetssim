@@ -343,8 +343,7 @@ public final class LabMainView
                 .coordinatesStream()
                 .forEachOrdered(coordinate ->
                         drawBaseCanvasCoordinate(basePainter, coordinate, colorModeGrayscale, renderingModeCircle,
-                                strokeColor, SHAPE_LINE_WIDTH,
-                                textColor));
+                                strokeColor, textColor));
 
         observationView.initializeForDraw();
     }
@@ -358,19 +357,17 @@ public final class LabMainView
         }
     }
 
-    @SuppressWarnings("SameParameterValue")
     private void drawBaseCanvasCoordinate(FXGridCanvasPainter basePainter,
                                           GridCoordinate coordinate,
                                           boolean colorModeGrayscale,
                                           boolean renderingModeCircle,
                                           @Nullable Color strokeColor,
-                                          double strokeLineWidth,
                                           Color textColor) {
         Color color = colorModeGrayscale ? computeCheckerGrayscaleColor(coordinate) : computeCheckerColor(coordinate);
         if (renderingModeCircle) {
-            basePainter.drawCellInnerCircle(coordinate, color, strokeColor, strokeLineWidth, StrokeType.CENTERED);
+            basePainter.drawCellInnerCircle(coordinate, color, strokeColor, SHAPE_LINE_WIDTH, StrokeType.CENTERED);
         } else {
-            basePainter.drawCell(coordinate, color, strokeColor, strokeLineWidth);
+            basePainter.drawCell(coordinate, color, strokeColor, SHAPE_LINE_WIDTH);
         }
         if (cellFont != null) {
             basePainter.drawCenteredTextInCell(coordinate, coordinate.toDisplayString(), textColor, cellFont);

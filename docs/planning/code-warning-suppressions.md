@@ -122,7 +122,7 @@ The test sources were done on 2026-11-06: 52 suppressions in 22 files and 9 insp
 | main    | `DataFlowIssue`                     |    11 | change code (list cells)         | done        |
 | main    | `SameReturnValue`                   |    13 | disable                          | done        |
 | main    | `MagicNumber`                       |    21 | disable                          | done        |
-| main    | `SameParameterValue`                |    14 | per occurrence                   | open        |
+| main    | `SameParameterValue`                |    14 | keep 12; change code in 2        | done        |
 | main    | `NumericCastThatLosesPrecision`     |    12 | keep; check each occurrence      | open        |
 | main    | `unused`                            |     6 | per occurrence                   | open        |
 | main    | `CommentedOutCode`                  |     4 | keep                             | open        |
@@ -452,18 +452,28 @@ The inventory is omitted: all occurrences are removed by the same commit.
 
 ### `SameParameterValue`
 
-- Count: 14; 10 are constructors of enums and entity classes.
+- Count: 14; 11 are enum constructors.
 - Proposal: per occurrence: remove the parameter where it is not needed (change code), otherwise keep.
-- Decision: open.
+- Decision (maintainer, 2026-11-07):
+    - Keep the 11 enum constructors. The entity enums pass a complete `GridEntityDescriptorSpec` per constant, whose
+      `visible` is `true` everywhere (and every value is the same in enums with one constant); `SimulationType` keeps
+      `implemented`, which `StartMainView` evaluates, although every type is implemented.
+    - Change code in the two private helpers with one call each: `ConwayConfigView.createTransitionRulesControl(..)`
+      uses `CONWAY_CONFIG_RULES` and `CONWAY_CONFIG_RULES_TOOLTIP` directly instead of the parameters `labelKey` and
+      `tooltipKey`; `LabMainView.drawBaseCanvasCoordinate(..)` uses `SHAPE_LINE_WIDTH` instead of the parameter
+      `strokeLineWidth`. Both suppressions are removed.
+    - Keep `AbstractConfigView.formatDoubleRangeTooltip(String, InputDoubleIntRangeProperty)`, the protected
+      counterpart of the overload for `InputDoubleProperty`; its visibility is recorded as a finding
+      in `code-simulation-classes.md` (category 3).
+
+Remaining suppressions (12):
 
 - `simulations/conway/model/entity/ConwayEntity.java`: `ConwayEntity()`
-- `simulations/conway/view/ConwayConfigView.java`: `createTransitionRulesControl()`
 - `simulations/core/SimulationType.java`: `SimulationType()`
 - `simulations/core/view/AbstractConfigView.java`: `formatDoubleRangeTooltip()`
 - `simulations/etpets/model/entity/EntityDescriptors.java`: `EntityDescriptors()`
 - `simulations/forest/model/entity/ForestEntity.java`: `ForestEntity()`
 - `simulations/lab/model/entity/LabEntity.java`: `LabEntity()`
-- `simulations/lab/view/LabMainView.java`: `drawBaseCanvasCoordinate()`
 - `simulations/langton/model/entity/EntityDescriptors.java`: `EntityDescriptors()`
 - `simulations/rebounding/model/entity/EntityDescriptors.java`: `EntityDescriptors()`
 - `simulations/snake/model/entity/EntityDescriptors.java`: `EntityDescriptors()`
