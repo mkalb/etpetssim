@@ -136,7 +136,6 @@ public final class GridInitializers {
      * @return a grid initializer that fills the grid with the given fraction of supplied entities
      * @throws IllegalArgumentException if {@code percent} is outside the range [0.0, 1.0]
      */
-    @SuppressWarnings("NumericCastThatLosesPrecision")
     public static <ENT extends GridEntity> GridInitializer<ENT> fillRandomPercent(double percent,
                                                                                   Supplier<ENT> entitySupplier,
                                                                                   ENT fallback,
@@ -147,11 +146,11 @@ public final class GridInitializers {
             cancellationCheck.run();
             int gridArea = model.structure().size().area();
             if (percent <= 0.8d) {
-                int entityCount = (int) Math.round(percent * gridArea);
+                int entityCount = Math.toIntExact(Math.round(percent * gridArea));
                 fillCells(model, () -> fallback, cancellationCheck);
                 placeRandomCount(model, entityCount, entitySupplier, fallback::equals, random, cancellationCheck);
             } else {
-                int fallbackCount = (int) Math.round((1.0d - percent) * gridArea);
+                int fallbackCount = Math.toIntExact(Math.round((1.0d - percent) * gridArea));
                 fillCells(model, entitySupplier, cancellationCheck);
                 placeRandomCount(model, fallbackCount,
                         () -> fallback, Predicate.not(fallback::equals), random, cancellationCheck);
@@ -264,13 +263,13 @@ public final class GridInitializers {
      * @throws IllegalArgumentException if {@code percent} is outside the range [0.0, 1.0]
      * @throws IllegalStateException    if an entity cannot be placed within the maximum number of attempts
      */
-    @SuppressWarnings("NumericCastThatLosesPrecision")
     public static <ENT extends GridEntity> GridInitializer<ENT> placeRandomPercent(double percent,
                                                                                    Supplier<ENT> entitySupplier,
                                                                                    Predicate<ENT> canReplaceExisting,
                                                                                    Random random) {
         checkFraction(percent, "percent");
-        return model -> placeRandomCount(model, (int) Math.round(percent * model.structure().size().area()),
+        return model -> placeRandomCount(model,
+                Math.toIntExact(Math.round(percent * model.structure().size().area())),
                 entitySupplier, canReplaceExisting, random, () -> {});
     }
 

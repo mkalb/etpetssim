@@ -162,13 +162,12 @@ public final class SnakeSimulationManager
         return GridInitializers.identity();
     }
 
-    @SuppressWarnings("NumericCastThatLosesPrecision")
     private GridInitializer<SnakeEntity> foodInitializer(SnakeConfig config,
                                                          WritableGridModel<SnakeEntity> model,
                                                          Random random,
                                                          SimulationInitializationCancellation cancellation) {
         if (config.foodCells() > 0) {
-            int freeGroundCells = (int) model.countEntities(SnakeEntity::isGround);
+            int freeGroundCells = Math.toIntExact(model.countEntities(SnakeEntity::isGround));
             int foodCells = Math.min(config.foodCells(), freeGroundCells);
             return GridInitializers.placeShuffledCount(
                     foodCells,

@@ -123,7 +123,7 @@ The test sources were done on 2026-11-06: 52 suppressions in 22 files and 9 insp
 | main    | `SameReturnValue`                   |    13 | disable                          | done        |
 | main    | `MagicNumber`                       |    21 | disable                          | done        |
 | main    | `SameParameterValue`                |    14 | keep 12; change code in 2        | done        |
-| main    | `NumericCastThatLosesPrecision`     |    12 | keep; check each occurrence      | open        |
+| main    | `NumericCastThatLosesPrecision`     |    12 | keep 8; change code in 4         | done        |
 | main    | `unused`                            |     6 | per occurrence                   | open        |
 | main    | `CommentedOutCode`                  |     4 | keep                             | open        |
 | main    | `ObjectEquality`                    |     3 | per occurrence                   | open        |
@@ -485,14 +485,23 @@ Remaining suppressions (12):
 
 - Count: 12, casts from `double` or `long` to `int` after rounding or clamping.
 - Proposal: keep; check each occurrence for a clearer alternative (e.g., `Math.toIntExact`, `Math.clamp`).
-- Decision: open.
+- Decision (maintainer, 2026-11-07):
+    - Change code in the 4 casts from `long` to `int`, whose values are always in the `int` range, and remove their
+      suppressions: `GridInitializers.fillRandomPercent(..)` and `placeRandomPercent(..)` and
+      `SnakeSimulationManager.foodInitializer(..)` use `Math.toIntExact(..)`; `PetGenome.fromParents(..)` passes the
+      rounded `long` to `Math.clamp(long, int, int)`, which returns an `int`. The results and random sequences stay
+      the same.
+    - Keep the 8 casts from `double` to `int` or `long` that truncate on purpose (pixels to cells, milliseconds,
+      points, sugar amounts, and metric values). The suppression of `SugarSimulationManager.computeSugarAmount()`
+      drops its braces (`{"..."}`).
+    - The exception messages of `StatisticsExtremum` are recorded as a deferred finding in
+      `code-simulation-classes.md`.
 
-- `engine/support/GridInitializers.java`: `fillRandomPercent()`, `placeRandomPercent()`
+Remaining suppressions (8):
+
 - `simulations/core/model/StatisticsExtremum.java`: `intValue()`
 - `simulations/core/view/AbstractObservationView.java`: `updateGenericMetricSection()`
 - `simulations/core/viewmodel/DefaultMainViewModel.java`: `configureSimulationTimeout()`
-- `simulations/etpets/model/entity/PetGenome.java`: `fromParents()`
-- `simulations/snake/model/SnakeSimulationManager.java`: `foodInitializer()`
 - `simulations/snake/model/SnakeStepLogic.java`: `moveSnake()`
 - `simulations/sugar/model/SugarSimulationManager.java`: `computeClampedIndex()`, `computeSugarAmount()`
 - `ui/FXGridCanvasPainter.java`: `isOnCanvas()`

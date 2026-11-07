@@ -618,3 +618,14 @@ None yet.
   the blank line in `code-other-classes.md`; empty bodies (`{` and `}`) stay without one.
 - Proposal: Add the blank line in both enums; they belong to no category of this plan, so change them with the
   category that touches their package, or in a final cleanup.
+
+### Exception messages of StatisticsExtremum
+
+- Origin: `code-warning-suppressions.md` (#68), `NumericCastThatLosesPrecision` in main sources (2026-11-07)
+- Types: `simulations.core.model.StatisticsExtremum`
+- Problem: The compact constructor throws `"value must be finite: " + value` and `"stepCount must be >= 0"`, while
+  `java.md` ("Exceptions") requires the form `<name> must <condition>, but was: <value>`; the second message also
+  lacks the rejected value.
+- Proposal: Change the messages to `value must be finite, but was: ...` and `stepCount must be >= 0, but was: ...`,
+  and check whether a test asserts the old text. A record, so it belongs to no category; change it with category 1,
+  which touches `simulations.core.model`, or in a final cleanup.

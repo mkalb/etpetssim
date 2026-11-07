@@ -24,7 +24,6 @@ public record PetGenome(PetTraits traits) {
      * @param mutationDelta          the relative mutation strength
      * @return the derived child genome
      */
-    @SuppressWarnings("NumericCastThatLosesPrecision")
     public static PetGenome fromParents(PetGenome parentA, PetGenome parentB,
                                         Random random,
                                         double mutationChancePerTrait, double mutationDelta) {
@@ -33,7 +32,7 @@ public record PetGenome(PetTraits traits) {
 
         double avgMaxEnergy = (ta.maxEnergy() + tb.maxEnergy()) / 2.0d;
         int maxEnergy = Math.clamp(
-                (int) Math.round(mutate(avgMaxEnergy, random, mutationChancePerTrait, mutationDelta)),
+                Math.round(mutate(avgMaxEnergy, random, mutationChancePerTrait, mutationDelta)),
                 EtpetsBalance.PET_TRAITS_MAX_ENERGY_MIN,
                 EtpetsBalance.PET_TRAITS_MAX_ENERGY_MAX);
 
@@ -45,13 +44,13 @@ public record PetGenome(PetTraits traits) {
 
         double avgReproEnergy = (ta.reproductionMinEnergy() + tb.reproductionMinEnergy()) / 2.0d;
         int reproEnergy = Math.clamp(
-                (int) Math.round(mutate(avgReproEnergy, random, mutationChancePerTrait, mutationDelta)),
+                Math.round(mutate(avgReproEnergy, random, mutationChancePerTrait, mutationDelta)),
                 EtpetsBalance.PET_TRAITS_REPRODUCTION_MIN_ENERGY_MIN,
                 EtpetsBalance.PET_TRAITS_REPRODUCTION_MIN_ENERGY_MAX);
 
         double avgReproCooldown = (ta.reproductionCooldown() + tb.reproductionCooldown()) / 2.0d;
         int reproCooldown = Math.clamp(
-                (int) Math.round(mutate(avgReproCooldown, random, mutationChancePerTrait, mutationDelta)),
+                Math.round(mutate(avgReproCooldown, random, mutationChancePerTrait, mutationDelta)),
                 EtpetsBalance.PET_TRAITS_REPRODUCTION_COOLDOWN_MIN,
                 EtpetsBalance.PET_TRAITS_REPRODUCTION_COOLDOWN_MAX);
 

@@ -185,7 +185,7 @@ public final class SugarSimulationManager
         return sugarMap;
     }
 
-    @SuppressWarnings({"NumericCastThatLosesPrecision"})
+    @SuppressWarnings("NumericCastThatLosesPrecision")
     private int computeSugarAmount(int minSugarAmount, int sugarRange, int radiusLimit, int radiusLevel, Random random) {
         // linear interpolation: near peaks -> max, at edge -> min
         if (radiusLimit <= 0) {
