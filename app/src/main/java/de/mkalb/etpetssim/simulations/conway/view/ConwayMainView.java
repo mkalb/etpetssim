@@ -86,7 +86,7 @@ public final class ConwayMainView
     }
 
     @Override
-    protected void initializeSimulation(CanvasPainters painters, ConwayConfig config, CellDimension cellDimension, WritableGridModel<ConwayEntity> model) {
+    protected void initializeSimulation(CanvasPainters painters, ConwayConfig config, CellDimension cellDimension) {
         editToolBarViewModel.updateAvailablePatternChoices(config);
         Color backgroundColor = entityDescriptorRegistry
                 .requireByDescriptorId(ConwayEntity.DEAD.descriptorId())

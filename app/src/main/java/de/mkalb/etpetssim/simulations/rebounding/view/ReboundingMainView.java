@@ -91,7 +91,7 @@ public final class ReboundingMainView
     }
 
     @Override
-    protected void initializeSimulation(CanvasPainters painters, ReboundingConfig config, CellDimension cellDimension, WritableGridModel<ReboundingEntity> model) {
+    protected void initializeSimulation(CanvasPainters painters, ReboundingConfig config, CellDimension cellDimension) {
         Color backgroundColor = entityDescriptorRegistry
                 .requireByDescriptorId(ReboundingEntity.DESCRIPTOR_ID_GROUND)
                 .colorOrFallback();

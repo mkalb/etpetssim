@@ -89,7 +89,7 @@ public final class WatorMainView
     }
 
     @Override
-    protected void initializeSimulation(CanvasPainters painters, WatorConfig config, CellDimension cellDimension, WritableGridModel<WatorEntity> model) {
+    protected void initializeSimulation(CanvasPainters painters, WatorConfig config, CellDimension cellDimension) {
         Color backgroundColor = entityDescriptorRegistry
                 .requireByDescriptorId(WatorEntity.DESCRIPTOR_ID_WATER)
                 .colorOrFallback();

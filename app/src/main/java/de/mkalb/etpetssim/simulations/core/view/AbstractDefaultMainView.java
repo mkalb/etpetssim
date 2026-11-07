@@ -146,7 +146,7 @@ public abstract class AbstractDefaultMainView<
     }
 
     @Override
-    protected void handleMouseClickedCoordinate(Point2D mousePoint, GridCoordinate mouseCoordinate, FXGridCanvasPainter painter) {
+    protected void handleMouseClickedCoordinate(GridCoordinate mouseCoordinate, FXGridCanvasPainter painter) {
         viewModel.updateClickedCoordinateProperties(mouseCoordinate);
         applySelectedCellUserActionAndRedraw();
     }
@@ -200,7 +200,7 @@ public abstract class AbstractDefaultMainView<
         controlView.setStepCount(stepCount);
         observationView.initializeObservationLabels();
 
-        initializeSimulation(newPainters, viewModel.getCurrentConfig(), newPainters.base().cellDimension(), viewModel.getCurrentGridModel());
+        initializeSimulation(newPainters, viewModel.getCurrentConfig(), newPainters.base().cellDimension());
 
         AppLogger.infof("%s: Simulation initialized in the view. step=%d", LOG_COMPONENT, stepCount);
 
@@ -320,8 +320,7 @@ public abstract class AbstractDefaultMainView<
         skipOverlayActive = false;
     }
 
-    @SuppressWarnings("unused")
-    protected abstract void initializeSimulation(CanvasPainters painters, CON config, CellDimension cellDimension, GM model);
+    protected abstract void initializeSimulation(CanvasPainters painters, CON config, CellDimension cellDimension);
 
     /**
      * Draws the current simulation state.

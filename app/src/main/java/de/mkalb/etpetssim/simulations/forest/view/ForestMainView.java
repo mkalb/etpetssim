@@ -61,7 +61,7 @@ public final class ForestMainView
     }
 
     @Override
-    protected void initializeSimulation(CanvasPainters painters, ForestConfig config, CellDimension cellDimension, WritableGridModel<ForestEntity> model) {
+    protected void initializeSimulation(CanvasPainters painters, ForestConfig config, CellDimension cellDimension) {
         Color backgroundColor = entityDescriptorRegistry
                 .requireByDescriptorId(ForestEntity.EMPTY.descriptorId())
                 .colorOrFallback();

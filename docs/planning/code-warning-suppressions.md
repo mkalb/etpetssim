@@ -124,7 +124,7 @@ The test sources were done on 2026-11-06: 52 suppressions in 22 files and 9 insp
 | main    | `MagicNumber`                       |    21 | disable                          | done        |
 | main    | `SameParameterValue`                |    14 | keep 12; change code in 2        | done        |
 | main    | `NumericCastThatLosesPrecision`     |    12 | keep 8; change code in 4         | done        |
-| main    | `unused`                            |     6 | per occurrence                   | open        |
+| main    | `unused`                            |     6 | keep 4; remove 2 parameters      | done        |
 | main    | `CommentedOutCode`                  |     4 | keep                             | open        |
 | main    | `ObjectEquality`                    |     3 | per occurrence                   | open        |
 | main    | types with two occurrences (4)      |     8 | per occurrence                   | open        |
@@ -514,12 +514,21 @@ Remaining suppressions (8):
 - Proposal: per occurrence: keep the suppressions on the overridable methods (parameters that implementations or
   overrides may ignore); for `formatActionCandidates()`, keep it together with the commented-out `AppLogger` call
   (`java.md`, "Logging with AppLogger") or remove both.
-- Decision: open.
+- Decision (maintainer, 2026-11-07):
+    - Keep 4: `SynchronousStepLogic.performSynchronousStep(..)` (engine API; Conway and Forest ignore `stepIndex`),
+      `SimulationUserAction.apply(..)` (every parameter is used by some user action),
+      `AbstractMainView.createEditToolBarOptionPanel(..)` (only the default implementation ignores
+      `selectedToolId`), and `EtpetsAgentLogic.formatActionCandidates(..)` together with the commented-out
+      `AppLogger` call (`java.md`, "Logging with AppLogger").
+    - API change in `simulations.core.view` (approved): remove the parameters that no implementation uses, and their
+      suppressions: `model` of `AbstractDefaultMainView.initializeSimulation(..)` (8 main views) and `mousePoint` of
+      `AbstractMainView.handleMouseClickedCoordinate(..)` (`AbstractDefaultMainView`, `LabMainView`).
+
+Remaining suppressions (4):
 
 - `engine/executor/SynchronousStepLogic.java`: `performSynchronousStep()`
 - `simulations/core/model/SimulationUserAction.java`: `apply()`
-- `simulations/core/view/AbstractDefaultMainView.java`: `initializeSimulation()`
-- `simulations/core/view/AbstractMainView.java`: `createEditToolBarOptionPanel()`, `handleMouseClickedCoordinate()`
+- `simulations/core/view/AbstractMainView.java`: `createEditToolBarOptionPanel()`
 - `simulations/etpets/model/EtpetsAgentLogic.java`: `formatActionCandidates()`
 
 ### `CommentedOutCode`

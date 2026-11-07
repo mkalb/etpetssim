@@ -117,7 +117,7 @@ public final class LabMainView
     }
 
     @Override
-    protected void handleMouseClickedCoordinate(Point2D mousePoint, GridCoordinate mouseCoordinate, FXGridCanvasPainter painter) {
+    protected void handleMouseClickedCoordinate(GridCoordinate mouseCoordinate, FXGridCanvasPainter painter) {
         painter.clearCanvasBackground();
 
         if (isLastClickedCoordinate(mouseCoordinate)) {

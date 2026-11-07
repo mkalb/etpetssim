@@ -122,7 +122,7 @@ public final class EtpetsMainView extends AbstractDefaultMainView<
     }
 
     @Override
-    protected void initializeSimulation(CanvasPainters painters, EtpetsConfig config, CellDimension cellDimension, EtpetsGridModel model) {
+    protected void initializeSimulation(CanvasPainters painters, EtpetsConfig config, CellDimension cellDimension) {
         Color backgroundColor = entityDescriptorRegistry
                 .requireByDescriptorId(EtpetsEntity.DESCRIPTOR_ID_GROUND)
                 .colorOrFallback();

@@ -106,7 +106,7 @@ public final class SugarMainView
     }
 
     @Override
-    protected void initializeSimulation(CanvasPainters painters, SugarConfig config, CellDimension cellDimension, SugarGridModel model) {
+    protected void initializeSimulation(CanvasPainters painters, SugarConfig config, CellDimension cellDimension) {
         Color backgroundColor = entityDescriptorRegistry
                 .requireByDescriptorId(SugarEntity.DESCRIPTOR_ID_TERRAIN)
                 .colorOrFallback();

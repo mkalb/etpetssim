@@ -120,7 +120,7 @@ public final class SnakeMainView
     }
 
     @Override
-    protected void initializeSimulation(CanvasPainters painters, SnakeConfig config, CellDimension cellDimension, WritableGridModel<SnakeEntity> model) {
+    protected void initializeSimulation(CanvasPainters painters, SnakeConfig config, CellDimension cellDimension) {
         Color backgroundColor = entityDescriptorRegistry
                 .requireByDescriptorId(SnakeEntity.DESCRIPTOR_ID_GROUND)
                 .colorOrFallback();

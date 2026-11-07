@@ -91,7 +91,7 @@ public final class LangtonMainView
     }
 
     @Override
-    protected void initializeSimulation(CanvasPainters painters, LangtonConfig config, CellDimension cellDimension, LangtonGridModel model) {
+    protected void initializeSimulation(CanvasPainters painters, LangtonConfig config, CellDimension cellDimension) {
         currentConfig = config;
         Color backgroundColor = entityDescriptorRegistry
                 .requireByDescriptorId(TerrainConstant.UNVISITED.descriptorId())

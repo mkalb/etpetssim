@@ -201,14 +201,13 @@ public abstract class AbstractMainView<
                 GridCoordinate mouseCoordinate = GridGeometry.fromCanvasPosition(mousePoint,
                         painter.cellDimension(), painter.gridDimension2D(), painter.gridStructure());
                 if (!mouseCoordinate.isIllegal() && painter.isInsideGrid(mouseCoordinate)) {
-                    handleMouseClickedCoordinate(mousePoint, mouseCoordinate, painter);
+                    handleMouseClickedCoordinate(mouseCoordinate, painter);
                 }
             }
         });
     }
 
-    @SuppressWarnings("unused")
-    protected abstract void handleMouseClickedCoordinate(Point2D mousePoint, GridCoordinate mouseCoordinate, FXGridCanvasPainter painter);
+    protected abstract void handleMouseClickedCoordinate(GridCoordinate mouseCoordinate, FXGridCanvasPainter painter);
 
     private void registerNotificationListener() {
         notificationListener = (_, _, newVal) -> {
