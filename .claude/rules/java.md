@@ -151,7 +151,9 @@ Use these method naming patterns when they match the method's primary behavior; 
   models, entities, `Random`) as a wrapper, holder, snapshot, or parameter object (e.g., `MoveContext`). Use a class
   instead when the type itself owns changing state or controls a lifecycle. Such a record says so in the last paragraph
   of its type Javadoc: "The record wraps/groups/holds ... without copying ...", optionally followed by the
-  consequence after a semicolon; a private record does so only when it explains something.
+  consequence after a semicolon; a private record does so only when it explains something. Do not use such a record as
+  a key in a hash-based collection or compare it with `equals(Object)`; compare its components instead, unless they
+  are immutable in that use (e.g., `GridCell` with an enum entity).
 - Prefer plain adjectives or noun phrases for boolean record components (`visible`, `finalStep`); boolean query names
   (`isFinished`, `hasTarget`) are allowed. Their generated accessors are exempt from the boolean query prefixes in
   "Naming Conventions". Use one style within a record, and use the name of an implemented interface method where one
