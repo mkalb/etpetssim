@@ -126,7 +126,7 @@ The test sources were done on 2026-11-06: 52 suppressions in 22 files and 9 insp
 | main    | `NumericCastThatLosesPrecision`     |    12 | keep 8; change code in 4         | done        |
 | main    | `unused`                            |     6 | keep 4; remove 2 parameters      | done        |
 | main    | `CommentedOutCode`                  |     4 | keep                             | done        |
-| main    | `ObjectEquality`                    |     3 | per occurrence                   | open        |
+| main    | `ObjectEquality`                    |     3 | change code; keep 1 (narrowed)   | done        |
 | main    | types with two occurrences (4)      |     8 | per occurrence                   | open        |
 | main    | other types (10)                    |    10 | per occurrence                   | open        |
 
@@ -551,10 +551,19 @@ Remaining suppressions (4):
 - Count: 3.
 - Proposal: `GridCoordinate` compares with its own constant on purpose; keep, or use `equals` if equally fast. Check
   `EtpetsAgentLogic.apply()` separately.
-- Decision: open.
+- Decision (maintainer, 2026-11-07):
+    - `GridCoordinate.isIllegal()`: the identity check with `ILLEGAL` is removed; the checks of `x` and `y` already
+      cover it. Suppression removed.
+    - `GridCoordinate.toDisplayString()`: compares with `equals(ILLEGAL)`, as fits a record; the Javadoc says
+      "equals the constant". A separately created coordinate equal to `ILLEGAL` now also returns `(illegal)`;
+      `GridCoordinateTest.testToDisplayString()` expected the numbers before and is adapted. Suppression removed.
+    - `EtpetsAgentLogic.apply(..)`: the identity check of the snapshot entity moves to the private method
+      `checkSnapshotEntity(..)`, which carries the suppression. Its exception message follows `java.md`
+      ("Exceptions"): `Unable to process agent: snapshot entity mismatch, coordinate=..., expected=..., actual=...`.
 
-- `engine/GridCoordinate.java`: `isIllegal()`, `toDisplayString()`
-- `simulations/etpets/model/EtpetsAgentLogic.java`: `apply()`
+Remaining suppressions (1):
+
+- `simulations/etpets/model/EtpetsAgentLogic.java`: `checkSnapshotEntity()`
 
 ### Main inspection types with two occurrences
 

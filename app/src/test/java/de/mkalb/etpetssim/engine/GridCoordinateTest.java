@@ -237,7 +237,7 @@ final class GridCoordinateTest {
                 () -> assertEquals("(2048, -1024)", new GridCoordinate(2_048, -1_024).toDisplayString()),
                 () -> assertEquals("(-2048, 1024)", new GridCoordinate(-2_048, 1_024).toDisplayString()),
                 () -> assertEquals("(illegal)", GridCoordinate.ILLEGAL.toDisplayString()),
-                () -> assertEquals("(-2147483648, -2147483648)",
+                () -> assertEquals("(illegal)",
                         new GridCoordinate(Integer.MIN_VALUE, Integer.MIN_VALUE).toDisplayString()),
                 () -> assertEquals("(2147483647, 2147483647)",
                         new GridCoordinate(Integer.MAX_VALUE, Integer.MAX_VALUE).toDisplayString())

@@ -71,7 +71,6 @@ public final class EtpetsAgentLogic {
      * @param stepIndex  the index of the current step
      * @param statistics the statistics to update with the changed cell counts
      */
-    @SuppressWarnings("ObjectEquality")
     public static void apply(EtpetsGridModel gridModel,
                              Random random,
                              EtpetsIdSequence idSequence,
@@ -91,12 +90,7 @@ public final class EtpetsAgentLogic {
             GridCoordinate currentCoordinate = cell.coordinate();
             AgentEntity entity = cell.entity();
 
-            if (agentModel.getEntity(currentCoordinate) != entity) {
-                throw new IllegalStateException("EtpetsAgentLogic: Snapshot entity mismatch at "
-                        + currentCoordinate.toDisplayString()
-                        + " (expected=" + entity.toDisplayString()
-                        + ", actual=" + agentModel.getEntity(currentCoordinate).toDisplayString() + ").");
-            }
+            checkSnapshotEntity(agentModel, currentCoordinate, entity);
 
             if (entity instanceof PetEgg egg) {
                 egg.decrementIncubationRemaining();
@@ -150,6 +144,19 @@ public final class EtpetsAgentLogic {
         }
 
         statistics.adjustCellCounts(activePetCountChange, eggCountChange, cumulativeDeadPetCountChange);
+    }
+
+    @SuppressWarnings("ObjectEquality")
+    private static void checkSnapshotEntity(WritableGridModel<AgentEntity> agentModel,
+                                            GridCoordinate coordinate,
+                                            AgentEntity snapshotEntity) {
+        AgentEntity currentEntity = agentModel.getEntity(coordinate);
+        if (currentEntity != snapshotEntity) {
+            throw new IllegalStateException("Unable to process agent: snapshot entity mismatch, coordinate="
+                    + coordinate.toDisplayString()
+                    + ", expected=" + snapshotEntity.toDisplayString()
+                    + ", actual=" + currentEntity.toDisplayString());
+        }
     }
 
     @SuppressWarnings("CommentedOutCode")

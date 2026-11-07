@@ -38,10 +38,8 @@ public record GridCoordinate(int x, int y) implements Comparable<GridCoordinate>
      *
      * @return {@code true} if the coordinate is illegal, {@code false} otherwise
      */
-    @SuppressWarnings("ObjectEquality")
     public boolean isIllegal() {
-        // First performs an identity check for performance; then validates x and y against MIN_VALID_COORDINATE.
-        return (this == ILLEGAL) || (x < MIN_VALID_COORDINATE) || (y < MIN_VALID_COORDINATE);
+        return (x < MIN_VALID_COORDINATE) || (y < MIN_VALID_COORDINATE);
     }
 
     /**
@@ -288,14 +286,13 @@ public record GridCoordinate(int x, int y) implements Comparable<GridCoordinate>
     /**
      * Returns a short, human-readable string representation of this coordinate.
      *
-     * <p>Format: {@code (x, y)}, e.g., {@code (15, 20)}. Returns {@code (illegal)} if this coordinate is the
+     * <p>Format: {@code (x, y)}, e.g., {@code (15, 20)}. Returns {@code (illegal)} if this coordinate equals the
      * constant {@link #ILLEGAL}.
      *
      * @return a concise display string for this coordinate
      */
-    @SuppressWarnings("ObjectEquality")
     public String toDisplayString() {
-        if (this == ILLEGAL) {
+        if (equals(ILLEGAL)) {
             return "(illegal)";
         }
         return String.format(Locale.ROOT, "(%d, %d)", x, y);
