@@ -10,10 +10,9 @@ Rules for all `.java` files; repository-wide instructions still apply.
 ## Code Style
 
 - Do not add comments that only restate obvious code.
-- Format code as `.editorconfig` in the repository root and the IntelliJ defaults specify (e.g., 4 spaces, a
-  continuation indent of 8, at most 120 characters per line, and chained method calls without alignment). End each
-  file with exactly one newline, and put one blank line before the closing brace of a type body, except for an empty
-  body; the IntelliJ formatter keeps extra or missing blank lines there.
+- Format code as `.editorconfig` and the IntelliJ defaults specify (e.g., 4 spaces, a continuation indent of 8, at
+  most 120 characters per line, and chained method calls without alignment). End each file with exactly one newline,
+  and put one blank line before the closing brace of a non-empty type body; the formatter does not add or remove it.
 - Use single-type imports, also for static members; do not use on-demand imports (`.*`). Import a nested type with
   a regular import, not with `import static`.
 - Group imports as IntelliJ does, with one blank line between the groups: all other packages, `javax.*`, `java.*`,
@@ -129,9 +128,9 @@ Use these method naming patterns when they match the method's primary behavior; 
   returns a defined fallback value
 - Boolean predicates and combinators (`and`, `or`, `andThen`) are not affected by `...And...` and `...Or...`.
 - Use concise noun-style names (`locale()`, `area()`, `opposite()`) for stored properties, intrinsic derived values, and
-  named catalog values. They are especially appropriate for records, enums, immutable value objects, data-focused types,
-  and components exposing owned state. Noun-style names may take qualifying parameters for pure queries whose name
-  describes the result (e.g., `turnForState(int)`, `boundingBoxAt(Point2D)`).
+  named catalog values, especially of records, enums, value types, and components exposing owned state. They may take
+  qualifying parameters for pure queries whose name describes the result (e.g., `turnForState(int)`,
+  `boundingBoxAt(Point2D)`).
 - Keep JavaBean-style `getX()` for getters paired with a JavaFX `xProperty()`, for ViewModel accessors (see
   `simulations.md`), and for existing JavaBean-style field accessors (e.g., `EditToolBarView.getNode()`,
   `DrawCallThrottler.getAverageDurationMillis()`).
@@ -160,7 +159,7 @@ Use these method naming patterns when they match the method's primary behavior; 
   exists (e.g., `MoveDecision.isFoodTarget()`).
 - Declare `toDisplayString()` on a record whose values are shown to users or in logs (e.g., coordinates, sizes,
   neighborhood results, cells, descriptors, rules); results, statistics, configs, user action contexts, and private
-  records do not need one. Do not add it only for completeness.
+  records do not need one.
 
 ## Enums
 
@@ -220,17 +219,14 @@ also annotate each parameter that is non-null there with `@NonNull` directly bef
 Only IntelliJ checks these contracts; the Gradle build and the tests do not. Check your own code against the rules
 below.
 
-- Treat unannotated types as non-null under `@NullMarked`.
 - Use `@Nullable` (imported from `org.jspecify.annotations`) only for intentional nullable contracts, not
   defensively.
 - Use `Optional` only as a return type; use `@Nullable` or an overload for parameters and fields. Return empty
   collections instead of `null`.
 - Do not check non-null-by-default parameters with `Objects.requireNonNull(...)`; use it only to assert that a
   `@Nullable` value (e.g., a field or a result) is set at this point.
-- Valid `@Nullable` locations include fields, parameters, return types, and type arguments
-  (`ObjectProperty<@Nullable GC>`).
-- Place `@Nullable` directly before the annotated type on the same line (`@Nullable String emojiKey()`), because it is
-  a type-use annotation.
+- Place `@Nullable` directly before the annotated type on the same line, because it is a type-use annotation
+  (`@Nullable String emojiKey()`, `ObjectProperty<@Nullable GC>`).
 - Handle `null` before dereferencing a `@Nullable` field, parameter, or result.
 - Do not pass `null` or a `@Nullable` value to a non-null parameter, assign it to a non-null field, or return it from
   a method with a non-null return type.
@@ -314,8 +310,7 @@ Rules for main sources; `core.md` adds stricter rules for `core`, and test sourc
 
 Use `de.mkalb.etpetssim.core.AppLogger` for all application logging.
 
-- Use `Supplier<String>` overloads (`debug(() -> ...)`, `info(() -> ...)`) when message construction is non-trivial to
-  avoid unnecessary string building.
+- Use `Supplier<String>` overloads (`debug(() -> ...)`, `info(() -> ...)`) when message construction is non-trivial.
 - Use `*f` formatting overloads (`debugf`, `infof`, `warnf`, `errorf`) for parameterized messages instead of manual
   `String.format(...)`.
 - Prefix log messages with a short, stable component tag when helpful (e.g., `"SimulationTimer: ..."`).
@@ -328,5 +323,5 @@ Use `de.mkalb.etpetssim.core.AppLogger` for all application logging.
 
 - Keep each `@SuppressWarnings` scope as narrow as possible (prefer method/field over class).
 - Do not add explanatory comments to `@SuppressWarnings`.
-- Do not add or remove `@SuppressWarnings` automatically; require human review and trade-off evaluation.
-- Prefer improving inspections/rules over adding suppressions when practical.
+- Do not add or remove `@SuppressWarnings` without the maintainer's review; prefer improving inspections or rules
+  over adding suppressions.

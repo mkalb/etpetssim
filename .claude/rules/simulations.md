@@ -27,11 +27,10 @@ Special cases:
 
 ## Package Isolation
 
-- Each simulation lives in `de.mkalb.etpetssim.simulations.<name>`.
-- Production code outside a simulation must not directly access its simulation-specific types.
-- `simulations.core.SimulationFactory` may import package-root `<SimulationName>Factory` classes.
+- Keep all simulation-specific code in `de.mkalb.etpetssim.simulations.<name>`.
+- Production code outside a simulation must not access its types; only `simulations.core.SimulationFactory` may
+  import the package-root `<SimulationName>Factory` classes.
 - Simulations must not depend on each other; shared infrastructure belongs in `simulations.core`.
-- Keep simulation-specific logic, entities, and UI components inside their simulation package.
 
 ## Consistency and Registration
 
@@ -83,7 +82,6 @@ Lists of simulations (e.g., the README table and gallery, and the entity catalog
 
 ### Shared
 
-- Contains layer-neutral enums, records, or value objects that the model uses together with `view` or `viewmodel`.
 - Exists because the model must not depend on `view` or `viewmodel`; `simulations.core` uses the same sub-packages.
 - Put a `<Simulation>UserActionContext` and its parameter types in `shared`.
 - Put types used only by `view` and `viewmodel` in `viewmodel`; rule preset families (`*RulePreset*`) stay in
@@ -91,7 +89,6 @@ Lists of simulations (e.g., the README table and gallery, and the entity catalog
 - May depend on the same simulation's `model.entity` and `model.strategy`; must not depend on the `model` package
   itself, `view`, or `viewmodel`.
 - Must not import JavaFX UI/property/binding types; neutral value types such as `Color` are allowed.
-- Entity types stay in `model.entity`, even when views read them for rendering.
 
 ## Entity Design
 
@@ -112,7 +109,7 @@ Lists of simulations (e.g., the README table and gallery, and the entity catalog
 
 ### Structure
 
-- Keep entity types in `model.entity`.
+- Keep entity types in `model.entity`, even when views read them for rendering.
 - Use sealed interfaces/classes for closed entity sets.
 - Implement `GridEntity` or `ConstantGridEntity` as appropriate.
 - Declare the `DESCRIPTOR_ID_*` constants of a simulation in its root entity contract (e.g., `SnakeEntity`), not in
@@ -157,29 +154,29 @@ are meant to be extended (e.g., `BaseTimedSimulationStatistics`).
 - Mutate scene graph and `Property` values only on the JavaFX Application Thread; pass model and background updates
   through `Platform.runLater(...)` and re-check relevant state inside the runnable.
 - Do not block the JavaFX Application Thread with long computation or I/O.
-- Use `Timeline`/`AnimationTimer` for periodic UI ticks and frame rendering.
-- Encapsulate periodic simulation drivers (e.g., `SimulationTimer`) instead of using `Timeline` directly in Views.
+- Drive periodic simulation steps through an encapsulated driver (e.g., `SimulationTimer`), not through a `Timeline`
+  in a View; use `Timeline`/`AnimationTimer` only for UI ticks and frame rendering.
 
 ### CSS and Styling
 
-- Put CSS under `app/src/main/resources/css/`; use shared `scene.css` for global rules.
-- Add simulation-specific CSS only when needed beyond `scene.css`.
-- Resolve CSS through `AppResources.getCssUrl(...)`.
-- Prefer CSS over hardcoded Java styling; Canvas rendering and other non-CSS-styleable APIs are exempt.
-- Do not use inline `setStyle(...)`; use style classes.
-- Reference style classes via constants: `FXStyleClasses` for shared names, `XStyleClasses` for simulation-local names.
+- Put CSS under `app/src/main/resources/css/`: global rules in the shared `scene.css`, simulation-specific CSS only
+  when needed beyond it.
+- Style with CSS classes, not in Java code or with inline `setStyle(...)`; Canvas rendering and other APIs that CSS
+  cannot style are exempt.
+- Reference style classes via constants: `FXStyleClasses` for shared names, `<Simulation>StyleClasses` (e.g.,
+  `ConwayStyleClasses`) for simulation-local names.
 - Use lower-kebab-case style class names and JavaFX looked-up colors (`-fx-*`) for shared theme values.
 
 ### Resources and Internationalization
 
-- Load images, CSS, and UI resources through `AppResources`.
+- Load images, CSS (`AppResources.getCssUrl(..)`), and other UI resources through `AppResources`.
 - Access bundles through `AppLocalization`; `i18n.md` describes the bundles and the localization key constants.
 
 ## Factory Pattern
 
 Each simulation package root must provide a factory:
 
-- Name `<SimulationName>Factory`, `public final`, private constructor.
+- Name it `<SimulationName>Factory` and make it a `public` utility class (`java.md`).
 - Regular simulations provide `public static SimulationMainView createMainView()`; `StartFactory` may accept its
   `Stage` navigation dependencies.
 - Let `simulations.core.SimulationFactory` wrap the returned view in `SimulationInstance`.
@@ -192,9 +189,7 @@ Use `CellDrawer` from `simulations.core.view`:
 - In `CellDrawer.draw(...)`, call `painter.drawCell(...)` for supported shapes and
   `painter.drawCenteredTextInCell(...)` for text or emoji overlays.
 - Keep custom rendering in simulation-specific View classes.
-- Cache drawing parameters when possible.
 - Use `DrawCallThrottler` to avoid excessive redraws; prefer batch updates for many cell changes.
-- Use `Canvas.setCache(true)` for static overlays when appropriate.
 
 ## Configuration and Input
 
@@ -246,14 +241,11 @@ Use `CellDrawer` from `simulations.core.view`:
 ### Observation and Statistics
 
 - Implement `SimulationObservationViewModel` for custom statistics; use `DefaultObservationViewModel` otherwise.
-- Update observation properties from Model via ViewModel.
-- Format statistics in ViewModel and localize labels with `AppLocalization`.
+- Format statistics in the ViewModel and localize labels with `AppLocalization`.
 
 ### Control Panel
 
-- Use `DefaultControlView` for standard play/pause/step/reset controls.
-- Wire control actions to ViewModel methods, not directly to Model.
-- Update control state from simulation state.
+- Use `DefaultControlView` for standard play/pause/step/reset controls; wire its actions to ViewModel methods.
 
 ### Main View Composition
 
@@ -261,7 +253,6 @@ Use `CellDrawer` from `simulations.core.view`:
 - Implement `buildObservationRegion()` and `buildConfigRegion()` in the corresponding Observation and Config Views.
 - `AbstractMainView` supplies the simulation canvas region through `createSimulationRegion()`.
 - Use `buildMainRegion()` as the UI composition entry point.
-- Keep layout in View classes, not ViewModel.
 
 ### User Action Context
 
@@ -277,7 +268,6 @@ Use `CellDrawer` from `simulations.core.view`:
 
 ## Naming
 
-- Use `draw...` for canvas rendering methods.
 - Name user-triggered redraw requests `requestDraw...` (for example, `requestDraw()`); their handlers follow
   `handle...`.
 - Name implementations of `SynchronousStepLogic` and `AgentStepLogic` with the suffix `StepLogic` (for example,

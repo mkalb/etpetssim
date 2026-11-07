@@ -77,17 +77,15 @@ Rules for test sources only; repository-wide and Java instructions still apply.
 
 ## Javadoc
 
-- Add Javadoc to test sources very sparingly and only where it adds clear value; test classes and test methods
-  normally have none.
-- Shared support classes such as `FXTestSupport` keep Javadoc for the class and its public API; manual test
-  utilities follow "Manual Test Utilities".
-- Package-local `*TestSupport` classes and all private helpers have no Javadoc.
-- Where test sources have Javadoc, it follows the tag and style rules of `java.md`.
+- Test classes and test methods normally have no Javadoc; package-local `*TestSupport` classes and private helpers
+  have none.
+- Shared support classes such as `FXTestSupport` document the class and its public API; manual test utilities follow
+  "Manual Test Utilities". This Javadoc follows the tag and style rules of `java.md`.
 
 ## Test Data and Helpers
 
 - Create focused helpers for verbose setup, e.g., `createConfig(...)` or `coordinate(...)`.
-- Keep helper names aligned with production naming (`create...`, `build...`, `compute...`, `is...`); never start a
+- Keep helper names aligned with production naming (`create...`, `compute...`, `is...`); never start a
   helper name with `test`.
 - Name fixture types `Test<Type>` for a minimal implementation of a production type; `Stub<Type>`, `Counting<Type>`,
   or `Recording<Type>` when the behavior of the test double matters; otherwise a meaningful domain name. Fixture names
@@ -149,8 +147,7 @@ Rules for test sources only; repository-wide and Java instructions still apply.
 
 ## JavaFX Tests
 
-- Use `de.mkalb.etpetssim.testsupport.FXTestSupport`.
-- Call `FXTestSupport.ensureStarted()` once in `@BeforeAll`.
+- Use `de.mkalb.etpetssim.testsupport.FXTestSupport` and call `FXTestSupport.ensureStarted()` once in `@BeforeAll`.
 - Create and mutate JavaFX components via `FXTestSupport.runAndWait(...)`; use the timeout overload only when needed.
 - Use `FXTestSupport.supplyAndWait(...)` to create a JavaFX object on the FX thread and return it for assertions on the
   calling thread.
@@ -162,9 +159,8 @@ Rules for test sources only; repository-wide and Java instructions still apply.
 - Put all automated tests for repository skills under
   `app/src/test/java/de/mkalb/etpetssim/skills` in the `de.mkalb.etpetssim.skills` package and annotate each test class
   with `@Tag("skill")`.
-- Run skill tests with `gradlew.bat app:skillTest`; the regular `test` task intentionally excludes the `skill` tag.
-- The existing `skillTest` task automatically discovers every test class tagged `skill`; adding tests for another
-  skill must not require changes to the Gradle configuration.
+- `app:skillTest` discovers every test class tagged `skill`; adding tests for another skill must not require changes to
+  the Gradle configuration.
 - Run skills that read or modify repository-shaped files against fixtures under `@TempDir`; never use production files
   as mutable test input.
 - For command-style skills, assert the exit code and stable output fragments or exact output. For modifying modes,

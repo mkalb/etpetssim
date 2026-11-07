@@ -5,13 +5,12 @@ paths:
 
 # UI Package Instructions
 
-Rules for production code in `de.mkalb.etpetssim.ui`; keep reusable UI infrastructure and application-level dialogs
-here, not simulation logic.
+Rules for production code in `de.mkalb.etpetssim.ui`: reusable UI infrastructure and application-level dialogs.
 
 ## Scope
 
-- Depend only on JavaFX, `core`, and `engine`.
-- Add code here only when it is reusable by multiple UI or simulation components.
+- Add code here only when several UI or simulation components can reuse it; no simulation logic.
+- Depend only on the JDK, JSpecify, JavaFX, `core`, and `engine`.
 - Keep the complete public API of the drawing toolkit (`FXGridCanvasPainter`, `FXPaintFactory`, `GridGeometry`, and
   `CellDimension`), also members without a current caller (e.g., `CellDimension.boundingBoxDimension()` or
   `FXPaintFactory.createRadialGradient(..)`); all simulations draw with it.
@@ -23,9 +22,8 @@ here, not simulation logic.
 - `FXComponentFactory` creates styled controls and returns `LabeledControl<R>` when a label/control pair is needed.
 - Keep labels connected with `setLabelFor(...)`; share tooltips between labels and controls when the factory pattern
   does so.
-- Use `FXStyleClasses` constants for CSS class names; add new constants there instead of scattering literal style names.
-- For factory-created listeners, bindings, or bidirectional bindings that can outlive the control, provide or preserve
-  cleanup registration.
+- Use and extend the `FXStyleClasses` constants for CSS class names instead of literals.
+- Provide or preserve cleanup registration for factory-created listeners and bindings that can outlive the control.
 - `FXPaintFactory` is for reusable paint/color calculations; validate numeric ranges before creating colors or maps.
 
 ## Input Property Records
@@ -33,24 +31,21 @@ here, not simulation logic.
 - `Input*Property` records wrap JavaFX properties plus constraints, valid choices, or display-name providers.
 - Compact constructors validate structural constraints and the initial property value; copy valid-value lists
   defensively.
-- Factory-created setters log invalid later values via `AppLogger.error(...)` but still set them so controls stay
-  responsive.
-- Numeric wrappers expose `asObjectProperty()`, `asStringBinding(...)`, and `adjustValue(...)` for control integration.
-- Choice wrappers expose `asStringBinding(...)`, `isValue(...)`, and `hasMultipleValidValues()`.
-- Keep validation helpers package-private when they support tests or shared non-trivial checks.
+- The properties created by `of(..)` log invalid later values with `AppLogger.errorf(..)` but still set them, so
+  controls stay responsive.
+- Numeric wrappers expose `asObjectProperty()`, `asStringBinding(..)`, and `adjustValue(..)`; choice wrappers expose
+  `asStringBinding(..)`, `isValue(..)`, and `hasMultipleValidValues()`.
 
 ## Grid Geometry and Rendering
 
 - Treat `GridGeometry` and `CellDimension` as the source of truth for cell sizes, canvas positions, polygons, bounds,
   and point-to-cell conversion.
 - Do not duplicate triangle, square, or hexagon geometry in painters or component code.
-- `FXGridCanvasPainter` is stateful canvas rendering around one `Canvas`, `GridStructure`, and computed dimensions.
 - Drawing methods may accept a `@Nullable Paint` or `Color` only when `null` means "do not draw this layer".
 - Preserve bounds checks for direct pixel drawing and positive-size checks for shapes.
 - `CellShapeSide` represents UI frame sides only; extend it only when all shape-specific frame methods are updated.
 
 ## Timer
 
-- `SimulationTimer` owns a JavaFX `Timeline`; `start(...)` validates a finite positive interval and stops the previous
-  timeline first.
-- `stop()` must stop and clear the timeline so `isRunning()` reflects current state.
+- `SimulationTimer.start(..)` rejects intervals that are not finite and positive, and stops the previous timeline
+  first; `stop()` stops and clears the timeline, so `isRunning()` reflects the current state.
