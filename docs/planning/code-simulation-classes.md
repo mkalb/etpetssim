@@ -627,3 +627,15 @@ None yet.
 - Proposal: Change the messages to `value must be finite, but was: ...` and `stepCount must be >= 0, but was: ...`,
   and check whether a test asserts the old text. A record, so it belongs to no category; change it with category 1,
   which touches `simulations.core.model`, or in a final cleanup.
+
+### Exception message of ReproductionOption
+
+- Origin: refinement of #111 (2026-11-07)
+- Types: `etpets.model.EtpetsAgentLogic` (nested private record `ReproductionOption`)
+- Problem: The compact constructor throws
+  `"EtpetsAgentLogic: ReproductionOption partnerCell must contain a Pet agent."`, while `java.md` ("Exceptions")
+  requires the form `<name> must <condition>, but was: <value>` without a final period; the message has a component
+  prefix and a final period, and lacks the rejected value. No test asserts the text.
+- Proposal: Change the message to `partnerCell must contain a Pet agent, but was: ` plus the agent entity of
+  `partnerCell`. `EtpetsAgentLogic` is a class with a private constructor and belongs to no category; change it with
+  category 5, which touches `etpets.model`, or in a final cleanup.
