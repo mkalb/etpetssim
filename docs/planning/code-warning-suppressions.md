@@ -125,7 +125,7 @@ The test sources were done on 2026-11-06: 52 suppressions in 22 files and 9 insp
 | main    | `SameParameterValue`                |    14 | keep 12; change code in 2        | done        |
 | main    | `NumericCastThatLosesPrecision`     |    12 | keep 8; change code in 4         | done        |
 | main    | `unused`                            |     6 | keep 4; remove 2 parameters      | done        |
-| main    | `CommentedOutCode`                  |     4 | keep                             | open        |
+| main    | `CommentedOutCode`                  |     4 | keep                             | done        |
 | main    | `ObjectEquality`                    |     3 | per occurrence                   | open        |
 | main    | types with two occurrences (4)      |     8 | per occurrence                   | open        |
 | main    | other types (10)                    |    10 | per occurrence                   | open        |
@@ -537,7 +537,10 @@ Remaining suppressions (4):
   `AppLogger` calls).
 - Proposal: keep; `java.md` ("Logging with AppLogger") allows commented-out `AppLogger` calls as diagnostic traces.
   Check whether the other commented-out blocks are still needed; otherwise remove them (change code).
-- Decision: open.
+- Decision: keep all 4 (maintainer, 2026-11-07). `EtpetsAgentLogic.selectAndApplyAction()` keeps the commented-out
+  `AppLogger` call that `java.md` allows. The three blocks "Only for testing / debugging" in
+  `EtpetsSimulationManager` stay as a temporary exception without a rule change: the optimization of ET Pets still
+  needs them and removes them afterwards, together with their suppressions.
 
 - `simulations/etpets/model/EtpetsAgentLogic.java`: `selectAndApplyAction()`
 - `simulations/etpets/model/EtpetsSimulationManager.java`: `initializePets()`, `initializeResources()`,
