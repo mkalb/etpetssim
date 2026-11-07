@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Execution(ExecutionMode.SAME_THREAD)
-final class ExtraterrestrialPetsSimulationTest {
+final class EtpetssimApplicationTest {
 
     @BeforeAll
     static void setUpBeforeAll() {
@@ -48,7 +48,7 @@ final class ExtraterrestrialPetsSimulationTest {
 
     @Test
     void testFormatUnexpectedErrorContent() {
-        String content = ExtraterrestrialPetsSimulation.formatUnexpectedErrorContent(
+        String content = EtpetssimApplication.formatUnexpectedErrorContent(
                 new IllegalStateException("Boom"), 0);
 
         assertEquals("Boom\n\nDetails are in the application log if logging is enabled (--log-file).", content);
@@ -56,7 +56,7 @@ final class ExtraterrestrialPetsSimulationTest {
 
     @Test
     void testFormatUnexpectedErrorContentReturnsClassNameForNullMessage() {
-        String content = ExtraterrestrialPetsSimulation.formatUnexpectedErrorContent(
+        String content = EtpetssimApplication.formatUnexpectedErrorContent(
                 new IllegalStateException(), 0);
 
         assertEquals("""
@@ -67,7 +67,7 @@ final class ExtraterrestrialPetsSimulationTest {
 
     @Test
     void testFormatUnexpectedErrorContentReturnsClassNameForBlankMessage() {
-        String content = ExtraterrestrialPetsSimulation.formatUnexpectedErrorContent(
+        String content = EtpetssimApplication.formatUnexpectedErrorContent(
                 new IllegalArgumentException("  "), 0);
 
         assertEquals("""
@@ -78,7 +78,7 @@ final class ExtraterrestrialPetsSimulationTest {
 
     @Test
     void testFormatUnexpectedErrorContentReturnsCounterLineForPositiveCount() {
-        String content = ExtraterrestrialPetsSimulation.formatUnexpectedErrorContent(
+        String content = EtpetssimApplication.formatUnexpectedErrorContent(
                 new IllegalStateException("Boom"), 3);
 
         assertEquals("""
@@ -91,7 +91,7 @@ final class ExtraterrestrialPetsSimulationTest {
     @Test
     void testStopShutsDownCurrentSimulationOnce() {
         CountingMainView view = new CountingMainView();
-        ExtraterrestrialPetsSimulation application = new ExtraterrestrialPetsSimulation();
+        EtpetssimApplication application = new EtpetssimApplication();
 
         FXTestSupport.runAndWait(() -> {
             SimulationInstance instance = createInstance(SimulationType.WATOR, view);
@@ -111,7 +111,7 @@ final class ExtraterrestrialPetsSimulationTest {
     @Test
     void testStopDoesNotShutDownTwiceAfterCloseRequest() {
         CountingMainView view = new CountingMainView();
-        ExtraterrestrialPetsSimulation application = new ExtraterrestrialPetsSimulation();
+        EtpetssimApplication application = new EtpetssimApplication();
 
         FXTestSupport.runAndWait(() -> {
             application.setCurrentSimulationInstance(createInstance(SimulationType.SNAKE, view));
@@ -127,7 +127,7 @@ final class ExtraterrestrialPetsSimulationTest {
     void testStopEscalatesWhenTerminationDoesNotComplete() {
         CountingTerminationHandle terminationHandle =
                 new CountingTerminationHandle(TerminationAwaitOutcome.INCOMPLETE);
-        ExtraterrestrialPetsSimulation application = new ExtraterrestrialPetsSimulation();
+        EtpetssimApplication application = new EtpetssimApplication();
 
         FXTestSupport.runAndWait(() -> {
             application.setCurrentSimulationInstance(
@@ -146,7 +146,7 @@ final class ExtraterrestrialPetsSimulationTest {
     void testStopInterruptsTerminationWaitAndRestoresInterruptStatus() {
         CountingTerminationHandle terminationHandle =
                 new CountingTerminationHandle(TerminationAwaitOutcome.INTERRUPTED);
-        ExtraterrestrialPetsSimulation application = new ExtraterrestrialPetsSimulation();
+        EtpetssimApplication application = new EtpetssimApplication();
         AtomicBoolean interrupted = new AtomicBoolean();
 
         FXTestSupport.runAndWait(() -> {
@@ -174,7 +174,7 @@ final class ExtraterrestrialPetsSimulationTest {
                 new CountingTerminationHandle(TerminationAwaitOutcome.INTERRUPTED);
         CountingTerminationHandle pendingTerminationHandle =
                 new CountingTerminationHandle(TerminationAwaitOutcome.TERMINATED);
-        ExtraterrestrialPetsSimulation application = new ExtraterrestrialPetsSimulation();
+        EtpetssimApplication application = new EtpetssimApplication();
 
         FXTestSupport.runAndWait(() -> {
             try {
@@ -203,7 +203,7 @@ final class ExtraterrestrialPetsSimulationTest {
                 TerminationAwaitOutcome.TERMINATED, TimeUnit.MILLISECONDS.toNanos(10));
         CountingTerminationHandle secondTerminationHandle =
                 new CountingTerminationHandle(TerminationAwaitOutcome.TERMINATED);
-        ExtraterrestrialPetsSimulation application = new ExtraterrestrialPetsSimulation();
+        EtpetssimApplication application = new EtpetssimApplication();
 
         FXTestSupport.runAndWait(() -> {
             application.setCurrentSimulationInstance(

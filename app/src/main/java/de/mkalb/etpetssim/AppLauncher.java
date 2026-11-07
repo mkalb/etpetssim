@@ -16,7 +16,7 @@ import java.util.Locale;
  * Application launcher and bootstrap entry point.
  *
  * <p>Parses command-line arguments, initializes logging and localization, and launches
- * {@link ExtraterrestrialPetsSimulation}. It is intentionally separate from the JavaFX {@link Application} subclass.
+ * {@link EtpetssimApplication}. It is intentionally separate from the JavaFX {@link Application} subclass.
  */
 public final class AppLauncher {
 
@@ -38,7 +38,7 @@ public final class AppLauncher {
 
         AppLogger.infof("AppLauncher: Launching %s with arguments: %s", AppManifest.formatVersionLine(),
                 arguments.toArgumentString());
-        Application.launch(ExtraterrestrialPetsSimulation.class, args);
+        Application.launch(EtpetssimApplication.class, args);
     }
 
     /**

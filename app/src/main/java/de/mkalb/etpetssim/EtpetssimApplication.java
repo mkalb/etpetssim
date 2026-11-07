@@ -42,7 +42,7 @@ import java.util.concurrent.TimeUnit;
  * and coordinates startup and shutdown behavior. Command-line parsing, logging,
  * and localization are initialized by {@link AppLauncher} before launch.
  */
-public final class ExtraterrestrialPetsSimulation extends Application {
+public final class EtpetssimApplication extends Application {
 
     /**
      * The application icon image paths used in the JavaFX application.
