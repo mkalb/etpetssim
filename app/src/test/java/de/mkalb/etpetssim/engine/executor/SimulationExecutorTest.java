@@ -88,6 +88,15 @@ final class SimulationExecutorTest {
     }
 
     @Test
+    void testExecuteStepsReturnsFinishedWhenStartingAtTechnicalLimit() {
+        TestExecutor executor = new TestExecutor(Integer.MAX_VALUE, NEVER_FINISHED);
+
+        StepExecutionResult result = executor.executeSteps(10, false, () -> fail("callback must not run"));
+
+        assertEquals(new StepExecutionResult(Integer.MAX_VALUE, 0, true, false), result);
+    }
+
+    @Test
     void testExecuteStepsReturnsInterruptedBeforeFirstStep() {
         TestExecutor executor = new TestExecutor(0, NEVER_FINISHED);
         Thread.currentThread().interrupt();

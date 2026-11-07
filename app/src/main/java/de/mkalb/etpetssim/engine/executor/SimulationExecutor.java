@@ -65,9 +65,11 @@ public interface SimulationExecutor<
     /**
      * Executes up to the specified number of simulation steps.
      *
-     * <p>Execution can terminate early if the thread is interrupted, if the executor reaches
-     * its technical limit ({@link #isExecutorFinished()}), or (optionally) if
-     * {@code checkTermination} is {@code true} and {@link #isFinished()} becomes {@code true}.
+     * <p>Execution stops early if the thread is interrupted, if the executor has reached its technical limit
+     * ({@link #isExecutorFinished()}, checked before each step), or, if {@code checkTermination} is {@code true}, when
+     * {@link #isFinished()} becomes {@code true} (checked after each step). A call on an already finished simulation
+     * therefore still executes one step, which allows stepping beyond a final state. A {@code count} of zero or less
+     * executes no step.
      *
      * <p>After each executed step, the provided {@code onStep} callback is invoked. This allows external code to track
      * progress, update the UI, or perform other actions after each step.
@@ -88,6 +90,9 @@ public interface SimulationExecutor<
         for (int i = 0; i < count; i++) {
             if (Thread.currentThread().isInterrupted()) {
                 return createInterruptedResult(stepBefore);
+            }
+            if (isExecutorFinished()) {
+                return createResult(stepBefore, true, false);
             }
             executeStep();
             onStep.run();

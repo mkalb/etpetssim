@@ -19,7 +19,7 @@ public final class TimedSimulationExecutor<
 
     private final SimulationExecutor<ENT, GM> delegate;
 
-    private long currentStepNanos = Long.MIN_VALUE;
+    private long currentStepNanos;
     private long minStepNanos = Long.MAX_VALUE;
     private long maxStepNanos = Long.MIN_VALUE;
     private long sumStepNanos;
@@ -28,11 +28,16 @@ public final class TimedSimulationExecutor<
      * Creates a timed executor for the given delegate.
      *
      * <p>The delegate must not have executed any step yet, because the average divides the timed durations by the step
-     * count of the delegate (see {@link #stepTimingStatistics()}).
+     * count of the delegate (see {@link #stepTimingStatistics()}). For the same reason, steps must only be executed
+     * through this executor; steps executed directly on the delegate are counted but not timed.
      *
      * @param delegate the underlying {@link SimulationExecutor} to decorate
+     * @throws IllegalArgumentException if the delegate has already executed steps
      */
     public TimedSimulationExecutor(SimulationExecutor<ENT, GM> delegate) {
+        if (delegate.stepCount() != 0) {
+            throw new IllegalArgumentException("delegate.stepCount() must be 0, but was: " + delegate.stepCount());
+        }
         this.delegate = delegate;
     }
 
@@ -86,8 +91,6 @@ public final class TimedSimulationExecutor<
      * <p>If no steps have been executed yet, all values in the returned record are {@code 0}.
      *
      * @return a {@link StepTimingStatistics} record with the current timing statistics
-     * @throws IllegalArgumentException if the delegate executed steps before it was wrapped and these counted but
-     *                                  untimed steps make the values inconsistent
      */
     public StepTimingStatistics stepTimingStatistics() {
         int steps = stepCount();

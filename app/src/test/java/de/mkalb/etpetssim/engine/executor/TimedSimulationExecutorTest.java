@@ -24,6 +24,11 @@ final class TimedSimulationExecutorTest {
     private static final long MIN_STEP_NANOS = 1_000L;
 
     @Test
+    void testConstructorRejectsDelegateWithExecutedSteps() {
+        assertThrows(IllegalArgumentException.class, () -> new TimedSimulationExecutor<>(new StubExecutor(1)));
+    }
+
+    @Test
     void testCurrentGridModel() {
         StubExecutor delegate = new StubExecutor(0);
 
@@ -107,14 +112,6 @@ final class TimedSimulationExecutorTest {
                 () -> assertTrue(statistics.sumNanos() >= statistics.maxNanos()),
                 () -> assertEquals(statistics.sumNanos() / 3, statistics.avgNanos())
         );
-    }
-
-    @Test
-    void testStepTimingStatisticsThrowsWhenDelegateStepsWereNotTimed() {
-        TimedSimulationExecutor<TestEntity, SparseGridModel<TestEntity>> executor =
-                new TimedSimulationExecutor<>(new StubExecutor(1));
-
-        assertThrows(IllegalArgumentException.class, executor::stepTimingStatistics);
     }
 
     private enum TestEntity implements GridEntity {
