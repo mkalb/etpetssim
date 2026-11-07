@@ -573,8 +573,6 @@ Notes:
 - The main views take `(viewModel, [editToolBarViewModel], entityDescriptorRegistry, configView, controlView,
   observationView)`; Forest and Wa-Tor have no edit tool bar. `LabMainView` extends `AbstractMainView` directly and
   has 23 private methods; `StartMainView` implements `SimulationMainView` and `SimulationControlView`.
-- `WatorConfigView` has a class-level `@SuppressWarnings("SpellCheckingInspection")`; check its scope
-  (`java.md`, "Suppressions Policy").
 - No view of this category has a test; JavaFX classes get no new tests in this plan.
 
 ## Cross-category decisions

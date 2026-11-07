@@ -1,6 +1,6 @@
 # IntelliJ Warning Suppressions
 
-**Status:** planned
+**Status:** done
 
 **Related issues:** #68, #23, #46
 
@@ -83,8 +83,8 @@ no warnings. The inventory below reflects this state.
 
 Not counted: the `@SuppressWarnings` text in the test data of `skills/JavaCodeInventoryTest.java`.
 
-The test sources were done on 2026-11-06: 52 suppressions in 22 files and 9 inspection types remain, all decided as
-"keep".
+The test sources were done on 2026-11-06: 51 suppressions in 21 files and 9 inspection types remain, all decided as
+"keep" (recounted on 2026-11-07).
 
 The main sources were done on 2026-11-07: 53 suppressions in 38 files and 19 inspection types remain, all decided as
 "keep". Five of them are removed later by other work: the two `OptionalUsedAsFieldOrParameterType` by the finding
@@ -142,6 +142,9 @@ by the optimization of ET Pets.
   (maintainer, 2026-10-30).
 - The suppressions that the maintainer added on 2026-11-06 are committed as a baseline before the types are worked
   on (maintainer, 2026-11-06).
+- The lasting decisions are the settings of the committed inspection profile and project dictionary, and the rules
+  in `java.md` and `junit.md`; `docs/development/intellij-setup.md` needs no additional section on them (maintainer,
+  2026-11-07).
 
 ## 1. Test sources
 
@@ -438,7 +441,8 @@ Remaining suppressions (1):
 - Decision: disable the inspection in the profile and remove all 13 suppressions (maintainer, 2026-11-06). All
   occurrences are intended: the key methods return literals as `java.md` prescribes, `minCoordinateInclusive()` is
   the counterpart of `maxCoordinateExclusive()` in the engine API, and `completed()` is a singleton factory; every new
-  choice enum would need another suppression.
+  choice enum would need another suppression. The inspection is enabled by default, so the profile keeps a disabled
+  entry for it.
 
 The inventory is omitted: all occurrences are removed by the same commit.
 
