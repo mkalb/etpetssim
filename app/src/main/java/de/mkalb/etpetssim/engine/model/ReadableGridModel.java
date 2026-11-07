@@ -89,6 +89,8 @@ public sealed interface ReadableGridModel<ENT extends GridEntity> extends GridMo
     /**
      * Selects a random coordinate from the grid that contains the default entity.
      *
+     * <p>The coordinate is chosen uniformly at random among all cells that contain the default entity.
+     *
      * @param random the random number generator to use
      * @return an Optional containing a random default coordinate, or empty if none exist
      */

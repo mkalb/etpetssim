@@ -22,7 +22,7 @@ public interface GridEntityDescriptorProvider {
     String descriptorId();
 
     /**
-     * Indicates whether this entity should be visible in the grid.
+     * Indicates whether the entity should be visible in the grid (rendering hint).
      *
      * @return {@code true} if visible, {@code false} otherwise
      */

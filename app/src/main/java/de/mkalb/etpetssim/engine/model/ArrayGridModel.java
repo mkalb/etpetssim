@@ -272,7 +272,6 @@ public final class ArrayGridModel<ENT extends GridEntity> implements WritableGri
         return "ArrayGridModel{" +
                 "structure=" + structure +
                 ", defaultEntity=" + defaultEntity +
-                ", data.length=" + data.length +
                 '}';
     }
 

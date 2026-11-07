@@ -37,6 +37,9 @@ public sealed interface WritableGridModel<ENT extends GridEntity> extends Readab
     /**
      * Sets the entity at the specified coordinate.
      *
+     * <p>An entity equal to the default entity ({@code equals}) is treated as the default entity; implementations may
+     * store and return the default entity instance instead of the given one.
+     *
      * @param coordinate the grid coordinate
      * @param entity     the entity to set
      * @throws IndexOutOfBoundsException if the coordinate is not valid

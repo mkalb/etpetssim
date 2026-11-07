@@ -168,6 +168,33 @@ final class WritableGridModelTest {
 
     @ParameterizedTest
     @EnumSource
+    void testFindRandomDefaultCoordinateSelectsUniformly(GridModelImplementation implementation) {
+        WritableGridModel<TestEntity> model = implementation.createModel();
+        model.fill(TestEntity.WALL);
+        GridCoordinate first = coordinate(1, 0);
+        GridCoordinate second = coordinate(2, 0);
+        model.setEntityToDefault(first);
+        model.setEntityToDefault(second);
+        Random random = new Random(42L);
+        int draws = 4_000;
+
+        int firstCount = 0;
+        for (int i = 0; i < draws; i++) {
+            if (model.findRandomDefaultCoordinate(random).orElseThrow().equals(first)) {
+                firstCount++;
+            }
+        }
+        int firstHits = firstCount;
+
+        // The first cell follows a long run of non-default cells; a biased scan would select it far more often.
+        assertAll(
+                () -> assertTrue(firstHits > 1_850, "first cell selected " + firstHits + " times"),
+                () -> assertTrue(firstHits < 2_150, "first cell selected " + firstHits + " times")
+        );
+    }
+
+    @ParameterizedTest
+    @EnumSource
     void testAllCells(GridModelImplementation implementation) {
         WritableGridModel<TestEntity> model = implementation.createModel();
         model.setEntity(coordinate(0, 0), TestEntity.WALL);

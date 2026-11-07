@@ -154,16 +154,18 @@ public final class SparseGridModel<ENT extends GridEntity> implements WritableGr
             }
         }
 
-        // Phase 2 – linear fallback: scan the full grid from a random start position.
-        // Guarantees a result when random sampling fails (e.g. when the grid is nearly full).
-        int startIndex = random.nextInt(area);
-        for (int offset = 0; offset < area; offset++) {
-            int index = (startIndex + offset) % area;
-            int y = index / width;
-            int x = index % width;
-            GridCoordinate coordinate = new GridCoordinate(x, y);
-            if (!data.containsKey(coordinate)) {
-                return Optional.of(coordinate);
+        // Phase 2 – linear fallback: select the target-th default cell in row-major order.
+        // Guarantees a uniformly chosen result when random sampling fails (e.g. when the grid is nearly full).
+        int remaining = random.nextInt(defaultCount);
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                GridCoordinate coordinate = new GridCoordinate(x, y);
+                if (!data.containsKey(coordinate)) {
+                    if (remaining == 0) {
+                        return Optional.of(coordinate);
+                    }
+                    remaining--;
+                }
             }
         }
 
@@ -263,7 +265,14 @@ public final class SparseGridModel<ENT extends GridEntity> implements WritableGr
     public void fill(ENT entity) {
         data.clear();
         if (!entity.equals(defaultEntity)) {
-            structure.coordinatesStream().forEach(coordinate -> data.put(coordinate, entity));
+            // Inline nested loop avoids the intermediate ArrayList created by coordinatesList().
+            int width = structure.size().width();
+            int height = structure.size().height();
+            for (int y = 0; y < height; y++) {
+                for (int x = 0; x < width; x++) {
+                    data.put(new GridCoordinate(x, y), entity);
+                }
+            }
         }
     }
 
