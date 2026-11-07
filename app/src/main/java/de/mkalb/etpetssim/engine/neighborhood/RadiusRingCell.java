@@ -33,7 +33,7 @@ public record RadiusRingCell<C>(int ring,
                                 SortedSet<GridCoordinate> reachedFromPreviousRing) {
 
     /**
-     * Validates the ring index and stores an unmodifiable copy of the predecessor set.
+     * Creates a radius ring cell, validates the ring index, and stores an unmodifiable copy of the predecessor set.
      *
      * @throws IllegalArgumentException if {@code ring} is negative
      */

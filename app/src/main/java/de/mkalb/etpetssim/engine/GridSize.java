@@ -6,13 +6,12 @@ import java.util.Locale;
  * Represents the logical size of a two-dimensional simulation grid.
  *
  * <p>The grid size is defined by its {@code width} (number of columns) and {@code height} (number of rows).
- * Both values must be within the valid range from {@value #MIN_SIZE} to {@value #MAX_SIZE}.
  *
  * <p>Provides methods for size validation, area and perimeter calculation,
  * aspect ratio, and orientation checks.
  *
- * @param width  the number of columns (horizontal cells), must be within valid range
- * @param height the number of rows (vertical cells), must be within valid range
+ * @param width  the number of columns (horizontal cells)
+ * @param height the number of rows (vertical cells)
  */
 public record GridSize(int width, int height) {
 
@@ -26,7 +25,7 @@ public record GridSize(int width, int height) {
     public static final int MAX_SIZE = 16_384;
 
     /**
-     * Validates that width and height are within the valid range.
+     * Creates a grid size and validates that width and height are within the valid range.
      *
      * @throws IllegalArgumentException if width or height is less than {@link #MIN_SIZE} or greater than
      *                                  {@link #MAX_SIZE}

@@ -179,6 +179,8 @@ public record GridCoordinate(int x, int y) implements Comparable<GridCoordinate>
      * @param maxX the maximum x-coordinate (exclusive)
      * @param maxY the maximum y-coordinate (exclusive)
      * @return a new GridCoordinate clamped to the specified bounds
+     * @throws IllegalArgumentException if {@code maxX} is not greater than {@code minX} or {@code maxY} is not
+     *                                  greater than {@code minY}
      */
     public GridCoordinate clampToBounds(int minX, int minY, int maxX, int maxY) {
         int clampedX = Math.clamp(x, minX, maxX - 1);
@@ -193,6 +195,8 @@ public record GridCoordinate(int x, int y) implements Comparable<GridCoordinate>
      * @param minCorner the minimum corner (inclusive)
      * @param maxCorner the maximum corner (exclusive)
      * @return a new GridCoordinate clamped to the specified bounds
+     * @throws IllegalArgumentException if the bounds are empty, i.e., a component of {@code maxCorner} is not greater
+     *                                  than the same component of {@code minCorner}
      */
     public GridCoordinate clampToBounds(GridCoordinate minCorner, GridCoordinate maxCorner) {
         return clampToBounds(minCorner.x, minCorner.y, maxCorner.x, maxCorner.y);
@@ -205,6 +209,7 @@ public record GridCoordinate(int x, int y) implements Comparable<GridCoordinate>
      *
      * @param exclusiveCorner the exclusive corner coordinate defining the bounds
      * @return a new GridCoordinate clamped to the specified bounds
+     * @throws IllegalArgumentException if a component of {@code exclusiveCorner} is not positive
      */
     public GridCoordinate clampToOriginBounds(GridCoordinate exclusiveCorner) {
         return clampToBounds(ORIGIN, exclusiveCorner);

@@ -24,7 +24,8 @@ import java.util.stream.Stream;
 public record GridStructure(GridTopology topology, GridSize size) {
 
     /**
-     * Validates that the provided {@link GridSize} is compatible with the given {@link GridTopology}.
+     * Creates a grid structure and validates that the provided {@link GridSize} is compatible with the given
+     * {@link GridTopology}.
      *
      * <p>The grid width and height must be multiples of the required values as specified by the topology.
      *
@@ -142,7 +143,7 @@ public record GridStructure(GridTopology topology, GridSize size) {
      * <p>The coordinates are ordered row by row: for each row from top to bottom,
      * all columns from left to right are included, starting at (0, 0) and ending at the bottom-right corner.
      *
-     * @return a list of all valid grid coordinates in row-major order
+     * @return a new, modifiable list of all valid grid coordinates in row-major order, owned by the caller
      */
     public List<GridCoordinate> coordinatesList() {
         List<GridCoordinate> coordinates = new ArrayList<>(size.area());

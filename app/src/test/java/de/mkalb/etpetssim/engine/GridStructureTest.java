@@ -2,6 +2,7 @@ package de.mkalb.etpetssim.engine;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 
@@ -160,8 +161,11 @@ final class GridStructureTest {
     @Test
     void testCoordinatesList() {
         GridStructure structure = createStructure(CellShape.SQUARE, GridEdgeBehavior.BLOCK_XY, 20, 30);
+        List<GridCoordinate> coordinates = structure.coordinatesList();
 
-        assertRowMajorCoordinates(structure, structure.coordinatesList());
+        assertRowMajorCoordinates(structure, coordinates);
+        // GridInitializers shuffles the returned list, so it must stay modifiable.
+        assertDoesNotThrow(() -> Collections.swap(coordinates, 0, 1));
     }
 
     @Test

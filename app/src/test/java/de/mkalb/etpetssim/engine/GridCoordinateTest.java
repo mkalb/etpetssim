@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 final class GridCoordinateTest {
@@ -161,6 +162,15 @@ final class GridCoordinateTest {
         assertAll(
                 () -> assertEquals(new GridCoordinate(9, 0), coordinate.clampToBounds(0, 0, 10, 10)),
                 () -> assertEquals(new GridCoordinate(5, 5), new GridCoordinate(5, 5).clampToBounds(0, 0, 10, 10))
+        );
+    }
+
+    @Test
+    void testClampToBoundsWithIntsRejectsEmptyBounds() {
+        GridCoordinate coordinate = new GridCoordinate(5, 5);
+        assertAll(
+                () -> assertThrows(IllegalArgumentException.class, () -> coordinate.clampToBounds(3, 0, 3, 10)),
+                () -> assertThrows(IllegalArgumentException.class, () -> coordinate.clampToBounds(0, 4, 10, 2))
         );
     }
 

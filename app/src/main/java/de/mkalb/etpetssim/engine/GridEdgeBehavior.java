@@ -2,7 +2,7 @@ package de.mkalb.etpetssim.engine;
 
 /**
  * Defines a combination of edge behaviors for the X and Y boundaries of a simulation grid.
- * Each constant specifies how entities interact with both the horizontal (X) and vertical (Y) edges,
+ * Each constant specifies how entities interact with the left and right (X) and the top and bottom (Y) edges,
  * enabling flexible configuration of grid boundary handling in various simulation scenarios.
  */
 public enum GridEdgeBehavior {
@@ -54,7 +54,7 @@ public enum GridEdgeBehavior {
     }
 
     /**
-     * Returns the edge behavior for the X-axis (horizontal boundary).
+     * Returns the edge behavior for the X-axis (left and right edges).
      *
      * @return the {@link EdgeBehavior} for the X edge
      */
@@ -63,7 +63,7 @@ public enum GridEdgeBehavior {
     }
 
     /**
-     * Returns the edge behavior for the Y-axis (vertical boundary).
+     * Returns the edge behavior for the Y-axis (top and bottom edges).
      *
      * @return the {@link EdgeBehavior} for the Y edge
      */
