@@ -43,7 +43,7 @@ public final class FXPaintFactory {
      *                                  values, groupCount is less than 1, or maxFactorDelta is outside the range
      *                                  [-1.0, 10.0]
      */
-    @SuppressWarnings({"MagicNumber", "ExtractMethodRecommender"})
+    @SuppressWarnings("ExtractMethodRecommender")
     public static Map<Integer, Color> computeBrightnessVariantsMap(
             Color baseColor,
             int minInclusive,
@@ -149,7 +149,6 @@ public final class FXPaintFactory {
      * @param edgeColor   the color at the edge of the gradient
      * @return a RadialGradient from centerColor to edgeColor
      */
-    @SuppressWarnings("MagicNumber")
     public static Paint createRadialGradient(Color centerColor, Color edgeColor) {
         return new RadialGradient(
                 0, 0, // Focus angle, focus distance.

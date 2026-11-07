@@ -73,7 +73,6 @@ final class EtpetsScoreMath {
         return (PET_MOVE_SCORE_BASE + positiveScoreTerms) - negativeScoreTerms;
     }
 
-    @SuppressWarnings("MagicNumber")
     static double computeRawReproduceScore(double petQualityScore,
                                            double partnerQualityScore) {
         double normalizedPetQuality = clampToUnitRange(petQualityScore);

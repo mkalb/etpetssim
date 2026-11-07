@@ -119,7 +119,6 @@ public abstract class AbstractMainView<
         clearNotification();
     }
 
-    @SuppressWarnings("MagicNumber")
     protected static double computeCellFontSize(CellDimension cellDimension, CellShape cellShape) {
         return Math.round(cellDimension.height() *
                 switch (cellShape) {
@@ -129,7 +128,6 @@ public abstract class AbstractMainView<
                 });
     }
 
-    @SuppressWarnings("MagicNumber")
     protected static double computeCellEmojiFontSize(CellDimension cellDimension, CellShape cellShape) {
         return Math.round(cellDimension.height() *
                 switch (cellShape) {
@@ -427,7 +425,6 @@ public abstract class AbstractMainView<
         return border;
     }
 
-    @SuppressWarnings("MagicNumber")
     protected final Point2D computeVisibleCanvasCenter(Canvas canvas) {
         double viewportWidth = canvasScrollPane.getViewportBounds().getWidth();
         double viewportHeight = canvasScrollPane.getViewportBounds().getHeight();

@@ -398,7 +398,6 @@ public final class FXComponentFactory {
      * @param styleClass          the CSS style class to apply to the slider
      * @return a LabeledControl containing the label and the slider
      */
-    @SuppressWarnings("MagicNumber")
     public static LabeledControl<Slider> createLabeledPercentSlider(
             InputDoubleProperty inputDoubleProperty,
             String labelFormatString,
@@ -437,7 +436,6 @@ public final class FXComponentFactory {
      * @param styleClass          the CSS style class to apply to the slider
      * @return a LabeledControl containing the label and the slider
      */
-    @SuppressWarnings("MagicNumber")
     public static LabeledControl<Slider> createLabeledDoubleSlider(
             InputDoubleProperty inputDoubleProperty,
             int decimalPlaces,
@@ -639,7 +637,6 @@ public final class FXComponentFactory {
      * @param range the range of the slider (difference between max and min values multiplied by 100)
      * @return the number of minor ticks (divisor - 1) if a matching divisor is found, or 0 otherwise
      */
-    @SuppressWarnings("MagicNumber")
     private static int computeMinorTickCountForPercentSlider(int range) {
         if ((range >= 2) && (range <= 100)) {
             int[] divisors = {10, 8, 6, 4, 9, 7, 5, 11, 13, 17, 19, 3, 2};

@@ -357,7 +357,6 @@ public final class FXGridCanvasPainter {
      * @param strokeLineWidth the width of the stroke line in pixels
      * @param strokeType      specifies how the stroke is rendered relative to the rectangle's outline
      */
-    @SuppressWarnings("MagicNumber")
     public void drawRectangle(Rectangle2D rectangle,
                               @Nullable Paint fillColor, @Nullable Paint strokeColor,
                               double strokeLineWidth, StrokeType strokeType) {
@@ -510,7 +509,6 @@ public final class FXGridCanvasPainter {
      * @param strokeLineWidth the width of the stroke line in pixels
      * @param strokeType      specifies how the stroke is rendered relative to the circle's outline
      */
-    @SuppressWarnings("MagicNumber")
     public void drawCircle(Point2D center, double radius,
                            @Nullable Paint fillColor, @Nullable Paint strokeColor,
                            double strokeLineWidth, StrokeType strokeType) {
@@ -612,7 +610,6 @@ public final class FXGridCanvasPainter {
      * @param font the font used for rendering the text
      * @return the offset as a Point2D object, where x is the horizontal offset and y is the vertical offset
      */
-    @SuppressWarnings("MagicNumber")
     Point2D computeCenteredTextOffset(String text, Font font) {
         Dimension2D textDimension = computeTextDimension(text, font);
 

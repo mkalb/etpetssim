@@ -116,7 +116,6 @@ public abstract class AbstractDefaultMainView<
         return super.shutdownSimulation();
     }
 
-    @SuppressWarnings("MagicNumber")
     protected final double computeStrokeLineWidth(CellDimension cellDimension) {
         if (cellDimension.innerRadius() < 2.0d) {
             return NO_STROKE_LINE_WIDTH;

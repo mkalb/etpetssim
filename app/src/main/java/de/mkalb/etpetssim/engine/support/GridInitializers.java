@@ -136,7 +136,7 @@ public final class GridInitializers {
      * @return a grid initializer that fills the grid with the given fraction of supplied entities
      * @throws IllegalArgumentException if {@code percent} is outside the range [0.0, 1.0]
      */
-    @SuppressWarnings({"NumericCastThatLosesPrecision", "MagicNumber"})
+    @SuppressWarnings("NumericCastThatLosesPrecision")
     public static <ENT extends GridEntity> GridInitializer<ENT> fillRandomPercent(double percent,
                                                                                   Supplier<ENT> entitySupplier,
                                                                                   ENT fallback,

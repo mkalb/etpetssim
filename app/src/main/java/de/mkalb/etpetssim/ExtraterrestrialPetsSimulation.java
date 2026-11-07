@@ -112,7 +112,6 @@ public final class ExtraterrestrialPetsSimulation extends Application {
      * @param stage stage to evaluate
      * @return matching screen, or the primary screen if none matches
      */
-    @SuppressWarnings("MagicNumber")
     private static Screen resolveScreenContainingStage(Stage stage) {
         double cx = stage.getX() + (stage.getWidth() / 2.0d);
         double cy = stage.getY() + (stage.getHeight() / 2.0d);

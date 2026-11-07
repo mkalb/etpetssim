@@ -90,7 +90,6 @@ public final class LangtonMainView
         this.editToolBarViewModel = editToolBarViewModel;
     }
 
-    @SuppressWarnings("MagicNumber")
     @Override
     protected void initializeSimulation(CanvasPainters painters, LangtonConfig config, CellDimension cellDimension, LangtonGridModel model) {
         currentConfig = config;

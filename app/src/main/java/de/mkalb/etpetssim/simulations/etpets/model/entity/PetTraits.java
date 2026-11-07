@@ -53,7 +53,6 @@ public record PetTraits(
      * @return the average normalized trait score, from {@code 0.0} (all traits at their minimum) to {@code 1.0}
      * (all traits at their maximum)
      */
-    @SuppressWarnings("MagicNumber")
     public double genomeQualityScore() {
         double normMax = normalize(maxEnergy,
                 EtpetsBalance.PET_TRAITS_MAX_ENERGY_MIN,

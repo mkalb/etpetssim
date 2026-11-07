@@ -98,37 +98,37 @@ The test sources were done on 2026-11-06: 52 suppressions in 22 files and 9 insp
 
 ## Summary
 
-| Sources | Inspection type                     | Count | Proposal                         | Status |
-|---------|-------------------------------------|------:|----------------------------------|--------|
-| test    | `MagicNumber`                       |    51 | disable for scope "Tests"        | done   |
-| test    | `SameParameterValue`                |    17 | disable for scope "Tests"        | done   |
-| test    | `TestMethodWithoutAssertion`        |    20 | keep                             | done   |
-| test    | `HardcodedLineSeparator`            |     8 | disable for scope "Tests"        | done   |
-| test    | `TextBlockMigration`                |     3 | change code (text blocks)        | done   |
-| test    | `UseOfProcessBuilder`               |     2 | keep                             | done   |
-| test    | `DataFlowIssue`                     |     8 | keep 5; change code in 3         | done   |
-| test    | `unused`                            |     5 | keep                             | done   |
-| test    | `ResultOfMethodCallIgnored`         |     4 | keep                             | done   |
-| test    | `NumericCastThatLosesPrecision`     |     3 | profile option                   | done   |
-| test    | `ConstantValue`                     |     2 | narrow scope                     | done   |
-| test    | `InsertLiteralUnderscores`          |     2 | change code                      | done   |
-| test    | `SpellCheckingInspection`           |     2 | dictionary                       | done   |
-| test    | other types (4)                     |     4 | per occurrence                   | done   |
-| main    | `MarkerInterface`                   |     9 | disable                          | done   |
-| main    | `InterfaceMayBeAnnotatedFunctional` |     5 | disable                          | done   |
-| main    | `SpellCheckingInspection`           |     8 | dictionary                       | done   |
-| main    | `unchecked`                         |    11 | change code in `ArrayGridModel`  | done   |
-| main    | `ConstantValue`                     |     9 | change code (list cells, equals) | done   |
-| main    | `DataFlowIssue`                     |    11 | change code (list cells)         | done   |
-| main    | `SameReturnValue`                   |    13 | disable                          | done   |
-| main    | `MagicNumber`                       |    21 | per occurrence                   | open   |
-| main    | `SameParameterValue`                |    14 | per occurrence                   | open   |
-| main    | `NumericCastThatLosesPrecision`     |    12 | keep; check each occurrence      | open   |
-| main    | `unused`                            |     6 | per occurrence                   | open   |
-| main    | `CommentedOutCode`                  |     4 | keep                             | open   |
-| main    | `ObjectEquality`                    |     3 | per occurrence                   | open   |
-| main    | types with two occurrences (4)      |     8 | per occurrence                   | open   |
-| main    | other types (10)                    |    10 | per occurrence                   | open   |
+| Sources | Inspection type                     | Count | Proposal                         | Status      |
+|---------|-------------------------------------|------:|----------------------------------|-------------|
+| test    | `MagicNumber`                       |    51 | disable for scope "Tests"        | done        |
+| test    | `SameParameterValue`                |    17 | disable for scope "Tests"        | done        |
+| test    | `TestMethodWithoutAssertion`        |    20 | keep                             | done        |
+| test    | `HardcodedLineSeparator`            |     8 | disable for scope "Tests"        | done        |
+| test    | `TextBlockMigration`                |     3 | change code (text blocks)        | done        |
+| test    | `UseOfProcessBuilder`               |     2 | keep                             | done        |
+| test    | `DataFlowIssue`                     |     8 | keep 5; change code in 3         | done        |
+| test    | `unused`                            |     5 | keep                             | done        |
+| test    | `ResultOfMethodCallIgnored`         |     4 | keep                             | done        |
+| test    | `NumericCastThatLosesPrecision`     |     3 | profile option                   | done        |
+| test    | `ConstantValue`                     |     2 | narrow scope                     | done        |
+| test    | `InsertLiteralUnderscores`          |     2 | change code                      | done        |
+| test    | `SpellCheckingInspection`           |     2 | dictionary                       | done        |
+| test    | other types (4)                     |     4 | per occurrence                   | done        |
+| main    | `MarkerInterface`                   |     9 | disable                          | done        |
+| main    | `InterfaceMayBeAnnotatedFunctional` |     5 | disable                          | done        |
+| main    | `SpellCheckingInspection`           |     8 | dictionary                       | done        |
+| main    | `unchecked`                         |    11 | change code in `ArrayGridModel`  | done        |
+| main    | `ConstantValue`                     |     9 | change code (list cells, equals) | done        |
+| main    | `DataFlowIssue`                     |    11 | change code (list cells)         | done        |
+| main    | `SameReturnValue`                   |    13 | disable                          | done        |
+| main    | `MagicNumber`                       |    21 | disable                          | done        |
+| main    | `SameParameterValue`                |    14 | per occurrence                   | open        |
+| main    | `NumericCastThatLosesPrecision`     |    12 | keep; check each occurrence      | open        |
+| main    | `unused`                            |     6 | per occurrence                   | open        |
+| main    | `CommentedOutCode`                  |     4 | keep                             | open        |
+| main    | `ObjectEquality`                    |     3 | per occurrence                   | open        |
+| main    | types with two occurrences (4)      |     8 | per occurrence                   | open        |
+| main    | other types (10)                    |    10 | per occurrence                   | open        |
 
 ## Cross-type decisions
 
@@ -442,24 +442,13 @@ The inventory is omitted: all occurrences are removed by the same commit.
 - Count: 21, mostly in UI geometry and simulation math; `CellNeighborhoods` is suppressed at class level.
 - Proposal: per occurrence: extract named constants where a value has a domain meaning, otherwise keep. Narrow the
   class-level scope of `CellNeighborhoods`.
-- Decision: open.
+- Decision: disable the inspection in the profile and remove all 21 suppressions (maintainer, 2026-11-07). All
+  occurrences are literals in formulas, geometry, and layout code (halving with `2.0d`, font and stroke factors,
+  percent scaling, rounding thresholds), which `java.md` allows inline; domain numbers are named in `*Constraints`
+  and `*Balance`. The maintainer disabled the entry in the profile; its scope setting for
+  "Tests" remains but has no effect.
 
-- `ExtraterrestrialPetsSimulation.java`: `resolveScreenContainingStage()`
-- `engine/neighborhood/CellNeighborhoods.java`: class `CellNeighborhoods`
-- `engine/support/GridInitializers.java`: `fillRandomPercent()`
-- `simulations/core/view/AbstractDefaultMainView.java`: `computeStrokeLineWidth()`
-- `simulations/core/view/AbstractMainView.java`: `computeCellEmojiFontSize()`, `computeCellFontSize()`,
-  `computeVisibleCanvasCenter()`
-- `simulations/core/view/StatisticsHistoryChartView.java`: `computeNiceCeiling()`
-- `simulations/etpets/model/EtpetsScoreMath.java`: `computeRawReproduceScore()`
-- `simulations/etpets/model/entity/PetGenome.java`: `fromParents()`
-- `simulations/etpets/model/entity/PetTraits.java`: `genomeQualityScore()`
-- `simulations/langton/view/LangtonMainView.java`: `initializeSimulation()`
-- `simulations/sugar/model/SugarSimulationManager.java`: `computeClampedIndex()`
-- `ui/FXComponentFactory.java`: `computeMinorTickCountForPercentSlider()`, `createLabeledDoubleSlider()`,
-  `createLabeledPercentSlider()`
-- `ui/FXGridCanvasPainter.java`: `computeCenteredTextOffset()`, `drawCircle()`, `drawRectangle()`
-- `ui/FXPaintFactory.java`: `computeBrightnessVariantsMap()`, `createRadialGradient()`
+The inventory is omitted: all occurrences are removed by the same commit.
 
 ### `SameParameterValue`
 

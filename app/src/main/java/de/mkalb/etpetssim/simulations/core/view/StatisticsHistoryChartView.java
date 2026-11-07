@@ -147,7 +147,6 @@ final class StatisticsHistoryChartView {
      * @param value the group maximum
      * @return the rounded-up ceiling
      */
-    @SuppressWarnings("MagicNumber")
     private static double computeNiceCeiling(double value) {
         if (value <= 1.0) {
             return 1.0;

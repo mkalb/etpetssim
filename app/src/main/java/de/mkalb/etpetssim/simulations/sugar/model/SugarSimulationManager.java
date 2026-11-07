@@ -79,7 +79,7 @@ public final class SugarSimulationManager
      * @param percent fraction between 0.0 and 1.0
      * @return clamped index in [0, size - 1]
      */
-    @SuppressWarnings({"MagicNumber", "NumericCastThatLosesPrecision"})
+    @SuppressWarnings("NumericCastThatLosesPrecision")
     private int computeClampedIndex(int size, double percent) {
         int count = (int) ((percent < 0.5d) ? Math.floor(size * percent) : Math.ceil(size * percent));
         return Math.clamp(count, 0, size - 1);

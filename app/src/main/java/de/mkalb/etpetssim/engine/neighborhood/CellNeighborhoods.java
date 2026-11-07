@@ -36,7 +36,6 @@ import java.util.stream.Stream;
  * <p>The parameters follow the order start coordinate (or coordinates), neighborhood mode, cell shape or grid
  * structure, further parameters (e.g., a direction or a radius).
  */
-@SuppressWarnings("MagicNumber")
 public final class CellNeighborhoods {
 
     /**
