@@ -16,7 +16,7 @@ import java.util.Properties;
  *
  * <p>Settings are stored as a {@link Properties} file named {@link #FILE_NAME} in the application data directory.
  * Reading and writing never throw: a missing file is normal, and every failure is logged with
- * {@link AppLogger#warn(String)} so that the application can continue with its defaults.
+ * {@link AppLogger#warnf(String, Object...)} so that the application can continue with its defaults.
  *
  * <p>Currently the only setting is the UI locale, stored as the stable {@link CountryLocale#localeCode()}.
  * Writing a setting keeps all other keys already present in the file.
@@ -81,7 +81,8 @@ public final class AppSettings {
     /**
      * Writes the locale to the given settings file and keeps all other keys already present.
      *
-     * <p>If the existing file is unreadable, its content is replaced.
+     * <p>If the existing file is unreadable, its content is replaced. The file is rewritten in place, not atomically;
+     * if writing fails, the file may be left empty or incomplete.
      *
      * @param file   the settings file
      * @param locale the locale to save

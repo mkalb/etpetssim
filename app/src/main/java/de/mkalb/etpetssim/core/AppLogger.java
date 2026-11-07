@@ -14,6 +14,8 @@ import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.IllegalFormatException;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
@@ -31,6 +33,9 @@ import java.util.logging.Logger;
  *
  * <p>Configure once via {@link #initialize(LogLevel, boolean, Path)} and then use the static logging methods
  * throughout the application.
+ *
+ * <p>The formatting methods ({@code debugf}, {@code infof}, {@code warnf}, {@code errorf}) do not throw for an
+ * invalid format string or mismatched arguments; they log the format string and the arguments unformatted instead.
  */
 public final class AppLogger {
 
@@ -80,6 +85,11 @@ public final class AppLogger {
 
     /**
      * Returns the log file that the active file logging writes to.
+     *
+     * <p>If another process, such as a second running instance, already holds the lock of the log file,
+     * {@link FileHandler} writes to a file with a numeric suffix instead (e.g.,
+     * {@code ExtraterrestrialPetsSimulation.log.1}); the returned path then names the locked file, not the file
+     * written by this instance.
      *
      * @return the absolute path of the log file, or empty if logging is not initialized, file logging is disabled, or
      * the log file could not be opened
@@ -136,7 +146,7 @@ public final class AppLogger {
      * @param args   format arguments
      */
     public static void debugf(String format, Object... args) {
-        APP_LOGGER.logger.log(Level.FINE, () -> String.format(Locale.ROOT, format, args));
+        APP_LOGGER.logger.log(Level.FINE, () -> formatLogMessage(format, args));
     }
 
     /**
@@ -164,7 +174,7 @@ public final class AppLogger {
      * @param args   format arguments
      */
     public static void infof(String format, Object... args) {
-        APP_LOGGER.logger.log(Level.INFO, () -> String.format(Locale.ROOT, format, args));
+        APP_LOGGER.logger.log(Level.INFO, () -> formatLogMessage(format, args));
     }
 
     /**
@@ -192,7 +202,7 @@ public final class AppLogger {
      * @param args   format arguments
      */
     public static void warnf(String format, Object... args) {
-        APP_LOGGER.logger.log(Level.WARNING, () -> String.format(Locale.ROOT, format, args));
+        APP_LOGGER.logger.log(Level.WARNING, () -> formatLogMessage(format, args));
     }
 
     /**
@@ -230,7 +240,7 @@ public final class AppLogger {
      * @param args   format arguments
      */
     public static void errorf(String format, Object... args) {
-        APP_LOGGER.logger.log(Level.SEVERE, () -> String.format(Locale.ROOT, format, args));
+        APP_LOGGER.logger.log(Level.SEVERE, () -> formatLogMessage(format, args));
     }
 
     /**
@@ -241,7 +251,7 @@ public final class AppLogger {
      * @param args      format arguments
      */
     public static void errorf(Throwable throwable, String format, Object... args) {
-        APP_LOGGER.logger.log(Level.SEVERE, throwable, () -> String.format(Locale.ROOT, format, args));
+        APP_LOGGER.logger.log(Level.SEVERE, throwable, () -> formatLogMessage(format, args));
     }
 
     /**
@@ -267,7 +277,15 @@ public final class AppLogger {
         return APP_LOGGER.logger.getHandlers().length;
     }
 
-    private synchronized void initializeLogger(LogLevel logLevel, boolean useConsole, @Nullable Path logPath) {
+    private static String formatLogMessage(String format, Object... args) {
+        try {
+            return String.format(Locale.ROOT, format, args);
+        } catch (IllegalFormatException e) {
+            return format + " " + Arrays.toString(args) + " [invalid format: " + e + "]";
+        }
+    }
+
+    private void initializeLogger(LogLevel logLevel, boolean useConsole, @Nullable Path logPath) {
         if (initialized) {
             throw new IllegalStateException("Unable to initialize AppLogger: already initialized");
         }
@@ -292,7 +310,8 @@ public final class AppLogger {
             try {
                 Path parent = logPath.getParent();
                 if ((parent != null) && Files.exists(parent) && Files.isDirectory(parent) && Files.isWritable(parent)) {
-                    FileHandler fileHandler = new FileHandler(logPath.toString(), false);
+                    // FileHandler expands '%' sequences in its pattern; escape them to use the path literally.
+                    FileHandler fileHandler = new FileHandler(logPath.toString().replace("%", "%%"), false);
                     fileHandler.setFormatter(new AppLogFormatter());
                     fileHandler.setEncoding(StandardCharsets.UTF_8.name());
                     fileHandler.setLevel(level);

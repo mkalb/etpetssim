@@ -64,7 +64,8 @@ final class AppStorageTest {
         assertAll(
                 () -> assertThrows(IllegalArgumentException.class, () -> AppStorage.getAppDataFile("", OS)),
                 () -> assertThrows(IllegalArgumentException.class, () -> AppStorage.getAppDataFile("   ", OS)),
-                () -> assertThrows(IOException.class, () -> AppStorage.getAppDataFile(pathTraversalName, OS))
+                () -> assertThrows(IOException.class, () -> AppStorage.getAppDataFile(pathTraversalName, OS)),
+                () -> assertThrows(IOException.class, () -> AppStorage.getAppDataFile(".", OS))
         );
     }
 
@@ -92,7 +93,8 @@ final class AppStorageTest {
         assertAll(
                 () -> assertThrows(IllegalArgumentException.class, () -> AppStorage.createAppDataFile("", OS)),
                 () -> assertThrows(IllegalArgumentException.class, () -> AppStorage.createAppDataFile("   ", OS)),
-                () -> assertThrows(IOException.class, () -> AppStorage.createAppDataFile(pathTraversalName, OS))
+                () -> assertThrows(IOException.class, () -> AppStorage.createAppDataFile(pathTraversalName, OS)),
+                () -> assertThrows(IOException.class, () -> AppStorage.createAppDataFile(".", OS))
         );
     }
 
@@ -122,7 +124,8 @@ final class AppStorageTest {
         assertAll(
                 () -> assertThrows(IllegalArgumentException.class, () -> AppStorage.deleteAppDataFile("", OS)),
                 () -> assertThrows(IllegalArgumentException.class, () -> AppStorage.deleteAppDataFile("   ", OS)),
-                () -> assertThrows(IOException.class, () -> AppStorage.deleteAppDataFile(pathTraversalName, OS))
+                () -> assertThrows(IOException.class, () -> AppStorage.deleteAppDataFile(pathTraversalName, OS)),
+                () -> assertThrows(IOException.class, () -> AppStorage.deleteAppDataFile(".", OS))
         );
     }
 
@@ -142,7 +145,8 @@ final class AppStorageTest {
         assertAll(
                 () -> assertThrows(IllegalArgumentException.class, () -> AppStorage.getLogFile("", OS)),
                 () -> assertThrows(IllegalArgumentException.class, () -> AppStorage.getLogFile("   ", OS)),
-                () -> assertThrows(IOException.class, () -> AppStorage.getLogFile(pathTraversalName, OS))
+                () -> assertThrows(IOException.class, () -> AppStorage.getLogFile(pathTraversalName, OS)),
+                () -> assertThrows(IOException.class, () -> AppStorage.getLogFile(".", OS))
         );
     }
 

@@ -55,8 +55,8 @@ public final class AppArgs {
      */
     static boolean parseBooleanValue(String value, boolean defaultValue) {
         return switch (value.toLowerCase(Locale.ROOT)) {
-            case "true", "1", "yes", "on" -> Boolean.TRUE;
-            case "false", "0", "no", "off" -> Boolean.FALSE;
+            case "true", "1", "yes", "on" -> true;
+            case "false", "0", "no", "off" -> false;
             default -> defaultValue;
         };
     }
@@ -264,7 +264,7 @@ public final class AppArgs {
                         .append(System.lineSeparator())
                         .append(formatHelpArguments(bundle::getString));
             } catch (IOException e) {
-                AppLogger.warn("AppArgs: Failed to print help message: " + e.getMessage());
+                AppLogger.error(e, "AppArgs: Failed to print help message");
             }
         }
 

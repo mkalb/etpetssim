@@ -84,6 +84,21 @@ final class AppLoggerTest {
     }
 
     @Test
+    void testInitializeWritesLogFileWithPercentInPath(@TempDir Path tempDir) {
+        Path logPath = tempDir.resolve("log%t%u%%.log");
+
+        AppLogger.initialize(AppLogger.LogLevel.INFO, false, logPath);
+        Optional<Path> activeLogFile = AppLogger.activeLogFile();
+        AppLogger.info(MESSAGE);
+        AppLogger.resetForTesting();
+
+        assertAll(
+                () -> assertEquals(Optional.of(logPath.toAbsolutePath()), activeLogFile),
+                () -> assertTrue(Files.readString(logPath).contains(MESSAGE))
+        );
+    }
+
+    @Test
     void testInitializeDisablesLoggingWithoutHandlers(@TempDir Path tempDir) {
         Path logPath = tempDir.resolve("missing").resolve(AppLogger.LOG_FILE_NAME);
 
@@ -263,6 +278,18 @@ final class AppLoggerTest {
         AppLogger.warnf("Test %s %d", "message", 3);
 
         assertSingleRecord(handler, Level.WARNING, "Test message 3", null);
+    }
+
+    @Test
+    void testWarnfLogsUnformattedMessageForInvalidFormat() {
+        RecordingHandler handler = initializeWithRecordingHandler(AppLogger.LogLevel.WARN);
+
+        AppLogger.warnf("Test %d", "message");
+
+        assertAll(
+                () -> assertEquals(1, handler.records.size()),
+                () -> assertTrue(handler.records.getFirst().getMessage().startsWith("Test %d [message]"))
+        );
     }
 
     @Test

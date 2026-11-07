@@ -18,6 +18,7 @@ import java.util.ResourceBundle;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Execution(ExecutionMode.SAME_THREAD)
@@ -91,7 +92,10 @@ final class AppResourcesTest {
         List<Image> images = AppResources.getImages("etpetssim16.png", "etpetssim16.png", "unknown.png",
                 "etpetssim32.png");
 
-        assertEquals(3, images.size());
+        assertAll(
+                () -> assertEquals(3, images.size()),
+                () -> assertThrows(UnsupportedOperationException.class, images::clear)
+        );
     }
 
     @Test

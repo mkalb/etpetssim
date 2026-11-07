@@ -30,7 +30,7 @@ public final class AppStorage {
      * @return resolved file path
      * @throws IllegalArgumentException if {@code fileName} is empty or blank
      * @throws IOException              if the data directory cannot be created/validated or {@code fileName} escapes
-     *                                  that directory
+     *                                  or resolves to that directory
      */
     public static Path getAppDataFile(String fileName, OperatingSystem os) throws IOException {
         return resolveFileInDirectory(getOrCreateAppDataDir(os), fileName);
@@ -71,7 +71,7 @@ public final class AppStorage {
      * @return resolved log file path
      * @throws IllegalArgumentException if {@code fileName} is empty or blank
      * @throws IOException              if the log directory cannot be created/validated or {@code fileName} escapes
-     *                                  that directory
+     *                                  or resolves to that directory
      */
     public static Path getLogFile(String fileName, OperatingSystem os) throws IOException {
         return resolveFileInDirectory(getOrCreateLogDir(os), fileName);
@@ -165,7 +165,8 @@ public final class AppStorage {
      * @param fileName  file name relative to {@code directory}
      * @return the normalized absolute file path
      * @throws IllegalArgumentException if {@code fileName} is empty or blank
-     * @throws IOException              if {@code fileName} resolves outside of {@code directory}
+     * @throws IOException              if {@code fileName} resolves outside of {@code directory} or to
+     *                                  {@code directory} itself
      */
     private static Path resolveFileInDirectory(Path directory, String fileName) throws IOException {
         if (fileName.isBlank()) {
@@ -174,9 +175,9 @@ public final class AppStorage {
 
         Path normalizedDirectory = directory.toAbsolutePath().normalize();
         Path resolvedPath = normalizedDirectory.resolve(fileName).toAbsolutePath().normalize();
-        if (!resolvedPath.startsWith(normalizedDirectory)) {
-            throw new IOException("fileName must resolve inside directory " + normalizedDirectory + ", but was: "
-                    + fileName);
+        if (!resolvedPath.startsWith(normalizedDirectory) || resolvedPath.equals(normalizedDirectory)) {
+            throw new IOException("fileName must resolve to a file inside directory " + normalizedDirectory
+                    + ", but was: " + fileName);
         }
         return resolvedPath;
     }

@@ -77,7 +77,11 @@ public final class AppLocalization {
             throw new IllegalStateException("Unable to initialize AppLocalization: already initialized");
         }
 
-        Locale resolvedLocale = resolveLocaleFromArgument(localeArgument)
+        Optional<Locale> argumentLocale = resolveLocaleFromArgument(localeArgument);
+        if ((localeArgument != null) && !localeArgument.isBlank() && argumentLocale.isEmpty()) {
+            AppLogger.warnf("AppLocalization: Ignoring unsupported locale argument '%s'", localeArgument);
+        }
+        Locale resolvedLocale = argumentLocale
                 .or(() -> resolveLocaleFromDefault(defaultLocale))
                 .orElse(DEFAULT_LOCALE);
         ResourceBundle resolvedBundle = AppResources.getBundle(resolvedLocale).orElseThrow(() ->

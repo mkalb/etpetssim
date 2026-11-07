@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.nio.charset.Charset;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.MissingResourceException;
@@ -101,15 +101,14 @@ public final class AppResources {
      * Loads multiple images from {@code /images/}.
      *
      * @param relativePaths image paths without leading slashes
-     * @return list of successfully loaded images; missing or undecodable resources are skipped
+     * @return unmodifiable list of successfully loaded images; missing or undecodable resources are skipped
      * @see #FOLDER_IMAGES
      */
     public static List<Image> getImages(String... relativePaths) {
-        List<Image> images = new ArrayList<>(relativePaths.length);
-        for (String relativePath : relativePaths) {
-            getImage(relativePath).ifPresent(images::add);
-        }
-        return images;
+        return Arrays.stream(relativePaths)
+                .map(AppResources::getImage)
+                .flatMap(Optional::stream)
+                .toList();
     }
 
     /**
