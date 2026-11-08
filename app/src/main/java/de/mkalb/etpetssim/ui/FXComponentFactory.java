@@ -26,6 +26,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
+import javafx.util.converter.IntegerStringConverter;
 import org.jspecify.annotations.Nullable;
 
 import java.util.List;
@@ -349,6 +350,13 @@ public final class FXComponentFactory {
             return null;
         });
         spinner.getEditor().setTextFormatter(formatter);
+        // The spinner commits the editor text with this converter, e.g., on focus loss and before each step.
+        spinner.getValueFactory().setConverter(new IntegerStringConverter() {
+            @Override
+            public Integer fromString(String text) {
+                return parseSpinnerValue(text, inputIntegerProperty);
+            }
+        });
 
         inputIntegerProperty.property().addListener((_, _, newVal) -> {
             int newValue = newVal.intValue();
@@ -581,9 +589,8 @@ public final class FXComponentFactory {
      * Normalizes and synchronizes the value of a Spinner's editor with its value factory and the associated
      * InputIntegerProperty.
      *
-     * <p>Attempts to parse the editor text as an integer, clamps and snaps it to the valid range and step
-     * defined by the given InputIntegerProperty, and updates both the spinner and the property with the normalized
-     * value. If parsing fails, resets the editor text and spinner value to the current property value.
+     * <p>Parses the editor text with {@link #parseSpinnerValue(String, InputIntegerProperty)} and updates the editor
+     * text, the spinner, and the property with the normalized value.
      *
      * @param spinner              the Spinner whose editor input is to be normalized and synchronized
      * @param inputIntegerProperty the InputIntegerProperty providing range and step constraints
@@ -594,23 +601,43 @@ public final class FXComponentFactory {
         SpinnerValueFactory<Integer> valueFactory = spinner.getValueFactory();
         if (valueFactory != null) {
             String text = spinner.getEditor().getText();
-            try {
-                int parsedValue = Integer.parseInt(text);
-                int normalizedValue = inputIntegerProperty.adjustValue(parsedValue);
-                if (parsedValue != normalizedValue) {
-                    spinner.getEditor().setText(String.valueOf(normalizedValue));
-                }
-                if (inputIntegerProperty.getValue() != normalizedValue) {
-                    inputIntegerProperty.setValue(normalizedValue);
-                }
-                if (!valueFactory.getValue().equals(normalizedValue)) {
-                    valueFactory.setValue(normalizedValue);
-                }
-            } catch (NumberFormatException e) {
-                int currentValue = inputIntegerProperty.getValue();
-                spinner.getEditor().setText(String.valueOf(currentValue));
-                valueFactory.setValue(currentValue);
+            int normalizedValue = parseSpinnerValue(text, inputIntegerProperty);
+            String normalizedText = String.valueOf(normalizedValue);
+            if (!text.equals(normalizedText)) {
+                spinner.getEditor().setText(normalizedText);
             }
+            if (inputIntegerProperty.getValue() != normalizedValue) {
+                inputIntegerProperty.setValue(normalizedValue);
+            }
+            if (!valueFactory.getValue().equals(normalizedValue)) {
+                valueFactory.setValue(normalizedValue);
+            }
+        }
+    }
+
+    /**
+     * Parses spinner editor text and fits it to the valid range and step of the given InputIntegerProperty.
+     *
+     * <p>A number beyond the {@code int} range is treated as the nearest {@code int} limit, so that it is fitted to
+     * the spinner maximum or minimum.
+     *
+     * @param text                 the editor text
+     * @param inputIntegerProperty the InputIntegerProperty providing range, step, and current value
+     * @return the normalized value, or the current property value if the text is not a number (e.g., empty or a
+     * single minus sign)
+     */
+    private static int parseSpinnerValue(String text, InputIntegerProperty inputIntegerProperty) {
+        if (!text.matches("-?\\d+")) {
+            return inputIntegerProperty.getValue();
+        }
+        return inputIntegerProperty.adjustValue(parseClampedToIntRange(text));
+    }
+
+    private static int parseClampedToIntRange(String digits) {
+        try {
+            return Integer.parseInt(digits);
+        } catch (NumberFormatException _) {
+            return digits.startsWith("-") ? Integer.MIN_VALUE : Integer.MAX_VALUE;
         }
     }
 

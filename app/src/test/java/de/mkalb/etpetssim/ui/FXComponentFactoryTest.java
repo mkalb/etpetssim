@@ -21,6 +21,8 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
@@ -304,6 +306,62 @@ final class FXComponentFactoryTest {
                     () -> assertEquals(Integer.valueOf(15), spinner.getValueFactory().getValue()),
                     () -> assertEquals("15 items", control.label().getText()),
                     () -> assertSame(spinner, control.label().getLabelFor())
+            );
+        });
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+            "99999999999, 20",
+            "-99999999999, 0",
+            "2147483648, 20",
+            "-2147483649, 0",
+            "'', 10",
+            "-, 10"
+    })
+    void testCreateLabeledIntSpinnerNormalizesEditorText(String text, int expectedValue) {
+        FXTestSupport.runAndWait(() -> {
+            InputIntegerProperty property = InputIntegerProperty.of(10, 0, 20, 5);
+            Spinner<Integer> spinner = FXComponentFactory.createLabeledIntSpinner(
+                    property,
+                    "%d items",
+                    TOOLTIP,
+                    STYLE_CLASS).controlRegion();
+
+            spinner.getEditor().setText(text);
+            spinner.getEditor().getOnAction().handle(null);
+
+            assertAll(
+                    () -> assertEquals(expectedValue, property.getValue()),
+                    () -> assertEquals(Integer.valueOf(expectedValue), spinner.getValueFactory().getValue()),
+                    () -> assertEquals(String.valueOf(expectedValue), spinner.getEditor().getText())
+            );
+        });
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+            "99999999999, 20",
+            "-99999999999, 0",
+            "14, 15",
+            "'', 10",
+            "-, 10"
+    })
+    void testCreateLabeledIntSpinnerNormalizesCommittedValue(String text, int expectedValue) {
+        FXTestSupport.runAndWait(() -> {
+            InputIntegerProperty property = InputIntegerProperty.of(10, 0, 20, 5);
+            Spinner<Integer> spinner = FXComponentFactory.createLabeledIntSpinner(
+                    property,
+                    "%d items",
+                    TOOLTIP,
+                    STYLE_CLASS).controlRegion();
+
+            spinner.getEditor().setText(text);
+            spinner.commitValue();
+
+            assertAll(
+                    () -> assertEquals(expectedValue, property.getValue()),
+                    () -> assertEquals(Integer.valueOf(expectedValue), spinner.getValueFactory().getValue())
             );
         });
     }
