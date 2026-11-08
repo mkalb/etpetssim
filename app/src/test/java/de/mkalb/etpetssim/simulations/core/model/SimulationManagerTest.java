@@ -49,7 +49,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 final class SimulationManagerTest {
 
@@ -327,54 +326,6 @@ final class SimulationManagerTest {
         SimulationManager<?, ?, ?, ?> manager = new LabSimulationManager(createLabConfig());
 
         assertEquals(StatisticsExtrema.empty(), manager.statisticsExtrema());
-    }
-
-    @Test
-    void testExecuteStepRecordsOneSample() {
-        ConwaySimulationManager manager = new ConwaySimulationManager(createConwayConfig());
-
-        manager.executeStep();
-
-        var history = manager.statisticsHistory();
-        assertAll(
-                () -> assertEquals(2, history.size()),
-                () -> assertEquals(1, history.getLast().stepCount())
-        );
-    }
-
-    @Test
-    void testExecuteStepsRecordsEveryExecutedStepWithoutDuplicateFinalSample() {
-        ConwaySimulationManager manager = new ConwaySimulationManager(createConwayConfig());
-
-        int executeCount = 7;
-        manager.executeSteps(executeCount, false, () -> {
-        });
-
-        var history = manager.statisticsHistory();
-        long finalStepSamples = history.stream()
-                .filter(sample -> sample.stepCount() == executeCount)
-                .count();
-        assertAll(
-                () -> assertEquals(executeCount + 1, history.size()),
-                () -> assertEquals(executeCount, history.getLast().stepCount()),
-                () -> assertEquals(1L, finalStepSamples)
-        );
-    }
-
-    @Test
-    void testExecuteStepsDoesNotRecordSampleForZeroSteps() {
-        ConwaySimulationManager manager = new ConwaySimulationManager(createConwayConfig());
-        var historyBefore = manager.statisticsHistory();
-
-        var result = manager.executeSteps(0, false, () -> fail("callback must not run"));
-
-        assertAll(
-                () -> assertEquals(0, result.stepCount()),
-                () -> assertEquals(0, result.executedSteps()),
-                () -> assertFalse(result.isFinished()),
-                () -> assertFalse(result.isInterrupted()),
-                () -> assertEquals(historyBefore, manager.statisticsHistory())
-        );
     }
 
     @Test

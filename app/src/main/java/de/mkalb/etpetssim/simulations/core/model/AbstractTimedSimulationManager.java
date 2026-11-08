@@ -36,17 +36,7 @@ public abstract class AbstractTimedSimulationManager<
     private final StatisticsExtremaTracker statisticsExtremaTracker;
 
     /**
-     * Initializes the base manager with the given immutable configuration.
-     *
-     * @param config the immutable simulation configuration
-     */
-    protected AbstractTimedSimulationManager(CON config) {
-        this(config, List.of());
-    }
-
-    /**
-     * Initializes the base manager with configuration and metric descriptors used for
-     * immutable sample history and generic extrema tracking.
+     * Creates a manager that samples the given metrics after each executed step.
      *
      * @param config  the immutable simulation configuration
      * @param metrics metric descriptors sampled after each executed step

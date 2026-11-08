@@ -9,27 +9,15 @@ import de.mkalb.etpetssim.engine.executor.StepTimingStatistics;
  * <p>Subclasses inherit the standard {@link TimedSimulationStatistics} implementation
  * and call {@link #setStepData} to advance the shared counters.
  */
-public class BaseTimedSimulationStatistics
-        implements TimedSimulationStatistics {
+public class BaseTimedSimulationStatistics implements TimedSimulationStatistics {
 
     private final GridStructure gridStructure;
 
     private int stepCount;
     private StepTimingStatistics stepTimingStatistics;
 
-    /**
-     * Initializes the statistics with the given grid structure.
-     * Step count and timing statistics are set to their initial values.
-     *
-     * @param gridStructure grid structure used by the simulation
-     */
     protected BaseTimedSimulationStatistics(GridStructure gridStructure) {
-        int totalCells = gridStructure.cellCount();
-        if (totalCells < 0) {
-            throw new IllegalArgumentException("totalCells must be >= 0, but was: " + totalCells);
-        }
         this.gridStructure = gridStructure;
-        stepCount = 0;
         stepTimingStatistics = StepTimingStatistics.empty();
     }
 

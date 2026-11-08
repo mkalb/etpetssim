@@ -133,7 +133,7 @@ sources. "Types" counts the top-level types in main sources of a group.
 | B6 | Metrics catalogs of the statistics                            |     - | done        |
 | B7 | Line length                                                   |     - | done        |
 | C1 | `core.shared`                                                 |    10 | done        |
-| C2 | `core.model`: managers, statistics base, and user actions     |    10 | open        |
+| C2 | `core.model`: managers, statistics base, and user actions     |    10 | done        |
 | C3 | `core.model`: statistics history and extrema                  |     8 | open        |
 | C4 | `core.viewmodel`: config, control, and observation            |     7 | open        |
 | C5 | `core.viewmodel`: main ViewModels and user action descriptors |     5 | open        |
@@ -497,6 +497,68 @@ Notes:
   methods (B3); its one-parameter constructor has no caller in main sources (only a fixture in
   `DefaultMainViewModelTest`). `BaseTimedSimulationStatistics` checks `cellCount() < 0`, which cannot occur, and
   initializes `stepCount = 0`.
+- Inventory (2026-11-08, verified against the sources): six interfaces (`SimulationConfig`, `SimulationManager`,
+  `SimulationStatistics`, `TimedSimulationStatistics`, `SimulationUserAction`, and
+  `SimulationInitializationCancellation`) and four classes (`NoUserAction`,
+  `SimulationInitializationCanceledException`, `AbstractTimedSimulationManager`, and `BaseTimedSimulationStatistics`). Tests exist for `SimulationConfig`,
+  `SimulationStatistics`, `NoUserAction`, `SimulationInitializationCancellation`,
+  `SimulationInitializationCanceledException`, and the topic `SimulationManagerTest`.
+- The member order of `AbstractTimedSimulationManager` follows `java.md` since B3. The default methods of
+  `SimulationConfig` all have callers; `createGridTopology()` and `createGridSize()` only inside the interface.
+
+#### Unused NoUserAction
+
+- Origin: C2 (2026-11-08)
+- Types: `NoUserAction`, `NoUserActionTest`
+- Problem: `NoUserAction` has no caller in main sources; Forest has its own `ForestUserAction` with
+  `NoUserActionContext`, and the Lab has no user action. Its bound `SM extends AbstractTimedSimulationManager` is
+  also narrower than the `SimulationManager` of the interface.
+- Proposal: Remove `NoUserAction` and `NoUserActionTest`; `NoUserActionContext` stays. An API change.
+- Status: done (2026-11-08).
+
+#### One-parameter constructor of AbstractTimedSimulationManager
+
+- Origin: first analysis of C2 (2026-11-08)
+- Types: `AbstractTimedSimulationManager`, `DefaultMainViewModelTest` (fixture `StubSimulationManager`)
+- Problem: All eight managers call `(config, metrics)`; `(config)` is only used by the test fixture. Both
+  constructor summaries start with "Initializes ..." instead of "Creates a ...".
+- Proposal: Remove `(config)`; the fixture passes `List.of()` (or `ConwayStatistics.metrics()`). The remaining
+  constructor gets the summary "Creates a manager that samples the given metrics after each executed step." An API
+  change.
+- Status: done (2026-11-08).
+
+#### Constructor of BaseTimedSimulationStatistics
+
+- Origin: first analysis of C2 (2026-11-08)
+- Types: `BaseTimedSimulationStatistics`
+- Problem: The constructor checks `cellCount() < 0`, which `GridSize` excludes, and sets `stepCount = 0`
+  explicitly; its Javadoc starts with "Initializes ..." and only says that the values start at their initial values.
+- Proposal: Remove the check, the assignment, and the constructor Javadoc.
+- Status: done (2026-11-08).
+
+#### Wrapped class declarations
+
+- Origin: C2 (2026-11-08)
+- Types: `BaseTimedSimulationStatistics`, `SimulationInitializationCanceledException`
+- Problem: Both declarations put `implements TimedSimulationStatistics` and `extends RuntimeException` on a second
+  line, although the declaration fits in one line.
+- Proposal: Join each declaration into one line.
+- Status: done (2026-11-08).
+
+#### Tests of the timed manager and statistics base
+
+- Origin: `code-interface-types.md`, category 5 (see "Tests for the timed managers"), and C2 (2026-11-08)
+- Types: `AbstractTimedSimulationManager`, `BaseTimedSimulationStatistics`, `SimulationManagerTest`
+- Problem: Three tests of `SimulationManagerTest` (`testExecuteStepRecordsOneSample`,
+  `testExecuteStepsRecordsEveryExecutedStepWithoutDuplicateFinalSample`,
+  `testExecuteStepsDoesNotRecordSampleForZeroSteps`) check only `AbstractTimedSimulationManager` through Conway. The
+  replacement of non-finite metric values with `NaN` is untested. `BaseTimedSimulationStatistics` has no test of its
+  own (initial values, `setStepData(..)` and its rejection, `baseToString()`).
+- Proposal: Keep `SimulationManagerTest` as the topic test for the cross-manager contracts (cancellation, step-zero
+  sample, extrema, defaults of the non-timed Lab manager). Add `AbstractTimedSimulationManagerTest` with a small
+  Conway-based fixture like `StubSimulationManager`, move the three tests there, and add a test for the `NaN`
+  replacement. Add `BaseTimedSimulationStatisticsTest`.
+- Status: done (2026-11-08).
 
 #### Tests for the timed managers
 
@@ -508,6 +570,22 @@ Notes:
   (2026-11-08): the test checks the cancellation, samples, and extrema of all managers, including the non-timed Lab
   manager; as such it is a `<Topic>Test` in the package of the common abstraction `SimulationManager` (`junit.md`,
   "Test Types") and may keep its name.
+- Status: done (2026-11-08); see "Tests of the timed manager and statistics base".
+
+### Decisions
+
+- API change: `NoUserAction` and `NoUserActionTest` are removed; `NoUserActionContext` stays for Forest and the Lab.
+- API change: the constructor `AbstractTimedSimulationManager(config)` is removed; the fixture `StubSimulationManager`
+  of `DefaultMainViewModelTest` passes `List.of()`. The remaining constructor is documented with "Creates a manager
+  that ...".
+- `BaseTimedSimulationStatistics` has a constructor without Javadoc, without the impossible cell count check, and
+  without `stepCount = 0`; it and `SimulationInitializationCanceledException` declare their supertype on one line.
+- `SimulationManagerTest` stays the topic test for the contracts across all managers. The new
+  `AbstractTimedSimulationManagerTest` holds the three tests of the sample history, now on the Conway-based fixture
+  `TestSimulationManager` with an empty grid, and tests the replacement of non-finite metric values with `NaN`. The
+  new `BaseTimedSimulationStatisticsTest` covers the initial values, `setStepData(..)`, its rejection, and
+  `baseToString()`.
+- No rule change; the group has no remaining test gaps.
 
 ### C3. `core.model`: statistics history and extrema
 

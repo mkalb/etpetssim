@@ -740,7 +740,7 @@ final class DefaultMainViewModelTest {
         private final Runnable stepFailure;
 
         StubSimulationManager(ConwayConfig config, Runnable stepFailure) {
-            super(config);
+            super(config, List.of());
             structure = config.createGridStructure();
             statistics = new ConwayStatistics(structure);
             var model = new SparseGridModel<>(structure, ConwayEntity.DEAD);
