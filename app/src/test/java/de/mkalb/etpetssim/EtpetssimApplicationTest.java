@@ -1,6 +1,5 @@
 package de.mkalb.etpetssim;
 
-import de.mkalb.etpetssim.core.AppLocalization;
 import de.mkalb.etpetssim.core.AppLogger;
 import de.mkalb.etpetssim.simulations.core.SimulationInstance;
 import de.mkalb.etpetssim.simulations.core.SimulationTerminationHandle;
@@ -15,7 +14,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 
-import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -32,9 +30,6 @@ final class EtpetssimApplicationTest {
     @BeforeAll
     static void setUpBeforeAll() {
         FXTestSupport.ensureStarted();
-        if (!AppLocalization.isInitialized()) {
-            AppLocalization.initialize("en_US", Locale.US);
-        }
     }
 
     private static SimulationInstance createInstance(SimulationType simulationType, SimulationMainView view) {
@@ -44,48 +39,6 @@ final class EtpetssimApplicationTest {
     @BeforeEach
     void setUpBeforeEach() {
         AppLogger.initializeForTesting();
-    }
-
-    @Test
-    void testFormatUnexpectedErrorContent() {
-        String content = EtpetssimApplication.formatUnexpectedErrorContent(
-                new IllegalStateException("Boom"), 0);
-
-        assertEquals("Boom\n\nDetails are in the application log if logging is enabled (--log-file).", content);
-    }
-
-    @Test
-    void testFormatUnexpectedErrorContentReturnsClassNameForNullMessage() {
-        String content = EtpetssimApplication.formatUnexpectedErrorContent(
-                new IllegalStateException(), 0);
-
-        assertEquals("""
-                IllegalStateException
-
-                Details are in the application log if logging is enabled (--log-file).""", content);
-    }
-
-    @Test
-    void testFormatUnexpectedErrorContentReturnsClassNameForBlankMessage() {
-        String content = EtpetssimApplication.formatUnexpectedErrorContent(
-                new IllegalArgumentException("  "), 0);
-
-        assertEquals("""
-                IllegalArgumentException
-
-                Details are in the application log if logging is enabled (--log-file).""", content);
-    }
-
-    @Test
-    void testFormatUnexpectedErrorContentReturnsCounterLineForPositiveCount() {
-        String content = EtpetssimApplication.formatUnexpectedErrorContent(
-                new IllegalStateException("Boom"), 3);
-
-        assertEquals("""
-                Boom
-
-                Details are in the application log if logging is enabled (--log-file).
-                Further errors since this alert: 3""", content);
     }
 
     @Test

@@ -11,15 +11,14 @@ import de.mkalb.etpetssim.simulations.core.SimulationTerminationHandle;
 import de.mkalb.etpetssim.simulations.core.SimulationType;
 import de.mkalb.etpetssim.ui.AboutDialog;
 import de.mkalb.etpetssim.ui.FXComponentFactory;
-import de.mkalb.etpetssim.ui.FXDialogStyler;
 import de.mkalb.etpetssim.ui.FXStyleClasses;
+import de.mkalb.etpetssim.ui.UnexpectedErrorDialog;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.geometry.Pos;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.image.Image;
 import javafx.scene.layout.HBox;
@@ -69,31 +68,6 @@ public final class EtpetssimApplication extends Application {
     private List<Image> appIcons = List.of();
     private @Nullable SimulationInstance currentSimulationInstance;
     private boolean terminationAwaited;
-    private @Nullable Alert unexpectedErrorAlert;
-    private @Nullable Throwable unexpectedErrorThrowable;
-    private int furtherErrorCount;
-
-    /**
-     * Formats the content text of the unexpected error alert.
-     *
-     * @param throwable         uncaught exception shown in the alert
-     * @param furtherErrorCount number of further errors since the alert opened
-     * @return the exception message (or its simple class name if the message is {@code null} or blank), an empty
-     * line, the log hint, and, if {@code furtherErrorCount} is positive, a line with the count
-     */
-    @SuppressWarnings("HardcodedLineSeparator")
-    static String formatUnexpectedErrorContent(Throwable throwable, int furtherErrorCount) {
-        String message = throwable.getMessage();
-        StringBuilder content = new StringBuilder(((message == null) || message.isBlank())
-                ? throwable.getClass().getSimpleName()
-                : message);
-        content.append("\n\n").append(AppLocalization.getText(AppLocalizationKeys.ALERT_UNEXPECTED_ERROR_LOG));
-        if (furtherErrorCount > 0) {
-            content.append('\n').append(AppLocalization.getFormattedText(
-                    AppLocalizationKeys.ALERT_UNEXPECTED_ERROR_FURTHER, furtherErrorCount));
-        }
-        return content.toString();
-    }
 
     /**
      * Resolves the initial simulation type from parsed arguments, restricted to implemented simulations.
@@ -135,23 +109,25 @@ public final class EtpetssimApplication extends Application {
     /**
      * Starts the JavaFX application.
      *
-     * <p>Installs uncaught-exception handling, resolves the requested simulation type, registers the shutdown of the
-     * current simulation on a close request, and shows the primary stage.
+     * <p>Loads the application icons, installs uncaught-exception handling that logs the exception and shows it in an
+     * {@link UnexpectedErrorDialog}, resolves the requested simulation type, registers the shutdown of the current
+     * simulation on a close request, and shows the primary stage.
      *
      * @param primaryStage primary stage created by JavaFX
      */
     @Override
     public void start(Stage primaryStage) {
+        updateStageIcons(primaryStage);
+        UnexpectedErrorDialog unexpectedErrorDialog = new UnexpectedErrorDialog(appIcons);
         Thread.setDefaultUncaughtExceptionHandler((thread, throwable) -> {
             AppLogger.errorf(throwable, "EtpetssimApplication: Uncaught exception in thread: %s", thread.getName());
-            Platform.runLater(() -> handleUncaughtException(throwable));
+            Platform.runLater(() -> unexpectedErrorDialog.handleUncaughtException(throwable));
         });
 
         AppArgs arguments = new AppArgs(getParameters().getRaw().toArray(String[]::new));
         SimulationType type = resolveSimulationType(arguments).orElse(SimulationType.STARTSCREEN);
         AppLogger.infof("EtpetssimApplication: Starting with simulation type: %s", type.name());
 
-        updateStageIcons(primaryStage);
         primaryStage.setOnCloseRequest(_ -> shutdownCurrentSimulation());
         switchToSimulation(primaryStage, type);
         primaryStage.show();
@@ -218,60 +194,6 @@ public final class EtpetssimApplication extends Application {
             AppLogger.error("EtpetssimApplication: Failed to load application icons");
         } else {
             stage.getIcons().addAll(appIcons);
-        }
-    }
-
-    /**
-     * Handles an uncaught exception on the JavaFX Application Thread.
-     *
-     * <p>If an unexpected error alert is already open, the further error is counted and the content of the open
-     * alert is updated; its window is resized so that the added counter line is not truncated. Otherwise, a new alert
-     * is shown.
-     *
-     * @param throwable uncaught exception
-     */
-    private void handleUncaughtException(Throwable throwable) {
-        Alert openAlert = unexpectedErrorAlert;
-        Throwable shownThrowable = unexpectedErrorThrowable;
-        if ((openAlert != null) && (shownThrowable != null)) {
-            furtherErrorCount++;
-            try {
-                openAlert.setContentText(formatUnexpectedErrorContent(shownThrowable, furtherErrorCount));
-                openAlert.getDialogPane().getScene().getWindow().sizeToScene();
-            } catch (RuntimeException e) {
-                AppLogger.error(e, "EtpetssimApplication: Failed to update unexpected error alert");
-            }
-        } else {
-            showUnexpectedErrorAlert(throwable);
-        }
-    }
-
-    /**
-     * Shows an alert for an uncaught exception and waits until it is closed.
-     *
-     * <p>The alert and its exception are kept until it is closed, so that further errors can update it. A failure
-     * to create or show the alert is only logged, so that it cannot trigger another alert.
-     *
-     * @param throwable uncaught exception shown in the alert
-     */
-    private void showUnexpectedErrorAlert(Throwable throwable) {
-        try {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            FXDialogStyler.applyAppStyle(alert, appIcons);
-            alert.setTitle(AppLocalization.getFormattedText(AppLocalizationKeys.WINDOW_TITLE,
-                    AppLocalization.getText(AppLocalizationKeys.ALERT_UNEXPECTED_ERROR_TITLE)));
-            alert.setHeaderText(AppLocalization.getText(AppLocalizationKeys.ALERT_UNEXPECTED_ERROR_HEADER));
-            alert.setGraphic(null);
-            unexpectedErrorAlert = alert;
-            unexpectedErrorThrowable = throwable;
-            alert.setContentText(formatUnexpectedErrorContent(throwable, 0));
-            alert.showAndWait();
-        } catch (RuntimeException e) {
-            AppLogger.error(e, "EtpetssimApplication: Failed to show unexpected error alert");
-        } finally {
-            unexpectedErrorAlert = null;
-            unexpectedErrorThrowable = null;
-            furtherErrorCount = 0;
         }
     }
 
