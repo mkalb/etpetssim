@@ -135,7 +135,7 @@ sources. "Types" counts the top-level types in main sources of a group.
 | C1 | `core.shared`                                                 |    10 | done        |
 | C2 | `core.model`: managers, statistics base, and user actions     |    10 | done        |
 | C3 | `core.model`: statistics history and extrema                  |     8 | done        |
-| C4 | `core.viewmodel`: config, control, and observation            |     7 | open        |
+| C4 | `core.viewmodel`: config, control, and observation            |     7 | done        |
 | C5 | `core.viewmodel`: main ViewModels and user action descriptors |     5 | open        |
 | C6 | `core.view`: config and control views                         |     6 | open        |
 | C7 | `core.view`: observation views and statistics chart           |     3 | open        |
@@ -686,6 +686,93 @@ Notes:
   `*Step`).
 - Proposal: Rename the `*Initial` components to `*Default` (e.g., `seedDefault`) and adapt the Javadoc and
   `AbstractConfigViewModelTest`; the callers pass the arguments by position and need no change. An API change.
+- Status: done (2026-11-08).
+
+Notes:
+
+- Inventory (2026-11-08, verified against the sources): the interfaces `SimulationConfigViewModel`,
+  `SimulationControlViewModel`, and `SimulationObservationViewModel`, the abstract class `AbstractConfigViewModel`
+  with the nested records `ConfigValidationRule` (private) and `CommonConfigSettings`, and the final classes
+  `DefaultControlViewModel`, `DefaultObservationViewModel`, and `SeedProperty`. Tests exist for
+  `AbstractConfigViewModel` (only `CommonConfigSettings`), `DefaultControlViewModel`, and
+  `DefaultObservationViewModel`. All are JavaFX types; no new tests in this plan.
+- `DefaultObservationViewModel` is the only implementation of `SimulationObservationViewModel`; the observation
+  views of the simulations use the concrete class.
+- Test gaps for the later separate optimization: `SeedProperty` (no test) and
+  `AbstractConfigViewModel.registerConfigValidationRule(..)`.
+
+#### Unused observation accessors
+
+- Origin: C4 (2026-11-08)
+- Types: `SimulationObservationViewModel`, `DefaultObservationViewModel`, `DefaultObservationViewModelTest`
+- Problem: `statisticsProperty()` and `statisticsExtremaProperty()` of the interface and `getStatisticsHistory()` of
+  the class have no caller in main sources; the views read `getStatistics()`, `getStatisticsExtrema()`, and
+  `statisticsHistoryProperty()`.
+- Proposal: Remove the three methods and adapt the tests, which then check the getters only. An API change.
+- Status: done (2026-11-08).
+
+#### Seed computation of SeedProperty
+
+- Origin: C4 (2026-11-08)
+- Types: `SeedProperty`
+- Problem: The five package-private static helpers (`isRandomSeed`, `isNumericSeed`, `parseNumericSeed`, `hashSeed`,
+  `fallbackHashSeed`) are package-private for tests that do not exist (`java.md`, "Test Access"). `computeSeed(..)`
+  parses a numeric seed twice. `fallbackHashSeed(..)` is dead code, because every Java platform must support
+  SHA-256 (`MessageDigest`). The Javadoc lacks the empty lines between its paragraphs, starts the constructor with
+  "Constructs a SeedProperty", writes `null` without `{@code}`, and repeats non-null contracts ("must be non-null");
+  three line comments restate the code.
+- Proposal: Reduce the logic to a private `computeSeed(..)` (blank -> random, `Long.parseLong` of the trimmed text,
+  `NumberFormatException` -> hash) and a private `hashSeed(..)` that wraps the impossible
+  `NoSuchAlgorithmException` into an `IllegalStateException` (`Unable to ...`); remove `fallbackHashSeed(..)` and
+  its constants. Fix the Javadoc and remove the three comments. The seeds of numeric and text input stay the same.
+- Status: done (2026-11-08).
+
+#### Names in DefaultControlViewModel and DefaultObservationViewModel
+
+- Origin: C4 (2026-11-08)
+- Types: `DefaultControlViewModel`, `DefaultObservationViewModel`, `DefaultControlView`, `DefaultMainViewModel`,
+  `DefaultControlViewModelTest`
+- Problem: `terminationCheckProperty()` exposes the field `terminationCheckMode`, while `simulationModeProperty()` and
+  `startModeProperty()` follow their fields. The private constants `STEP_DURATION_INITIAL` and `STEP_COUNT_INITIAL`
+  use `_INITIAL` instead of `_DEFAULT` (`simulations.md`, "Configuration and Input"). In
+  `DefaultObservationViewModel`, the wrappers are named `statistics`, `statisticsExtremaWrapper`, and
+  `statisticsHistoryWrapper`; only `statistics` is created in the constructor, whose Javadoc explains nothing.
+- Proposal: Rename `terminationCheckProperty()` to `terminationCheckModeProperty()` (an API change with two callers),
+  the constants to `STEP_DURATION_DEFAULT` and `STEP_COUNT_DEFAULT`, and the wrappers to `statisticsExtrema` and
+  `statisticsHistory`; initialize `statistics` at its declaration and remove the constructor Javadoc.
+- Status: done (2026-11-08).
+
+#### Javadoc and declarations of the ViewModel contracts
+
+- Origin: C4 (2026-11-08)
+- Types: `SimulationObservationViewModel`, `AbstractConfigViewModel`, `DefaultControlViewModel`
+- Problem: `setStatistics(..)` documents "never {@code null}", which `@NullMarked` already states.
+  `AbstractConfigViewModel` and `DefaultControlViewModel` put `implements ...` on a second line, although the
+  declaration fits in one line (decided in C2 for the same case).
+- Proposal: Remove "never {@code null}"; join both declarations into one line.
+- Status: done (2026-11-08).
+
+### Decisions
+
+- API change: the components of `CommonConfigSettings` are named `cellShapeDefault`, `gridEdgeBehaviorDefault`,
+  `gridWidthDefault`, `gridHeightDefault`, `cellEdgeLengthDefault`, `cellDisplayModeDefault`, and `seedDefault`; their
+  `@param` tags say "default ...".
+- API change: `SimulationObservationViewModel.statisticsProperty()` and `statisticsExtremaProperty()` and
+  `DefaultObservationViewModel.getStatisticsHistory()` are removed. `DefaultObservationViewModel` holds the
+  statistics and the extrema in plain `SimpleObjectProperty` fields, keeps the `ReadOnlyObjectWrapper` only for the
+  history, and has a constructor without Javadoc. `DefaultObservationViewModelTest` checks the getters and
+  `statisticsHistoryProperty()`; the listener test of the extrema property is removed. `DefaultMainViewModelTest`
+  reads the history through `statisticsHistoryProperty()`.
+- `SeedProperty` has only the private helpers `computeSeed(..)` and `hashSeed(..)`; `hashSeed(..)` throws an
+  `IllegalStateException` (`Unable to hash seed: algorithm=SHA-256`) instead of the removed fallback hash. The
+  seeds of all inputs stay the same.
+- API change: `DefaultControlViewModel.terminationCheckProperty()` is renamed to `terminationCheckModeProperty()`;
+  `DefaultControlView` and the tests are adapted. The private constants are `STEP_DURATION_DEFAULT` and
+  `STEP_COUNT_DEFAULT`.
+- The fields of `DefaultObservationViewModel` are `statisticsExtrema` and `statisticsHistory`;
+  `AbstractConfigViewModel` and `DefaultControlViewModel` declare their interface on one line, and
+  `setStatistics(..)` no longer documents "never {@code null}".
+- No rule change. Test gaps: `SeedProperty` and `AbstractConfigViewModel.registerConfigValidationRule(..)`.
 
 ### C5. `core.viewmodel`: main ViewModels and user action descriptors
 

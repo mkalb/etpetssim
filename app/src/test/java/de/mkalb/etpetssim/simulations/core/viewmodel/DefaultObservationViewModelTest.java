@@ -25,7 +25,6 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
 @Execution(ExecutionMode.SAME_THREAD)
@@ -57,55 +56,32 @@ final class DefaultObservationViewModelTest {
     void testGetStatisticsReturnsEmptyInitially() {
         Fixture fixture = FXTestSupport.supplyAndWaitNonNull(DefaultObservationViewModelTest::createFixture);
 
-        FXTestSupport.runAndWait(() -> assertAll(
-                () -> assertNull(fixture.viewModel().statisticsProperty().get()),
-                () -> assertEquals(Optional.empty(), fixture.viewModel().getStatistics())
-        ));
+        FXTestSupport.runAndWait(
+                () -> assertEquals(Optional.empty(), fixture.viewModel().getStatistics()));
     }
 
     @Test
-    void testSetStatisticsUpdatesPropertyAndOptionalGetter() {
+    void testSetStatistics() {
         Fixture fixture = FXTestSupport.supplyAndWaitNonNull(DefaultObservationViewModelTest::createFixture);
         var statistics = new TestStatistics(7);
 
         FXTestSupport.runAndWait(() -> {
             fixture.viewModel().setStatistics(statistics);
 
-            assertAll(
-                    () -> assertSame(statistics, fixture.viewModel().statisticsProperty().get()),
-                    () -> assertEquals(Optional.of(statistics), fixture.viewModel().getStatistics())
-            );
+            assertEquals(Optional.of(statistics), fixture.viewModel().getStatistics());
         });
     }
 
     @Test
-    void testStatisticsExtremaPropertyInitialValueIsEmpty() {
+    void testGetStatisticsExtremaReturnsEmptyInitially() {
         Fixture fixture = FXTestSupport.supplyAndWaitNonNull(DefaultObservationViewModelTest::createFixture);
 
-        FXTestSupport.runAndWait(() -> assertAll(
-                () -> assertEquals(StatisticsExtrema.empty(), fixture.viewModel().statisticsExtremaProperty().get()),
-                () -> assertEquals(StatisticsExtrema.empty(), fixture.viewModel().getStatisticsExtrema())
-        ));
+        FXTestSupport.runAndWait(
+                () -> assertEquals(StatisticsExtrema.empty(), fixture.viewModel().getStatisticsExtrema()));
     }
 
     @Test
-    void testStatisticsExtremaPropertyNotifiesListener() {
-        Fixture fixture = FXTestSupport.supplyAndWaitNonNull(DefaultObservationViewModelTest::createFixture);
-        var extrema = new StatisticsExtrema(
-                Map.of("metric", new StatisticsExtremum(42.0, 7)),
-                Map.of());
-        var observedValues = new ArrayList<StatisticsExtrema>();
-
-        FXTestSupport.runAndWait(() -> {
-            fixture.viewModel().statisticsExtremaProperty().addListener((_, _, value) -> observedValues.add(value));
-            fixture.viewModel().setStatisticsExtrema(extrema);
-        });
-
-        assertEquals(List.of(extrema), observedValues);
-    }
-
-    @Test
-    void testSetStatisticsExtremaUpdatesPropertyAndGetter() {
+    void testSetStatisticsExtrema() {
         Fixture fixture = FXTestSupport.supplyAndWaitNonNull(DefaultObservationViewModelTest::createFixture);
         var extremum = new StatisticsExtremum(42.0, 7);
         var extrema = new StatisticsExtrema(Map.of("metric", extremum), Map.of());
@@ -113,15 +89,12 @@ final class DefaultObservationViewModelTest {
         FXTestSupport.runAndWait(() -> {
             fixture.viewModel().setStatisticsExtrema(extrema);
 
-            assertAll(
-                    () -> assertEquals(extrema, fixture.viewModel().statisticsExtremaProperty().get()),
-                    () -> assertEquals(extrema, fixture.viewModel().getStatisticsExtrema())
-            );
+            assertEquals(extrema, fixture.viewModel().getStatisticsExtrema());
         });
     }
 
     @Test
-    void testSetStatisticsExtremaToEmptyResetsProperty() {
+    void testSetStatisticsExtremaResetsToEmpty() {
         Fixture fixture = FXTestSupport.supplyAndWaitNonNull(DefaultObservationViewModelTest::createFixture);
 
         FXTestSupport.runAndWait(() -> {
@@ -129,7 +102,7 @@ final class DefaultObservationViewModelTest {
                     Map.of("x", new StatisticsExtremum(1.0, 0)), Map.of()));
             fixture.viewModel().setStatisticsExtrema(StatisticsExtrema.empty());
 
-            assertEquals(StatisticsExtrema.empty(), fixture.viewModel().statisticsExtremaProperty().get());
+            assertEquals(StatisticsExtrema.empty(), fixture.viewModel().getStatisticsExtrema());
         });
     }
 
@@ -137,10 +110,8 @@ final class DefaultObservationViewModelTest {
     void testStatisticsHistoryPropertyInitialValueIsEmpty() {
         Fixture fixture = FXTestSupport.supplyAndWaitNonNull(DefaultObservationViewModelTest::createFixture);
 
-        FXTestSupport.runAndWait(() -> assertAll(
-                () -> assertEquals(List.of(), fixture.viewModel().statisticsHistoryProperty().get()),
-                () -> assertEquals(List.of(), fixture.viewModel().getStatisticsHistory())
-        ));
+        FXTestSupport.runAndWait(
+                () -> assertEquals(List.of(), fixture.viewModel().statisticsHistoryProperty().get()));
     }
 
     @Test
@@ -161,7 +132,7 @@ final class DefaultObservationViewModelTest {
     }
 
     @Test
-    void testSetStatisticsHistoryUpdatesPropertyAndGetter() {
+    void testSetStatisticsHistory() {
         Fixture fixture = FXTestSupport.supplyAndWaitNonNull(DefaultObservationViewModelTest::createFixture);
         var sample = new StatisticsSample(1, StepTimingStatistics.empty(), Map.of("metric", 3.0));
         var history = List.of(sample);
@@ -169,10 +140,7 @@ final class DefaultObservationViewModelTest {
         FXTestSupport.runAndWait(() -> {
             fixture.viewModel().setStatisticsHistory(history);
 
-            assertAll(
-                    () -> assertEquals(history, fixture.viewModel().statisticsHistoryProperty().get()),
-                    () -> assertEquals(history, fixture.viewModel().getStatisticsHistory())
-            );
+            assertEquals(history, fixture.viewModel().statisticsHistoryProperty().get());
         });
     }
 
@@ -205,7 +173,7 @@ final class DefaultObservationViewModelTest {
             assertAll(
                     () -> assertEquals(Optional.empty(), fixture.viewModel().getStatistics()),
                     () -> assertEquals(StatisticsExtrema.empty(), fixture.viewModel().getStatisticsExtrema()),
-                    () -> assertEquals(List.of(), fixture.viewModel().getStatisticsHistory())
+                    () -> assertEquals(List.of(), fixture.viewModel().statisticsHistoryProperty().get())
             );
         });
     }

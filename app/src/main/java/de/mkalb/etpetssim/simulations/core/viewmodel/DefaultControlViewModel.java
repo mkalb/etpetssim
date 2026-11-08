@@ -15,13 +15,12 @@ import javafx.beans.property.SimpleBooleanProperty;
 /**
  * Default implementation of control view-model state and user requests.
  */
-public final class DefaultControlViewModel
-        implements SimulationControlViewModel {
+public final class DefaultControlViewModel implements SimulationControlViewModel {
 
-    private static final int STEP_DURATION_INITIAL = 700;
+    private static final int STEP_DURATION_DEFAULT = 700;
     private static final int STEP_DURATION_MIN = 50;
     private static final int STEP_DURATION_MAX = 2_000;
-    private static final int STEP_COUNT_INITIAL = 100;
+    private static final int STEP_COUNT_DEFAULT = 100;
     private static final int STEP_COUNT_MIN = 1;
     private static final int STEP_COUNT_MAX = 10_000;
     private static final int STEP_COUNT_STEP = 1;
@@ -30,9 +29,9 @@ public final class DefaultControlViewModel
     private final InputChoiceProperty<SimulationMode> simulationMode = InputChoiceProperty.ofEnum(SimulationMode.TIMED,
             SimulationMode.class,
             e -> AppLocalization.getText(e.resourceKey()));
-    private final InputDoubleIntRangeProperty stepDuration = InputDoubleIntRangeProperty.of(STEP_DURATION_INITIAL,
+    private final InputDoubleIntRangeProperty stepDuration = InputDoubleIntRangeProperty.of(STEP_DURATION_DEFAULT,
             STEP_DURATION_MIN, STEP_DURATION_MAX);
-    private final InputIntegerProperty stepCount = InputIntegerProperty.of(STEP_COUNT_INITIAL,
+    private final InputIntegerProperty stepCount = InputIntegerProperty.of(STEP_COUNT_DEFAULT,
             STEP_COUNT_MIN, STEP_COUNT_MAX, STEP_COUNT_STEP);
     private final InputChoiceProperty<SimulationStartMode> startMode = InputChoiceProperty
             .ofEnum(SimulationStartMode.START_IMMEDIATELY, SimulationStartMode.class, Enum::toString);
@@ -127,7 +126,7 @@ public final class DefaultControlViewModel
         return startMode;
     }
 
-    public InputChoiceProperty<SimulationTerminationCheckMode> terminationCheckProperty() {
+    public InputChoiceProperty<SimulationTerminationCheckMode> terminationCheckModeProperty() {
         return terminationCheckMode;
     }
 

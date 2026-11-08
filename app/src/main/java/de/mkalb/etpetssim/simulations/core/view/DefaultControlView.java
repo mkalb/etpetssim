@@ -107,7 +107,7 @@ public final class DefaultControlView
         bindNotStartableDisabled(startModeControl.controlRegion());
 
         var terminationCheckControl = FXComponentFactory
-                .createLabeledChoiceCheckBox(viewModel.terminationCheckProperty(),
+                .createLabeledChoiceCheckBox(viewModel.terminationCheckModeProperty(),
                         SimulationTerminationCheckMode.CHECKED,
                         SimulationTerminationCheckMode.UNCHECKED,
                         AppLocalization.getText(SimulationLocalizationKeys.CONTROL_TERMINATION_CHECK),

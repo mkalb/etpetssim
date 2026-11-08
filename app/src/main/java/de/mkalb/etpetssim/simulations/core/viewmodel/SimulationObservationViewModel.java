@@ -2,7 +2,6 @@ package de.mkalb.etpetssim.simulations.core.viewmodel;
 
 import de.mkalb.etpetssim.engine.GridCoordinate;
 import de.mkalb.etpetssim.simulations.core.model.SimulationStatistics;
-import de.mkalb.etpetssim.simulations.core.model.StatisticsExtrema;
 import de.mkalb.etpetssim.simulations.core.model.StatisticsSample;
 import de.mkalb.etpetssim.simulations.core.shared.SimulationState;
 import javafx.beans.property.ObjectProperty;
@@ -24,15 +23,6 @@ public interface SimulationObservationViewModel<STA extends SimulationStatistics
     SimulationState getSimulationState();
 
     /**
-     * Exposes the current statistics snapshot.
-     *
-     * <p>The value is {@code null} before initialization or after a reset.
-     *
-     * @return read-only property containing the current statistics or {@code null}
-     */
-    ReadOnlyObjectProperty<@Nullable STA> statisticsProperty();
-
-    /**
      * Returns the current statistics snapshot.
      *
      * @return the statistics snapshot, or empty before initialization or after a reset
@@ -42,7 +32,7 @@ public interface SimulationObservationViewModel<STA extends SimulationStatistics
     /**
      * Replaces the current statistics snapshot.
      *
-     * @param statistics the new statistics snapshot, never {@code null}
+     * @param statistics the new statistics snapshot
      */
     void setStatistics(STA statistics);
 
@@ -52,13 +42,6 @@ public interface SimulationObservationViewModel<STA extends SimulationStatistics
      * @return mutable property that may contain {@code null} when no cell is selected
      */
     ObjectProperty<@Nullable GridCoordinate> lastClickedCoordinateProperty();
-
-    /**
-     * Exposes the current statistic extrema snapshot as an observable property.
-     *
-     * @return read-only property containing the latest extrema
-     */
-    ReadOnlyObjectProperty<StatisticsExtrema> statisticsExtremaProperty();
 
     /**
      * Exposes the current statistics history snapshot as an observable property.

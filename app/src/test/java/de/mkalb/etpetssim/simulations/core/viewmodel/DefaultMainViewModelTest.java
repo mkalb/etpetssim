@@ -123,7 +123,7 @@ final class DefaultMainViewModelTest {
         fixture.controlViewModel().startModeProperty().setValue(SimulationStartMode.START_IMMEDIATELY);
         fixture.controlViewModel().simulationModeProperty().setValue(SimulationMode.BATCH_SINGLE);
         fixture.controlViewModel().stepCountProperty().setValue(10);
-        fixture.controlViewModel().terminationCheckProperty().setValue(SimulationTerminationCheckMode.UNCHECKED);
+        fixture.controlViewModel().terminationCheckModeProperty().setValue(SimulationTerminationCheckMode.UNCHECKED);
     }
 
     private static void startAndAwaitInitialization(Fixture fixture) throws InterruptedException {
@@ -155,7 +155,7 @@ final class DefaultMainViewModelTest {
         fixture.controlViewModel().startModeProperty().setValue(SimulationStartMode.START_IMMEDIATELY);
         fixture.controlViewModel().simulationModeProperty().setValue(SimulationMode.BATCH_SINGLE);
         fixture.controlViewModel().stepCountProperty().setValue(10_000);
-        fixture.controlViewModel().terminationCheckProperty().setValue(SimulationTerminationCheckMode.UNCHECKED);
+        fixture.controlViewModel().terminationCheckModeProperty().setValue(SimulationTerminationCheckMode.UNCHECKED);
         fixture.mainViewModel().setSimulationStepListener(event -> {
             if (event.batchModeRunning()
                     && (fixture.mainViewModel().getSimulationState() == SimulationState.RUNNING_BATCH)
@@ -328,7 +328,7 @@ final class DefaultMainViewModelTest {
 
             assertAll(
                     () -> assertEquals(SimulationState.SHUTTING_DOWN, fixture.mainViewModel().getSimulationState()),
-                    () -> assertEquals(List.of(), fixture.observationViewModel().getStatisticsHistory()),
+                    () -> assertEquals(List.of(), fixture.observationViewModel().statisticsHistoryProperty().get()),
                     () -> assertEquals(StatisticsExtrema.empty(), fixture.observationViewModel().getStatisticsExtrema())
             );
         });
@@ -439,8 +439,9 @@ final class DefaultMainViewModelTest {
 
         FXTestSupport.runAndWait(() -> assertAll(
                 () -> assertEquals(SimulationState.PAUSED, fixture.mainViewModel().getSimulationState()),
-                () -> assertEquals(1, fixture.observationViewModel().getStatisticsHistory().size()),
-                () -> assertEquals(0L, fixture.observationViewModel().getStatisticsHistory().getFirst().stepCount()),
+                () -> assertEquals(1, fixture.observationViewModel().statisticsHistoryProperty().get().size()),
+                () -> assertEquals(0L, fixture.observationViewModel().statisticsHistoryProperty().get().getFirst()
+                        .stepCount()),
                 () -> assertFalse(fixture.observationViewModel().getStatisticsExtrema().minimumValues().isEmpty()),
                 () -> assertFalse(fixture.observationViewModel().getStatisticsExtrema().maximumValues().isEmpty())
         ));
@@ -547,7 +548,8 @@ final class DefaultMainViewModelTest {
             fixture.controlViewModel().startModeProperty().setValue(SimulationStartMode.START_IMMEDIATELY);
             fixture.controlViewModel().simulationModeProperty().setValue(SimulationMode.BATCH_SINGLE);
             fixture.controlViewModel().stepCountProperty().setValue(4);
-            fixture.controlViewModel().terminationCheckProperty().setValue(SimulationTerminationCheckMode.UNCHECKED);
+            fixture.controlViewModel().terminationCheckModeProperty()
+                    .setValue(SimulationTerminationCheckMode.UNCHECKED);
             fixture.mainViewModel().simulationStateProperty().addListener((_, _, newState) -> {
                 if (newState == SimulationState.PAUSED) {
                     batchCompleted.countDown();
@@ -560,7 +562,7 @@ final class DefaultMainViewModelTest {
         FXTestSupport.runAndWait(() -> {
             fixture.controlViewModel().simulationModeProperty().setValue(SimulationMode.BATCH_CONTINUOUS);
             fixture.controlViewModel().stepCountProperty().setValue(1);
-            fixture.controlViewModel().terminationCheckProperty().setValue(SimulationTerminationCheckMode.CHECKED);
+            fixture.controlViewModel().terminationCheckModeProperty().setValue(SimulationTerminationCheckMode.CHECKED);
         });
         releaseConstruction.countDown();
         assertTrue(batchCompleted.await(FXTestSupport.DEFAULT_TIMEOUT_SECONDS, TimeUnit.SECONDS));

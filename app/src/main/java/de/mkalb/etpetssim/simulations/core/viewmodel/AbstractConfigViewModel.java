@@ -25,8 +25,7 @@ import java.util.function.Supplier;
  *
  * @param <CON> immutable simulation config type
  */
-public abstract class AbstractConfigViewModel<CON extends SimulationConfig>
-        implements SimulationConfigViewModel<CON> {
+public abstract class AbstractConfigViewModel<CON extends SimulationConfig> implements SimulationConfigViewModel<CON> {
 
     private final List<ConfigValidationRule> configValidationRules = new ArrayList<>();
     private final ReadOnlyBooleanWrapper hasConfigValidationIssues = new ReadOnlyBooleanWrapper(false);
@@ -47,32 +46,32 @@ public abstract class AbstractConfigViewModel<CON extends SimulationConfig>
         this.simulationState = simulationState;
 
         cellShape = InputChoiceProperty.ofList(
-                commonConfigSettings.cellShapeInitial(),
+                commonConfigSettings.cellShapeDefault(),
                 commonConfigSettings.cellShapeValues(),
                 e -> AppLocalization.getText(e.resourceKey()));
         gridEdgeBehavior = InputChoiceProperty.ofList(
-                commonConfigSettings.gridEdgeBehaviorInitial(),
+                commonConfigSettings.gridEdgeBehaviorDefault(),
                 commonConfigSettings.gridEdgeBehaviorValues(),
                 e -> AppLocalization.getText(e.resourceKey()));
         gridWidth = InputIntegerProperty.of(
-                commonConfigSettings.gridWidthInitial(),
+                commonConfigSettings.gridWidthDefault(),
                 commonConfigSettings.gridWidthMin(),
                 commonConfigSettings.gridWidthMax(),
                 commonConfigSettings.gridWidthStep());
         gridHeight = InputIntegerProperty.of(
-                commonConfigSettings.gridHeightInitial(),
+                commonConfigSettings.gridHeightDefault(),
                 commonConfigSettings.gridHeightMin(),
                 commonConfigSettings.gridHeightMax(),
                 commonConfigSettings.gridHeightStep());
         cellEdgeLength = InputDoubleIntRangeProperty.of(
-                commonConfigSettings.cellEdgeLengthInitial(),
+                commonConfigSettings.cellEdgeLengthDefault(),
                 commonConfigSettings.cellEdgeLengthMin(),
                 commonConfigSettings.cellEdgeLengthMax());
         cellDisplayMode = InputChoiceProperty.ofList(
-                commonConfigSettings.cellDisplayModeInitial(),
+                commonConfigSettings.cellDisplayModeDefault(),
                 commonConfigSettings.cellDisplayModeValues(),
                 e -> AppLocalization.getText(e.resourceKey()));
-        seed = new SeedProperty(commonConfigSettings.seedInitial());
+        seed = new SeedProperty(commonConfigSettings.seedDefault());
     }
 
     @Override
@@ -155,44 +154,44 @@ public abstract class AbstractConfigViewModel<CON extends SimulationConfig>
     /**
      * Shared defaults and ranges used to initialize common config controls.
      *
-     * @param cellShapeInitial        initial cell shape
+     * @param cellShapeDefault        default cell shape
      * @param cellShapeValues         selectable cell shapes
-     * @param gridEdgeBehaviorInitial initial grid edge behavior
+     * @param gridEdgeBehaviorDefault default grid edge behavior
      * @param gridEdgeBehaviorValues  selectable grid edge behaviors
-     * @param gridWidthInitial        initial grid width
+     * @param gridWidthDefault        default grid width
      * @param gridWidthMin            minimum grid width
      * @param gridWidthMax            maximum grid width
      * @param gridWidthStep           grid width step size
-     * @param gridHeightInitial       initial grid height
+     * @param gridHeightDefault       default grid height
      * @param gridHeightMin           minimum grid height
      * @param gridHeightMax           maximum grid height
      * @param gridHeightStep          grid height step size
-     * @param cellEdgeLengthInitial   initial cell edge length
+     * @param cellEdgeLengthDefault   default cell edge length
      * @param cellEdgeLengthMin       minimum cell edge length
      * @param cellEdgeLengthMax       maximum cell edge length
-     * @param cellDisplayModeInitial  initial cell display mode
+     * @param cellDisplayModeDefault  default cell display mode
      * @param cellDisplayModeValues   selectable cell display modes
-     * @param seedInitial             initial seed text
+     * @param seedDefault             default seed text
      */
     public record CommonConfigSettings(
-            CellShape cellShapeInitial,
+            CellShape cellShapeDefault,
             List<CellShape> cellShapeValues,
-            GridEdgeBehavior gridEdgeBehaviorInitial,
+            GridEdgeBehavior gridEdgeBehaviorDefault,
             List<GridEdgeBehavior> gridEdgeBehaviorValues,
-            int gridWidthInitial,
+            int gridWidthDefault,
             int gridWidthMin,
             int gridWidthMax,
             int gridWidthStep,
-            int gridHeightInitial,
+            int gridHeightDefault,
             int gridHeightMin,
             int gridHeightMax,
             int gridHeightStep,
-            int cellEdgeLengthInitial,
+            int cellEdgeLengthDefault,
             int cellEdgeLengthMin,
             int cellEdgeLengthMax,
-            CellDisplayMode cellDisplayModeInitial,
+            CellDisplayMode cellDisplayModeDefault,
             List<CellDisplayMode> cellDisplayModeValues,
-            String seedInitial
+            String seedDefault
     ) {
 
         public CommonConfigSettings {

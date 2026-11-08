@@ -38,7 +38,7 @@ final class DefaultControlViewModelTest {
                     () -> assertEquals(100, viewModel.stepCountProperty().getValue()),
                     () -> assertEquals(SimulationStartMode.START_IMMEDIATELY, viewModel.startModeProperty().getValue()),
                     () -> assertEquals(SimulationTerminationCheckMode.CHECKED,
-                            viewModel.terminationCheckProperty().getValue())
+                            viewModel.terminationCheckModeProperty().getValue())
             );
         });
     }
@@ -195,7 +195,7 @@ final class DefaultControlViewModelTest {
             var viewModel = new DefaultControlViewModel(new SimpleObjectProperty<>(SimulationState.READY));
 
             for (SimulationTerminationCheckMode terminationCheckMode : SimulationTerminationCheckMode.values()) {
-                viewModel.terminationCheckProperty().setValue(terminationCheckMode);
+                viewModel.terminationCheckModeProperty().setValue(terminationCheckMode);
                 assertEquals(terminationCheckMode == SimulationTerminationCheckMode.CHECKED,
                         viewModel.isTerminationChecked());
             }
