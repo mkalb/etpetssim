@@ -61,7 +61,7 @@ java {
 application {
     applicationName = baseName
     mainModule = applicationModuleName
-    mainClass = "de.mkalb.etpetssim.AppLauncher"
+    mainClass = "de.mkalb.etpetssim.EtpetssimLauncher"
     applicationDefaultJvmArgs = listOf("--enable-native-access=javafx.graphics")
 }
 

@@ -40,7 +40,7 @@ import java.util.concurrent.TimeUnit;
  *
  * <p>Creates the primary stage content, switches between simulations,
  * and coordinates startup and shutdown behavior. Command-line parsing, logging,
- * and localization are initialized by {@link AppLauncher} before launch.
+ * and localization are initialized by {@link EtpetssimLauncher} before launch.
  */
 public final class EtpetssimApplication extends Application {
 

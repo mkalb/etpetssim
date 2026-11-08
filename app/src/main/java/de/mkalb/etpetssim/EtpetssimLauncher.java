@@ -18,9 +18,9 @@ import java.util.Locale;
  * <p>Parses command-line arguments, initializes logging and localization, and launches
  * {@link EtpetssimApplication}. It is intentionally separate from the JavaFX {@link Application} subclass.
  */
-public final class AppLauncher {
+public final class EtpetssimLauncher {
 
-    private AppLauncher() {
+    private EtpetssimLauncher() {
     }
 
     /**
@@ -36,7 +36,7 @@ public final class AppLauncher {
         initializeAppLogger(arguments);
         initializeAppLocalization(arguments);
 
-        AppLogger.infof("AppLauncher: Launching %s with arguments: %s", AppManifest.formatVersionLine(),
+        AppLogger.infof("EtpetssimLauncher: Launching %s with arguments: %s", AppManifest.formatVersionLine(),
                 arguments.toArgumentString());
         Application.launch(EtpetssimApplication.class, args);
     }
@@ -86,7 +86,7 @@ public final class AppLauncher {
             AppLogger.initialize(logLevel, useConsole, logPath);
         } catch (IOException e) {
             AppLogger.initialize(logLevel, useConsole, null);
-            AppLogger.error(e, "AppLauncher: Failed to initialize log file");
+            AppLogger.error(e, "EtpetssimLauncher: Failed to initialize log file");
         }
     }
 
