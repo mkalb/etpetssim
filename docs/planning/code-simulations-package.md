@@ -130,7 +130,7 @@ sources. "Types" counts the top-level types in main sources of a group.
 | B3 | Member order                                                  |     - | done        |
 | B4 | Edge behavior checks and direction rings                      |     - | done        |
 | B5 | Constructor parameters of step runners and step logic         |     - | done        |
-| B6 | Metrics catalogs of the statistics                            |     - | open        |
+| B6 | Metrics catalogs of the statistics                            |     - | done        |
 | B7 | Line length                                                   |     - | open        |
 | C1 | `core.shared`                                                 |    10 | open        |
 | C2 | `core.model`: managers, statistics base, and user actions     |    10 | open        |
@@ -365,6 +365,15 @@ commit.
   observation views, and several tests in `simulations.core`.
 - Proposal: Store the list in a private static final constant and return it from `metrics()`; decide whether the
   catalog rule applies to static accessors of instantiable classes and, if so, clarify it in `simulations.md`.
+- Status: done (2026-11-08).
+
+### Decisions
+
+- The eight statistics classes hold their metrics in `private static final List<StatisticsMetric<...>> METRICS`,
+  named like `SnakeMoveStrategies.STRATEGIES`, after the other private constants and separated by a blank line;
+  `metrics()` returns it. The signature of `metrics()` stays unchanged.
+- Rule change (`simulations.md`, "Model"): the catalog rule names the metrics of a statistics class and `metrics()`
+  as an example, so it also covers static catalog accessors of instantiable classes.
 
 ### B7. Line length
 
@@ -572,6 +581,14 @@ Families and their known deviations:
   has 23 private methods; the Lab has its own control view and ViewModel and its own main ViewModel.
 
 ### D1. Wa-Tor (reference)
+
+#### Redundant counter initializations in the statistics constructors
+
+- Origin: B6 (2026-11-08)
+- Types: `WatorStatistics` and the other statistics classes that extend `BaseTimedSimulationStatistics`
+- Problem: The constructors set their counters explicitly to `0` (e.g., `fishCells = 0;`), which the review
+  guidelines ("Constructors") list as redundant field initializations.
+- Proposal: Remove the assignments in `WatorStatistics` and adopt the decision in the later groups.
 
 ### D2. Rebounding
 

@@ -19,6 +19,15 @@ public final class SugarStatistics
     private static final String SUGAR_OBSERVATION_CELLS_RESOURCE = "sugar.observation.cells.resource";
     private static final String SUGAR_OBSERVATION_CELLS_AGENT = "sugar.observation.cells.agent";
 
+    private static final List<StatisticsMetric<SugarStatistics>> METRICS = List.of(
+            new StatisticsMetric<>(KEY_RESOURCE_CELLS, SUGAR_OBSERVATION_CELLS_RESOURCE,
+                    SugarStatistics::resourceCells,
+                    StatisticsExtremaMode.NONE),
+            new StatisticsMetric<>(KEY_AGENT_CELLS, SUGAR_OBSERVATION_CELLS_AGENT,
+                    SugarStatistics::agentCells,
+                    StatisticsExtremaMode.NONE)
+    );
+
     private int resourceCells;
     private int agentCells;
 
@@ -29,14 +38,7 @@ public final class SugarStatistics
     }
 
     public static List<StatisticsMetric<SugarStatistics>> metrics() {
-        return List.of(
-                new StatisticsMetric<>(KEY_RESOURCE_CELLS, SUGAR_OBSERVATION_CELLS_RESOURCE,
-                        SugarStatistics::resourceCells,
-                        StatisticsExtremaMode.NONE),
-                new StatisticsMetric<>(KEY_AGENT_CELLS, SUGAR_OBSERVATION_CELLS_AGENT,
-                        SugarStatistics::agentCells,
-                        StatisticsExtremaMode.NONE)
-        );
+        return METRICS;
     }
 
     public void adjustResourceCells(int resourceCellsDelta) {

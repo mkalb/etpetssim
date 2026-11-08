@@ -21,6 +21,15 @@ public final class WatorStatistics
     private static final String WATOR_OBSERVATION_CELLS_SHARK = "wator.observation.cells.shark";
     private static final int CHART_WINDOW_SIZE = 500;
 
+    private static final List<StatisticsMetric<WatorStatistics>> METRICS = List.of(
+            new StatisticsMetric<>(KEY_FISH_CELLS, WATOR_OBSERVATION_CELLS_FISH,
+                    WatorStatistics::fishCells,
+                    StatisticsExtremaMode.MIN_AND_MAX, StatisticsChartGroup.PRIMARY, CHART_WINDOW_SIZE),
+            new StatisticsMetric<>(KEY_SHARK_CELLS, WATOR_OBSERVATION_CELLS_SHARK,
+                    WatorStatistics::sharkCells,
+                    StatisticsExtremaMode.MIN_AND_MAX, StatisticsChartGroup.PRIMARY, CHART_WINDOW_SIZE)
+    );
+
     private int fishCells;
     private int sharkCells;
 
@@ -31,14 +40,7 @@ public final class WatorStatistics
     }
 
     public static List<StatisticsMetric<WatorStatistics>> metrics() {
-        return List.of(
-                new StatisticsMetric<>(KEY_FISH_CELLS, WATOR_OBSERVATION_CELLS_FISH,
-                        WatorStatistics::fishCells,
-                        StatisticsExtremaMode.MIN_AND_MAX, StatisticsChartGroup.PRIMARY, CHART_WINDOW_SIZE),
-                new StatisticsMetric<>(KEY_SHARK_CELLS, WATOR_OBSERVATION_CELLS_SHARK,
-                        WatorStatistics::sharkCells,
-                        StatisticsExtremaMode.MIN_AND_MAX, StatisticsChartGroup.PRIMARY, CHART_WINDOW_SIZE)
-        );
+        return METRICS;
     }
 
     public void adjustCellCounts(int fishCellsDelta,

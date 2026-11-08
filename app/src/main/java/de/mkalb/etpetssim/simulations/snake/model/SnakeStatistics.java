@@ -25,6 +25,24 @@ public final class SnakeStatistics
     private static final String SNAKE_OBSERVATION_CELLS_FOOD = "snake.observation.cells.food";
     private static final String SNAKE_OBSERVATION_CUMULATIVE_SNAKE_DEATH_COUNT = "snake.observation.cumulativesnakedeathcount";
 
+    private static final List<StatisticsMetric<SnakeStatistics>> METRICS = List.of(
+            new StatisticsMetric<>(KEY_SNAKE_HEAD_CELLS, SNAKE_OBSERVATION_CELLS_SNAKE_HEAD,
+                    SnakeStatistics::snakeHeadCells,
+                    StatisticsExtremaMode.NONE),
+            new StatisticsMetric<>(KEY_LIVING_SNAKE_HEAD_CELLS, SNAKE_OBSERVATION_CELLS_LIVING_SNAKE_HEAD,
+                    SnakeStatistics::livingSnakeHeadCells,
+                    StatisticsExtremaMode.NONE),
+            new StatisticsMetric<>(KEY_WALL_CELLS, SNAKE_OBSERVATION_CELLS_WALL,
+                    SnakeStatistics::wallCells,
+                    StatisticsExtremaMode.NONE),
+            new StatisticsMetric<>(KEY_FOOD_CELLS, SNAKE_OBSERVATION_CELLS_FOOD,
+                    SnakeStatistics::foodCells,
+                    StatisticsExtremaMode.NONE),
+            new StatisticsMetric<>(KEY_CUMULATIVE_SNAKE_DEATH_COUNT, SNAKE_OBSERVATION_CUMULATIVE_SNAKE_DEATH_COUNT,
+                    SnakeStatistics::cumulativeSnakeDeathCount,
+                    StatisticsExtremaMode.NONE)
+    );
+
     private int snakeHeadCells;
     private int livingSnakeHeadCells;
     private int wallCells;
@@ -41,23 +59,7 @@ public final class SnakeStatistics
     }
 
     public static List<StatisticsMetric<SnakeStatistics>> metrics() {
-        return List.of(
-                new StatisticsMetric<>(KEY_SNAKE_HEAD_CELLS, SNAKE_OBSERVATION_CELLS_SNAKE_HEAD,
-                        SnakeStatistics::snakeHeadCells,
-                        StatisticsExtremaMode.NONE),
-                new StatisticsMetric<>(KEY_LIVING_SNAKE_HEAD_CELLS, SNAKE_OBSERVATION_CELLS_LIVING_SNAKE_HEAD,
-                        SnakeStatistics::livingSnakeHeadCells,
-                        StatisticsExtremaMode.NONE),
-                new StatisticsMetric<>(KEY_WALL_CELLS, SNAKE_OBSERVATION_CELLS_WALL,
-                        SnakeStatistics::wallCells,
-                        StatisticsExtremaMode.NONE),
-                new StatisticsMetric<>(KEY_FOOD_CELLS, SNAKE_OBSERVATION_CELLS_FOOD,
-                        SnakeStatistics::foodCells,
-                        StatisticsExtremaMode.NONE),
-                new StatisticsMetric<>(KEY_CUMULATIVE_SNAKE_DEATH_COUNT, SNAKE_OBSERVATION_CUMULATIVE_SNAKE_DEATH_COUNT,
-                        SnakeStatistics::cumulativeSnakeDeathCount,
-                        StatisticsExtremaMode.NONE)
-        );
+        return METRICS;
     }
 
     public void decrementSnakeHeadCells() {

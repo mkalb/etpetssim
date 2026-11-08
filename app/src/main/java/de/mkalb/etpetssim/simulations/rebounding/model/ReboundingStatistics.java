@@ -19,6 +19,15 @@ public final class ReboundingStatistics
     private static final String REBOUNDING_OBSERVATION_CELLS_WALL = "rebounding.observation.cells.wall";
     private static final String REBOUNDING_OBSERVATION_CELLS_MOVING_ENTITY = "rebounding.observation.cells.movingentity";
 
+    private static final List<StatisticsMetric<ReboundingStatistics>> METRICS = List.of(
+            new StatisticsMetric<>(KEY_WALL_CELLS, REBOUNDING_OBSERVATION_CELLS_WALL,
+                    ReboundingStatistics::wallCells,
+                    StatisticsExtremaMode.MAX),
+            new StatisticsMetric<>(KEY_MOVING_ENTITY_CELLS, REBOUNDING_OBSERVATION_CELLS_MOVING_ENTITY,
+                    ReboundingStatistics::movingEntityCells,
+                    StatisticsExtremaMode.MAX)
+    );
+
     private int wallCells;
     private int movingEntityCells;
 
@@ -29,14 +38,7 @@ public final class ReboundingStatistics
     }
 
     public static List<StatisticsMetric<ReboundingStatistics>> metrics() {
-        return List.of(
-                new StatisticsMetric<>(KEY_WALL_CELLS, REBOUNDING_OBSERVATION_CELLS_WALL,
-                        ReboundingStatistics::wallCells,
-                        StatisticsExtremaMode.MAX),
-                new StatisticsMetric<>(KEY_MOVING_ENTITY_CELLS, REBOUNDING_OBSERVATION_CELLS_MOVING_ENTITY,
-                        ReboundingStatistics::movingEntityCells,
-                        StatisticsExtremaMode.MAX)
-        );
+        return METRICS;
     }
 
     public void incrementWallCells() {

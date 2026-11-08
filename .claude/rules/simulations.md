@@ -59,9 +59,10 @@ Lists of simulations (e.g., the README table and gallery, and the entity catalog
 - Must not import JavaFX scene graph, controls, properties, bindings, stages, or animation types.
 - May use neutral JavaFX value types (`Color`, `Image`, `Duration`) as plain value carriers.
 - May depend on same-simulation `shared`; must not depend on `view` or `viewmodel`.
-- Expose a catalog of predefined values (e.g., `ConwayPatterns`, `SnakeMoveStrategies`) through a noun-style accessor
-  that returns a constant unmodifiable list (`choices()`, `strategies()`); keep the constants and factories that only
-  build the catalog private, also when tests used them, and test them through the accessor.
+- Expose a catalog of predefined values (e.g., `ConwayPatterns`, `SnakeMoveStrategies`, or the metrics of a statistics
+  class) through a noun-style accessor that returns a constant unmodifiable list (`choices()`, `strategies()`,
+  `metrics()`); keep the constants and factories that only build the catalog private, also when tests used them, and
+  test them through the accessor.
 - Keep an early return that avoids a random draw (e.g., when there is no tie among the candidates) and explain it in
   a comment; removing it changes the random sequence of a seed.
 
