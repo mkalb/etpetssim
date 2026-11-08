@@ -52,12 +52,6 @@ public record ForestConfig(
         double lightningIgnitionProbability)
         implements SimulationConfig {
 
-    private boolean hasValidRanges() {
-        return isInRangeDouble(treeDensity, TREE_DENSITY_MIN, TREE_DENSITY_MAX)
-                && isInRangeDouble(treeGrowthProbability, TREE_GROWTH_PROBABILITY_MIN, TREE_GROWTH_PROBABILITY_MAX)
-                && isInRangeDouble(lightningIgnitionProbability, LIGHTNING_IGNITION_PROBABILITY_MIN, LIGHTNING_IGNITION_PROBABILITY_MAX);
-    }
-
     /**
      * Validates the common simulation settings and the Forest-specific selections and ranges.
      *
@@ -68,6 +62,12 @@ public record ForestConfig(
         return isBaseValid()
                 && hasAllowedCoreSelections(CELL_SHAPE_VALUES, GRID_EDGE_BEHAVIOR_VALUES, CELL_DISPLAY_MODE_VALUES)
                 && hasValidRanges();
+    }
+
+    private boolean hasValidRanges() {
+        return isInRangeDouble(treeDensity, TREE_DENSITY_MIN, TREE_DENSITY_MAX)
+                && isInRangeDouble(treeGrowthProbability, TREE_GROWTH_PROBABILITY_MIN, TREE_GROWTH_PROBABILITY_MAX)
+                && isInRangeDouble(lightningIgnitionProbability, LIGHTNING_IGNITION_PROBABILITY_MIN, LIGHTNING_IGNITION_PROBABILITY_MAX);
     }
 
 }

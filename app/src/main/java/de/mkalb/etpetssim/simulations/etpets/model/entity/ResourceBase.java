@@ -47,10 +47,10 @@ public abstract sealed class ResourceBase implements ResourceEntity
         currentAmount = Math.min(maxAmount, currentAmount + regenerationPerStep);
     }
 
-    protected abstract int consumptionPerAct();
-
     public abstract int energyGainPerAct();
 
     public abstract double minAmount();
+
+    protected abstract int consumptionPerAct();
 
 }

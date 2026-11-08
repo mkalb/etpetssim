@@ -39,16 +39,6 @@ public final class SugarStatistics
         );
     }
 
-    void initializeStartupCellCounts(int resourceCellsInitial,
-                                     int agentCellsInitial) {
-        resourceCells = resourceCellsInitial;
-        agentCells = agentCellsInitial;
-    }
-
-    void adjustAgentCells(int agentCellsDelta) {
-        agentCells += agentCellsDelta;
-    }
-
     public void adjustResourceCells(int resourceCellsDelta) {
         resourceCells += resourceCellsDelta;
     }
@@ -59,6 +49,16 @@ public final class SugarStatistics
 
     public int agentCells() {
         return agentCells;
+    }
+
+    void initializeStartupCellCounts(int resourceCellsInitial,
+                                     int agentCellsInitial) {
+        resourceCells = resourceCellsInitial;
+        agentCells = agentCellsInitial;
+    }
+
+    void adjustAgentCells(int agentCellsDelta) {
+        agentCells += agentCellsDelta;
     }
 
     @Override

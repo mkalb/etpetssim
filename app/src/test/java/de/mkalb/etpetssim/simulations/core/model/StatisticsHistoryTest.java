@@ -49,6 +49,19 @@ final class StatisticsHistoryTest {
     }
 
     @Test
+    void testClearRemovesSamples() {
+        StatisticsHistory history = new StatisticsHistory(2);
+        history.add(sample(0));
+
+        history.clear();
+
+        assertAll(
+                () -> assertEquals(0, history.size()),
+                () -> assertTrue(history.toList().isEmpty())
+        );
+    }
+
+    @Test
     void testAddEvictsOldestSampleAtCapacity() {
         StatisticsHistory history = new StatisticsHistory(2);
 
@@ -88,19 +101,6 @@ final class StatisticsHistoryTest {
                 () -> assertEquals(1, snapshot.size()),
                 () -> assertEquals(0, snapshot.getFirst().stepCount()),
                 () -> assertEquals(2, history.size())
-        );
-    }
-
-    @Test
-    void testClearRemovesSamples() {
-        StatisticsHistory history = new StatisticsHistory(2);
-        history.add(sample(0));
-
-        history.clear();
-
-        assertAll(
-                () -> assertEquals(0, history.size()),
-                () -> assertTrue(history.toList().isEmpty())
         );
     }
 

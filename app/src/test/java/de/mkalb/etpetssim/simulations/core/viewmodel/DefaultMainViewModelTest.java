@@ -190,6 +190,193 @@ final class DefaultMainViewModelTest {
     }
 
     @Test
+    void testSetSimulationResetListenerRunsOnStartAndShutdown() throws InterruptedException {
+        Fixture fixture = FXTestSupport.supplyAndWaitNonNull(DefaultMainViewModelTest::createFixture);
+        AtomicInteger resetCallCount = new AtomicInteger();
+
+        FXTestSupport.runAndWait(() -> fixture.mainViewModel().setSimulationResetListener(resetCallCount::incrementAndGet));
+        startAndAwaitInitialization(fixture);
+        FXTestSupport.runAndWait(() -> {
+            assertEquals(1, resetCallCount.get());
+            fixture.mainViewModel().shutdownSimulation();
+            assertEquals(2, resetCallCount.get());
+        });
+    }
+
+    @SuppressWarnings("ResultOfMethodCallIgnored")
+    @Test
+    void testShutdownSimulationSuppressesStaleInitializationCompletion() throws InterruptedException {
+        CountDownLatch constructionStarted = new CountDownLatch(1);
+        CountDownLatch releaseConstruction = new CountDownLatch(1);
+        AtomicBoolean initializationCompleted = new AtomicBoolean();
+        ExecutorService lifecycleExecutor = Executors.newSingleThreadExecutor();
+        Fixture fixture = FXTestSupport.supplyAndWaitNonNull(() -> createFixture((config, _) -> {
+            constructionStarted.countDown();
+            boolean interrupted = false;
+            while (releaseConstruction.getCount() > 0L) {
+                try {
+                    releaseConstruction.await();
+                } catch (InterruptedException e) {
+                    interrupted = true;
+                }
+            }
+            if (interrupted) {
+                Thread.interrupted();
+            }
+            return new ConwaySimulationManager(config);
+        }, lifecycleExecutor));
+
+        FXTestSupport.runAndWait(() -> {
+            fixture.mainViewModel().setSimulationInitializedListener(() -> initializationCompleted.set(true));
+            fixture.controlViewModel().requestActionButton();
+        });
+        assertTrue(constructionStarted.await(FXTestSupport.DEFAULT_TIMEOUT_SECONDS, TimeUnit.SECONDS));
+
+        SimulationTerminationHandle terminationHandle = FXTestSupport.supplyAndWaitNonNull(
+                fixture.mainViewModel()::shutdownSimulation);
+        releaseConstruction.countDown();
+        assertTrue(terminationHandle.awaitTermination(FXTestSupport.DEFAULT_TIMEOUT_SECONDS, TimeUnit.SECONDS));
+
+        FXTestSupport.runAndWait(() -> assertAll(
+                () -> assertEquals(SimulationState.SHUTTING_DOWN, fixture.mainViewModel().getSimulationState()),
+                () -> assertFalse(fixture.mainViewModel().hasSimulationManager()),
+                () -> assertFalse(initializationCompleted.get())
+        ));
+    }
+
+    @Test
+    void testShutdownSimulationReturnsSameTerminationHandle() {
+        Fixture fixture = FXTestSupport.supplyAndWaitNonNull(DefaultMainViewModelTest::createFixture);
+
+        SimulationTerminationHandle firstTerminationHandle = FXTestSupport.supplyAndWaitNonNull(
+                fixture.mainViewModel()::shutdownSimulation);
+        SimulationTerminationHandle secondTerminationHandle = FXTestSupport.supplyAndWaitNonNull(
+                fixture.mainViewModel()::shutdownSimulation);
+
+        assertAll(
+                () -> assertSame(firstTerminationHandle, secondTerminationHandle),
+                () -> assertTrue(firstTerminationHandle.awaitTermination(FXTestSupport.DEFAULT_TIMEOUT_SECONDS, TimeUnit.SECONDS))
+        );
+    }
+
+    @Test
+    void testShutdownSimulationRemainsIdempotentWhenResetListenerFails() {
+        Fixture fixture = FXTestSupport.supplyAndWaitNonNull(DefaultMainViewModelTest::createFixture);
+
+        FXTestSupport.runAndWait(() -> fixture.mainViewModel().setSimulationResetListener(
+                () -> {
+                    throw new IllegalStateException("Test reset listener failure");
+                }));
+        SimulationTerminationHandle firstTerminationHandle = FXTestSupport.supplyAndWaitNonNull(
+                fixture.mainViewModel()::shutdownSimulation);
+        SimulationTerminationHandle secondTerminationHandle = FXTestSupport.supplyAndWaitNonNull(
+                fixture.mainViewModel()::shutdownSimulation);
+
+        assertAll(
+                () -> assertSame(firstTerminationHandle, secondTerminationHandle),
+                () -> assertTrue(firstTerminationHandle.awaitTermination(FXTestSupport.DEFAULT_TIMEOUT_SECONDS, TimeUnit.SECONDS))
+        );
+    }
+
+    @Test
+    void testShutdownSimulationDoesNotWaitForInitializationWorker() throws InterruptedException {
+        CountDownLatch constructionStarted = new CountDownLatch(1);
+        CountDownLatch releaseConstruction = new CountDownLatch(1);
+        ExecutorService lifecycleExecutor = Executors.newSingleThreadExecutor();
+        Fixture fixture = FXTestSupport.supplyAndWaitNonNull(() -> createFixture((config, cancellation) -> {
+            constructionStarted.countDown();
+            boolean interrupted = false;
+            while (releaseConstruction.getCount() > 0L) {
+                try {
+                    releaseConstruction.await();
+                } catch (InterruptedException e) {
+                    interrupted = true;
+                }
+            }
+            if (interrupted) {
+                Thread.currentThread().interrupt();
+            }
+            return new ConwaySimulationManager(config, cancellation);
+        }, lifecycleExecutor));
+
+        FXTestSupport.runAndWait(fixture.controlViewModel()::requestActionButton);
+        assertTrue(constructionStarted.await(FXTestSupport.DEFAULT_TIMEOUT_SECONDS, TimeUnit.SECONDS));
+
+        FXTestSupport.runAndWait(() -> {
+            fixture.mainViewModel().shutdownSimulation();
+            fixture.mainViewModel().shutdownSimulation();
+            assertEquals(SimulationState.SHUTTING_DOWN, fixture.mainViewModel().getSimulationState());
+        });
+
+        assertTrue(lifecycleExecutor.isShutdown());
+        assertFalse(lifecycleExecutor.isTerminated());
+        releaseConstruction.countDown();
+        assertTrue(lifecycleExecutor.awaitTermination(FXTestSupport.DEFAULT_TIMEOUT_SECONDS, TimeUnit.SECONDS));
+    }
+
+    @Test
+    void testShutdownSimulationClearsHistoryAndExtrema() throws InterruptedException {
+        Fixture fixture = FXTestSupport.supplyAndWaitNonNull(DefaultMainViewModelTest::createFixture);
+        startAndAwaitInitialization(fixture);
+
+        FXTestSupport.runAndWait(() -> {
+            fixture.mainViewModel().shutdownSimulation();
+
+            assertAll(
+                    () -> assertEquals(SimulationState.SHUTTING_DOWN, fixture.mainViewModel().getSimulationState()),
+                    () -> assertEquals(List.of(), fixture.observationViewModel().getStatisticsHistory()),
+                    () -> assertEquals(StatisticsExtrema.empty(), fixture.observationViewModel().getStatisticsExtrema())
+            );
+        });
+    }
+
+    @Test
+    void testShutdownSimulationKeepsShuttingDownWhenRunningBatchCompletes() throws InterruptedException {
+        Fixture fixture = FXTestSupport.supplyAndWaitNonNull(DefaultMainViewModelTest::createFixture);
+        List<SimulationState> states = new ArrayList<>();
+        AtomicReference<SimulationTerminationHandle> terminationHandle = new AtomicReference<>();
+        CountDownLatch shutdownRequested = new CountDownLatch(1);
+
+        FXTestSupport.runAndWait(() -> {
+            recordStates(fixture, states);
+            startBatchAndRunOnFirstBatchStep(fixture, () -> {
+                terminationHandle.set(fixture.mainViewModel().shutdownSimulation());
+                shutdownRequested.countDown();
+            });
+        });
+
+        assertTrue(shutdownRequested.await(FXTestSupport.DEFAULT_TIMEOUT_SECONDS, TimeUnit.SECONDS));
+        assertTrue(terminationHandle.get().awaitTermination(FXTestSupport.DEFAULT_TIMEOUT_SECONDS, TimeUnit.SECONDS));
+        FXTestSupport.runAndWait(() -> assertEquals(
+                List.of(SimulationState.RUNNING_BATCH, SimulationState.SHUTTING_DOWN),
+                statesFrom(states, SimulationState.RUNNING_BATCH)));
+    }
+
+    @Test
+    void testShutdownSimulationReleasesViewCallbacks() {
+        Fixture fixture = FXTestSupport.supplyAndWaitNonNull(DefaultMainViewModelTest::createFixture);
+
+        FXTestSupport.runAndWait(() -> {
+            fixture.mainViewModel().setSimulationInitializedListener(() -> {});
+            fixture.mainViewModel().setSimulationStepListener(_ -> {});
+            fixture.mainViewModel().setSimulationResetListener(() -> {});
+            fixture.mainViewModel().shutdownSimulation();
+        });
+
+        assertAll(
+                () -> assertSame(
+                        getStaticField("NO_OP_SIMULATION_INITIALIZED_LISTENER"),
+                        getField(fixture.mainViewModel(), "simulationInitializedListener")),
+                () -> assertSame(
+                        getStaticField("NO_OP_SIMULATION_STEP_LISTENER"),
+                        getField(fixture.mainViewModel(), "simulationStepListener")),
+                () -> assertSame(
+                        getStaticField("NO_OP_SIMULATION_RESET_LISTENER"),
+                        getField(fixture.mainViewModel(), "simulationResetListener"))
+        );
+    }
+
+    @Test
     void testHandleCancelButtonCancelsRunningBatch() throws InterruptedException {
         Fixture fixture = FXTestSupport.supplyAndWaitNonNull(DefaultMainViewModelTest::createFixture);
         List<SimulationState> states = new ArrayList<>();
@@ -521,193 +708,6 @@ final class DefaultMainViewModelTest {
                 List.of(SimulationState.RUNNING_BATCH, SimulationState.ERROR),
                 statesFrom(states, SimulationState.RUNNING_BATCH)));
         FXTestSupport.runAndWait(fixture.mainViewModel()::shutdownSimulation);
-    }
-
-    @SuppressWarnings("ResultOfMethodCallIgnored")
-    @Test
-    void testShutdownSimulationSuppressesStaleInitializationCompletion() throws InterruptedException {
-        CountDownLatch constructionStarted = new CountDownLatch(1);
-        CountDownLatch releaseConstruction = new CountDownLatch(1);
-        AtomicBoolean initializationCompleted = new AtomicBoolean();
-        ExecutorService lifecycleExecutor = Executors.newSingleThreadExecutor();
-        Fixture fixture = FXTestSupport.supplyAndWaitNonNull(() -> createFixture((config, _) -> {
-            constructionStarted.countDown();
-            boolean interrupted = false;
-            while (releaseConstruction.getCount() > 0L) {
-                try {
-                    releaseConstruction.await();
-                } catch (InterruptedException e) {
-                    interrupted = true;
-                }
-            }
-            if (interrupted) {
-                Thread.interrupted();
-            }
-            return new ConwaySimulationManager(config);
-        }, lifecycleExecutor));
-
-        FXTestSupport.runAndWait(() -> {
-            fixture.mainViewModel().setSimulationInitializedListener(() -> initializationCompleted.set(true));
-            fixture.controlViewModel().requestActionButton();
-        });
-        assertTrue(constructionStarted.await(FXTestSupport.DEFAULT_TIMEOUT_SECONDS, TimeUnit.SECONDS));
-
-        SimulationTerminationHandle terminationHandle = FXTestSupport.supplyAndWaitNonNull(
-                fixture.mainViewModel()::shutdownSimulation);
-        releaseConstruction.countDown();
-        assertTrue(terminationHandle.awaitTermination(FXTestSupport.DEFAULT_TIMEOUT_SECONDS, TimeUnit.SECONDS));
-
-        FXTestSupport.runAndWait(() -> assertAll(
-                () -> assertEquals(SimulationState.SHUTTING_DOWN, fixture.mainViewModel().getSimulationState()),
-                () -> assertFalse(fixture.mainViewModel().hasSimulationManager()),
-                () -> assertFalse(initializationCompleted.get())
-        ));
-    }
-
-    @Test
-    void testSetSimulationResetListenerRunsOnStartAndShutdown() throws InterruptedException {
-        Fixture fixture = FXTestSupport.supplyAndWaitNonNull(DefaultMainViewModelTest::createFixture);
-        AtomicInteger resetCallCount = new AtomicInteger();
-
-        FXTestSupport.runAndWait(() -> fixture.mainViewModel().setSimulationResetListener(resetCallCount::incrementAndGet));
-        startAndAwaitInitialization(fixture);
-        FXTestSupport.runAndWait(() -> {
-            assertEquals(1, resetCallCount.get());
-            fixture.mainViewModel().shutdownSimulation();
-            assertEquals(2, resetCallCount.get());
-        });
-    }
-
-    @Test
-    void testShutdownSimulationReturnsSameTerminationHandle() {
-        Fixture fixture = FXTestSupport.supplyAndWaitNonNull(DefaultMainViewModelTest::createFixture);
-
-        SimulationTerminationHandle firstTerminationHandle = FXTestSupport.supplyAndWaitNonNull(
-                fixture.mainViewModel()::shutdownSimulation);
-        SimulationTerminationHandle secondTerminationHandle = FXTestSupport.supplyAndWaitNonNull(
-                fixture.mainViewModel()::shutdownSimulation);
-
-        assertAll(
-                () -> assertSame(firstTerminationHandle, secondTerminationHandle),
-                () -> assertTrue(firstTerminationHandle.awaitTermination(FXTestSupport.DEFAULT_TIMEOUT_SECONDS, TimeUnit.SECONDS))
-        );
-    }
-
-    @Test
-    void testShutdownSimulationRemainsIdempotentWhenResetListenerFails() {
-        Fixture fixture = FXTestSupport.supplyAndWaitNonNull(DefaultMainViewModelTest::createFixture);
-
-        FXTestSupport.runAndWait(() -> fixture.mainViewModel().setSimulationResetListener(
-                () -> {
-                    throw new IllegalStateException("Test reset listener failure");
-                }));
-        SimulationTerminationHandle firstTerminationHandle = FXTestSupport.supplyAndWaitNonNull(
-                fixture.mainViewModel()::shutdownSimulation);
-        SimulationTerminationHandle secondTerminationHandle = FXTestSupport.supplyAndWaitNonNull(
-                fixture.mainViewModel()::shutdownSimulation);
-
-        assertAll(
-                () -> assertSame(firstTerminationHandle, secondTerminationHandle),
-                () -> assertTrue(firstTerminationHandle.awaitTermination(FXTestSupport.DEFAULT_TIMEOUT_SECONDS, TimeUnit.SECONDS))
-        );
-    }
-
-    @Test
-    void testShutdownSimulationDoesNotWaitForInitializationWorker() throws InterruptedException {
-        CountDownLatch constructionStarted = new CountDownLatch(1);
-        CountDownLatch releaseConstruction = new CountDownLatch(1);
-        ExecutorService lifecycleExecutor = Executors.newSingleThreadExecutor();
-        Fixture fixture = FXTestSupport.supplyAndWaitNonNull(() -> createFixture((config, cancellation) -> {
-            constructionStarted.countDown();
-            boolean interrupted = false;
-            while (releaseConstruction.getCount() > 0L) {
-                try {
-                    releaseConstruction.await();
-                } catch (InterruptedException e) {
-                    interrupted = true;
-                }
-            }
-            if (interrupted) {
-                Thread.currentThread().interrupt();
-            }
-            return new ConwaySimulationManager(config, cancellation);
-        }, lifecycleExecutor));
-
-        FXTestSupport.runAndWait(fixture.controlViewModel()::requestActionButton);
-        assertTrue(constructionStarted.await(FXTestSupport.DEFAULT_TIMEOUT_SECONDS, TimeUnit.SECONDS));
-
-        FXTestSupport.runAndWait(() -> {
-            fixture.mainViewModel().shutdownSimulation();
-            fixture.mainViewModel().shutdownSimulation();
-            assertEquals(SimulationState.SHUTTING_DOWN, fixture.mainViewModel().getSimulationState());
-        });
-
-        assertTrue(lifecycleExecutor.isShutdown());
-        assertFalse(lifecycleExecutor.isTerminated());
-        releaseConstruction.countDown();
-        assertTrue(lifecycleExecutor.awaitTermination(FXTestSupport.DEFAULT_TIMEOUT_SECONDS, TimeUnit.SECONDS));
-    }
-
-    @Test
-    void testShutdownSimulationClearsHistoryAndExtrema() throws InterruptedException {
-        Fixture fixture = FXTestSupport.supplyAndWaitNonNull(DefaultMainViewModelTest::createFixture);
-        startAndAwaitInitialization(fixture);
-
-        FXTestSupport.runAndWait(() -> {
-            fixture.mainViewModel().shutdownSimulation();
-
-            assertAll(
-                    () -> assertEquals(SimulationState.SHUTTING_DOWN, fixture.mainViewModel().getSimulationState()),
-                    () -> assertEquals(List.of(), fixture.observationViewModel().getStatisticsHistory()),
-                    () -> assertEquals(StatisticsExtrema.empty(), fixture.observationViewModel().getStatisticsExtrema())
-            );
-        });
-    }
-
-    @Test
-    void testShutdownSimulationKeepsShuttingDownWhenRunningBatchCompletes() throws InterruptedException {
-        Fixture fixture = FXTestSupport.supplyAndWaitNonNull(DefaultMainViewModelTest::createFixture);
-        List<SimulationState> states = new ArrayList<>();
-        AtomicReference<SimulationTerminationHandle> terminationHandle = new AtomicReference<>();
-        CountDownLatch shutdownRequested = new CountDownLatch(1);
-
-        FXTestSupport.runAndWait(() -> {
-            recordStates(fixture, states);
-            startBatchAndRunOnFirstBatchStep(fixture, () -> {
-                terminationHandle.set(fixture.mainViewModel().shutdownSimulation());
-                shutdownRequested.countDown();
-            });
-        });
-
-        assertTrue(shutdownRequested.await(FXTestSupport.DEFAULT_TIMEOUT_SECONDS, TimeUnit.SECONDS));
-        assertTrue(terminationHandle.get().awaitTermination(FXTestSupport.DEFAULT_TIMEOUT_SECONDS, TimeUnit.SECONDS));
-        FXTestSupport.runAndWait(() -> assertEquals(
-                List.of(SimulationState.RUNNING_BATCH, SimulationState.SHUTTING_DOWN),
-                statesFrom(states, SimulationState.RUNNING_BATCH)));
-    }
-
-    @Test
-    void testShutdownSimulationReleasesViewCallbacks() {
-        Fixture fixture = FXTestSupport.supplyAndWaitNonNull(DefaultMainViewModelTest::createFixture);
-
-        FXTestSupport.runAndWait(() -> {
-            fixture.mainViewModel().setSimulationInitializedListener(() -> {});
-            fixture.mainViewModel().setSimulationStepListener(_ -> {});
-            fixture.mainViewModel().setSimulationResetListener(() -> {});
-            fixture.mainViewModel().shutdownSimulation();
-        });
-
-        assertAll(
-                () -> assertSame(
-                        getStaticField("NO_OP_SIMULATION_INITIALIZED_LISTENER"),
-                        getField(fixture.mainViewModel(), "simulationInitializedListener")),
-                () -> assertSame(
-                        getStaticField("NO_OP_SIMULATION_STEP_LISTENER"),
-                        getField(fixture.mainViewModel(), "simulationStepListener")),
-                () -> assertSame(
-                        getStaticField("NO_OP_SIMULATION_RESET_LISTENER"),
-                        getField(fixture.mainViewModel(), "simulationResetListener"))
-        );
     }
 
     private record Fixture(

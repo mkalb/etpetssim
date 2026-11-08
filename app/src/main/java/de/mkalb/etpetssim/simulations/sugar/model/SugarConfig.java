@@ -80,6 +80,21 @@ public record SugarConfig(
         int agentMaxAge)
         implements SimulationConfig {
 
+    /**
+     * Validates the common simulation settings and the Sugarscape-specific selections, ranges, and combined ranges.
+     *
+     * @return {@code true} if this configuration is valid, otherwise {@code false}
+     */
+    @Override
+    public boolean isValid() {
+        return isBaseValid()
+                && hasAllowedCoreSelections(CELL_SHAPE_VALUES, GRID_EDGE_BEHAVIOR_VALUES, CELL_DISPLAY_MODE_VALUES)
+                && hasExpectedSelection(neighborhoodMode, NEIGHBORHOOD_MODE_DEFAULT)
+                && hasExpectedSelection(minSugarAmount, MIN_SUGAR_AMOUNT_DEFAULT)
+                && hasValidRanges()
+                && hasValidCombinedRanges();
+    }
+
     private boolean hasValidRanges() {
         return isInRangeDouble(agentPercent, AGENT_PERCENT_MIN, AGENT_PERCENT_MAX)
                 && isInRangeInt(sugarPeaks, SUGAR_PEAKS_MIN, SUGAR_PEAKS_MAX)
@@ -94,21 +109,6 @@ public record SugarConfig(
 
     private boolean hasValidCombinedRanges() {
         return minSugarAmount <= maxSugarAmount;
-    }
-
-    /**
-     * Validates the common simulation settings and the Sugarscape-specific selections, ranges, and combined ranges.
-     *
-     * @return {@code true} if this configuration is valid, otherwise {@code false}
-     */
-    @Override
-    public boolean isValid() {
-        return isBaseValid()
-                && hasAllowedCoreSelections(CELL_SHAPE_VALUES, GRID_EDGE_BEHAVIOR_VALUES, CELL_DISPLAY_MODE_VALUES)
-                && hasExpectedSelection(neighborhoodMode, NEIGHBORHOOD_MODE_DEFAULT)
-                && hasExpectedSelection(minSugarAmount, MIN_SUGAR_AMOUNT_DEFAULT)
-                && hasValidRanges()
-                && hasValidCombinedRanges();
     }
 
 }

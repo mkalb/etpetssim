@@ -28,6 +28,68 @@ final class DefaultControlViewModelTest {
     }
 
     @Test
+    void testConstructorSetsDefaultInputValues() {
+        FXTestSupport.runAndWait(() -> {
+            var viewModel = new DefaultControlViewModel(new SimpleObjectProperty<>(SimulationState.READY));
+
+            assertAll(
+                    () -> assertEquals(SimulationMode.TIMED, viewModel.simulationModeProperty().getValue()),
+                    () -> assertEquals(700.0d, viewModel.stepDurationProperty().getValue()),
+                    () -> assertEquals(100, viewModel.stepCountProperty().getValue()),
+                    () -> assertEquals(SimulationStartMode.START_IMMEDIATELY, viewModel.startModeProperty().getValue()),
+                    () -> assertEquals(SimulationTerminationCheckMode.CHECKED, viewModel.terminationCheckProperty().getValue())
+            );
+        });
+    }
+
+    @Test
+    void testCreateWithMinStepDuration() {
+        FXTestSupport.runAndWait(() -> {
+            var viewModel = DefaultControlViewModel.createWithMinStepDuration(
+                    new SimpleObjectProperty<>(SimulationState.READY));
+
+            assertEquals(viewModel.stepDurationProperty().min(), viewModel.stepDurationProperty().getValue());
+        });
+    }
+
+    @Test
+    void testSimulationStatePropertyIsForwarded() {
+        FXTestSupport.runAndWait(() -> {
+            var state = new SimpleObjectProperty<>(SimulationState.READY);
+            var viewModel = new DefaultControlViewModel(state);
+
+            assertSame(state, viewModel.simulationStateProperty());
+            state.set(SimulationState.PAUSED);
+
+            assertEquals(SimulationState.PAUSED, viewModel.getSimulationState());
+        });
+    }
+
+    @Test
+    void testRequestActionButton() {
+        FXTestSupport.runAndWait(() -> {
+            var viewModel = new DefaultControlViewModel(new SimpleObjectProperty<>(SimulationState.READY));
+
+            assertFalse(viewModel.actionButtonRequestedProperty().get());
+            viewModel.requestActionButton();
+
+            assertTrue(viewModel.actionButtonRequestedProperty().get());
+        });
+    }
+
+    @Test
+    void testRequestCancelButton() {
+        FXTestSupport.runAndWait(() -> {
+            var viewModel = new DefaultControlViewModel(new SimpleObjectProperty<>(SimulationState.READY));
+
+            assertFalse(viewModel.cancelButtonRequestedProperty().get());
+            viewModel.requestCancelButton();
+
+            assertTrue(viewModel.cancelButtonRequestedProperty().get());
+        });
+    }
+
+    @Test
     void testIsControlConfigDisabledReturnsTrueForBusyStates() {
         FXTestSupport.runAndWait(() -> {
             var state = new SimpleObjectProperty<>(SimulationState.READY);
@@ -61,55 +123,6 @@ final class DefaultControlViewModelTest {
                 state.set(simulationState);
                 assertFalse(viewModel.isControlConfigDisabled(), simulationState::name);
             }
-        });
-    }
-
-    @Test
-    void testConstructorSetsDefaultInputValues() {
-        FXTestSupport.runAndWait(() -> {
-            var viewModel = new DefaultControlViewModel(new SimpleObjectProperty<>(SimulationState.READY));
-
-            assertAll(
-                    () -> assertEquals(SimulationMode.TIMED, viewModel.simulationModeProperty().getValue()),
-                    () -> assertEquals(700.0d, viewModel.stepDurationProperty().getValue()),
-                    () -> assertEquals(100, viewModel.stepCountProperty().getValue()),
-                    () -> assertEquals(SimulationStartMode.START_IMMEDIATELY, viewModel.startModeProperty().getValue()),
-                    () -> assertEquals(SimulationTerminationCheckMode.CHECKED, viewModel.terminationCheckProperty().getValue())
-            );
-        });
-    }
-
-    @Test
-    void testCreateWithMinStepDuration() {
-        FXTestSupport.runAndWait(() -> {
-            var viewModel = DefaultControlViewModel.createWithMinStepDuration(
-                    new SimpleObjectProperty<>(SimulationState.READY));
-
-            assertEquals(viewModel.stepDurationProperty().min(), viewModel.stepDurationProperty().getValue());
-        });
-    }
-
-    @Test
-    void testRequestActionButton() {
-        FXTestSupport.runAndWait(() -> {
-            var viewModel = new DefaultControlViewModel(new SimpleObjectProperty<>(SimulationState.READY));
-
-            assertFalse(viewModel.actionButtonRequestedProperty().get());
-            viewModel.requestActionButton();
-
-            assertTrue(viewModel.actionButtonRequestedProperty().get());
-        });
-    }
-
-    @Test
-    void testRequestCancelButton() {
-        FXTestSupport.runAndWait(() -> {
-            var viewModel = new DefaultControlViewModel(new SimpleObjectProperty<>(SimulationState.READY));
-
-            assertFalse(viewModel.cancelButtonRequestedProperty().get());
-            viewModel.requestCancelButton();
-
-            assertTrue(viewModel.cancelButtonRequestedProperty().get());
         });
     }
 
@@ -182,19 +195,6 @@ final class DefaultControlViewModelTest {
                 viewModel.terminationCheckProperty().setValue(terminationCheckMode);
                 assertEquals(terminationCheckMode == SimulationTerminationCheckMode.CHECKED, viewModel.isTerminationChecked());
             }
-        });
-    }
-
-    @Test
-    void testSimulationStatePropertyIsForwarded() {
-        FXTestSupport.runAndWait(() -> {
-            var state = new SimpleObjectProperty<>(SimulationState.READY);
-            var viewModel = new DefaultControlViewModel(state);
-
-            assertSame(state, viewModel.simulationStateProperty());
-            state.set(SimulationState.PAUSED);
-
-            assertEquals(SimulationState.PAUSED, viewModel.getSimulationState());
         });
     }
 

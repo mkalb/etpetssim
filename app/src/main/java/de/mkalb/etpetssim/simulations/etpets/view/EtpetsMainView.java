@@ -209,6 +209,95 @@ public final class EtpetsMainView extends AbstractDefaultMainView<
         };
     }
 
+    @Override
+    protected void handleSelectedGridCellChanged(FXGridCanvasPainter painter,
+                                                 @Nullable EtpetsCell oldGridCell,
+                                                 @Nullable EtpetsCell newGridCell) {
+        if (oldGridCell != null) {
+            painter.clearCanvasBackground();
+        }
+        if (newGridCell != null) {
+            painter.drawCellOuterCircle(newGridCell.coordinate(), null,
+                    SELECTED_STROKE_COLOR, SELECTED_STROKE_LINE_WIDTH,
+                    StrokeType.OUTSIDE);
+        }
+    }
+
+    @Override
+    protected void drawSimulation(CanvasPainters painters, EtpetsGridModel currentGridModel, int stepCount, int lastDrawnStepCount) {
+        if ((cellTerrainDrawer == null) || (cellResourceDrawer == null) || (cellAgentDrawer == null)) {
+            AppLogger.warn("EtpetsMainView: Skipping canvas draw: cell drawers are not initialized");
+            return;
+        }
+
+        painters.dynamic().clearCanvasBackground();
+
+        var terrainModel = currentGridModel.terrainModel();
+        var resourceModel = currentGridModel.resourceModel();
+        var agentModel = currentGridModel.agentModel();
+
+        var rockDescriptor = entityDescriptorRegistry.requireByDescriptorId(EtpetsEntity.DESCRIPTOR_ID_ROCK);
+        terrainModel.filteredCoordinates(e -> EtpetsEntity.DESCRIPTOR_ID_ROCK.equals(e.descriptorId()))
+                .forEach(coordinate ->
+                        painters.dynamic().drawCell(coordinate, rockDescriptor.color(), rockDescriptor.borderColor(), NO_STROKE_LINE_WIDTH));
+
+        var waterDescriptor = entityDescriptorRegistry.requireByDescriptorId(EtpetsEntity.DESCRIPTOR_ID_WATER);
+        terrainModel.filteredCoordinates(e -> EtpetsEntity.DESCRIPTOR_ID_WATER.equals(e.descriptorId()))
+                .forEach(coordinate ->
+                        painters.dynamic().drawCell(coordinate, waterDescriptor.color(), waterDescriptor.borderColor(), NO_STROKE_LINE_WIDTH));
+
+        terrainModel.filteredCells(e -> e instanceof Trail)
+                .forEach(cell -> cellTerrainDrawer.draw(
+                        entityDescriptorRegistry.requireByDescriptorId(cell.descriptorId()),
+                        painters.dynamic(),
+                        cell,
+                        stepCount));
+
+        resourceModel.nonDefaultCells()
+                .forEach(cell -> cellResourceDrawer.draw(
+                        entityDescriptorRegistry.requireByDescriptorId(cell.descriptorId()),
+                        painters.dynamic(),
+                        cell,
+                        stepCount));
+
+        agentModel.nonDefaultCells()
+                .forEach(cell -> cellAgentDrawer.draw(
+                        entityDescriptorRegistry.requireByDescriptorId(cell.descriptorId()),
+                        painters.dynamic(),
+                        cell,
+                        stepCount));
+    }
+
+    @Override
+    protected List<SimulationUserActionDescriptor<EtpetsUserActionContext>> createUserActionDescriptors() {
+        return List.of(
+                new SimulationUserActionDescriptor<>(
+                        ETPETS_TOOL_ID_SET_TERRAIN,
+                        SimulationUserActionScope.CELL_SELECTED,
+                        ETPETS_TOOLBAR_SET_TERRAIN,
+                        ETPETS_TOOLBAR_SET_TERRAIN_TOOLTIP,
+                        () -> editToolBarViewModel.resolveSelectedTerrainContext()
+                                .map(Function.identity())),
+                new SimulationUserActionDescriptor<>(
+                        ETPETS_TOOL_ID_SET_RESOURCE,
+                        SimulationUserActionScope.CELL_SELECTED,
+                        ETPETS_TOOLBAR_SET_RESOURCE,
+                        ETPETS_TOOLBAR_SET_RESOURCE_TOOLTIP,
+                        () -> editToolBarViewModel.resolveSelectedResourceContext()
+                                .map(Function.identity()))
+        );
+    }
+
+    @Override
+    protected Node createEditToolBarOptionPanel(@Nullable ObjectProperty<String> selectedToolId) {
+        HBox optionPanel = new HBox(
+                createTerrainOptionBox(selectedToolId),
+                createResourceOptionBox(selectedToolId));
+        optionPanel.getStyleClass().add(FXStyleClasses.SIMULATION_EDIT_TOOLBAR_OPTION_PANEL);
+        optionPanel.setSpacing(EDIT_OPTION_BOX_SPACING);
+        return optionPanel;
+    }
+
     private int minByDescriptorId(String descriptorId) {
         return switch (descriptorId) {
             case EtpetsEntity.DESCRIPTOR_ID_TRAIL -> EtpetsBalance.TRAIL_INTENSITY_MIN;
@@ -305,95 +394,6 @@ public final class EtpetsMainView extends AbstractDefaultMainView<
             return colorMap.getOrDefault(value, baseColor);
         }
         return baseColor;
-    }
-
-    @Override
-    protected void handleSelectedGridCellChanged(FXGridCanvasPainter painter,
-                                                 @Nullable EtpetsCell oldGridCell,
-                                                 @Nullable EtpetsCell newGridCell) {
-        if (oldGridCell != null) {
-            painter.clearCanvasBackground();
-        }
-        if (newGridCell != null) {
-            painter.drawCellOuterCircle(newGridCell.coordinate(), null,
-                    SELECTED_STROKE_COLOR, SELECTED_STROKE_LINE_WIDTH,
-                    StrokeType.OUTSIDE);
-        }
-    }
-
-    @Override
-    protected void drawSimulation(CanvasPainters painters, EtpetsGridModel currentGridModel, int stepCount, int lastDrawnStepCount) {
-        if ((cellTerrainDrawer == null) || (cellResourceDrawer == null) || (cellAgentDrawer == null)) {
-            AppLogger.warn("EtpetsMainView: Skipping canvas draw: cell drawers are not initialized");
-            return;
-        }
-
-        painters.dynamic().clearCanvasBackground();
-
-        var terrainModel = currentGridModel.terrainModel();
-        var resourceModel = currentGridModel.resourceModel();
-        var agentModel = currentGridModel.agentModel();
-
-        var rockDescriptor = entityDescriptorRegistry.requireByDescriptorId(EtpetsEntity.DESCRIPTOR_ID_ROCK);
-        terrainModel.filteredCoordinates(e -> EtpetsEntity.DESCRIPTOR_ID_ROCK.equals(e.descriptorId()))
-                .forEach(coordinate ->
-                        painters.dynamic().drawCell(coordinate, rockDescriptor.color(), rockDescriptor.borderColor(), NO_STROKE_LINE_WIDTH));
-
-        var waterDescriptor = entityDescriptorRegistry.requireByDescriptorId(EtpetsEntity.DESCRIPTOR_ID_WATER);
-        terrainModel.filteredCoordinates(e -> EtpetsEntity.DESCRIPTOR_ID_WATER.equals(e.descriptorId()))
-                .forEach(coordinate ->
-                        painters.dynamic().drawCell(coordinate, waterDescriptor.color(), waterDescriptor.borderColor(), NO_STROKE_LINE_WIDTH));
-
-        terrainModel.filteredCells(e -> e instanceof Trail)
-                .forEach(cell -> cellTerrainDrawer.draw(
-                        entityDescriptorRegistry.requireByDescriptorId(cell.descriptorId()),
-                        painters.dynamic(),
-                        cell,
-                        stepCount));
-
-        resourceModel.nonDefaultCells()
-                .forEach(cell -> cellResourceDrawer.draw(
-                        entityDescriptorRegistry.requireByDescriptorId(cell.descriptorId()),
-                        painters.dynamic(),
-                        cell,
-                        stepCount));
-
-        agentModel.nonDefaultCells()
-                .forEach(cell -> cellAgentDrawer.draw(
-                        entityDescriptorRegistry.requireByDescriptorId(cell.descriptorId()),
-                        painters.dynamic(),
-                        cell,
-                        stepCount));
-    }
-
-    @Override
-    protected List<SimulationUserActionDescriptor<EtpetsUserActionContext>> createUserActionDescriptors() {
-        return List.of(
-                new SimulationUserActionDescriptor<>(
-                        ETPETS_TOOL_ID_SET_TERRAIN,
-                        SimulationUserActionScope.CELL_SELECTED,
-                        ETPETS_TOOLBAR_SET_TERRAIN,
-                        ETPETS_TOOLBAR_SET_TERRAIN_TOOLTIP,
-                        () -> editToolBarViewModel.resolveSelectedTerrainContext()
-                                .map(Function.identity())),
-                new SimulationUserActionDescriptor<>(
-                        ETPETS_TOOL_ID_SET_RESOURCE,
-                        SimulationUserActionScope.CELL_SELECTED,
-                        ETPETS_TOOLBAR_SET_RESOURCE,
-                        ETPETS_TOOLBAR_SET_RESOURCE_TOOLTIP,
-                        () -> editToolBarViewModel.resolveSelectedResourceContext()
-                                .map(Function.identity()))
-        );
-    }
-
-    @Override
-    protected Node createEditToolBarOptionPanel(@Nullable ObjectProperty<String> selectedToolId) {
-        HBox optionPanel = new HBox(
-                createTerrainOptionBox(selectedToolId),
-                createResourceOptionBox(selectedToolId));
-        optionPanel.getStyleClass().add(FXStyleClasses.SIMULATION_EDIT_TOOLBAR_OPTION_PANEL);
-        optionPanel.setSpacing(EDIT_OPTION_BOX_SPACING);
-        return optionPanel;
     }
 
     private HBox createTerrainOptionBox(@Nullable ObjectProperty<String> selectedToolId) {

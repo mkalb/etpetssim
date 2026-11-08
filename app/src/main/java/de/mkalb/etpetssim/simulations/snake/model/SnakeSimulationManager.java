@@ -80,6 +80,28 @@ public final class SnakeSimulationManager
         recordInitialStatisticsSample();
     }
 
+    @Override
+    public GridStructure structure() {
+        return structure;
+    }
+
+    @Override
+    public SnakeStatistics statistics() {
+        return statistics;
+    }
+
+    @Override
+    protected void updateStatistics() {
+        statistics.setStepData(
+                executor.stepCount(),
+                executor.stepTimingStatistics());
+    }
+
+    @Override
+    protected TimedSimulationExecutor<SnakeEntity, WritableGridModel<SnakeEntity>> executor() {
+        return executor;
+    }
+
     int nextSnakeId() {
         return nextSnakeId;
     }
@@ -177,33 +199,11 @@ public final class SnakeSimulationManager
         return GridInitializers.identity();
     }
 
-    @Override
-    public GridStructure structure() {
-        return structure;
-    }
-
-    @Override
-    public SnakeStatistics statistics() {
-        return statistics;
-    }
-
-    @Override
-    protected void updateStatistics() {
-        statistics.setStepData(
-                executor.stepCount(),
-                executor.stepTimingStatistics());
-    }
-
     private void initializeStatistics(ReadableGridModel<SnakeEntity> model) {
         int snakeHeadCellsInitial = Math.toIntExact(model.countEntities(e -> e instanceof SnakeHead));
         int wallCellsInitial = Math.toIntExact(model.countEntities(SnakeEntity::isWall));
         int foodCellsInitial = Math.toIntExact(model.countEntities(SnakeEntity::isFood));
         statistics.initializeStartupCellCounts(snakeHeadCellsInitial, wallCellsInitial, foodCellsInitial);
-    }
-
-    @Override
-    protected TimedSimulationExecutor<SnakeEntity, WritableGridModel<SnakeEntity>> executor() {
-        return executor;
     }
 
 }

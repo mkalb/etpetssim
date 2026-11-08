@@ -115,6 +115,30 @@ public abstract class AbstractDefaultMainView<
         return super.shutdownSimulation();
     }
 
+    @Override
+    protected void handleMouseClickedCoordinate(GridCoordinate mouseCoordinate, FXGridCanvasPainter painter) {
+        viewModel.updateClickedCoordinateProperties(mouseCoordinate);
+        applySelectedCellUserActionAndRedraw();
+    }
+
+    @Override
+    protected final BooleanProperty editModeActiveProperty() {
+        return viewModel.editModeActiveProperty();
+    }
+
+    @Override
+    protected final ObjectProperty<String> selectedUserActionToolIdProperty() {
+        return viewModel.selectedUserActionToolIdProperty();
+    }
+
+    @Override
+    protected final void applyGlobalUserActionAndRedraw(SimulationUserActionDescriptor<CTX> descriptor) {
+        boolean changed = viewModel.applyUserAction(descriptor);
+        if (changed) {
+            redrawAfterUserAction();
+        }
+    }
+
     protected final double computeStrokeLineWidth(CellDimension cellDimension) {
         if (cellDimension.innerRadius() < 2.0d) {
             return NO_STROKE_LINE_WIDTH;
@@ -144,29 +168,24 @@ public abstract class AbstractDefaultMainView<
         return FXPaintFactory.computeBrightnessVariantsMap(baseColor, min, max, groupCount, maxFactorDelta);
     }
 
-    @Override
-    protected void handleMouseClickedCoordinate(GridCoordinate mouseCoordinate, FXGridCanvasPainter painter) {
-        viewModel.updateClickedCoordinateProperties(mouseCoordinate);
-        applySelectedCellUserActionAndRedraw();
-    }
+    protected abstract void handleSelectedGridCellChanged(FXGridCanvasPainter painter,
+                                                          @Nullable GC oldGridCell,
+                                                          @Nullable GC newGridCell);
 
-    @Override
-    protected final BooleanProperty editModeActiveProperty() {
-        return viewModel.editModeActiveProperty();
-    }
+    protected abstract void initializeSimulation(CanvasPainters painters, CON config, CellDimension cellDimension);
 
-    @Override
-    protected final ObjectProperty<String> selectedUserActionToolIdProperty() {
-        return viewModel.selectedUserActionToolIdProperty();
-    }
-
-    @Override
-    protected final void applyGlobalUserActionAndRedraw(SimulationUserActionDescriptor<CTX> descriptor) {
-        boolean changed = viewModel.applyUserAction(descriptor);
-        if (changed) {
-            redrawAfterUserAction();
-        }
-    }
+    /**
+     * Draws the current simulation state.
+     *
+     * @param painters           the painters of the canvas layers
+     * @param currentGridModel   the grid model to draw
+     * @param stepCount          the step count of the grid model
+     * @param lastDrawnStepCount the step count of the previous draw, {@link Integer#MIN_VALUE} before the first draw,
+     *                           or {@code stepCount} when the same step is redrawn after a user action; a gap greater
+     *                           than {@code 1} means that intermediate steps were not drawn
+     */
+    @SuppressWarnings("ParameterHidesMemberVariable")
+    protected abstract void drawSimulation(CanvasPainters painters, GM currentGridModel, int stepCount, int lastDrawnStepCount);
 
     private void applySelectedCellUserActionAndRedraw() {
         boolean changed = viewModel.applySelectedCellUserAction(createUserActionDescriptors());
@@ -257,10 +276,6 @@ public abstract class AbstractDefaultMainView<
         }
     }
 
-    protected abstract void handleSelectedGridCellChanged(FXGridCanvasPainter painter,
-                                                          @Nullable GC oldGridCell,
-                                                          @Nullable GC newGridCell);
-
     private void drawAndMeasureSimulationStep(CanvasPainters currentPainters, int stepCount) {
         long startNanos = System.nanoTime();
         drawSimulation(currentPainters, viewModel.getCurrentGridModel(), stepCount, lastDrawnStepCount);
@@ -318,20 +333,5 @@ public abstract class AbstractDefaultMainView<
         }
         skipOverlayActive = false;
     }
-
-    protected abstract void initializeSimulation(CanvasPainters painters, CON config, CellDimension cellDimension);
-
-    /**
-     * Draws the current simulation state.
-     *
-     * @param painters           the painters of the canvas layers
-     * @param currentGridModel   the grid model to draw
-     * @param stepCount          the step count of the grid model
-     * @param lastDrawnStepCount the step count of the previous draw, {@link Integer#MIN_VALUE} before the first draw,
-     *                           or {@code stepCount} when the same step is redrawn after a user action; a gap greater
-     *                           than {@code 1} means that intermediate steps were not drawn
-     */
-    @SuppressWarnings("ParameterHidesMemberVariable")
-    protected abstract void drawSimulation(CanvasPainters painters, GM currentGridModel, int stepCount, int lastDrawnStepCount);
 
 }

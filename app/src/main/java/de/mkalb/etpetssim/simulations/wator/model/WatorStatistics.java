@@ -41,16 +41,24 @@ public final class WatorStatistics
         );
     }
 
-    void initializeStartupCellCounts(int fishCellsInitial,
-                                     int sharkCellsInitial) {
-        fishCells = fishCellsInitial;
-        sharkCells = sharkCellsInitial;
-    }
-
     public void adjustCellCounts(int fishCellsDelta,
                                  int sharkCellsDelta) {
         fishCells += fishCellsDelta;
         sharkCells += sharkCellsDelta;
+    }
+
+    public int fishCells() {
+        return fishCells;
+    }
+
+    public int sharkCells() {
+        return sharkCells;
+    }
+
+    void initializeStartupCellCounts(int fishCellsInitial,
+                                     int sharkCellsInitial) {
+        fishCells = fishCellsInitial;
+        sharkCells = sharkCellsInitial;
     }
 
     void incrementFishCells() {
@@ -67,14 +75,6 @@ public final class WatorStatistics
 
     void decrementSharkCells() {
         sharkCells--;
-    }
-
-    public int fishCells() {
-        return fishCells;
-    }
-
-    public int sharkCells() {
-        return sharkCells;
     }
 
     @Override

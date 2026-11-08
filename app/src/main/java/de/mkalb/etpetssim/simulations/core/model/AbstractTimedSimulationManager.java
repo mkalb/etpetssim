@@ -59,20 +59,6 @@ public abstract class AbstractTimedSimulationManager<
         statisticsExtremaTracker = new StatisticsExtremaTracker(metrics);
     }
 
-    /**
-     * Updates the statistics snapshot after each simulation step.
-     * Called by {@link #executeStep()}, within the per-step callback of {@link #executeSteps}, and by
-     * {@link #recordInitialStatisticsSample()}.
-     */
-    protected abstract void updateStatistics();
-
-    /**
-     * Returns the timed simulation executor backing this manager.
-     *
-     * @return the executor used for simulation step execution
-     */
-    protected abstract TimedSimulationExecutor<ENT, GM> executor();
-
     @Override
     public final CON config() {
         return config;
@@ -134,6 +120,20 @@ public abstract class AbstractTimedSimulationManager<
     public final StepTimingStatistics stepTimingStatistics() {
         return executor().stepTimingStatistics();
     }
+
+    /**
+     * Updates the statistics snapshot after each simulation step.
+     * Called by {@link #executeStep()}, within the per-step callback of {@link #executeSteps}, and by
+     * {@link #recordInitialStatisticsSample()}.
+     */
+    protected abstract void updateStatistics();
+
+    /**
+     * Returns the timed simulation executor backing this manager.
+     *
+     * @return the executor used for simulation step execution
+     */
+    protected abstract TimedSimulationExecutor<ENT, GM> executor();
 
     /**
      * Records the initial step-0 sample after simulation-specific startup counters were initialized.

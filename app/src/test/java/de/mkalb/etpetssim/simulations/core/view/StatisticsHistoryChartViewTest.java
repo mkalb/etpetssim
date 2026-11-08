@@ -81,6 +81,23 @@ final class StatisticsHistoryChartViewTest {
     }
 
     @Test
+    void testShutdownUnregistersHistoryListener() {
+        var historyProp = new SimpleObjectProperty<>(List.<StatisticsSample>of());
+
+        Boolean managed = FXTestSupport.supplyAndWaitNonNull(() -> {
+            var view = new StatisticsHistoryChartView(WatorStatistics.metrics(), historyProp);
+            view.shutdown();
+            historyProp.set(List.of(sample(1, Map.of(
+                    WatorStatistics.KEY_FISH_CELLS, 200.0,
+                    WatorStatistics.KEY_SHARK_CELLS, 50.0))));
+
+            return view.titledPane().isManaged();
+        });
+
+        assertFalse(managed, "Chart section must not react to history changes after shutdown");
+    }
+
+    @Test
     void testUpdateChartsHidesTitledPaneWithoutData() {
         var historyProp = new SimpleObjectProperty<>(List.<StatisticsSample>of());
 
@@ -152,23 +169,6 @@ final class StatisticsHistoryChartViewTest {
 
         assertNotNull(managed, "TitledPane must not be null after reset");
         assertFalse(managed, "TitledPane must be hidden again after shutdown reset");
-    }
-
-    @Test
-    void testShutdownUnregistersHistoryListener() {
-        var historyProp = new SimpleObjectProperty<>(List.<StatisticsSample>of());
-
-        Boolean managed = FXTestSupport.supplyAndWaitNonNull(() -> {
-            var view = new StatisticsHistoryChartView(WatorStatistics.metrics(), historyProp);
-            view.shutdown();
-            historyProp.set(List.of(sample(1, Map.of(
-                    WatorStatistics.KEY_FISH_CELLS, 200.0,
-                    WatorStatistics.KEY_SHARK_CELLS, 50.0))));
-
-            return view.titledPane().isManaged();
-        });
-
-        assertFalse(managed, "Chart section must not react to history changes after shutdown");
     }
 
     @Test

@@ -51,10 +51,6 @@ public abstract class AbstractMainViewModel<
         bindObservationBindings();
     }
 
-    private void bindObservationBindings() {
-        observationViewModel.lastClickedCoordinateProperty().bind(lastClickedCoordinateProperty());
-    }
-
     @Override
     public final ReadOnlyObjectProperty<SimulationState> simulationStateProperty() {
         return simulationState;
@@ -153,6 +149,10 @@ public abstract class AbstractMainViewModel<
      */
     protected final void unbindObservationBindings() {
         observationViewModel.lastClickedCoordinateProperty().unbind();
+    }
+
+    private void bindObservationBindings() {
+        observationViewModel.lastClickedCoordinateProperty().bind(lastClickedCoordinateProperty());
     }
 
 }

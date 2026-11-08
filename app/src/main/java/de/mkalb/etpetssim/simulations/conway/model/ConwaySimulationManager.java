@@ -45,19 +45,6 @@ public final class ConwaySimulationManager
         recordInitialStatisticsSample();
     }
 
-    private void initializeGrid(ConwayConfig config,
-                                WritableGridModel<ConwayEntity> model,
-                                Random random,
-                                SimulationInitializationCancellation cancellation) {
-        var gridInitializer = GridInitializers.fillRandomPercent(
-                config.alivePercent(),
-                () -> ConwayEntity.ALIVE,
-                ConwayEntity.DEAD,
-                random,
-                cancellation::checkCanceled);
-        gridInitializer.initialize(model);
-    }
-
     @Override
     public GridStructure structure() {
         return structure;
@@ -75,14 +62,27 @@ public final class ConwaySimulationManager
                 executor.stepTimingStatistics());
     }
 
-    private void initializeStatistics(ReadableGridModel<ConwayEntity> model) {
-        int aliveCellsInitial = Math.toIntExact(model.countEntities(ConwayEntity::isAlive));
-        statistics.initializeStartupCellCounts(aliveCellsInitial);
-    }
-
     @Override
     protected TimedSimulationExecutor<ConwayEntity, WritableGridModel<ConwayEntity>> executor() {
         return executor;
+    }
+
+    private void initializeGrid(ConwayConfig config,
+                                WritableGridModel<ConwayEntity> model,
+                                Random random,
+                                SimulationInitializationCancellation cancellation) {
+        var gridInitializer = GridInitializers.fillRandomPercent(
+                config.alivePercent(),
+                () -> ConwayEntity.ALIVE,
+                ConwayEntity.DEAD,
+                random,
+                cancellation::checkCanceled);
+        gridInitializer.initialize(model);
+    }
+
+    private void initializeStatistics(ReadableGridModel<ConwayEntity> model) {
+        int aliveCellsInitial = Math.toIntExact(model.countEntities(ConwayEntity::isAlive));
+        statistics.initializeStartupCellCounts(aliveCellsInitial);
     }
 
 }

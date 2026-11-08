@@ -127,7 +127,7 @@ sources. "Types" counts the top-level types in main sources of a group.
 | A2 | Javadoc paragraphs                                            |     - | done        |
 | B1 | Exception messages                                            |     - | done        |
 | B2 | Log messages                                                  |     - | done        |
-| B3 | Member order                                                  |     - | open        |
+| B3 | Member order                                                  |     - | done        |
 | B4 | Edge behavior checks and direction rings                      |     - | open        |
 | B5 | Constructor parameters of step runners and step logic         |     - | open        |
 | B6 | Metrics catalogs of the statistics                            |     - | open        |
@@ -272,6 +272,19 @@ The members of all types follow `java.md` ("Code Style"), and the tests follow t
 almost only in the visibility order of the methods (private helpers next to their callers, protected before public).
 Scan again with a script, reorder the deviating types and their tests, and do not change anything else in this
 commit.
+
+### Decisions
+
+- The new scan (2026-11-08) found 39 of 305 types in main sources, including nested types, all with deviations in the
+  order of their instance methods: the `*Config` records, simulation managers, and statistics classes of all eight
+  timed simulations, the main views of ET Pets, Sugar, and Wa-Tor, the config ViewModels of Conway and the Lab,
+  `LabMainViewModel`, `StartMainView`, `ResourceBase`, and seven classes of `simulations.core`. A script reordered
+  their methods as `java.md` requires, also the protected methods of the abstract classes after the public ones; it
+  kept overloads and a getter with its setter together and moved each method with its Javadoc and annotations.
+- Seven test classes of `simulations.core` follow the declaration order of their production classes now
+  (`junit.md`, "Organization"); only test methods were reordered, helpers and fields keep their place. Enum tests and
+  the topic test `SimulationManagerTest` were not checked.
+- The commit changes only the order of lines; no line was added or removed.
 
 ### B4. Edge behavior checks and direction rings
 

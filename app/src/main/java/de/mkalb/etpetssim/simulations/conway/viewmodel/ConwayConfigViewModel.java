@@ -104,6 +104,46 @@ public final class ConwayConfigViewModel
         updateMaxNeighborCount();
     }
 
+    @Override
+    public ConwayConfig createConfig() {
+        return new ConwayConfig(
+                cellShapeProperty().property().getValue(),
+                gridEdgeBehaviorProperty().property().getValue(),
+                gridWidthProperty().property().getValue(),
+                gridHeightProperty().property().getValue(),
+                cellEdgeLengthProperty().property().getValue(),
+                cellDisplayModeProperty().property().getValue(),
+                seedProperty().computeSeedAndUpdateLabel(),
+                alivePercent.getValue(),
+                NEIGHBORHOOD_MODE_DEFAULT,
+                transitionRulesProperty().getValue()
+        );
+    }
+
+    public InputDoubleProperty alivePercentProperty() {
+        return alivePercent;
+    }
+
+    public ConwayRuleProperty ruleProperty() {
+        return ruleProperty;
+    }
+
+    public List<BooleanProperty> getSurviveProperties() {
+        return surviveProperties;
+    }
+
+    public List<BooleanProperty> getBirthProperties() {
+        return birthProperties;
+    }
+
+    public ObjectProperty<ConwayTransitionRules> transitionRulesProperty() {
+        return transitionRules;
+    }
+
+    public IntegerProperty maxNeighborCountProperty() {
+        return maxNeighborCount;
+    }
+
     private void updateMaxNeighborCount() {
         int maxNeighbors = Math.min(ConwayTransitionRules.MAX_NEIGHBOR_COUNT,
                 CellNeighborhoods.maxNeighborCount(
@@ -143,46 +183,6 @@ public final class ConwayConfigViewModel
             surviveProperties.get(index).set(rules.surviveCounts().contains(i));
             birthProperties.get(index).set(rules.birthCounts().contains(i));
         }
-    }
-
-    @Override
-    public ConwayConfig createConfig() {
-        return new ConwayConfig(
-                cellShapeProperty().property().getValue(),
-                gridEdgeBehaviorProperty().property().getValue(),
-                gridWidthProperty().property().getValue(),
-                gridHeightProperty().property().getValue(),
-                cellEdgeLengthProperty().property().getValue(),
-                cellDisplayModeProperty().property().getValue(),
-                seedProperty().computeSeedAndUpdateLabel(),
-                alivePercent.getValue(),
-                NEIGHBORHOOD_MODE_DEFAULT,
-                transitionRulesProperty().getValue()
-        );
-    }
-
-    public InputDoubleProperty alivePercentProperty() {
-        return alivePercent;
-    }
-
-    public ConwayRuleProperty ruleProperty() {
-        return ruleProperty;
-    }
-
-    public List<BooleanProperty> getSurviveProperties() {
-        return surviveProperties;
-    }
-
-    public List<BooleanProperty> getBirthProperties() {
-        return birthProperties;
-    }
-
-    public ObjectProperty<ConwayTransitionRules> transitionRulesProperty() {
-        return transitionRules;
-    }
-
-    public IntegerProperty maxNeighborCountProperty() {
-        return maxNeighborCount;
     }
 
 }

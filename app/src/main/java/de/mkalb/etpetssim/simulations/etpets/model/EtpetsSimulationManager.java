@@ -79,6 +79,28 @@ public final class EtpetsSimulationManager
         }
     }
 
+    @Override
+    public GridStructure structure() {
+        return structure;
+    }
+
+    @Override
+    public EtpetsStatistics statistics() {
+        return statistics;
+    }
+
+    @Override
+    protected void updateStatistics() {
+        statistics.setStepData(
+                executor.stepCount(),
+                executor.stepTimingStatistics());
+    }
+
+    @Override
+    protected TimedSimulationExecutor<EtpetsEntity, EtpetsGridModel> executor() {
+        return executor;
+    }
+
     @SuppressWarnings("CommentedOutCode")
     private void initializeTerrain(EtpetsGridModel model, Random random, SimulationInitializationCancellation cancellation) {
         int totalCells = structure.cellCount();
@@ -261,34 +283,12 @@ public final class EtpetsSimulationManager
         return coordinates;
     }
 
-    @Override
-    public GridStructure structure() {
-        return structure;
-    }
-
-    @Override
-    public EtpetsStatistics statistics() {
-        return statistics;
-    }
-
-    @Override
-    protected void updateStatistics() {
-        statistics.setStepData(
-                executor.stepCount(),
-                executor.stepTimingStatistics());
-    }
-
     private void initializeStatistics(EtpetsGridModel model) {
         int activePetCountInitial = Math.toIntExact(model.agentModel()
                 .countEntities(entity -> (entity instanceof Pet pet) && !pet.isDead()));
         int eggCountInitial = Math.toIntExact(model.agentModel()
                 .countEntities(entity -> entity instanceof PetEgg));
         statistics.initializeStartupCellCounts(activePetCountInitial, eggCountInitial);
-    }
-
-    @Override
-    protected TimedSimulationExecutor<EtpetsEntity, EtpetsGridModel> executor() {
-        return executor;
     }
 
 }

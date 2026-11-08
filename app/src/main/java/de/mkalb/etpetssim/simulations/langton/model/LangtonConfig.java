@@ -44,10 +44,6 @@ public record LangtonConfig(
         LangtonMovementRules movementRules)
         implements SimulationConfig {
 
-    private boolean hasValidMovementRules() {
-        return movementRules.isValidForCellShape(cellShape);
-    }
-
     /**
      * Validates the common simulation settings and the Langton-specific selections and movement rules.
      *
@@ -59,6 +55,10 @@ public record LangtonConfig(
                 && hasAllowedCoreSelections(CELL_SHAPE_VALUES, GRID_EDGE_BEHAVIOR_VALUES, CELL_DISPLAY_MODE_VALUES)
                 && hasExpectedSelection(neighborhoodMode, NEIGHBORHOOD_MODE_DEFAULT)
                 && hasValidMovementRules();
+    }
+
+    private boolean hasValidMovementRules() {
+        return movementRules.isValidForCellShape(cellShape);
     }
 
 }

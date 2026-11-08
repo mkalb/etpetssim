@@ -45,19 +45,6 @@ public final class ForestSimulationManager
         recordInitialStatisticsSample();
     }
 
-    private void initializeGrid(ForestConfig config,
-                                WritableGridModel<ForestEntity> model,
-                                Random random,
-                                SimulationInitializationCancellation cancellation) {
-        var gridInitializer = GridInitializers.fillRandomPercent(
-                config.treeDensity(),
-                () -> ForestEntity.TREE,
-                ForestEntity.EMPTY,
-                random,
-                cancellation::checkCanceled);
-        gridInitializer.initialize(model);
-    }
-
     @Override
     public GridStructure structure() {
         return structure;
@@ -75,14 +62,27 @@ public final class ForestSimulationManager
                 executor.stepTimingStatistics());
     }
 
-    private void initializeStatistics(ReadableGridModel<ForestEntity> model) {
-        int treeCellsInitial = Math.toIntExact(model.countEntities(ForestEntity::isTree));
-        statistics.initializeStartupCellCounts(treeCellsInitial);
-    }
-
     @Override
     protected TimedSimulationExecutor<ForestEntity, WritableGridModel<ForestEntity>> executor() {
         return executor;
+    }
+
+    private void initializeGrid(ForestConfig config,
+                                WritableGridModel<ForestEntity> model,
+                                Random random,
+                                SimulationInitializationCancellation cancellation) {
+        var gridInitializer = GridInitializers.fillRandomPercent(
+                config.treeDensity(),
+                () -> ForestEntity.TREE,
+                ForestEntity.EMPTY,
+                random,
+                cancellation::checkCanceled);
+        gridInitializer.initialize(model);
+    }
+
+    private void initializeStatistics(ReadableGridModel<ForestEntity> model) {
+        int treeCellsInitial = Math.toIntExact(model.countEntities(ForestEntity::isTree));
+        statistics.initializeStartupCellCounts(treeCellsInitial);
     }
 
 }

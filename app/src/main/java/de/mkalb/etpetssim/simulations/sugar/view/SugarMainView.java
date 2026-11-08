@@ -101,10 +101,6 @@ public final class SugarMainView
         entityColors.put(SugarEntity.DESCRIPTOR_ID_AGENT, null);
     }
 
-    private int computeMaxColorAgentEnergy(SugarConfig config) {
-        return config.agentInitialEnergy() * MAX_COLOR_AGENT_ENERGY_FACTOR;
-    }
-
     @Override
     protected void initializeSimulation(CanvasPainters painters, SugarConfig config, CellDimension cellDimension) {
         Color backgroundColor = entityDescriptorRegistry
@@ -149,36 +145,6 @@ public final class SugarMainView
                         StrokeType.CENTERED);
             }
         };
-    }
-
-    private Color resolveResourceFillColor(GridEntityDescriptor entityDescriptor,
-                                           ResourceEntity entity) {
-        Color baseColor = entityDescriptor.colorOrFallback();
-        Map<Integer, Color> colorMap = entityColors.get(entityDescriptor.descriptorId());
-        if (colorMap != null) {
-            Integer value = switch (entity) {
-                case Sugar sugar -> sugar.currentAmount();
-                case NoResource _ -> -1;
-            };
-
-            return colorMap.getOrDefault(value, baseColor);
-        }
-        return (entityDescriptor.color() != null) ? entityDescriptor.color() : FALLBACK_COLOR_SUGAR;
-    }
-
-    private Color resolveAgentFillColor(GridEntityDescriptor entityDescriptor,
-                                        AgentEntity entity) {
-        Color baseColor = entityDescriptor.colorOrFallback();
-        Map<Integer, Color> colorMap = entityColors.get(entityDescriptor.descriptorId());
-        if (colorMap != null) {
-            Integer value = switch (entity) {
-                case Agent agent -> Math.min(maxColorAgentEnergy, agent.currentEnergy());
-                case NoAgent _ -> -1;
-            };
-
-            return colorMap.getOrDefault(value, baseColor);
-        }
-        return (entityDescriptor.color() != null) ? entityDescriptor.color() : FALLBACK_COLOR_AGENT;
     }
 
     @Override
@@ -301,6 +267,40 @@ public final class SugarMainView
         optionPanel.getStyleClass().add(FXStyleClasses.SIMULATION_EDIT_TOOLBAR_OPTION_PANEL);
         optionPanel.setSpacing(EDIT_OPTION_BOX_SPACING);
         return optionPanel;
+    }
+
+    private int computeMaxColorAgentEnergy(SugarConfig config) {
+        return config.agentInitialEnergy() * MAX_COLOR_AGENT_ENERGY_FACTOR;
+    }
+
+    private Color resolveResourceFillColor(GridEntityDescriptor entityDescriptor,
+                                           ResourceEntity entity) {
+        Color baseColor = entityDescriptor.colorOrFallback();
+        Map<Integer, Color> colorMap = entityColors.get(entityDescriptor.descriptorId());
+        if (colorMap != null) {
+            Integer value = switch (entity) {
+                case Sugar sugar -> sugar.currentAmount();
+                case NoResource _ -> -1;
+            };
+
+            return colorMap.getOrDefault(value, baseColor);
+        }
+        return (entityDescriptor.color() != null) ? entityDescriptor.color() : FALLBACK_COLOR_SUGAR;
+    }
+
+    private Color resolveAgentFillColor(GridEntityDescriptor entityDescriptor,
+                                        AgentEntity entity) {
+        Color baseColor = entityDescriptor.colorOrFallback();
+        Map<Integer, Color> colorMap = entityColors.get(entityDescriptor.descriptorId());
+        if (colorMap != null) {
+            Integer value = switch (entity) {
+                case Agent agent -> Math.min(maxColorAgentEnergy, agent.currentEnergy());
+                case NoAgent _ -> -1;
+            };
+
+            return colorMap.getOrDefault(value, baseColor);
+        }
+        return (entityDescriptor.color() != null) ? entityDescriptor.color() : FALLBACK_COLOR_AGENT;
     }
 
     private ListCell<SugarAddSugarLevel> createAddSugarLevelCell() {

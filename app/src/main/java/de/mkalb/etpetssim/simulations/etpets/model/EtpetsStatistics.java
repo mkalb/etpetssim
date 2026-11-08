@@ -48,6 +48,18 @@ public final class EtpetsStatistics
         );
     }
 
+    public int activePetCells() {
+        return activePetCells;
+    }
+
+    public int eggCells() {
+        return eggCells;
+    }
+
+    public int cumulativePetDeathCount() {
+        return cumulativePetDeathCount;
+    }
+
     void initializeStartupCellCounts(int activePetCountInitial,
                                      int eggCountInitial) {
         activePetCells = activePetCountInitial;
@@ -60,18 +72,6 @@ public final class EtpetsStatistics
         activePetCells += activePetCellsDelta;
         eggCells += eggCellsDelta;
         cumulativePetDeathCount += cumulativePetDeathCountDelta;
-    }
-
-    public int activePetCells() {
-        return activePetCells;
-    }
-
-    public int eggCells() {
-        return eggCells;
-    }
-
-    public int cumulativePetDeathCount() {
-        return cumulativePetDeathCount;
     }
 
     @Override

@@ -73,16 +73,6 @@ public record SnakeConfig(
         double segmentLengthMultiplier)
         implements SimulationConfig {
 
-    private boolean hasValidRanges() {
-        return isInRangeInt(verticalWalls, VERTICAL_WALLS_MIN, VERTICAL_WALLS_MAX)
-                && isInRangeInt(foodCells, FOOD_CELLS_MIN, FOOD_CELLS_MAX)
-                && isInRangeInt(snakes, SNAKES_MIN, SNAKES_MAX)
-                && isInRangeInt(initialPendingGrowth, INITIAL_PENDING_GROWTH_MIN, INITIAL_PENDING_GROWTH_MAX)
-                && isInRangeInt(growthPerFood, GROWTH_PER_FOOD_MIN, GROWTH_PER_FOOD_MAX)
-                && isInRangeInt(basePointsPerFood, BASE_POINTS_PER_FOOD_MIN, BASE_POINTS_PER_FOOD_MAX)
-                && isInRangeDouble(segmentLengthMultiplier, SEGMENT_LENGTH_MULTIPLIER_MIN, SEGMENT_LENGTH_MULTIPLIER_MAX);
-    }
-
     /**
      * Validates the common simulation settings and the Snake-specific selections and ranges.
      *
@@ -95,6 +85,16 @@ public record SnakeConfig(
                 && hasExpectedSelection(neighborhoodMode, NEIGHBORHOOD_MODE_DEFAULT)
                 && isAllowedSelection(deathMode, DEATH_MODE_VALUES)
                 && hasValidRanges();
+    }
+
+    private boolean hasValidRanges() {
+        return isInRangeInt(verticalWalls, VERTICAL_WALLS_MIN, VERTICAL_WALLS_MAX)
+                && isInRangeInt(foodCells, FOOD_CELLS_MIN, FOOD_CELLS_MAX)
+                && isInRangeInt(snakes, SNAKES_MIN, SNAKES_MAX)
+                && isInRangeInt(initialPendingGrowth, INITIAL_PENDING_GROWTH_MIN, INITIAL_PENDING_GROWTH_MAX)
+                && isInRangeInt(growthPerFood, GROWTH_PER_FOOD_MIN, GROWTH_PER_FOOD_MAX)
+                && isInRangeInt(basePointsPerFood, BASE_POINTS_PER_FOOD_MIN, BASE_POINTS_PER_FOOD_MAX)
+                && isInRangeDouble(segmentLengthMultiplier, SEGMENT_LENGTH_MULTIPLIER_MIN, SEGMENT_LENGTH_MULTIPLIER_MAX);
     }
 
 }

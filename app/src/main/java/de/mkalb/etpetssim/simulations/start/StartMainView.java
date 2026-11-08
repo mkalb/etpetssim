@@ -93,6 +93,11 @@ public final class StartMainView implements SimulationMainView, SimulationContro
         return vbox;
     }
 
+    @Override
+    public void setStepCount(int stepCount) {
+        // Do nothing
+    }
+
     private InputChoiceProperty<CountryLocale> createLanguageChoiceProperty() {
         Locale activeLocale = AppLocalization.locale();
         CountryLocale activeCountryLocale = AppLocalization.supportedLocales().stream()
@@ -117,11 +122,6 @@ public final class StartMainView implements SimulationMainView, SimulationContro
         Locale.setDefault(AppLocalization.locale());
         AppSettings.writeLocale(countryLocale);
         stageUpdater.accept(stage, SimulationType.STARTSCREEN);
-    }
-
-    @Override
-    public void setStepCount(int stepCount) {
-        // Do nothing
     }
 
 }

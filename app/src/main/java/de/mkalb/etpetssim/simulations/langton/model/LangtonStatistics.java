@@ -39,6 +39,14 @@ public final class LangtonStatistics
         );
     }
 
+    public int antCells() {
+        return antCells;
+    }
+
+    public int visitedCells() {
+        return visitedCells;
+    }
+
     void initializeStartupCellCounts(int antCellsInitial) {
         antCells = antCellsInitial;
         visitedCells = antCellsInitial;
@@ -48,14 +56,6 @@ public final class LangtonStatistics
                           int visitedCellsDelta) {
         antCells += antCellsDelta;
         visitedCells += visitedCellsDelta;
-    }
-
-    public int antCells() {
-        return antCells;
-    }
-
-    public int visitedCells() {
-        return visitedCells;
     }
 
     @Override

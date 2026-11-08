@@ -48,11 +48,6 @@ public record ReboundingConfig(
         NeighborhoodMode neighborhoodMode)
         implements SimulationConfig {
 
-    private boolean hasValidRanges() {
-        return isInRangeInt(verticalWalls, VERTICAL_WALLS_MIN, VERTICAL_WALLS_MAX)
-                && isInRangeDouble(movingEntityPercent, MOVING_ENTITY_PERCENT_MIN, MOVING_ENTITY_PERCENT_MAX);
-    }
-
     /**
      * Validates the common simulation settings and the Rebounding-specific selections and ranges.
      *
@@ -63,6 +58,11 @@ public record ReboundingConfig(
         return isBaseValid()
                 && hasAllowedCoreSelections(CELL_SHAPE_VALUES, GRID_EDGE_BEHAVIOR_VALUES, CELL_DISPLAY_MODE_VALUES)
                 && hasValidRanges();
+    }
+
+    private boolean hasValidRanges() {
+        return isInRangeInt(verticalWalls, VERTICAL_WALLS_MIN, VERTICAL_WALLS_MAX)
+                && isInRangeDouble(movingEntityPercent, MOVING_ENTITY_PERCENT_MIN, MOVING_ENTITY_PERCENT_MAX);
     }
 
 }

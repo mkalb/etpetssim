@@ -47,17 +47,6 @@ public final class ForestStatistics
         );
     }
 
-    void initializeStartupCellCounts(int treeCellsInitial) {
-        emptyCells = totalCells() - treeCellsInitial;
-        treeCells = treeCellsInitial;
-    }
-
-    void setCellCounts(int newTreeCells, int newBurningCells) {
-        emptyCells = totalCells() - newTreeCells - newBurningCells;
-        treeCells = newTreeCells;
-        burningCells = newBurningCells;
-    }
-
     public int emptyCells() {
         return emptyCells;
     }
@@ -68,6 +57,17 @@ public final class ForestStatistics
 
     public int burningCells() {
         return burningCells;
+    }
+
+    void initializeStartupCellCounts(int treeCellsInitial) {
+        emptyCells = totalCells() - treeCellsInitial;
+        treeCells = treeCellsInitial;
+    }
+
+    void setCellCounts(int newTreeCells, int newBurningCells) {
+        emptyCells = totalCells() - newTreeCells - newBurningCells;
+        treeCells = newTreeCells;
+        burningCells = newBurningCells;
     }
 
     @Override

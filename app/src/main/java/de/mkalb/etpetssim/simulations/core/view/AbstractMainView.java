@@ -188,48 +188,7 @@ public abstract class AbstractMainView<
 
     protected abstract void registerViewModelListeners();
 
-    private void registerOverlayPrimaryClickHandler() {
-        overlayCanvas.setOnMouseReleased(event -> {
-            CanvasPainters currentPainters = painters();
-            if ((currentPainters != null)
-                    && (event.getButton() == MouseButton.PRIMARY)
-                    && event.isStillSincePress()
-                    && (event.getClickCount() == 1)) {
-                FXGridCanvasPainter painter = currentPainters.overlay();
-                Point2D mousePoint = new Point2D(event.getX(), event.getY());
-                GridCoordinate mouseCoordinate = GridGeometry.fromCanvasPosition(mousePoint,
-                        painter.cellDimension(), painter.gridDimension2D(), painter.gridStructure());
-                if (!mouseCoordinate.isIllegal() && painter.isInsideGrid(mouseCoordinate)) {
-                    handleMouseClickedCoordinate(mouseCoordinate, painter);
-                }
-            }
-        });
-    }
-
     protected abstract void handleMouseClickedCoordinate(GridCoordinate mouseCoordinate, FXGridCanvasPainter painter);
-
-    private void registerNotificationListener() {
-        notificationListener = (_, _, newVal) -> {
-            if (newVal == SimulationNotificationType.NONE) {
-                clearNotification();
-            } else {
-                updateNotification(AppLocalization.getText(newVal.resourceKey()));
-            }
-        };
-        viewModel.notificationTypeProperty().addListener(notificationListener);
-    }
-
-    private void updateNotification(String notification) {
-        notificationLabel.setText(notification);
-        notificationLabel.setVisible(true);
-        notificationLabel.setManaged(true);
-    }
-
-    private void clearNotification() {
-        notificationLabel.setText(null);
-        notificationLabel.setVisible(false);
-        notificationLabel.setManaged(false);
-    }
 
     protected final void rebuildEditToolBar() {
         editToolBar.rebuild(
@@ -416,12 +375,6 @@ public abstract class AbstractMainView<
                 createBorderRegion(FXStyleClasses.SIMULATION_BOTTOM_BORDERPANE));
     }
 
-    private Region createBorderRegion(String styleClass) {
-        Region border = new Region();
-        border.getStyleClass().add(styleClass);
-        return border;
-    }
-
     protected final Point2D computeVisibleCanvasCenter(Canvas canvas) {
         double viewportWidth = canvasScrollPane.getViewportBounds().getWidth();
         double viewportHeight = canvasScrollPane.getViewportBounds().getHeight();
@@ -448,6 +401,53 @@ public abstract class AbstractMainView<
                 return Font.font(FALLBACK_FONT_FAMILY, s);
             }
         });
+    }
+
+    private void registerOverlayPrimaryClickHandler() {
+        overlayCanvas.setOnMouseReleased(event -> {
+            CanvasPainters currentPainters = painters();
+            if ((currentPainters != null)
+                    && (event.getButton() == MouseButton.PRIMARY)
+                    && event.isStillSincePress()
+                    && (event.getClickCount() == 1)) {
+                FXGridCanvasPainter painter = currentPainters.overlay();
+                Point2D mousePoint = new Point2D(event.getX(), event.getY());
+                GridCoordinate mouseCoordinate = GridGeometry.fromCanvasPosition(mousePoint,
+                        painter.cellDimension(), painter.gridDimension2D(), painter.gridStructure());
+                if (!mouseCoordinate.isIllegal() && painter.isInsideGrid(mouseCoordinate)) {
+                    handleMouseClickedCoordinate(mouseCoordinate, painter);
+                }
+            }
+        });
+    }
+
+    private void registerNotificationListener() {
+        notificationListener = (_, _, newVal) -> {
+            if (newVal == SimulationNotificationType.NONE) {
+                clearNotification();
+            } else {
+                updateNotification(AppLocalization.getText(newVal.resourceKey()));
+            }
+        };
+        viewModel.notificationTypeProperty().addListener(notificationListener);
+    }
+
+    private void updateNotification(String notification) {
+        notificationLabel.setText(notification);
+        notificationLabel.setVisible(true);
+        notificationLabel.setManaged(true);
+    }
+
+    private void clearNotification() {
+        notificationLabel.setText(null);
+        notificationLabel.setVisible(false);
+        notificationLabel.setManaged(false);
+    }
+
+    private Region createBorderRegion(String styleClass) {
+        Region border = new Region();
+        border.getStyleClass().add(styleClass);
+        return border;
     }
 
 }

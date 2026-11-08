@@ -119,26 +119,14 @@ final class SimulationConfigTest {
     }
 
     @Test
-    void testIsValidRejectsInvalidBaseSettings() {
-        TestSimulationConfig invalidSize = createConfig(GridSize.MIN_SIZE - 1, GridSize.MIN_SIZE, CELL_EDGE_LENGTH);
-        TestSimulationConfig invalidEdgeLength = createConfig(GridSize.MIN_SIZE, GridSize.MIN_SIZE, 0.0d);
+    void testIsAllowedSelectionUsesMembership() {
+        TestSimulationConfig config = createConfig(GridSize.MIN_SIZE, GridSize.MIN_SIZE, CELL_EDGE_LENGTH);
 
         assertAll(
-                () -> assertFalse(invalidSize.isValid()),
-                () -> assertFalse(invalidEdgeLength.isValid())
-        );
-    }
-
-    @Test
-    void testIsValidDelegatesToBaseValidation() {
-        TestSimulationConfig validConfig = createConfig(GridSize.MIN_SIZE, GridSize.MIN_SIZE, CELL_EDGE_LENGTH);
-        TestSimulationConfig invalidConfig = createConfig(GridSize.MIN_SIZE - 1, GridSize.MIN_SIZE, CELL_EDGE_LENGTH);
-
-        assertAll(
-                () -> assertTrue(validConfig.isBaseValid()),
-                () -> assertTrue(validConfig.isValid()),
-                () -> assertFalse(invalidConfig.isBaseValid()),
-                () -> assertFalse(invalidConfig.isValid())
+                () -> assertTrue(config.isAllowedSelection(NeighborhoodMode.EDGES_ONLY,
+                        List.of(NeighborhoodMode.EDGES_ONLY, NeighborhoodMode.EDGES_AND_VERTICES))),
+                () -> assertFalse(config.isAllowedSelection(NeighborhoodMode.EDGES_ONLY,
+                        List.of(NeighborhoodMode.EDGES_AND_VERTICES)))
         );
     }
 
@@ -161,18 +149,6 @@ final class SimulationConfigTest {
     }
 
     @Test
-    void testIsAllowedSelectionUsesMembership() {
-        TestSimulationConfig config = createConfig(GridSize.MIN_SIZE, GridSize.MIN_SIZE, CELL_EDGE_LENGTH);
-
-        assertAll(
-                () -> assertTrue(config.isAllowedSelection(NeighborhoodMode.EDGES_ONLY,
-                        List.of(NeighborhoodMode.EDGES_ONLY, NeighborhoodMode.EDGES_AND_VERTICES))),
-                () -> assertFalse(config.isAllowedSelection(NeighborhoodMode.EDGES_ONLY,
-                        List.of(NeighborhoodMode.EDGES_AND_VERTICES)))
-        );
-    }
-
-    @Test
     void testHasExpectedSelectionComparesConfiguredAndExpectedValues() {
         TestSimulationConfig config = createConfig(GridSize.MIN_SIZE, GridSize.MIN_SIZE, CELL_EDGE_LENGTH);
 
@@ -181,6 +157,30 @@ final class SimulationConfigTest {
                 () -> assertFalse(config.hasExpectedSelection(config.neighborhoodMode(), NeighborhoodMode.EDGES_AND_VERTICES)),
                 () -> assertTrue(config.hasExpectedSelection(5, 5)),
                 () -> assertFalse(config.hasExpectedSelection(5, 6))
+        );
+    }
+
+    @Test
+    void testIsValidRejectsInvalidBaseSettings() {
+        TestSimulationConfig invalidSize = createConfig(GridSize.MIN_SIZE - 1, GridSize.MIN_SIZE, CELL_EDGE_LENGTH);
+        TestSimulationConfig invalidEdgeLength = createConfig(GridSize.MIN_SIZE, GridSize.MIN_SIZE, 0.0d);
+
+        assertAll(
+                () -> assertFalse(invalidSize.isValid()),
+                () -> assertFalse(invalidEdgeLength.isValid())
+        );
+    }
+
+    @Test
+    void testIsValidDelegatesToBaseValidation() {
+        TestSimulationConfig validConfig = createConfig(GridSize.MIN_SIZE, GridSize.MIN_SIZE, CELL_EDGE_LENGTH);
+        TestSimulationConfig invalidConfig = createConfig(GridSize.MIN_SIZE - 1, GridSize.MIN_SIZE, CELL_EDGE_LENGTH);
+
+        assertAll(
+                () -> assertTrue(validConfig.isBaseValid()),
+                () -> assertTrue(validConfig.isValid()),
+                () -> assertFalse(invalidConfig.isBaseValid()),
+                () -> assertFalse(invalidConfig.isValid())
         );
     }
 

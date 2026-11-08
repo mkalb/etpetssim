@@ -89,6 +89,19 @@ public record WatorConfig(
         int sharkMinReproductionInterval)
         implements SimulationConfig {
 
+    /**
+     * Validates the common simulation settings and the Wa-Tor-specific selections, ranges, and combined ranges.
+     *
+     * @return {@code true} if this configuration is valid, otherwise {@code false}
+     */
+    @Override
+    public boolean isValid() {
+        return isBaseValid()
+                && hasAllowedCoreSelections(CELL_SHAPE_VALUES, GRID_EDGE_BEHAVIOR_VALUES, CELL_DISPLAY_MODE_VALUES)
+                && hasValidRanges()
+                && hasValidCombinedRanges();
+    }
+
     private boolean hasValidRanges() {
         return isInRangeDouble(fishPercent, FISH_PERCENT_MIN, FISH_PERCENT_MAX)
                 && isInRangeDouble(sharkPercent, SHARK_PERCENT_MIN, SHARK_PERCENT_MAX)
@@ -106,19 +119,6 @@ public record WatorConfig(
 
     private boolean hasValidCombinedRanges() {
         return (fishPercent + sharkPercent) <= COMBINED_PERCENT_MAX;
-    }
-
-    /**
-     * Validates the common simulation settings and the Wa-Tor-specific selections, ranges, and combined ranges.
-     *
-     * @return {@code true} if this configuration is valid, otherwise {@code false}
-     */
-    @Override
-    public boolean isValid() {
-        return isBaseValid()
-                && hasAllowedCoreSelections(CELL_SHAPE_VALUES, GRID_EDGE_BEHAVIOR_VALUES, CELL_DISPLAY_MODE_VALUES)
-                && hasValidRanges()
-                && hasValidCombinedRanges();
     }
 
 }

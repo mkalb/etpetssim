@@ -94,18 +94,6 @@ public final class LabConfigViewModel
         initializeConfigListeners();
     }
 
-    private void initializeConfigListeners() {
-        cellShapeProperty().property().addListener((_, _, _) -> configChangedRequested.set(true));
-        gridEdgeBehaviorProperty().property().addListener((_, _, _) -> configChangedRequested.set(true));
-        gridWidthProperty().property().addListener((_, _, _) -> configChangedRequested.set(true));
-        gridHeightProperty().property().addListener((_, _, _) -> configChangedRequested.set(true));
-        cellEdgeLengthProperty().property().addListener((_, _, _) -> configChangedRequested.set(true));
-        cellDisplayModeProperty().property().addListener((_, _, _) -> configChangedRequested.set(true));
-        colorModeProperty().property().addListener((_, _, _) -> configChangedRequested.set(true));
-        seedProperty().stringProperty().addListener((_, _, _) -> configChangedRequested.set(true));
-        neighborhoodModeProperty().property().addListener((_, _, _) -> configChangedRequested.set(true));
-    }
-
     @Override
     public LabConfig createConfig() {
         return new LabConfig(
@@ -131,6 +119,18 @@ public final class LabConfigViewModel
 
     public BooleanProperty configChangedRequestedProperty() {
         return configChangedRequested;
+    }
+
+    private void initializeConfigListeners() {
+        cellShapeProperty().property().addListener((_, _, _) -> configChangedRequested.set(true));
+        gridEdgeBehaviorProperty().property().addListener((_, _, _) -> configChangedRequested.set(true));
+        gridWidthProperty().property().addListener((_, _, _) -> configChangedRequested.set(true));
+        gridHeightProperty().property().addListener((_, _, _) -> configChangedRequested.set(true));
+        cellEdgeLengthProperty().property().addListener((_, _, _) -> configChangedRequested.set(true));
+        cellDisplayModeProperty().property().addListener((_, _, _) -> configChangedRequested.set(true));
+        colorModeProperty().property().addListener((_, _, _) -> configChangedRequested.set(true));
+        seedProperty().stringProperty().addListener((_, _, _) -> configChangedRequested.set(true));
+        neighborhoodModeProperty().property().addListener((_, _, _) -> configChangedRequested.set(true));
     }
 
 }

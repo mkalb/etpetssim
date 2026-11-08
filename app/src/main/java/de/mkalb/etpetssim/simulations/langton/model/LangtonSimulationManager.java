@@ -46,19 +46,6 @@ public final class LangtonSimulationManager
         recordInitialStatisticsSample();
     }
 
-    private void initializeGrid(LangtonGridModel model) {
-        Ant ant = new Ant(CompassDirection.N);
-        // Start at the middle of the grid but round down to an even number. This avoids problems with TRIANGLE.
-        GridCoordinate coordinate = new GridCoordinate(halveToEven(structure.size().width()), halveToEven(structure.size().height()));
-        model.antModel().setEntity(coordinate, ant);
-        model.terrainModel().setEntity(coordinate, TerrainConstant.COLOR_1);
-    }
-
-    int halveToEven(int n) {
-        // Divides n by 2 and clears the lowest bit to guarantee an even result.
-        return (n / 2) & ~1;
-    }
-
     @Override
     public GridStructure structure() {
         return structure;
@@ -76,14 +63,27 @@ public final class LangtonSimulationManager
                 executor.stepTimingStatistics());
     }
 
-    private void initializeStatistics(LangtonGridModel model) {
-        int antCellsInitial = Math.toIntExact(model.antModel().countEntities(LangtonEntity::isAgent));
-        statistics.initializeStartupCellCounts(antCellsInitial);
-    }
-
     @Override
     protected TimedSimulationExecutor<LangtonEntity, LangtonGridModel> executor() {
         return executor;
+    }
+
+    int halveToEven(int n) {
+        // Divides n by 2 and clears the lowest bit to guarantee an even result.
+        return (n / 2) & ~1;
+    }
+
+    private void initializeGrid(LangtonGridModel model) {
+        Ant ant = new Ant(CompassDirection.N);
+        // Start at the middle of the grid but round down to an even number. This avoids problems with TRIANGLE.
+        GridCoordinate coordinate = new GridCoordinate(halveToEven(structure.size().width()), halveToEven(structure.size().height()));
+        model.antModel().setEntity(coordinate, ant);
+        model.terrainModel().setEntity(coordinate, TerrainConstant.COLOR_1);
+    }
+
+    private void initializeStatistics(LangtonGridModel model) {
+        int antCellsInitial = Math.toIntExact(model.antModel().countEntities(LangtonEntity::isAgent));
+        statistics.initializeStartupCellCounts(antCellsInitial);
     }
 
 }

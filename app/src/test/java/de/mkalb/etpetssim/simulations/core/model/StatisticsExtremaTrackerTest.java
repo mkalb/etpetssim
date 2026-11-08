@@ -19,6 +19,14 @@ final class StatisticsExtremaTrackerTest {
     }
 
     @Test
+    void testConstructorRejectsDuplicateMetricKeys() {
+        assertThrows(IllegalArgumentException.class, () -> new StatisticsExtremaTracker(List.of(
+                new StatisticsMetric<>("dup", "k1", _ -> 1.0d, StatisticsExtremaMode.NONE),
+                new StatisticsMetric<>("dup", "k2", _ -> 2.0d, StatisticsExtremaMode.MAX)
+        )));
+    }
+
+    @Test
     void testRecordSampleRespectsExtremaModes() {
         StatisticsExtremaTracker tracker = new StatisticsExtremaTracker(List.of(
                 new StatisticsMetric<>("none", "none.key", _ -> 0.0d, StatisticsExtremaMode.NONE),
@@ -48,14 +56,6 @@ final class StatisticsExtremaTrackerTest {
     }
 
     @Test
-    void testConstructorRejectsDuplicateMetricKeys() {
-        assertThrows(IllegalArgumentException.class, () -> new StatisticsExtremaTracker(List.of(
-                new StatisticsMetric<>("dup", "k1", _ -> 1.0d, StatisticsExtremaMode.NONE),
-                new StatisticsMetric<>("dup", "k2", _ -> 2.0d, StatisticsExtremaMode.MAX)
-        )));
-    }
-
-    @Test
     void testRecordSampleKeepsFirstStepCountForEqualValues() {
         StatisticsExtremaTracker tracker = createCountTracker();
 
@@ -66,21 +66,6 @@ final class StatisticsExtremaTrackerTest {
         assertAll(
                 () -> assertEquals(1L, extrema.minimumValues().get("count").stepCount()),
                 () -> assertEquals(1L, extrema.maximumValues().get("count").stepCount())
-        );
-    }
-
-    @Test
-    void testSnapshotIsUnaffectedByLaterSamples() {
-        StatisticsExtremaTracker tracker = createCountTracker();
-        tracker.recordSample(Map.of("count", 5.0d), 1);
-        StatisticsExtrema snapshot = tracker.snapshot();
-
-        tracker.recordSample(Map.of("count", 1.0d), 2);
-        tracker.recordSample(Map.of("count", 9.0d), 3);
-
-        assertAll(
-                () -> assertEquals(new StatisticsExtremum(5.0d, 1), snapshot.minimumValues().get("count")),
-                () -> assertEquals(new StatisticsExtremum(5.0d, 1), snapshot.maximumValues().get("count"))
         );
     }
 
@@ -129,6 +114,21 @@ final class StatisticsExtremaTrackerTest {
                 () -> assertEquals(1L, extrema.minimumValues().get("count").stepCount()),
                 () -> assertEquals(7.0d, extrema.maximumValues().get("count").value()),
                 () -> assertEquals(1L, extrema.maximumValues().get("count").stepCount())
+        );
+    }
+
+    @Test
+    void testSnapshotIsUnaffectedByLaterSamples() {
+        StatisticsExtremaTracker tracker = createCountTracker();
+        tracker.recordSample(Map.of("count", 5.0d), 1);
+        StatisticsExtrema snapshot = tracker.snapshot();
+
+        tracker.recordSample(Map.of("count", 1.0d), 2);
+        tracker.recordSample(Map.of("count", 9.0d), 3);
+
+        assertAll(
+                () -> assertEquals(new StatisticsExtremum(5.0d, 1), snapshot.minimumValues().get("count")),
+                () -> assertEquals(new StatisticsExtremum(5.0d, 1), snapshot.maximumValues().get("count"))
         );
     }
 

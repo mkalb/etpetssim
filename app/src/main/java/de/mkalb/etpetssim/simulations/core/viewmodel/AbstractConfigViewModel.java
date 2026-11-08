@@ -118,6 +118,14 @@ public abstract class AbstractConfigViewModel<CON extends SimulationConfig>
         return seed;
     }
 
+    public final ReadOnlyBooleanProperty hasConfigValidationIssuesProperty() {
+        return hasConfigValidationIssues.getReadOnlyProperty();
+    }
+
+    public final ReadOnlyStringProperty configValidationMessageProperty() {
+        return configValidationMessage.getReadOnlyProperty();
+    }
+
     /**
      * Registers a UI-facing configuration validation rule.
      *
@@ -129,14 +137,6 @@ public abstract class AbstractConfigViewModel<CON extends SimulationConfig>
         configValidationRules.add(new ConfigValidationRule(violatedCondition, messageProvider));
         violatedCondition.addListener((_, _, _) -> updateConfigValidationState());
         updateConfigValidationState();
-    }
-
-    public final ReadOnlyBooleanProperty hasConfigValidationIssuesProperty() {
-        return hasConfigValidationIssues.getReadOnlyProperty();
-    }
-
-    public final ReadOnlyStringProperty configValidationMessageProperty() {
-        return configValidationMessage.getReadOnlyProperty();
     }
 
     private void updateConfigValidationState() {

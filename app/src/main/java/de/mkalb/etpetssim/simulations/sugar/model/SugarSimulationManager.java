@@ -63,6 +63,28 @@ public final class SugarSimulationManager
         recordInitialStatisticsSample();
     }
 
+    @Override
+    public GridStructure structure() {
+        return structure;
+    }
+
+    @Override
+    public SugarStatistics statistics() {
+        return statistics;
+    }
+
+    @Override
+    protected void updateStatistics() {
+        statistics.setStepData(
+                executor.stepCount(),
+                executor.stepTimingStatistics());
+    }
+
+    @Override
+    protected TimedSimulationExecutor<SugarEntity, SugarGridModel> executor() {
+        return executor;
+    }
+
     private void initializeGrid(SugarConfig config,
                                 SugarGridModel model,
                                 Random random,
@@ -211,32 +233,10 @@ public final class SugarSimulationManager
         agentGridInitializer.initialize(model.agentModel());
     }
 
-    @Override
-    public GridStructure structure() {
-        return structure;
-    }
-
-    @Override
-    public SugarStatistics statistics() {
-        return statistics;
-    }
-
-    @Override
-    protected void updateStatistics() {
-        statistics.setStepData(
-                executor.stepCount(),
-                executor.stepTimingStatistics());
-    }
-
     private void initializeStatistics(SugarGridModel model) {
         int resourceCellsInitial = Math.toIntExact(model.resourceModel().countEntities(SugarEntity::isNotEmpty));
         int agentCellsInitial = Math.toIntExact(model.agentModel().countEntities(SugarEntity::isNotEmpty));
         statistics.initializeStartupCellCounts(resourceCellsInitial, agentCellsInitial);
-    }
-
-    @Override
-    protected TimedSimulationExecutor<SugarEntity, SugarGridModel> executor() {
-        return executor;
     }
 
 }

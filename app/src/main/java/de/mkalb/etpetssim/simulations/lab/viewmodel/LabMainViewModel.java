@@ -162,45 +162,6 @@ public final class LabMainViewModel
         drawTestRequestedListener = listener;
     }
 
-    private void handleConfigChanged() {
-        setSimulationState(SimulationState.READY);
-        reset();
-
-        configChangedListener.run();
-    }
-
-    private void handleDrawRequested() {
-        // Reset notification type.
-        setNotificationType(SimulationNotificationType.NONE);
-
-        setSimulationState(SimulationState.RUNNING_TIMED);
-
-        reset();
-
-        LabConfig config = configViewModel.createConfig();
-        if (!config.isValid()) {
-            setSimulationState(SimulationState.ERROR);
-            AppLogger.warnf("%s: Ignoring start request: configuration is invalid", LOG_COMPONENT);
-            setNotificationType(SimulationNotificationType.INVALID_CONFIG);
-            return;
-        }
-
-        simulationManager = new LabSimulationManager(config);
-        labObservationViewModel.setStatistics(simulationManager.statistics());
-
-        drawRequestedListener.run();
-
-        setSimulationState(SimulationState.PAUSED);
-    }
-
-    private void handleDrawModelRequested() {
-        drawModelRequestedListener.run();
-    }
-
-    private void handleDrawTestRequested() {
-        drawTestRequestedListener.run();
-    }
-
     public Optional<LabNeighborhoodHighlights> computeNeighborhoodHighlights(GridCoordinate center, GridStructure gridStructure) {
         if (simulationManager == null) {
             return Optional.empty();
@@ -254,6 +215,45 @@ public final class LabMainViewModel
 
     public void resetSelectedGridCell() {
         labObservationViewModel.selectedGridCellProperty().set(null);
+    }
+
+    private void handleConfigChanged() {
+        setSimulationState(SimulationState.READY);
+        reset();
+
+        configChangedListener.run();
+    }
+
+    private void handleDrawRequested() {
+        // Reset notification type.
+        setNotificationType(SimulationNotificationType.NONE);
+
+        setSimulationState(SimulationState.RUNNING_TIMED);
+
+        reset();
+
+        LabConfig config = configViewModel.createConfig();
+        if (!config.isValid()) {
+            setSimulationState(SimulationState.ERROR);
+            AppLogger.warnf("%s: Ignoring start request: configuration is invalid", LOG_COMPONENT);
+            setNotificationType(SimulationNotificationType.INVALID_CONFIG);
+            return;
+        }
+
+        simulationManager = new LabSimulationManager(config);
+        labObservationViewModel.setStatistics(simulationManager.statistics());
+
+        drawRequestedListener.run();
+
+        setSimulationState(SimulationState.PAUSED);
+    }
+
+    private void handleDrawModelRequested() {
+        drawModelRequestedListener.run();
+    }
+
+    private void handleDrawTestRequested() {
+        drawTestRequestedListener.run();
     }
 
     private void reset() {

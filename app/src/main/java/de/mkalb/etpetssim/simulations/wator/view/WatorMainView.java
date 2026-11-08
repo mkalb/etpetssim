@@ -84,10 +84,6 @@ public final class WatorMainView
         entityColors.put(EntityDescriptors.SHARK.descriptorId(), null);
     }
 
-    private int computeMaxColorSharkEnergy(WatorConfig config) {
-        return Math.max(config.sharkBirthEnergy(), config.sharkMinReproductionEnergy()) * MAX_COLOR_SHARK_ENERGY_FACTOR;
-    }
-
     @Override
     protected void initializeSimulation(CanvasPainters painters, WatorConfig config, CellDimension cellDimension) {
         Color backgroundColor = entityDescriptorRegistry
@@ -153,23 +149,6 @@ public final class WatorMainView
         };
     }
 
-    private Color resolveEntityFillColor(GridEntityDescriptor entityDescriptor,
-                                         WatorEntity entity,
-                                         int stepCount) {
-        Color baseColor = entityDescriptor.colorOrFallback();
-        Map<Integer, Color> colorMap = entityColors.get(entityDescriptor.descriptorId());
-        if (colorMap != null) {
-            Integer value = switch (entity) {
-                case Fish fish -> fish.ageAtStepCount(stepCount);
-                case Shark shark -> Math.min(maxColorSharkEnergy, shark.currentEnergy());
-                case TerrainConstant ignored -> -1; // Not expected when colorMap is non-null
-            };
-
-            return colorMap.getOrDefault(value, baseColor);
-        }
-        return (entityDescriptor.color() != null) ? entityDescriptor.color() : FALLBACK_COLOR_AGENT;
-    }
-
     @Override
     protected void handleSelectedGridCellChanged(FXGridCanvasPainter painter,
                                                  @Nullable GridCell<WatorEntity> oldGridCell,
@@ -220,6 +199,27 @@ public final class WatorMainView
                         SimulationUserActionScope.CELL_SELECTED,
                         WATOR_TOOLBAR_REMOVE_CREATURE,
                         WATOR_TOOLBAR_REMOVE_CREATURE_TOOLTIP));
+    }
+
+    private int computeMaxColorSharkEnergy(WatorConfig config) {
+        return Math.max(config.sharkBirthEnergy(), config.sharkMinReproductionEnergy()) * MAX_COLOR_SHARK_ENERGY_FACTOR;
+    }
+
+    private Color resolveEntityFillColor(GridEntityDescriptor entityDescriptor,
+                                         WatorEntity entity,
+                                         int stepCount) {
+        Color baseColor = entityDescriptor.colorOrFallback();
+        Map<Integer, Color> colorMap = entityColors.get(entityDescriptor.descriptorId());
+        if (colorMap != null) {
+            Integer value = switch (entity) {
+                case Fish fish -> fish.ageAtStepCount(stepCount);
+                case Shark shark -> Math.min(maxColorSharkEnergy, shark.currentEnergy());
+                case TerrainConstant ignored -> -1; // Not expected when colorMap is non-null
+            };
+
+            return colorMap.getOrDefault(value, baseColor);
+        }
+        return (entityDescriptor.color() != null) ? entityDescriptor.color() : FALLBACK_COLOR_AGENT;
     }
 
 }

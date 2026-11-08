@@ -56,18 +56,6 @@ public record EtpetsConfig(
         NeighborhoodMode neighborhoodMode)
         implements SimulationConfig {
 
-    private boolean hasValidRanges() {
-        return isInRangeDouble(rockPercent, PERCENT_MIN, PERCENT_MAX)
-                && isInRangeDouble(waterPercent, PERCENT_MIN, PERCENT_MAX)
-                && isInRangeDouble(plantPercent, PERCENT_MIN, PERCENT_MAX)
-                && isInRangeDouble(insectPercent, PERCENT_MIN, PERCENT_MAX)
-                && isInRangeInt(petCount, PET_COUNT_MIN, PET_COUNT_MAX);
-    }
-
-    private boolean hasValidCombinedRanges() {
-        return (rockPercent + waterPercent + plantPercent + insectPercent) <= COMBINED_PERCENT_MAX;
-    }
-
     /**
      * Validates the common simulation settings and the ET Pets-specific selections, ranges, and combined ranges.
      *
@@ -80,6 +68,18 @@ public record EtpetsConfig(
                 && hasExpectedSelection(neighborhoodMode, NEIGHBORHOOD_MODE_DEFAULT)
                 && hasValidRanges()
                 && hasValidCombinedRanges();
+    }
+
+    private boolean hasValidRanges() {
+        return isInRangeDouble(rockPercent, PERCENT_MIN, PERCENT_MAX)
+                && isInRangeDouble(waterPercent, PERCENT_MIN, PERCENT_MAX)
+                && isInRangeDouble(plantPercent, PERCENT_MIN, PERCENT_MAX)
+                && isInRangeDouble(insectPercent, PERCENT_MIN, PERCENT_MAX)
+                && isInRangeInt(petCount, PET_COUNT_MIN, PET_COUNT_MAX);
+    }
+
+    private boolean hasValidCombinedRanges() {
+        return (rockPercent + waterPercent + plantPercent + insectPercent) <= COMBINED_PERCENT_MAX;
     }
 
 }

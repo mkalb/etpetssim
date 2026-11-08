@@ -50,17 +50,6 @@ public record ConwayConfig(
         ConwayTransitionRules transitionRules)
         implements SimulationConfig {
 
-    private boolean hasValidRanges() {
-        return isInRangeDouble(alivePercent, ALIVE_PERCENT_MIN, ALIVE_PERCENT_MAX);
-    }
-
-    private boolean hasValidTransitionRules() {
-        int maxNeighborCount = CellNeighborhoods.maxNeighborCount(neighborhoodMode, cellShape);
-        return transitionRules.birthCounts().stream().noneMatch(count -> count < BIRTH_NEIGHBOR_COUNT_MIN)
-                && transitionRules.surviveCounts().stream().allMatch(count -> count <= maxNeighborCount)
-                && transitionRules.birthCounts().stream().allMatch(count -> count <= maxNeighborCount);
-    }
-
     /**
      * Validates the common simulation settings and the Conway-specific selections, ranges, and transition rules.
      *
@@ -73,6 +62,17 @@ public record ConwayConfig(
                 && hasExpectedSelection(neighborhoodMode, NEIGHBORHOOD_MODE_DEFAULT)
                 && hasValidRanges()
                 && hasValidTransitionRules();
+    }
+
+    private boolean hasValidRanges() {
+        return isInRangeDouble(alivePercent, ALIVE_PERCENT_MIN, ALIVE_PERCENT_MAX);
+    }
+
+    private boolean hasValidTransitionRules() {
+        int maxNeighborCount = CellNeighborhoods.maxNeighborCount(neighborhoodMode, cellShape);
+        return transitionRules.birthCounts().stream().noneMatch(count -> count < BIRTH_NEIGHBOR_COUNT_MIN)
+                && transitionRules.surviveCounts().stream().allMatch(count -> count <= maxNeighborCount)
+                && transitionRules.birthCounts().stream().allMatch(count -> count <= maxNeighborCount);
     }
 
 }

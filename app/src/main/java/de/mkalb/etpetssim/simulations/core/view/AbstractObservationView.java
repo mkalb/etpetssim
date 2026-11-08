@@ -78,6 +78,26 @@ public abstract class AbstractObservationView<
     @Override
     public abstract Region buildObservationRegion();
 
+    @Override
+    public final void initializeObservationLabels() {
+        updateGridSectionLabel();
+        updateObservationLabels();
+    }
+
+    @Override
+    public final void shutdownObservation() {
+        if ((selectedGridCellProperty != null) && (selectedGridCellListener != null)) {
+            selectedGridCellProperty.removeListener(selectedGridCellListener);
+        }
+        selectedGridCellProperty = null;
+        selectedGridCellListener = null;
+
+        for (StatisticsHistoryChartView chartView : statisticsHistoryChartViews) {
+            chartView.shutdown();
+        }
+        statisticsHistoryChartViews.clear();
+    }
+
     /**
      * Wraps the given regions in a vertically stacked {@link VBox} inside a {@link ScrollPane}.
      * The scroll pane and its content are styled with the standard observation CSS classes.
@@ -139,21 +159,6 @@ public abstract class AbstractObservationView<
                         stepCountLabel
                 }
         );
-    }
-
-    private void updateGridSectionLabel() {
-        Optional<STA> statistics = viewModel.getStatistics();
-        if (statistics.isPresent()) {
-            setFormattedIntegerValue(totalCellsLabel, statistics.get().totalCells());
-        } else {
-            setUnknownValues(totalCellsLabel);
-        }
-    }
-
-    @Override
-    public final void initializeObservationLabels() {
-        updateGridSectionLabel();
-        updateObservationLabels();
     }
 
     /**
@@ -223,13 +228,6 @@ public abstract class AbstractObservationView<
         return section;
     }
 
-    private NumberFormat integerFormat() {
-        if (integerFormat == null) {
-            integerFormat = NumberFormat.getIntegerInstance(AppLocalization.locale());
-        }
-        return integerFormat;
-    }
-
     /**
      * Sets the text of {@code valueLabel} to the locale-formatted integer representation of {@code value}.
      *
@@ -268,20 +266,6 @@ public abstract class AbstractObservationView<
             handleSelectedGridCellChanged(newCell);
         };
         property.addListener(selectedGridCellListener);
-    }
-
-    @Override
-    public final void shutdownObservation() {
-        if ((selectedGridCellProperty != null) && (selectedGridCellListener != null)) {
-            selectedGridCellProperty.removeListener(selectedGridCellListener);
-        }
-        selectedGridCellProperty = null;
-        selectedGridCellListener = null;
-
-        for (StatisticsHistoryChartView chartView : statisticsHistoryChartViews) {
-            chartView.shutdown();
-        }
-        statisticsHistoryChartViews.clear();
     }
 
     /**
@@ -539,6 +523,22 @@ public abstract class AbstractObservationView<
                 viewModel.statisticsHistoryProperty());
         statisticsHistoryChartViews.add(chartView);
         return chartView.titledPane();
+    }
+
+    private void updateGridSectionLabel() {
+        Optional<STA> statistics = viewModel.getStatistics();
+        if (statistics.isPresent()) {
+            setFormattedIntegerValue(totalCellsLabel, statistics.get().totalCells());
+        } else {
+            setUnknownValues(totalCellsLabel);
+        }
+    }
+
+    private NumberFormat integerFormat() {
+        if (integerFormat == null) {
+            integerFormat = NumberFormat.getIntegerInstance(AppLocalization.locale());
+        }
+        return integerFormat;
     }
 
     /**

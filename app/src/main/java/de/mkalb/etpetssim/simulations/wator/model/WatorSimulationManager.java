@@ -56,6 +56,36 @@ public final class WatorSimulationManager
         recordInitialStatisticsSample();
     }
 
+    public Fish createFish(int stepIndexOfBirth) {
+        return creatureFactory.createFish(stepIndexOfBirth);
+    }
+
+    public Shark createShark(int stepIndexOfBirth) {
+        return creatureFactory.createShark(stepIndexOfBirth, config().sharkBirthEnergy());
+    }
+
+    @Override
+    public GridStructure structure() {
+        return structure;
+    }
+
+    @Override
+    public WatorStatistics statistics() {
+        return statistics;
+    }
+
+    @Override
+    protected void updateStatistics() {
+        statistics.setStepData(
+                executor.stepCount(),
+                executor.stepTimingStatistics());
+    }
+
+    @Override
+    protected TimedSimulationExecutor<WatorEntity, WritableGridModel<WatorEntity>> executor() {
+        return executor;
+    }
+
     private void initializeGrid(WritableGridModel<WatorEntity> model,
                                 Random random,
                                 SimulationInitializationCancellation cancellation) {
@@ -87,17 +117,9 @@ public final class WatorSimulationManager
                 .initialize(model);
     }
 
-    public Fish createFish(int stepIndexOfBirth) {
-        return creatureFactory.createFish(stepIndexOfBirth);
-    }
-
     private Fish createInitialFish(Random random) {
         int stepIndexOfBirth = -1 - random.nextInt(config().fishMaxAge()); // negative age for birth time
         return createFish(stepIndexOfBirth);
-    }
-
-    public Shark createShark(int stepIndexOfBirth) {
-        return creatureFactory.createShark(stepIndexOfBirth, config().sharkBirthEnergy());
     }
 
     private Shark createInitialShark(Random random) {
@@ -105,32 +127,10 @@ public final class WatorSimulationManager
         return createShark(stepIndexOfBirth);
     }
 
-    @Override
-    public GridStructure structure() {
-        return structure;
-    }
-
-    @Override
-    public WatorStatistics statistics() {
-        return statistics;
-    }
-
-    @Override
-    protected void updateStatistics() {
-        statistics.setStepData(
-                executor.stepCount(),
-                executor.stepTimingStatistics());
-    }
-
     private void initializeStatistics(ReadableGridModel<WatorEntity> model) {
         int fishCellsInitial = Math.toIntExact(model.countEntities(WatorEntity::isFish));
         int sharkCellsInitial = Math.toIntExact(model.countEntities(WatorEntity::isShark));
         statistics.initializeStartupCellCounts(fishCellsInitial, sharkCellsInitial);
-    }
-
-    @Override
-    protected TimedSimulationExecutor<WatorEntity, WritableGridModel<WatorEntity>> executor() {
-        return executor;
     }
 
 }

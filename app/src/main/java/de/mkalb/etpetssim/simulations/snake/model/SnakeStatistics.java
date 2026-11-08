@@ -60,15 +60,6 @@ public final class SnakeStatistics
         );
     }
 
-    void initializeStartupCellCounts(int snakeHeadCellsInitial,
-                                     int wallCellsInitial,
-                                     int foodCellsInitial) {
-        snakeHeadCells = snakeHeadCellsInitial;
-        livingSnakeHeadCells = snakeHeadCellsInitial;
-        wallCells = wallCellsInitial;
-        foodCells = foodCellsInitial;
-    }
-
     public void decrementSnakeHeadCells() {
         snakeHeadCells--;
     }
@@ -97,10 +88,6 @@ public final class SnakeStatistics
         foodCells += foodCellsDelta;
     }
 
-    void incrementCumulativeSnakeDeathCount() {
-        cumulativeSnakeDeathCount++;
-    }
-
     public int snakeHeadCells() {
         return snakeHeadCells;
     }
@@ -119,6 +106,19 @@ public final class SnakeStatistics
 
     public int cumulativeSnakeDeathCount() {
         return cumulativeSnakeDeathCount;
+    }
+
+    void initializeStartupCellCounts(int snakeHeadCellsInitial,
+                                     int wallCellsInitial,
+                                     int foodCellsInitial) {
+        snakeHeadCells = snakeHeadCellsInitial;
+        livingSnakeHeadCells = snakeHeadCellsInitial;
+        wallCells = wallCellsInitial;
+        foodCells = foodCellsInitial;
+    }
+
+    void incrementCumulativeSnakeDeathCount() {
+        cumulativeSnakeDeathCount++;
     }
 
     @Override

@@ -61,6 +61,28 @@ public final class ReboundingSimulationManager
         recordInitialStatisticsSample();
     }
 
+    @Override
+    public GridStructure structure() {
+        return structure;
+    }
+
+    @Override
+    public ReboundingStatistics statistics() {
+        return statistics;
+    }
+
+    @Override
+    protected void updateStatistics() {
+        statistics.setStepData(
+                executor.stepCount(),
+                executor.stepTimingStatistics());
+    }
+
+    @Override
+    protected TimedSimulationExecutor<ReboundingEntity, WritableGridModel<ReboundingEntity>> executor() {
+        return executor;
+    }
+
     private void initializeGrid(ReboundingConfig config,
                                 WritableGridModel<ReboundingEntity> model,
                                 Random random,
@@ -146,32 +168,10 @@ public final class ReboundingSimulationManager
         throw new IllegalStateException("Unsupported cell shape: " + structure.cellShape());
     }
 
-    @Override
-    public GridStructure structure() {
-        return structure;
-    }
-
-    @Override
-    public ReboundingStatistics statistics() {
-        return statistics;
-    }
-
-    @Override
-    protected void updateStatistics() {
-        statistics.setStepData(
-                executor.stepCount(),
-                executor.stepTimingStatistics());
-    }
-
     private void initializeStatistics(WritableGridModel<ReboundingEntity> model) {
         int wallCellsInitial = Math.toIntExact(model.countEntities(ReboundingEntity::isWall));
         int movingEntityCellsInitial = Math.toIntExact(model.countEntities(ReboundingEntity::isRebounder));
         statistics.initializeStartupCellCounts(wallCellsInitial, movingEntityCellsInitial);
-    }
-
-    @Override
-    protected TimedSimulationExecutor<ReboundingEntity, WritableGridModel<ReboundingEntity>> executor() {
-        return executor;
     }
 
 }

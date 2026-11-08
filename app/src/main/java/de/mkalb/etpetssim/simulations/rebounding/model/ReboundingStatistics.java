@@ -39,12 +39,6 @@ public final class ReboundingStatistics
         );
     }
 
-    void initializeStartupCellCounts(int wallCellsInitial,
-                                     int movingEntityCellsInitial) {
-        wallCells = wallCellsInitial;
-        movingEntityCells = movingEntityCellsInitial;
-    }
-
     public void incrementWallCells() {
         wallCells += 1;
     }
@@ -67,6 +61,12 @@ public final class ReboundingStatistics
 
     public int movingEntityCells() {
         return movingEntityCells;
+    }
+
+    void initializeStartupCellCounts(int wallCellsInitial,
+                                     int movingEntityCellsInitial) {
+        wallCells = wallCellsInitial;
+        movingEntityCells = movingEntityCellsInitial;
     }
 
     @Override

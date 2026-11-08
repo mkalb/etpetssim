@@ -48,18 +48,6 @@ public final class ConwayStatistics
         );
     }
 
-    void initializeStartupCellCounts(int aliveCellsInitial) {
-        aliveCells = aliveCellsInitial;
-        deadCells = totalCells() - aliveCellsInitial;
-    }
-
-    void setCellCounts(int newAliveCells,
-                       int newChangedCells) {
-        aliveCells = newAliveCells;
-        deadCells = totalCells() - newAliveCells;
-        changedCells = newChangedCells;
-    }
-
     public void adjustCellCounts(int aliveCellsDelta,
                                  int changedCellsDelta) {
         int newAliveCells = aliveCells + aliveCellsDelta;
@@ -78,6 +66,18 @@ public final class ConwayStatistics
 
     public int changedCells() {
         return changedCells;
+    }
+
+    void initializeStartupCellCounts(int aliveCellsInitial) {
+        aliveCells = aliveCellsInitial;
+        deadCells = totalCells() - aliveCellsInitial;
+    }
+
+    void setCellCounts(int newAliveCells,
+                       int newChangedCells) {
+        aliveCells = newAliveCells;
+        deadCells = totalCells() - newAliveCells;
+        changedCells = newChangedCells;
     }
 
     @Override

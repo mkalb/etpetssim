@@ -190,19 +190,6 @@ public final class DefaultMainViewModel<
         };
     }
 
-    private void refreshSelectedGridCell(GM currentGridModel, GridCoordinate coordinate) {
-        try {
-            var cell = selectedGridCellProvider.apply(currentGridModel, coordinate);
-            selectedGridCell.set(cell);
-            lastSelectedCoordinate.set(cell.coordinate());
-            lastSelectedEntity.set(cell.entity());
-            AppLogger.infof("%s: Cell selected: %s", LOG_COMPONENT, cell.toDisplayString());
-        } catch (RuntimeException e) {
-            AppLogger.errorf(e, "%s: Failed to determine selected cell: coordinate=%s", LOG_COMPONENT, coordinate.toDisplayString());
-            selectedGridCell.set(null);
-        }
-    }
-
     /**
      * Exposes the selected grid cell resolved from the latest click.
      *
@@ -359,8 +346,93 @@ public final class DefaultMainViewModel<
         return throttleDrawMillis;
     }
 
+    /**
+     * Applies the configured user action to the current simulation state.
+     *
+     * <p>The action is only applied when a simulation manager is active and the simulation is currently paused.
+     * The active simulation manager, the context, and the selected cell are passed to the configured
+     * {@link SimulationUserAction}. If a cell was selected before the action, the selection is refreshed afterward.
+     *
+     * @param context simulation-specific action context
+     * @return {@code true} if the user action was applied, which does not mean that the model changed; {@code false} if
+     * no active manager exists or the simulation is not paused
+     */
+    public boolean applyUserAction(CTX context) {
+        var manager = simulationManager;
+        if ((manager != null)
+                && (getSimulationState() == SimulationState.PAUSED)) {
+            GC currentSelectedCell = selectedGridCell.get();
+            logSimulationInfo("Applying user action to the current simulation state: selectedCell="
+                    + ((currentSelectedCell != null) ? currentSelectedCell.toDisplayString() : "null"));
+            simulationUserAction.apply(manager, context, currentSelectedCell);
+            if (currentSelectedCell != null) {
+                refreshSelectedGridCell(manager.currentGridModel(), currentSelectedCell.coordinate());
+            }
+            return true;
+        } else {
+            AppLogger.errorf("%s: Failed to apply user action: invalid state, "
+                            + "thread=%s, state=%s, managerActive=%s",
+                    LOG_COMPONENT,
+                    Thread.currentThread().getName(),
+                    getSimulationState(),
+                    manager != null);
+            return false;
+        }
+    }
+
+    /**
+     * Applies the resolved user action described by the given descriptor.
+     *
+     * @param descriptor descriptor whose current context should be resolved and applied
+     * @return {@code true} if the action context resolved and the action was applied; {@code false} otherwise
+     */
+    @SuppressWarnings("OptionalIsPresent")
+    public boolean applyUserAction(SimulationUserActionDescriptor<CTX> descriptor) {
+        var context = descriptor.resolveContext();
+        if (context.isEmpty()) {
+            return false;
+        }
+        return applyUserAction(context.get());
+    }
+
+    /**
+     * Applies the currently selected cell-scoped action descriptor.
+     *
+     * @param descriptors descriptors currently available in the toolbar
+     * @return {@code true} when an action was applied; {@code false} when edit mode is inactive, no cell action or
+     * no grid cell is selected, the action context does not resolve, or the simulation state does not allow applying
+     * actions
+     */
+    public boolean applySelectedCellUserAction(List<SimulationUserActionDescriptor<CTX>> descriptors) {
+        if (!editToolBarViewModel.isEditModeActive()) {
+            return false;
+        }
+
+        var descriptor = editToolBarViewModel.findSelectedCellActionDescriptor(descriptors);
+        if (descriptor.isEmpty()) {
+            return false;
+        }
+        if (selectedGridCell.get() == null) {
+            return false;
+        }
+        return applyUserAction(descriptor.get());
+    }
+
     boolean isTimerRunning() {
         return timer.isRunning();
+    }
+
+    private void refreshSelectedGridCell(GM currentGridModel, GridCoordinate coordinate) {
+        try {
+            var cell = selectedGridCellProvider.apply(currentGridModel, coordinate);
+            selectedGridCell.set(cell);
+            lastSelectedCoordinate.set(cell.coordinate());
+            lastSelectedEntity.set(cell.entity());
+            AppLogger.infof("%s: Cell selected: %s", LOG_COMPONENT, cell.toDisplayString());
+        } catch (RuntimeException e) {
+            AppLogger.errorf(e, "%s: Failed to determine selected cell: coordinate=%s", LOG_COMPONENT, coordinate.toDisplayString());
+            selectedGridCell.set(null);
+        }
     }
 
     private void handleActionButton() {
@@ -805,78 +877,6 @@ public final class DefaultMainViewModel<
                 }
             }
         });
-    }
-
-    /**
-     * Applies the configured user action to the current simulation state.
-     *
-     * <p>The action is only applied when a simulation manager is active and the simulation is currently paused.
-     * The active simulation manager, the context, and the selected cell are passed to the configured
-     * {@link SimulationUserAction}. If a cell was selected before the action, the selection is refreshed afterward.
-     *
-     * @param context simulation-specific action context
-     * @return {@code true} if the user action was applied, which does not mean that the model changed; {@code false} if
-     * no active manager exists or the simulation is not paused
-     */
-    public boolean applyUserAction(CTX context) {
-        var manager = simulationManager;
-        if ((manager != null)
-                && (getSimulationState() == SimulationState.PAUSED)) {
-            GC currentSelectedCell = selectedGridCell.get();
-            logSimulationInfo("Applying user action to the current simulation state: selectedCell="
-                    + ((currentSelectedCell != null) ? currentSelectedCell.toDisplayString() : "null"));
-            simulationUserAction.apply(manager, context, currentSelectedCell);
-            if (currentSelectedCell != null) {
-                refreshSelectedGridCell(manager.currentGridModel(), currentSelectedCell.coordinate());
-            }
-            return true;
-        } else {
-            AppLogger.errorf("%s: Failed to apply user action: invalid state, "
-                            + "thread=%s, state=%s, managerActive=%s",
-                    LOG_COMPONENT,
-                    Thread.currentThread().getName(),
-                    getSimulationState(),
-                    manager != null);
-            return false;
-        }
-    }
-
-    /**
-     * Applies the resolved user action described by the given descriptor.
-     *
-     * @param descriptor descriptor whose current context should be resolved and applied
-     * @return {@code true} if the action context resolved and the action was applied; {@code false} otherwise
-     */
-    @SuppressWarnings("OptionalIsPresent")
-    public boolean applyUserAction(SimulationUserActionDescriptor<CTX> descriptor) {
-        var context = descriptor.resolveContext();
-        if (context.isEmpty()) {
-            return false;
-        }
-        return applyUserAction(context.get());
-    }
-
-    /**
-     * Applies the currently selected cell-scoped action descriptor.
-     *
-     * @param descriptors descriptors currently available in the toolbar
-     * @return {@code true} when an action was applied; {@code false} when edit mode is inactive, no cell action or
-     * no grid cell is selected, the action context does not resolve, or the simulation state does not allow applying
-     * actions
-     */
-    public boolean applySelectedCellUserAction(List<SimulationUserActionDescriptor<CTX>> descriptors) {
-        if (!editToolBarViewModel.isEditModeActive()) {
-            return false;
-        }
-
-        var descriptor = editToolBarViewModel.findSelectedCellActionDescriptor(descriptors);
-        if (descriptor.isEmpty()) {
-            return false;
-        }
-        if (selectedGridCell.get() == null) {
-            return false;
-        }
-        return applyUserAction(descriptor.get());
     }
 
     private void logSimulationInfo(String message) {
