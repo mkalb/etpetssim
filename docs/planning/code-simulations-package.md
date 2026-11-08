@@ -176,13 +176,12 @@ patterns, no regexes over whole files):
 - `setAccessible(..)` in `AbstractMainViewTest` and `DefaultMainViewModelTest` (C5, C8).
 - 6 line comments in tests that do not precede an assertion, in `StatisticsMetricLayoutTest` and
   `StatisticsHistoryChartViewTest` (C3, C7).
-- No trailing whitespace, tabs, wildcard imports, `@throws NullPointerException`, `{@return`, `System.out` in main
-  sources, `@DisplayName`, `@Nested`, `@Nullable` in tests, or underscores in test names. `toUpperCase(..)` and
-  `toLowerCase(..)` use `Locale.ROOT`. Javadoc in tests only in the manual utilities `ExtremaGoldenValueAnalyzer` and
-  `EtpetsScoreTuningRunner`.
+- No trailing whitespace, tabs, wildcard imports, `@throws NullPointerException`, `{@return`, `String.format(..)`
+  without a `Locale` (also on the next line), `System.out` or `System.err` in main sources, `@DisplayName`, `@Nested`,
+  `@Nullable` in tests, or underscores in test names. `toUpperCase(..)` and `toLowerCase(..)` use `Locale.ROOT`.
+  Javadoc in tests only in the manual utilities `ExtremaGoldenValueAnalyzer` and `EtpetsScoreTuningRunner`.
 
-The final check repeats these checks and adds `String.format(..)` without a `Locale` (also on the next line) and
-`System.err` in main sources.
+The script stays in the scratchpad of its session; the final check writes a new one with the same checks.
 
 ## Phase A: script fixes
 
