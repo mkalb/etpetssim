@@ -3,9 +3,8 @@ package de.mkalb.etpetssim.simulations.core.shared;
 /**
  * Controls whether the simulation termination condition is evaluated during execution.
  *
- * <p>Use {@code CHECKED} when the simulation should evaluate its termination condition
- * after every step. Use {@code UNCHECKED} to skip termination
- * checks for runs where termination is managed externally or not required.
+ * <p>Use {@code CHECKED} to pause the simulation when its termination condition is met after a step. Use
+ * {@code UNCHECKED} to let it continue beyond that point.
  */
 public enum SimulationTerminationCheckMode {
 

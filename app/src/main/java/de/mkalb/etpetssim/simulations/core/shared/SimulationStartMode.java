@@ -2,18 +2,16 @@ package de.mkalb.etpetssim.simulations.core.shared;
 
 /**
  * Available start modes for simulation initialization.
- *
- * @see SimulationState
  */
 public enum SimulationStartMode {
 
     /**
-     * Start running immediately after initialization.
+     * Starts running immediately after initialization.
      */
     START_IMMEDIATELY,
 
     /**
-     * Initialize in a paused state so manual intervention is possible before running.
+     * Starts in the state {@code PAUSED} after initialization, so that the user can edit the grid before running.
      */
     START_PAUSED
 

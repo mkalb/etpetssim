@@ -8,7 +8,7 @@ package de.mkalb.etpetssim.simulations.core.shared;
 public enum SimulationNotificationType {
 
     /**
-     * No notification; simulation is running normally.
+     * No notification is shown.
      */
     NONE("notification.none"),
 
@@ -18,7 +18,7 @@ public enum SimulationNotificationType {
     EXCEPTION("notification.exception"),
 
     /**
-     * The simulation was stopped due to a timeout.
+     * The timed simulation was paused because a step or its drawing took too long.
      */
     TIMEOUT("notification.timeout"),
 
@@ -28,7 +28,7 @@ public enum SimulationNotificationType {
     INVALID_CONFIG("notification.invalidconfig"),
 
     /**
-     * The canvas size exceeds the allowed limit for the simulation.
+     * The grid is larger than the maximum canvas size; the canvas shows only part of it.
      */
     CANVAS_SIZE_LIMIT("notification.canvassizelimit");
 

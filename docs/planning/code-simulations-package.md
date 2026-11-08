@@ -132,7 +132,7 @@ sources. "Types" counts the top-level types in main sources of a group.
 | B5 | Constructor parameters of step runners and step logic         |     - | done        |
 | B6 | Metrics catalogs of the statistics                            |     - | done        |
 | B7 | Line length                                                   |     - | done        |
-| C1 | `core.shared`                                                 |    10 | open        |
+| C1 | `core.shared`                                                 |    10 | done        |
 | C2 | `core.model`: managers, statistics base, and user actions     |    10 | open        |
 | C3 | `core.model`: statistics history and extrema                  |     8 | open        |
 | C4 | `core.viewmodel`: config, control, and observation            |     7 | open        |
@@ -404,6 +404,84 @@ and `core.view` (22). Runs after B1 to B6, because they change lines; wrap only,
 The layer-neutral enums, records, and interfaces: `CellDisplayMode`, `NoUserActionContext`, `SimulationMode`,
 `SimulationNotificationType`, `SimulationStartMode`, `SimulationState`, `SimulationStepEvent`,
 `SimulationTerminationCheckMode`, `SimulationUserActionContext`, and `SimulationUserActionScope`.
+
+Notes:
+
+- Inventory (2026-11-08, verified against the sources): eight enums, the record `SimulationStepEvent`, and the marker
+  interface `SimulationUserActionContext`, all public. Tests exist for `CellDisplayMode`, `SimulationMode`,
+  `SimulationNotificationType`, `SimulationState`, and `SimulationStepEvent`; the other five types have no methods
+  of their own and need none (`junit.md`, "Common Contract Patterns").
+- Every constant and method has a caller in main sources; member order, exception message, and tests follow the
+  rules. Boolean queries are documented with "Checks if" and "Indicates whether", as elsewhere in `engine` and `ui`;
+  no change.
+
+#### Javadoc of the states that does not match the controls
+
+- Origin: C1 (2026-11-08)
+- Types: `SimulationState`
+- Problem: The constant Javadoc describes the controls inaccurately, compared with `AbstractConfigView`,
+  `DefaultControlView`, and `DefaultControlViewModel.isControlConfigDisabled()`:
+    - `PAUSED` says "Configuration controls are enabled", but the simulation config and the start mode are disabled,
+      because `PAUSED` is not startable; only the control settings (mode, step duration and count, termination
+      check) are enabled. `PAUSED` is also reached when the termination condition is met, not only by the user.
+    - `PAUSING_BATCH` says "Cancel action is available", but the cancel button is disabled.
+    - `RUNNING_BATCH` says "without intermediate UI updates", but the continuous batch mode draws after each batch,
+      and the step count is updated during the batch.
+- Proposal: Correct the three constants and distinguish the simulation config from the control settings, e.g., for
+  `PAUSED`: "The simulation config is disabled; the control settings are enabled. Resume and cancel actions are
+  available.", for `PAUSING_BATCH`: "No actions are available until the batch pauses.", and for `RUNNING_BATCH`:
+  "Simulation is running in batch mode in a background thread; the canvas is drawn only after a batch."
+- Status: done (2026-11-08).
+
+#### Javadoc of the notification types
+
+- Origin: C1 (2026-11-08)
+- Types: `SimulationNotificationType`
+- Problem: `NONE` says "simulation is running normally", but it is also set before a start and on cancel. `TIMEOUT`
+  says "stopped due to a timeout", but `DefaultMainViewModel` pauses the timed simulation when a step or the view
+  takes too long. `CANVAS_SIZE_LIMIT` says "The canvas size exceeds the allowed limit", but `AbstractMainView` sets
+  it when the grid is larger than the maximum canvas size and the canvas shows only part of it.
+- Proposal: `NONE`: "No notification is shown."; `TIMEOUT`: "The timed simulation was paused because a step or its
+  drawing took too long."; `CANVAS_SIZE_LIMIT`: "The grid is larger than the maximum canvas size; the canvas shows
+  only part of it."
+- Status: done (2026-11-08).
+
+#### Javadoc of the termination check modes
+
+- Origin: C1 (2026-11-08)
+- Types: `SimulationTerminationCheckMode`
+- Problem: The type Javadoc says `UNCHECKED` is for "runs where termination is managed externally or not required",
+  which the code does not show; with `CHECKED`, `DefaultMainViewModel` pauses the simulation when the termination
+  condition is met, and with `UNCHECKED` the simulation continues.
+- Proposal: "Use `CHECKED` to pause the simulation when its termination condition is met after a step. Use
+  `UNCHECKED` to let it continue beyond that point."
+- Status: done (2026-11-08).
+
+#### Javadoc of the start modes
+
+- Origin: C1 (2026-11-08)
+- Types: `SimulationStartMode`
+- Problem: The constant summaries are imperative ("Start running ...", "Initialize in a paused state ..."), and the
+  type Javadoc has `@see SimulationState`, a link to the type of a related property, which `java.md` ("Tags") does
+  not want.
+- Proposal: "Starts running immediately after initialization." and "Starts in the state `PAUSED` after
+  initialization, so that the user can edit the grid before running."; remove the `@see`.
+- Status: done (2026-11-08).
+
+#### Link from shared to model
+
+- Origin: C1 (2026-11-08)
+- Types: `SimulationUserActionContext`
+- Problem: The type Javadoc links to `simulations.core.model.SimulationUserAction`, although `shared` must not depend
+  on `model` (`java.md`, "Javadoc", "Style").
+- Proposal: Write `{@code SimulationUserAction}` instead.
+- Status: done (2026-11-08).
+
+### Decisions
+
+- The five findings are implemented as proposed; only Javadoc changed. The summary of `PAUSED` also says that the
+  state is reached by the user or because the termination condition is met.
+- No API change, rule change, or new test; the group has no test gaps.
 
 ### C2. `core.model`: managers, statistics base, and user actions
 

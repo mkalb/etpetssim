@@ -33,7 +33,7 @@ public enum SimulationState {
     RUNNING_TIMED,
 
     /**
-     * Simulation is running in batch mode (continuous execution without intermediate UI updates).
+     * Simulation is running in batch mode in a background thread; the canvas is drawn only after a batch.
      *
      * <p>Configuration controls are disabled. Pause and cancel actions are available.
      */
@@ -42,14 +42,16 @@ public enum SimulationState {
     /**
      * Pause requested during batch mode; waiting for a safe point to pause.
      *
-     * <p>Configuration controls are disabled. Cancel action is available.
+     * <p>Configuration controls are disabled. No actions are available until the batch pauses.
      */
     PAUSING_BATCH,
 
     /**
-     * Simulation is fully paused (applies to both timed and batch modes).
+     * Simulation is fully paused (applies to both timed and batch modes), by the user or because its termination
+     * condition is met.
      *
-     * <p>Configuration controls are enabled. Resume and cancel actions are available.
+     * <p>The simulation config is disabled; the control settings are enabled. Resume and cancel actions are
+     * available.
      */
     PAUSED,
 
