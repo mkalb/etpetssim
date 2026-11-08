@@ -68,11 +68,11 @@ public final class DefaultControlView
     protected Optional<Pane> createControlConfigPane() {
         var simulationModeControl = FXComponentFactory
                 .createLabeledChoiceRadioButtons(viewModel.simulationModeProperty(),
-                FXComponentFactory.createVBox(FXStyleClasses.CONFIG_RADIOBUTTON_BOX),
-                AppLocalization.getText(SimulationMode.labelResourceKey()),
-                AppLocalization.getText(SimulationLocalizationKeys.CONTROL_SIMULATION_MODE_TOOLTIP),
-                FXStyleClasses.CONFIG_RADIOBUTTON
-        );
+                        FXComponentFactory.createVBox(FXStyleClasses.CONFIG_RADIOBUTTON_BOX),
+                        AppLocalization.getText(SimulationMode.labelResourceKey()),
+                        AppLocalization.getText(SimulationLocalizationKeys.CONTROL_SIMULATION_MODE_TOOLTIP),
+                        FXStyleClasses.CONFIG_RADIOBUTTON
+                );
 
         bindControlConfigDisabled(simulationModeControl.controlRegion());
 
@@ -108,12 +108,12 @@ public final class DefaultControlView
 
         var terminationCheckControl = FXComponentFactory
                 .createLabeledChoiceCheckBox(viewModel.terminationCheckProperty(),
-                SimulationTerminationCheckMode.CHECKED,
-                SimulationTerminationCheckMode.UNCHECKED,
-                AppLocalization.getText(SimulationLocalizationKeys.CONTROL_TERMINATION_CHECK),
-                AppLocalization.getText(SimulationLocalizationKeys.CONTROL_TERMINATION_CHECK_TOOLTIP),
-                FXStyleClasses.CONFIG_CHECKBOX
-        );
+                        SimulationTerminationCheckMode.CHECKED,
+                        SimulationTerminationCheckMode.UNCHECKED,
+                        AppLocalization.getText(SimulationLocalizationKeys.CONTROL_TERMINATION_CHECK),
+                        AppLocalization.getText(SimulationLocalizationKeys.CONTROL_TERMINATION_CHECK_TOOLTIP),
+                        FXStyleClasses.CONFIG_CHECKBOX
+                );
 
         bindControlConfigDisabled(terminationCheckControl.controlRegion());
 

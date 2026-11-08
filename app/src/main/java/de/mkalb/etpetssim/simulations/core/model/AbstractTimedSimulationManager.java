@@ -154,7 +154,7 @@ public abstract class AbstractTimedSimulationManager<
                 AppLogger
                         .errorf("AbstractTimedSimulationManager: Replacing non-finite metric value with NaN: key: %s, "
                                         + "value: %f",
-                        metric.key(), value);
+                                metric.key(), value);
                 value = Double.NaN;
             }
             values.put(metric.key(), value);

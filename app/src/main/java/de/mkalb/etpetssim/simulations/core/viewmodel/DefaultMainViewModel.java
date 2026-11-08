@@ -569,7 +569,7 @@ public final class DefaultMainViewModel<
             AppLogger
                     .infof("%s: Simulation manager was created; scheduling initialization completion: generation=%d, "
                                     + "request=%s",
-                    LOG_COMPONENT, generation, request);
+                            LOG_COMPONENT, generation, request);
             Platform.runLater(() -> completeInitialization(request, generation, startNanos, manager));
         } catch (SimulationInitializationCanceledException e) {
             AppLogger.infof("%s: Simulation initialization was canceled: generation=%d, request=%s",
@@ -587,7 +587,7 @@ public final class DefaultMainViewModel<
             AppLogger
                     .infof("%s: Discarding completed initialization because it is no longer active: generation=%d, "
                                     + "activeGeneration=%d, state=%s",
-                    LOG_COMPONENT, generation, lifecycleGeneration, getSimulationState());
+                            LOG_COMPONENT, generation, lifecycleGeneration, getSimulationState());
             return;
         }
 

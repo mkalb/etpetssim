@@ -316,10 +316,10 @@ public abstract class AbstractDefaultMainView<
                 AppLogger
                         .infof("%s: Skipping draw for step %d due to high average draw time: averageMillis=%d, "
                                         + "thresholdMillis=%d",
-                        LOG_COMPONENT,
-                        stepCount,
-                        drawThrottler.getAverageDurationMillis(),
-                        throttleDrawMillis);
+                                LOG_COMPONENT,
+                                stepCount,
+                                drawThrottler.getAverageDurationMillis(),
+                                throttleDrawMillis);
             }
         }
     }
