@@ -17,7 +17,6 @@ import org.jspecify.annotations.Nullable;
 public enum LabEntity implements ConstantGridEntityDescriptorProvider {
     NORMAL(
             "normal",
-            true,
             "lab.entity.normal.short",
             "lab.entity.normal.long",
             "lab.entity.normal.description",
@@ -27,7 +26,6 @@ public enum LabEntity implements ConstantGridEntityDescriptorProvider {
     ),
     HIGHLIGHTED(
             "highlighted",
-            true,
             "lab.entity.highlighted.short",
             "lab.entity.highlighted.long",
             "lab.entity.highlighted.description",
@@ -40,7 +38,6 @@ public enum LabEntity implements ConstantGridEntityDescriptorProvider {
 
     @SuppressWarnings("SameParameterValue")
     LabEntity(String descriptorId,
-              boolean visible,
               String shortNameKey,
               String longNameKey,
               String descriptionKey,
@@ -49,7 +46,6 @@ public enum LabEntity implements ConstantGridEntityDescriptorProvider {
               @Nullable Color borderColor) {
         spec = new GridEntityDescriptorSpec(
                 descriptorId,
-                visible,
                 shortNameKey,
                 longNameKey,
                 descriptionKey,

@@ -13,7 +13,6 @@ import org.jspecify.annotations.Nullable;
 public enum EntityDescriptors implements SpecBackedGridEntityDescriptorProvider {
     GROUND(
             SnakeEntity.DESCRIPTOR_ID_GROUND,
-            true,
             "snake.entity.ground.short",
             "snake.entity.ground.long",
             "snake.entity.ground.description",
@@ -23,7 +22,6 @@ public enum EntityDescriptors implements SpecBackedGridEntityDescriptorProvider 
     ),
     WALL(
             SnakeEntity.DESCRIPTOR_ID_WALL,
-            true,
             "snake.entity.wall.short",
             "snake.entity.wall.long",
             "snake.entity.wall.description",
@@ -33,7 +31,6 @@ public enum EntityDescriptors implements SpecBackedGridEntityDescriptorProvider 
     ),
     GROWTH_FOOD(
             SnakeEntity.DESCRIPTOR_ID_GROWTH_FOOD,
-            true,
             "snake.entity.growthfood.short",
             "snake.entity.growthfood.long",
             "snake.entity.growthfood.description",
@@ -43,7 +40,6 @@ public enum EntityDescriptors implements SpecBackedGridEntityDescriptorProvider 
     ),
     SNAKE_SEGMENT(
             SnakeEntity.DESCRIPTOR_ID_SNAKE_SEGMENT,
-            true,
             "snake.entity.snakesegment.short",
             "snake.entity.snakesegment.long",
             "snake.entity.snakesegment.description",
@@ -53,7 +49,6 @@ public enum EntityDescriptors implements SpecBackedGridEntityDescriptorProvider 
     ),
     SNAKE_HEAD(
             SnakeEntity.DESCRIPTOR_ID_SNAKE_HEAD,
-            true,
             "snake.entity.snakehead.short",
             "snake.entity.snakehead.long",
             "snake.entity.snakehead.description",
@@ -66,7 +61,6 @@ public enum EntityDescriptors implements SpecBackedGridEntityDescriptorProvider 
 
     @SuppressWarnings("SameParameterValue")
     EntityDescriptors(String descriptorId,
-                      boolean visible,
                       String shortNameKey,
                       String longNameKey,
                       String descriptionKey,
@@ -75,7 +69,6 @@ public enum EntityDescriptors implements SpecBackedGridEntityDescriptorProvider 
                       @Nullable Color borderColor) {
         spec = new GridEntityDescriptorSpec(
                 descriptorId,
-                visible,
                 shortNameKey,
                 longNameKey,
                 descriptionKey,

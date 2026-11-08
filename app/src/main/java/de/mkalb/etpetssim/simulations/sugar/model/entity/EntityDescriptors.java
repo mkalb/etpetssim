@@ -13,7 +13,6 @@ import org.jspecify.annotations.Nullable;
 public enum EntityDescriptors implements SpecBackedGridEntityDescriptorProvider {
     TERRAIN(
             SugarEntity.DESCRIPTOR_ID_TERRAIN,
-            true,
             "sugar.entity.terrain.short",
             "sugar.entity.terrain.long",
             "sugar.entity.terrain.description",
@@ -23,7 +22,6 @@ public enum EntityDescriptors implements SpecBackedGridEntityDescriptorProvider 
     ),
     SUGAR(
             SugarEntity.DESCRIPTOR_ID_SUGAR,
-            true,
             "sugar.entity.sugar.short",
             "sugar.entity.sugar.long",
             "sugar.entity.sugar.description",
@@ -33,7 +31,6 @@ public enum EntityDescriptors implements SpecBackedGridEntityDescriptorProvider 
     ),
     AGENT(
             SugarEntity.DESCRIPTOR_ID_AGENT,
-            true,
             "sugar.entity.agent.short",
             "sugar.entity.agent.long",
             "sugar.entity.agent.description",
@@ -46,7 +43,6 @@ public enum EntityDescriptors implements SpecBackedGridEntityDescriptorProvider 
 
     @SuppressWarnings("SameParameterValue")
     EntityDescriptors(String descriptorId,
-                      boolean visible,
                       String shortNameKey,
                       String longNameKey,
                       String descriptionKey,
@@ -55,7 +51,6 @@ public enum EntityDescriptors implements SpecBackedGridEntityDescriptorProvider 
                       @Nullable Color borderColor) {
         spec = new GridEntityDescriptorSpec(
                 descriptorId,
-                visible,
                 shortNameKey,
                 longNameKey,
                 descriptionKey,

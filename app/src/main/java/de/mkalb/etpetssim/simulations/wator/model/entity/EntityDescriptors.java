@@ -13,7 +13,6 @@ import org.jspecify.annotations.Nullable;
 public enum EntityDescriptors implements SpecBackedGridEntityDescriptorProvider {
     WATER(
             WatorEntity.DESCRIPTOR_ID_WATER,
-            true,
             "wator.entity.water.short",
             "wator.entity.water.long",
             "wator.entity.water.description",
@@ -23,7 +22,6 @@ public enum EntityDescriptors implements SpecBackedGridEntityDescriptorProvider 
     ),
     FISH(
             WatorEntity.DESCRIPTOR_ID_FISH,
-            true,
             "wator.entity.fish.short",
             "wator.entity.fish.long",
             "wator.entity.fish.description",
@@ -33,7 +31,6 @@ public enum EntityDescriptors implements SpecBackedGridEntityDescriptorProvider 
     ),
     SHARK(
             WatorEntity.DESCRIPTOR_ID_SHARK,
-            true,
             "wator.entity.shark.short",
             "wator.entity.shark.long",
             "wator.entity.shark.description",
@@ -44,9 +41,7 @@ public enum EntityDescriptors implements SpecBackedGridEntityDescriptorProvider 
 
     private final GridEntityDescriptorSpec spec;
 
-    @SuppressWarnings("SameParameterValue")
     EntityDescriptors(String descriptorId,
-                      boolean visible,
                       String shortNameKey,
                       String longNameKey,
                       String descriptionKey,
@@ -55,7 +50,6 @@ public enum EntityDescriptors implements SpecBackedGridEntityDescriptorProvider 
                       @Nullable Color borderColor) {
         spec = new GridEntityDescriptorSpec(
                 descriptorId,
-                visible,
                 shortNameKey,
                 longNameKey,
                 descriptionKey,

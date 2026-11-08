@@ -153,10 +153,10 @@ Use these method naming patterns when they match the method's primary behavior; 
   consequence after a semicolon; a private record does so only when it explains something. Do not use such a record as
   a key in a hash-based collection or compare it with `equals(Object)`; compare its components instead, unless they
   are immutable in that use (e.g., `GridCell` with an enum entity).
-- Prefer plain adjectives or noun phrases for boolean record components (`visible`, `finalStep`); boolean query names
-  (`isFinished`, `hasTarget`) are allowed. Their generated accessors are exempt from the boolean query prefixes in
-  "Naming Conventions". Use one style within a record, and use the name of an implemented interface method where one
-  exists (e.g., `MoveDecision.isFoodTarget()`).
+- Prefer plain adjectives or noun phrases for boolean record components (`batchModeRunning`, `finalStep`); boolean
+  query names (`isFinished`, `hasTarget`) are allowed. Their generated accessors are exempt from the boolean query
+  prefixes in "Naming Conventions". Use one style within a record, and use the name of an implemented interface method
+  where one exists (e.g., `MoveDecision.isFoodTarget()`).
 - Declare `toDisplayString()` on a record whose values are shown to users or in logs (e.g., coordinates, sizes,
   neighborhood results, cells, descriptors, rules); results, statistics, configs, user action contexts, and private
   records do not need one.

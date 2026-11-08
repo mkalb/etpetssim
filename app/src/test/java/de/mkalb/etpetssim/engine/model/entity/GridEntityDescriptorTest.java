@@ -12,7 +12,6 @@ final class GridEntityDescriptorTest {
     private static GridEntityDescriptor createDescriptorWithValues() {
         return new GridEntityDescriptor(
                 "id-1",
-                true,
                 "Wall",
                 "Wall Cell",
                 "An obstacle",
@@ -25,7 +24,6 @@ final class GridEntityDescriptorTest {
     private static GridEntityDescriptor createDescriptorWithoutValues() {
         return new GridEntityDescriptor(
                 "id-2",
-                false,
                 "Short",
                 "Long",
                 "Description",

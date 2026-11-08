@@ -10,7 +10,6 @@ final class ConstantGridEntityDescriptorProviderTest {
     private static ConstantGridEntityDescriptorProvider createProvider() {
         GridEntityDescriptorSpec spec = new GridEntityDescriptorSpec(
                 "constant-id",
-                false,
                 "short.key",
                 "long.key",
                 "description.key",

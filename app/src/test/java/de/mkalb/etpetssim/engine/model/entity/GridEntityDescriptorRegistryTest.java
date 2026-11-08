@@ -23,7 +23,6 @@ final class GridEntityDescriptorRegistryTest {
 
     private static final GridEntityDescriptorProvider PROVIDER_A = new TestDescriptorProvider(
             "entity.a",
-            true,
             "conway.entity.alive.short",
             "conway.entity.alive.long",
             "conway.entity.alive.description",
@@ -33,7 +32,6 @@ final class GridEntityDescriptorRegistryTest {
     );
     private static final GridEntityDescriptorProvider PROVIDER_B = new TestDescriptorProvider(
             "entity.b",
-            false,
             "conway.entity.dead.short",
             "conway.entity.dead.long",
             "conway.entity.dead.description",
@@ -43,7 +41,6 @@ final class GridEntityDescriptorRegistryTest {
     );
     private static final GridEntityDescriptorProvider PROVIDER_B_REPLACEMENT = new TestDescriptorProvider(
             "entity.b",
-            true,
             "conway.entity.alive.short",
             "conway.entity.alive.long",
             "conway.entity.alive.description",
@@ -69,7 +66,6 @@ final class GridEntityDescriptorRegistryTest {
 
         assertAll(
                 () -> assertEquals(provider.descriptorId(), descriptor.descriptorId()),
-                () -> assertEquals(provider.visible(), descriptor.visible()),
                 () -> assertEquals(AppLocalization.getText(provider.shortNameKey()), descriptor.shortName()),
                 () -> assertEquals(AppLocalization.getText(provider.longNameKey()), descriptor.longName()),
                 () -> assertEquals(AppLocalization.getText(provider.descriptionKey()), descriptor.description()),
@@ -127,7 +123,6 @@ final class GridEntityDescriptorRegistryTest {
 
     private record TestDescriptorProvider(
             String descriptorId,
-            boolean visible,
             String shortNameKey,
             String longNameKey,
             String descriptionKey,

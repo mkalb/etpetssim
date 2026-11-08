@@ -13,7 +13,6 @@ import java.util.Optional;
  * display strings via {@code AppLocalization}.
  *
  * @param descriptorId unique identifier for the entity descriptor
- * @param visible      whether the entity should be visible in the grid (rendering hint)
  * @param shortName    resolved short display name
  * @param longName     resolved long display name
  * @param description  resolved description text
@@ -23,7 +22,6 @@ import java.util.Optional;
  */
 public record GridEntityDescriptor(
         String descriptorId,
-        boolean visible,
         String shortName,
         String longName,
         String description,

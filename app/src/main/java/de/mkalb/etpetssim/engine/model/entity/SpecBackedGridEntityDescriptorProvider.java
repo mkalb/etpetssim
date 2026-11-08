@@ -25,11 +25,6 @@ public interface SpecBackedGridEntityDescriptorProvider extends GridEntityDescri
     }
 
     @Override
-    default boolean visible() {
-        return descriptorSpec().visible();
-    }
-
-    @Override
     default String shortNameKey() {
         return descriptorSpec().shortNameKey();
     }

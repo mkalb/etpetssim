@@ -5,9 +5,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 final class SpecBackedGridEntityDescriptorProviderTest {
 
@@ -15,7 +13,6 @@ final class SpecBackedGridEntityDescriptorProviderTest {
     void testDefaultAccessorsDelegateToDescriptorSpec() {
         GridEntityDescriptorSpec spec = new GridEntityDescriptorSpec(
                 "entity-id",
-                true,
                 "short.key",
                 "long.key",
                 "description.key",
@@ -27,7 +24,6 @@ final class SpecBackedGridEntityDescriptorProviderTest {
 
         assertAll(
                 () -> assertEquals("entity-id", provider.descriptorId()),
-                () -> assertTrue(provider.visible()),
                 () -> assertEquals("short.key", provider.shortNameKey()),
                 () -> assertEquals("long.key", provider.longNameKey()),
                 () -> assertEquals("description.key", provider.descriptionKey()),
@@ -41,7 +37,6 @@ final class SpecBackedGridEntityDescriptorProviderTest {
     void testDefaultAccessorsReturnNullForUnsetOptionalValues() {
         GridEntityDescriptorSpec spec = new GridEntityDescriptorSpec(
                 "entity-id",
-                false,
                 "short.key",
                 "long.key",
                 "description.key",
@@ -52,7 +47,6 @@ final class SpecBackedGridEntityDescriptorProviderTest {
         SpecBackedGridEntityDescriptorProvider provider = new TestSpecBackedProvider(spec);
 
         assertAll(
-                () -> assertFalse(provider.visible()),
                 () -> assertNull(provider.emojiKey()),
                 () -> assertNull(provider.color()),
                 () -> assertNull(provider.borderColor())

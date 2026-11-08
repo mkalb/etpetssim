@@ -10,7 +10,6 @@ import org.jspecify.annotations.Nullable;
  * {@link GridEntityDescriptorRegistry}.
  *
  * @param descriptorId   unique descriptor identifier
- * @param visible        whether the entity should be visible in the grid (rendering hint)
  * @param shortNameKey   localization key for the short name
  * @param longNameKey    localization key for the long name
  * @param descriptionKey localization key for the description
@@ -20,7 +19,6 @@ import org.jspecify.annotations.Nullable;
  */
 public record GridEntityDescriptorSpec(
         String descriptorId,
-        boolean visible,
         String shortNameKey,
         String longNameKey,
         String descriptionKey,

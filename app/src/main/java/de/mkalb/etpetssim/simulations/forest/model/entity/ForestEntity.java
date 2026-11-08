@@ -17,7 +17,6 @@ import org.jspecify.annotations.Nullable;
 public enum ForestEntity implements ConstantGridEntityDescriptorProvider {
     EMPTY(
             "empty",
-            true,
             "forest.entity.empty.short",
             "forest.entity.empty.long",
             "forest.entity.empty.description",
@@ -27,7 +26,6 @@ public enum ForestEntity implements ConstantGridEntityDescriptorProvider {
     ),
     TREE(
             "tree",
-            true,
             "forest.entity.tree.short",
             "forest.entity.tree.long",
             "forest.entity.tree.description",
@@ -37,7 +35,6 @@ public enum ForestEntity implements ConstantGridEntityDescriptorProvider {
     ),
     BURNING(
             "burning",
-            true,
             "forest.entity.burning.short",
             "forest.entity.burning.long",
             "forest.entity.burning.description",
@@ -48,9 +45,7 @@ public enum ForestEntity implements ConstantGridEntityDescriptorProvider {
 
     private final GridEntityDescriptorSpec spec;
 
-    @SuppressWarnings("SameParameterValue")
     ForestEntity(String descriptorId,
-                 boolean visible,
                  String shortNameKey,
                  String longNameKey,
                  String descriptionKey,
@@ -59,7 +54,6 @@ public enum ForestEntity implements ConstantGridEntityDescriptorProvider {
                  @Nullable Color borderColor) {
         spec = new GridEntityDescriptorSpec(
                 descriptorId,
-                visible,
                 shortNameKey,
                 longNameKey,
                 descriptionKey,

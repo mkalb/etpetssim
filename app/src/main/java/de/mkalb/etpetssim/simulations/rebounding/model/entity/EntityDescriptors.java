@@ -13,7 +13,6 @@ import org.jspecify.annotations.Nullable;
 public enum EntityDescriptors implements SpecBackedGridEntityDescriptorProvider {
     GROUND(
             ReboundingEntity.DESCRIPTOR_ID_GROUND,
-            true,
             "rebounding.entity.ground.short",
             "rebounding.entity.ground.long",
             "rebounding.entity.ground.description",
@@ -23,7 +22,6 @@ public enum EntityDescriptors implements SpecBackedGridEntityDescriptorProvider 
     ),
     WALL(
             ReboundingEntity.DESCRIPTOR_ID_WALL,
-            true,
             "rebounding.entity.wall.short",
             "rebounding.entity.wall.long",
             "rebounding.entity.wall.description",
@@ -33,7 +31,6 @@ public enum EntityDescriptors implements SpecBackedGridEntityDescriptorProvider 
     ),
     REBOUNDER(
             ReboundingEntity.DESCRIPTOR_ID_REBOUNDER,
-            true,
             "rebounding.entity.rebounder.short",
             "rebounding.entity.rebounder.long",
             "rebounding.entity.rebounder.description",
@@ -46,7 +43,6 @@ public enum EntityDescriptors implements SpecBackedGridEntityDescriptorProvider 
 
     @SuppressWarnings("SameParameterValue")
     EntityDescriptors(String descriptorId,
-                      boolean visible,
                       String shortNameKey,
                       String longNameKey,
                       String descriptionKey,
@@ -55,7 +51,6 @@ public enum EntityDescriptors implements SpecBackedGridEntityDescriptorProvider 
                       @Nullable Color borderColor) {
         spec = new GridEntityDescriptorSpec(
                 descriptorId,
-                visible,
                 shortNameKey,
                 longNameKey,
                 descriptionKey,

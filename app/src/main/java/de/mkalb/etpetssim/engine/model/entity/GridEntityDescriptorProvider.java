@@ -22,13 +22,6 @@ public interface GridEntityDescriptorProvider {
     String descriptorId();
 
     /**
-     * Indicates whether the entity should be visible in the grid (rendering hint).
-     *
-     * @return {@code true} if visible, {@code false} otherwise
-     */
-    boolean visible();
-
-    /**
      * Returns the resource bundle key for the short name of this entity.
      *
      * @return the localization key for the short name

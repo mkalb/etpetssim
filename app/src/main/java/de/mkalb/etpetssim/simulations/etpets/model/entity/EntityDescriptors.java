@@ -14,7 +14,6 @@ public enum EntityDescriptors implements SpecBackedGridEntityDescriptorProvider 
 
     GROUND(
             EtpetsEntity.DESCRIPTOR_ID_GROUND,
-            true,
             "etpets.entity.terrain.ground.short",
             "etpets.entity.terrain.ground.long",
             "etpets.entity.terrain.ground.description",
@@ -24,7 +23,6 @@ public enum EntityDescriptors implements SpecBackedGridEntityDescriptorProvider 
     ),
     ROCK(
             EtpetsEntity.DESCRIPTOR_ID_ROCK,
-            true,
             "etpets.entity.terrain.rock.short",
             "etpets.entity.terrain.rock.long",
             "etpets.entity.terrain.rock.description",
@@ -34,7 +32,6 @@ public enum EntityDescriptors implements SpecBackedGridEntityDescriptorProvider 
     ),
     WATER(
             EtpetsEntity.DESCRIPTOR_ID_WATER,
-            true,
             "etpets.entity.terrain.water.short",
             "etpets.entity.terrain.water.long",
             "etpets.entity.terrain.water.description",
@@ -44,7 +41,6 @@ public enum EntityDescriptors implements SpecBackedGridEntityDescriptorProvider 
     ),
     TRAIL(
             EtpetsEntity.DESCRIPTOR_ID_TRAIL,
-            true,
             "etpets.entity.terrain.trail.short",
             "etpets.entity.terrain.trail.long",
             "etpets.entity.terrain.trail.description",
@@ -54,7 +50,6 @@ public enum EntityDescriptors implements SpecBackedGridEntityDescriptorProvider 
     ),
     PLANT(
             EtpetsEntity.DESCRIPTOR_ID_PLANT,
-            true,
             "etpets.entity.resource.plant.short",
             "etpets.entity.resource.plant.long",
             "etpets.entity.resource.plant.description",
@@ -64,7 +59,6 @@ public enum EntityDescriptors implements SpecBackedGridEntityDescriptorProvider 
     ),
     INSECT(
             EtpetsEntity.DESCRIPTOR_ID_INSECT,
-            true,
             "etpets.entity.resource.insect.short",
             "etpets.entity.resource.insect.long",
             "etpets.entity.resource.insect.description",
@@ -74,7 +68,6 @@ public enum EntityDescriptors implements SpecBackedGridEntityDescriptorProvider 
     ),
     PET(
             EtpetsEntity.DESCRIPTOR_ID_PET,
-            true,
             "etpets.entity.agent.pet.short",
             "etpets.entity.agent.pet.long",
             "etpets.entity.agent.pet.description",
@@ -84,7 +77,6 @@ public enum EntityDescriptors implements SpecBackedGridEntityDescriptorProvider 
     ),
     PET_EGG(
             EtpetsEntity.DESCRIPTOR_ID_PET_EGG,
-            true,
             "etpets.entity.agent.petegg.short",
             "etpets.entity.agent.petegg.long",
             "etpets.entity.agent.petegg.description",
@@ -97,7 +89,6 @@ public enum EntityDescriptors implements SpecBackedGridEntityDescriptorProvider 
 
     @SuppressWarnings("SameParameterValue")
     EntityDescriptors(String descriptorId,
-                      boolean visible,
                       String shortNameKey,
                       String longNameKey,
                       String descriptionKey,
@@ -106,7 +97,6 @@ public enum EntityDescriptors implements SpecBackedGridEntityDescriptorProvider 
                       @Nullable Color borderColor) {
         spec = new GridEntityDescriptorSpec(
                 descriptorId,
-                visible,
                 shortNameKey,
                 longNameKey,
                 descriptionKey,

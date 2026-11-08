@@ -60,7 +60,6 @@ public enum TerrainConstant implements LangtonEntity, ConstantGridEntityDescript
         String id = (ruleIndex < 0) ? "unvisited" : String.valueOf(ruleIndex);
         spec = new GridEntityDescriptorSpec(
                 "terrain" + id,
-                true,
                 "langton.entity.terrain." + id + ".short",
                 "langton.entity.terrain." + id + ".long",
                 "langton.entity.terrain." + id + ".description",
