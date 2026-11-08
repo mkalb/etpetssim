@@ -74,7 +74,8 @@ public final class LangtonRuleProperty {
         try {
             rules = LangtonMovementRules.parse(stringProperty.get());
             if (!rules.isValidForCellShape(cellShape)) {
-                throw new IllegalArgumentException("Rule not valid for cell shape! cellShape=" + cellShape + ", input=" + stringProperty.get());
+                throw new IllegalArgumentException("rules must be valid for cellShape " + cellShape
+                        + ", but was: " + rules);
             }
         } catch (IllegalArgumentException e) {
             AppLogger.errorf(e, "Invalid Langton rule string '%s', falling back to '%s'", stringProperty.get(), MOVEMENT_RULES_DEFAULT);

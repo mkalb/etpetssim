@@ -253,7 +253,7 @@ final class DefaultObservationViewModelTest {
         @NonNull
         @Override
         public GridStructure gridStructure() {
-            throw new AssertionError("Grid structure is not needed by this test fixture.");
+            throw new AssertionError("Grid structure is not needed by this test fixture");
         }
 
     }

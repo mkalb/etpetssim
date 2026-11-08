@@ -119,25 +119,25 @@ public final class LabMainViewModel
 
     @Override
     public GridStructure getStructure() {
-        Objects.requireNonNull(simulationManager, "Simulation manager is not initialized.");
+        Objects.requireNonNull(simulationManager, "Unable to access simulationManager: not initialized");
         return simulationManager.structure();
     }
 
     @Override
     public double getCellEdgeLength() {
-        Objects.requireNonNull(simulationManager, "Simulation manager is not initialized.");
+        Objects.requireNonNull(simulationManager, "Unable to access simulationManager: not initialized");
         return simulationManager.config().cellEdgeLength();
     }
 
     @Override
     public LabConfig getCurrentConfig() {
-        Objects.requireNonNull(simulationManager, "Simulation manager is not initialized.");
+        Objects.requireNonNull(simulationManager, "Unable to access simulationManager: not initialized");
         return simulationManager.config();
     }
 
     @Override
     public WritableGridModel<LabEntity> getCurrentGridModel() {
-        Objects.requireNonNull(simulationManager, "Simulation manager is not initialized.");
+        Objects.requireNonNull(simulationManager, "Unable to access simulationManager: not initialized");
         return simulationManager.currentGridModel();
     }
 

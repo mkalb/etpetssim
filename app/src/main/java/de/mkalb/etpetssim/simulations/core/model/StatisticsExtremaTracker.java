@@ -17,7 +17,7 @@ final class StatisticsExtremaTracker {
         extremaModesByKey = new LinkedHashMap<>();
         for (var metric : metrics) {
             if (extremaModesByKey.put(metric.key(), metric.extremaMode()) != null) {
-                throw new IllegalArgumentException("duplicate metric key: " + metric.key());
+                throw new IllegalArgumentException("metrics must not contain duplicate keys, but was: " + metric.key());
             }
         }
         minimumValues = new LinkedHashMap<>();

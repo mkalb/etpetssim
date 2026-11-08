@@ -17,10 +17,10 @@ final class DrawCallThrottler {
 
     DrawCallThrottler(int historySize, int maxSkips) {
         if (historySize <= 0) {
-            throw new IllegalArgumentException("historySize must be greater than zero.");
+            throw new IllegalArgumentException("historySize must be > 0, but was: " + historySize);
         }
         if (maxSkips < 0) {
-            throw new IllegalArgumentException("maxSkips must be non-negative.");
+            throw new IllegalArgumentException("maxSkips must be >= 0, but was: " + maxSkips);
         }
         this.historySize = historySize;
         this.maxSkips = maxSkips;

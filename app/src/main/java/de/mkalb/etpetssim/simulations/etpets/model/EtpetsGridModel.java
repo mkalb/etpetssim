@@ -38,7 +38,10 @@ public record EtpetsGridModel(
         if (!structure.equals(terrainModel.structure())
                 || !structure.equals(resourceModel.structure())
                 || !structure.equals(agentModel.structure())) {
-            throw new IllegalArgumentException("All structures must be the same");
+            throw new IllegalArgumentException("all models must have structure " + structure
+                    + ", but was: terrainModel=" + terrainModel.structure()
+                    + ", resourceModel=" + resourceModel.structure()
+                    + ", agentModel=" + agentModel.structure());
         }
     }
 

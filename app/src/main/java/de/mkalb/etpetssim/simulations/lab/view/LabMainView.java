@@ -444,12 +444,14 @@ public final class LabMainView
         int columnGroup = coordinate.x() % CHECKER_GROUP_SIZE;
         int rowGroup = coordinate.y() % CHECKER_GROUP_SIZE;
 
-        return switch ((columnGroup << CHECKER_GROUP_SHIFT) | rowGroup) {
+        int checkerGroup = (columnGroup << CHECKER_GROUP_SHIFT) | rowGroup;
+
+        return switch (checkerGroup) {
             case 0 -> Color.LIGHTSKYBLUE;       // Column 0, Row 0
             case 1 -> Color.LIGHTSTEELBLUE;     // Column 0, Row 1
             case 2 -> Color.PALEGREEN;          // Column 1, Row 0
             case 3 -> Color.MEDIUMAQUAMARINE;   // Column 1, Row 1
-            default -> throw new IllegalStateException("Unexpected value");
+            default -> throw new IllegalStateException("checkerGroup must be in [0, 3], but was: " + checkerGroup);
         };
     }
 
@@ -457,12 +459,14 @@ public final class LabMainView
         int columnGroup = coordinate.x() % CHECKER_GROUP_SIZE;
         int rowGroup = coordinate.y() % CHECKER_GROUP_SIZE;
 
-        return switch ((columnGroup << CHECKER_GROUP_SHIFT) | rowGroup) {
+        int checkerGroup = (columnGroup << CHECKER_GROUP_SHIFT) | rowGroup;
+
+        return switch (checkerGroup) {
             case 0 -> Color.WHITE;              // Column 0, Row 0
             case 1 -> Color.LIGHTGRAY;          // Column 0, Row 1
             case 2 -> Color.DARKGRAY;           // Column 1, Row 0
             case 3 -> Color.GRAY;               // Column 1, Row 1
-            default -> throw new IllegalStateException("Unexpected value");
+            default -> throw new IllegalStateException("checkerGroup must be in [0, 3], but was: " + checkerGroup);
         };
     }
 

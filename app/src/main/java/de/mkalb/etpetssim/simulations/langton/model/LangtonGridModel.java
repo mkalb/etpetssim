@@ -33,7 +33,9 @@ public record LangtonGridModel(
      */
     public LangtonGridModel {
         if (!structure.equals(terrainModel.structure()) || !structure.equals(antModel.structure())) {
-            throw new IllegalArgumentException("All structures must be the same");
+            throw new IllegalArgumentException("all models must have structure " + structure
+                    + ", but was: terrainModel=" + terrainModel.structure()
+                    + ", antModel=" + antModel.structure());
         }
     }
 

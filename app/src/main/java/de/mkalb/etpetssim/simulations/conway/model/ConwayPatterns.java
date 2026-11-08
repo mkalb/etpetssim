@@ -193,7 +193,8 @@ public final class ConwayPatterns {
                 ConwayEntity entity = switch (row.charAt(x)) {
                     case 'A' -> ConwayEntity.ALIVE;
                     case 'D' -> ConwayEntity.DEAD;
-                    default -> throw new IllegalArgumentException("Unsupported pattern cell: " + row.charAt(x));
+                    default -> throw new IllegalArgumentException("pattern cell must be 'A' or 'D', but was: "
+                            + row.charAt(x));
                 };
                 map.put(new GridOffset(x, y), entity);
             }

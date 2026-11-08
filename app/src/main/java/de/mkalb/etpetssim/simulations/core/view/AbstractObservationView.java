@@ -184,7 +184,8 @@ public abstract class AbstractObservationView<
      */
     protected final VBox createObservationSection(String titleKey, String[] nameKeys, Label[] valueLabels) {
         if (nameKeys.length != valueLabels.length) {
-            throw new IllegalArgumentException("nameKeys and valueLabels must have the same length.");
+            throw new IllegalArgumentException("nameKeys and valueLabels must have the same length, but was: "
+                    + "nameKeys.length=" + nameKeys.length + ", valueLabels.length=" + valueLabels.length);
         }
 
         GridPane grid = new GridPane();

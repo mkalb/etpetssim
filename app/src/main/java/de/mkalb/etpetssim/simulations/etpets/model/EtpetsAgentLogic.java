@@ -376,7 +376,8 @@ public final class EtpetsAgentLogic {
                                                EtpetsGridModel gridModel) {
         if (!(gridModel.resourceModel().getEntity(resourceCoordinate) instanceof ResourceBase resource)
                 || !resource.canConsume()) {
-            throw new IllegalStateException("EtpetsAgentLogic: EAT precondition failed for action " + actionCandidate + ".");
+            throw new IllegalStateException("Unable to apply EAT action: resource is missing or not consumable, "
+                    + "actionCandidate=" + actionCandidate);
         }
 
         resource.consume();
@@ -394,12 +395,14 @@ public final class EtpetsAgentLogic {
                                                      EtpetsIdSequence idSequence) {
         if (!(gridModel.agentModel().getEntity(actionCandidate.interactionTarget()) instanceof Pet partnerPet)
                 || !canReproduce(pet, partnerPet, stepIndex)) {
-            throw new IllegalStateException("EtpetsAgentLogic: REPRODUCE precondition failed for action " + actionCandidate + ".");
+            throw new IllegalStateException("Unable to apply REPRODUCE action: partner is missing or cannot reproduce, "
+                    + "actionCandidate=" + actionCandidate);
         }
 
         if (!(actionCandidate.eggTarget() instanceof GridCoordinate eggCoordinate)
                 || !EtpetsCell.from(gridModel, eggCoordinate).isWalkable()) {
-            throw new IllegalStateException("EtpetsAgentLogic: REPRODUCE egg placement invalid for action " + actionCandidate + ".");
+            throw new IllegalStateException("Unable to apply REPRODUCE action: egg target is missing or not walkable, "
+                    + "actionCandidate=" + actionCandidate);
         }
 
         PetGenome genome = PetGenome.fromParents(
@@ -494,8 +497,8 @@ public final class EtpetsAgentLogic {
     private static int computeReproduceScore(Pet pet,
                                              EtpetsCell partnerCell) {
         if (!(partnerCell.agentEntity() instanceof Pet partnerPet)) {
-            throw new IllegalStateException("EtpetsAgentLogic: Invalid reproduction partner cell: expected agent Pet, actual="
-                    + partnerCell.agentEntity().toDisplayString() + ".");
+            throw new IllegalStateException("partnerCell must contain a Pet agent, but was: "
+                    + partnerCell.agentEntity());
         }
 
         double petQualityScore = pet.traits().genomeQualityScore();
@@ -761,17 +764,19 @@ public final class EtpetsAgentLogic {
          */
         private ActionCandidate {
             if (score < 0) {
-                throw new IllegalArgumentException("EtpetsAgentLogic: ActionCandidate score must be >= 0 (actual=" + score + ").");
+                throw new IllegalArgumentException("score must be >= 0, but was: " + score);
             }
             switch (type) {
                 case WAIT, MOVE, EAT -> {
                     if (eggTarget != null) {
-                        throw new IllegalArgumentException("EtpetsAgentLogic: ActionCandidate eggTarget must be null for type " + type + ".");
+                        throw new IllegalArgumentException("eggTarget must be null if type is not REPRODUCE, but was: "
+                                + "eggTarget=" + eggTarget + ", type=" + type);
                     }
                 }
                 case REPRODUCE -> {
                     if (eggTarget == null) {
-                        throw new IllegalArgumentException("EtpetsAgentLogic: ActionCandidate eggTarget is required for type REPRODUCE.");
+                        throw new IllegalArgumentException(
+                                "eggTarget must not be null if type is REPRODUCE, but was: null");
                     }
                 }
             }
@@ -784,7 +789,8 @@ public final class EtpetsAgentLogic {
 
         private ReproductionOption {
             if (!(partnerCell.agentEntity() instanceof Pet)) {
-                throw new IllegalArgumentException("EtpetsAgentLogic: ReproductionOption partnerCell must contain a Pet agent.");
+                throw new IllegalArgumentException("partnerCell must contain a Pet agent, but was: "
+                        + partnerCell.agentEntity());
             }
         }
 
@@ -794,7 +800,7 @@ public final class EtpetsAgentLogic {
 
         private ActionEffect {
             if (eggCountDelta < 0) {
-                throw new IllegalArgumentException("EtpetsAgentLogic: ActionEffect eggCountDelta must be >= 0 (actual=" + eggCountDelta + ").");
+                throw new IllegalArgumentException("eggCountDelta must be >= 0, but was: " + eggCountDelta);
             }
         }
 

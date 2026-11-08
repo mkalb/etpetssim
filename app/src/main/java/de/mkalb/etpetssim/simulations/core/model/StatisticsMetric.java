@@ -38,17 +38,19 @@ public record StatisticsMetric<STA extends SimulationStatistics>(
      */
     public StatisticsMetric {
         if (key.isBlank()) {
-            throw new IllegalArgumentException("key must not be blank");
+            throw new IllegalArgumentException("key must not be blank, but was: \"" + key + '"');
         }
         if (labelKey.isBlank()) {
-            throw new IllegalArgumentException("labelKey must not be blank");
+            throw new IllegalArgumentException("labelKey must not be blank, but was: \"" + labelKey + '"');
         }
         if (chartGroup == StatisticsChartGroup.NONE) {
             if (chartWindowSize != 0) {
-                throw new IllegalArgumentException("chartWindowSize must be 0 when chartGroup is NONE");
+                throw new IllegalArgumentException("chartWindowSize must be 0 if chartGroup is NONE, but was: "
+                        + chartWindowSize);
             }
         } else if (chartWindowSize <= 0) {
-            throw new IllegalArgumentException("chartWindowSize must be > 0 when chartGroup is not NONE");
+            throw new IllegalArgumentException("chartWindowSize must be > 0 if chartGroup is not NONE, but was: "
+                    + "chartWindowSize=" + chartWindowSize + ", chartGroup=" + chartGroup);
         }
     }
 

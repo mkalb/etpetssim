@@ -28,7 +28,7 @@ public final class ReboundingStepLogic implements AgentStepLogic<ReboundingEntit
                                  int stepIndex,
                                  ReboundingStatistics statistics) {
         if (!(agentCell.entity() instanceof Rebounder movingEntity)) {
-            throw new IllegalArgumentException("Provided cell does not contain a Rebounder entity. Cell: " + agentCell);
+            throw new IllegalArgumentException("agentCell must contain a Rebounder, but was: " + agentCell);
         }
         GridCoordinate currentCoordinate = agentCell.coordinate();
 
@@ -43,7 +43,8 @@ public final class ReboundingStepLogic implements AgentStepLogic<ReboundingEntit
                 config.neighborhoodMode(),
                 structure,
                 movingEntity.direction()
-        ).orElseThrow(() -> new IllegalStateException("Unexpected empty neighbor. This should not happen. Cell: " + agentCell));
+        ).orElseThrow(() -> new IllegalStateException("Unable to find neighbor: agentCell=" + agentCell
+                + ", direction=" + movingEntity.direction()));
 
         // Check edge behavior and neighbor cell entity to determine the action for the moving entity
         if ((neighbor.edgeBehaviorAction() == EdgeBehaviorAction.BLOCKED)) {
@@ -85,7 +86,8 @@ public final class ReboundingStepLogic implements AgentStepLogic<ReboundingEntit
                     case SE -> CompassDirection.NE;
                     case SW -> CompassDirection.NW;
                     case NW -> CompassDirection.SW;
-                    default -> throw new IllegalStateException("Unexpected direction: " + currentDirection);
+                    default -> throw new IllegalStateException("currentDirection must be NE, SE, SW, or NW, but was: "
+                            + currentDirection);
                 };
             } else if (blockedCoordinate.isYWithinAndXOutOfOriginBounds(structure.maxCoordinateExclusive())) {
                 return switch (currentDirection) {
@@ -93,7 +95,8 @@ public final class ReboundingStepLogic implements AgentStepLogic<ReboundingEntit
                     case SE -> CompassDirection.SW;
                     case SW -> CompassDirection.SE;
                     case NW -> CompassDirection.NE;
-                    default -> throw new IllegalStateException("Unexpected direction: " + currentDirection);
+                    default -> throw new IllegalStateException("currentDirection must be NE, SE, SW, or NW, but was: "
+                            + currentDirection);
                 };
             } else {
                 return switch (currentDirection) {
@@ -101,12 +104,14 @@ public final class ReboundingStepLogic implements AgentStepLogic<ReboundingEntit
                     case SE -> CompassDirection.NW;
                     case SW -> CompassDirection.NE;
                     case NW -> CompassDirection.SE;
-                    default -> throw new IllegalStateException("Unexpected direction: " + currentDirection);
+                    default -> throw new IllegalStateException("currentDirection must be NE, SE, SW, or NW, but was: "
+                            + currentDirection);
                 };
             }
         }
 
-        throw new IllegalStateException("Unhandled direction level: " + currentDirection.level() + " for direction: " + currentDirection);
+        throw new IllegalStateException("currentDirection.level() must be 0 or 1, but was: "
+                + currentDirection.level());
     }
 
 }

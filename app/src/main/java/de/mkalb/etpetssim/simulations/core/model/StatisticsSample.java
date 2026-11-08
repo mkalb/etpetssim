@@ -26,7 +26,7 @@ public record StatisticsSample(
      */
     public StatisticsSample {
         if (stepCount < 0) {
-            throw new IllegalArgumentException("stepCount must be >= 0");
+            throw new IllegalArgumentException("stepCount must be >= 0, but was: " + stepCount);
         }
         values = Collections.unmodifiableMap(new LinkedHashMap<>(values));
     }

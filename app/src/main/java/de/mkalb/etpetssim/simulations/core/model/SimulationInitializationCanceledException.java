@@ -10,7 +10,7 @@ public final class SimulationInitializationCanceledException
      * Creates an exception without a stack trace because cancellation is an expected lifecycle event.
      */
     SimulationInitializationCanceledException() {
-        super("Simulation initialization was canceled.", null, false, false);
+        super("Simulation initialization was canceled", null, false, false);
     }
 
 }

@@ -27,19 +27,26 @@ public record PetTraits(
     public PetTraits {
         if ((maxEnergy < EtpetsBalance.PET_TRAITS_MAX_ENERGY_MIN)
                 || (maxEnergy > EtpetsBalance.PET_TRAITS_MAX_ENERGY_MAX)) {
-            throw new IllegalArgumentException("maxEnergy out of range: " + maxEnergy);
+            throw new IllegalArgumentException("maxEnergy must be in [" + EtpetsBalance.PET_TRAITS_MAX_ENERGY_MIN + ", "
+                    + EtpetsBalance.PET_TRAITS_MAX_ENERGY_MAX + "], but was: " + maxEnergy);
         }
         if (!(movementCostModifier >= EtpetsBalance.PET_TRAITS_MOVEMENT_COST_MODIFIER_MIN)
                 || !(movementCostModifier <= EtpetsBalance.PET_TRAITS_MOVEMENT_COST_MODIFIER_MAX)) {
-            throw new IllegalArgumentException("movementCostModifier out of range: " + movementCostModifier);
+            throw new IllegalArgumentException("movementCostModifier must be in ["
+                    + EtpetsBalance.PET_TRAITS_MOVEMENT_COST_MODIFIER_MIN + ", "
+                    + EtpetsBalance.PET_TRAITS_MOVEMENT_COST_MODIFIER_MAX + "], but was: " + movementCostModifier);
         }
         if ((reproductionMinEnergy < EtpetsBalance.PET_TRAITS_REPRODUCTION_MIN_ENERGY_MIN)
                 || (reproductionMinEnergy > EtpetsBalance.PET_TRAITS_REPRODUCTION_MIN_ENERGY_MAX)) {
-            throw new IllegalArgumentException("reproductionMinEnergy out of range: " + reproductionMinEnergy);
+            throw new IllegalArgumentException("reproductionMinEnergy must be in ["
+                    + EtpetsBalance.PET_TRAITS_REPRODUCTION_MIN_ENERGY_MIN + ", "
+                    + EtpetsBalance.PET_TRAITS_REPRODUCTION_MIN_ENERGY_MAX + "], but was: " + reproductionMinEnergy);
         }
         if ((reproductionCooldown < EtpetsBalance.PET_TRAITS_REPRODUCTION_COOLDOWN_MIN)
                 || (reproductionCooldown > EtpetsBalance.PET_TRAITS_REPRODUCTION_COOLDOWN_MAX)) {
-            throw new IllegalArgumentException("reproductionCooldown out of range: " + reproductionCooldown);
+            throw new IllegalArgumentException("reproductionCooldown must be in ["
+                    + EtpetsBalance.PET_TRAITS_REPRODUCTION_COOLDOWN_MIN + ", "
+                    + EtpetsBalance.PET_TRAITS_REPRODUCTION_COOLDOWN_MAX + "], but was: " + reproductionCooldown);
         }
     }
 

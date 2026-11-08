@@ -15,10 +15,10 @@ public record StatisticsExtremum(double value, int stepCount) {
      */
     public StatisticsExtremum {
         if (!Double.isFinite(value)) {
-            throw new IllegalArgumentException("value must be finite: " + value);
+            throw new IllegalArgumentException("value must be finite, but was: " + value);
         }
         if (stepCount < 0) {
-            throw new IllegalArgumentException("stepCount must be >= 0");
+            throw new IllegalArgumentException("stepCount must be >= 0, but was: " + stepCount);
         }
     }
 

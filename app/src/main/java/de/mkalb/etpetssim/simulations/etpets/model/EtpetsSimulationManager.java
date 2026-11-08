@@ -134,9 +134,8 @@ public final class EtpetsSimulationManager
         List<GridCoordinate> available = traversableCoordinates(model, random, cancellation);
         int requestedResources = plantCount + insectCount;
         if (requestedResources > available.size()) {
-            throw new IllegalArgumentException("Invalid ET Pets resource initialization: requested "
-                    + requestedResources + " resource cells, but only " + available.size()
-                    + " traversable cells are available.");
+            throw new IllegalArgumentException("Unable to place resources: requestedResources=" + requestedResources
+                    + ", availableCells=" + available.size());
         }
 
         int plantRange = (EtpetsBalance.PLANT_MAX_AMOUNT_MAX - EtpetsBalance.PLANT_MAX_AMOUNT_MIN) + 1;
@@ -189,9 +188,8 @@ public final class EtpetsSimulationManager
 
         List<GridCoordinate> available = traversableCoordinates(model, random, cancellation);
         if (config().petCount() > available.size()) {
-            throw new IllegalArgumentException("Invalid ET Pets pet initialization: requested "
-                    + config().petCount() + " pets, but only " + available.size()
-                    + " traversable cells are available.");
+            throw new IllegalArgumentException("Unable to place pets: petCount=" + config().petCount()
+                    + ", availableCells=" + available.size());
         }
 
         int maxEnergyRange = (EtpetsBalance.PET_TRAITS_MAX_ENERGY_MAX - EtpetsBalance.PET_TRAITS_MAX_ENERGY_MIN) + 1;

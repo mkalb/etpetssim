@@ -78,7 +78,7 @@ public enum TerrainConstant implements LangtonEntity, ConstantGridEntityDescript
     public static TerrainConstant requireByRuleIndex(int ruleIndex) {
         TerrainConstant result = BY_RULE_INDEX.get(ruleIndex);
         if (result == null) {
-            throw new IllegalArgumentException("No TerrainConstant for rule index: " + ruleIndex);
+            throw new IllegalArgumentException("No TerrainConstant found for ruleIndex: " + ruleIndex);
         }
         return result;
     }

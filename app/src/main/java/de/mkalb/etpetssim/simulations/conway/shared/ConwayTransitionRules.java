@@ -81,12 +81,10 @@ public record ConwayTransitionRules(
      * @see #toDisplayString()
      */
     public static ConwayTransitionRules parse(String displayString) {
-        if (!displayString.contains("/")) {
-            throw new IllegalArgumentException("Invalid format: must contain '/'");
-        }
         String[] parts = displayString.split("/", -1);
         if (parts.length != 2) {
-            throw new IllegalArgumentException("Invalid format: must have one '/'");
+            throw new IllegalArgumentException("Unable to parse displayString: expected exactly one '/', "
+                    + "displayString=" + displayString);
         }
         SortedSet<Integer> survive = new TreeSet<>();
         SortedSet<Integer> birth = new TreeSet<>();
@@ -106,7 +104,8 @@ public record ConwayTransitionRules(
     private static void checkNeighborCounts(String componentName, Collection<Integer> neighborCounts) {
         for (int n : neighborCounts) {
             if ((n < MIN_NEIGHBOR_COUNT) || (n > MAX_NEIGHBOR_COUNT)) {
-                throw new IllegalArgumentException(componentName + " value out of range: " + n);
+                throw new IllegalArgumentException(componentName + " must contain only values in [" + MIN_NEIGHBOR_COUNT
+                        + ", " + MAX_NEIGHBOR_COUNT + "], but was: " + neighborCounts);
             }
         }
     }

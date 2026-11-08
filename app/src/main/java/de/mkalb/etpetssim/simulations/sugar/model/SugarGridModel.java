@@ -33,7 +33,9 @@ public record SugarGridModel(
      */
     public SugarGridModel {
         if (!structure.equals(resourceModel.structure()) || !structure.equals(agentModel.structure())) {
-            throw new IllegalArgumentException("All structures must be the same");
+            throw new IllegalArgumentException("all models must have structure " + structure
+                    + ", but was: resourceModel=" + resourceModel.structure()
+                    + ", agentModel=" + agentModel.structure());
         }
     }
 

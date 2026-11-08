@@ -115,7 +115,8 @@ public final class LangtonMainView
                             backgroundColor,
                             strokeLineWidth);
             case CellDisplayMode.CIRCLE, CellDisplayMode.CIRCLE_BORDERED, CellDisplayMode.EMOJI ->
-                    throw new IllegalArgumentException("CellDisplayMode not supported: " + config.cellDisplayMode());
+                    throw new IllegalArgumentException("cellDisplayMode must be SHAPE or SHAPE_BORDERED, but was: "
+                            + config.cellDisplayMode());
         };
         cellAntDrawer = (descriptor, painter, cell, _) -> {
             if ((cellEmojiFont != null)

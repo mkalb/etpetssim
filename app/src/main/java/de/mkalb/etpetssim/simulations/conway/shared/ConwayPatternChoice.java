@@ -31,13 +31,13 @@ public record ConwayPatternChoice(
      */
     public ConwayPatternChoice {
         if (choiceId.isBlank()) {
-            throw new IllegalArgumentException("choiceId must not be blank");
+            throw new IllegalArgumentException("choiceId must not be blank, but was: \"" + choiceId + '"');
         }
         if (labelKey.isBlank()) {
-            throw new IllegalArgumentException("labelKey must not be blank");
+            throw new IllegalArgumentException("labelKey must not be blank, but was: \"" + labelKey + '"');
         }
         if (choiceId.equals(labelKey)) {
-            throw new IllegalArgumentException("choiceId must differ from labelKey");
+            throw new IllegalArgumentException("choiceId must be different from labelKey, but was: " + choiceId);
         }
     }
 

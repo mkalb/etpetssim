@@ -35,7 +35,7 @@ public final class StatisticsHistory {
      */
     public StatisticsHistory(int capacity) {
         if (capacity <= 0) {
-            throw new IllegalArgumentException("capacity must be > 0");
+            throw new IllegalArgumentException("capacity must be > 0, but was: " + capacity);
         }
         this.capacity = capacity;
         samples = new ArrayDeque<>(capacity);

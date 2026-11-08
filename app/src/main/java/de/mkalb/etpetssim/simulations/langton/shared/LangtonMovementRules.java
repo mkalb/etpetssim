@@ -27,10 +27,12 @@ public record LangtonMovementRules(
      */
     public LangtonMovementRules {
         if (turns.size() < MIN_RULE_COUNT) {
-            throw new IllegalArgumentException("At least " + MIN_RULE_COUNT + " rules required, got: " + turns.size());
+            throw new IllegalArgumentException("turns.size() must be >= " + MIN_RULE_COUNT
+                    + ", but was: " + turns.size());
         }
         if (turns.size() > MAX_RULE_COUNT) {
-            throw new IllegalArgumentException("At most " + MAX_RULE_COUNT + " rules allowed, got: " + turns.size());
+            throw new IllegalArgumentException("turns.size() must be <= " + MAX_RULE_COUNT
+                    + ", but was: " + turns.size());
         }
         turns = List.copyOf(turns);
     }
@@ -84,7 +86,8 @@ public record LangtonMovementRules(
                     result.add(AntTurn.U_TURN);
                     i++;
                 }
-                default -> throw new IllegalArgumentException("Unknown rule character: " + c);
+                default -> throw new IllegalArgumentException("Unable to parse ruleString: unknown character '" + c
+                        + "', ruleString=" + ruleString);
             }
         }
         return new LangtonMovementRules(result);

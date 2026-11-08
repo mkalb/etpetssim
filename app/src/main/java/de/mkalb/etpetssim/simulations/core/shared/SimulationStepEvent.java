@@ -16,7 +16,7 @@ public record SimulationStepEvent(boolean batchModeRunning, int stepCount, boole
      */
     public SimulationStepEvent {
         if (stepCount < 0) {
-            throw new IllegalArgumentException("stepCount must be >= 0");
+            throw new IllegalArgumentException("stepCount must be >= 0, but was: " + stepCount);
         }
     }
 

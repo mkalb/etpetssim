@@ -126,7 +126,9 @@ public final class ConwayMainView
                             aliveBorderColor,
                             strokeLineWidth,
                             StrokeType.INSIDE);
-            case EMOJI -> throw new IllegalArgumentException("CellDisplayMode not supported!");
+            case EMOJI -> throw new IllegalArgumentException(
+                    "cellDisplayMode must be SHAPE, SHAPE_BORDERED, CIRCLE, or CIRCLE_BORDERED, but was: "
+                            + config.cellDisplayMode());
         };
     }
 

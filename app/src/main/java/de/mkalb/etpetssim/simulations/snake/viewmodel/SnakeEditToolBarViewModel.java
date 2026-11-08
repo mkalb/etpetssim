@@ -13,7 +13,7 @@ public final class SnakeEditToolBarViewModel {
     public SnakeEditToolBarViewModel() {
         List<SnakeMoveStrategy> availableStrategies = SnakeMoveStrategies.strategies();
         if (availableStrategies.isEmpty()) {
-            throw new IllegalStateException("Snake move strategy list must not be empty.");
+            throw new IllegalStateException("availableStrategies must not be empty, but was: " + availableStrategies);
         }
         selectedStrategy = InputChoiceProperty.ofList(
                 availableStrategies.getFirst(),

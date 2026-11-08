@@ -216,7 +216,7 @@ public final class EtpetsMainView extends AbstractDefaultMainView<
             case EtpetsEntity.DESCRIPTOR_ID_INSECT -> EtpetsBalance.INSECT_CURRENT_AMOUNT_MIN;
             case EtpetsEntity.DESCRIPTOR_ID_PET -> EtpetsBalance.PET_CURRENT_ENERGY_MIN;
             case EtpetsEntity.DESCRIPTOR_ID_PET_EGG -> EtpetsBalance.PET_EGG_INCUBATION_REMAINING_MIN;
-            default -> throw new IllegalArgumentException("No min defined for descriptorId: " + descriptorId);
+            default -> throw new IllegalArgumentException("No min found for descriptorId: " + descriptorId);
         };
     }
 
@@ -227,7 +227,7 @@ public final class EtpetsMainView extends AbstractDefaultMainView<
             case EtpetsEntity.DESCRIPTOR_ID_INSECT -> EtpetsBalance.INSECT_CURRENT_AMOUNT_MAX;
             case EtpetsEntity.DESCRIPTOR_ID_PET -> EtpetsBalance.PET_CURRENT_ENERGY_MAX;
             case EtpetsEntity.DESCRIPTOR_ID_PET_EGG -> EtpetsBalance.PET_EGG_INCUBATION_REMAINING_MAX;
-            default -> throw new IllegalArgumentException("No max defined for descriptorId: " + descriptorId);
+            default -> throw new IllegalArgumentException("No max found for descriptorId: " + descriptorId);
         };
     }
 

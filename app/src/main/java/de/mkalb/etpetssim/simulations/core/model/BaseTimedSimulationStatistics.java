@@ -26,7 +26,7 @@ public class BaseTimedSimulationStatistics
     protected BaseTimedSimulationStatistics(GridStructure gridStructure) {
         int totalCells = gridStructure.cellCount();
         if (totalCells < 0) {
-            throw new IllegalArgumentException("totalCells must be >= 0");
+            throw new IllegalArgumentException("totalCells must be >= 0, but was: " + totalCells);
         }
         this.gridStructure = gridStructure;
         stepCount = 0;
@@ -58,7 +58,7 @@ public class BaseTimedSimulationStatistics
     public final void setStepData(int newStepCount,
                                   StepTimingStatistics newStepTimingStatistics) {
         if (newStepCount < 0) {
-            throw new IllegalArgumentException("newStepCount must be >= 0");
+            throw new IllegalArgumentException("newStepCount must be >= 0, but was: " + newStepCount);
         }
         stepCount = newStepCount;
         stepTimingStatistics = newStepTimingStatistics;

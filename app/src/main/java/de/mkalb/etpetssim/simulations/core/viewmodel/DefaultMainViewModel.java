@@ -280,13 +280,13 @@ public final class DefaultMainViewModel<
 
     @Override
     public GridStructure getStructure() {
-        Objects.requireNonNull(simulationManager, "Simulation manager is not initialized.");
+        Objects.requireNonNull(simulationManager, "Unable to access simulationManager: not initialized");
         return simulationManager.structure();
     }
 
     @Override
     public double getCellEdgeLength() {
-        Objects.requireNonNull(simulationManager, "Simulation manager is not initialized.");
+        Objects.requireNonNull(simulationManager, "Unable to access simulationManager: not initialized");
         return simulationManager.config().cellEdgeLength();
     }
 
@@ -330,7 +330,7 @@ public final class DefaultMainViewModel<
 
     @Override
     public CON getCurrentConfig() {
-        Objects.requireNonNull(simulationManager, "Simulation manager is not initialized.");
+        Objects.requireNonNull(simulationManager, "Unable to access simulationManager: not initialized");
         return simulationManager.config();
     }
 
@@ -341,12 +341,12 @@ public final class DefaultMainViewModel<
 
     @Override
     public GM getCurrentGridModel() {
-        Objects.requireNonNull(simulationManager, "Simulation manager is not initialized.");
+        Objects.requireNonNull(simulationManager, "Unable to access simulationManager: not initialized");
         return simulationManager.currentGridModel();
     }
 
     public int getStepCount() {
-        Objects.requireNonNull(simulationManager, "Simulation manager is not initialized.");
+        Objects.requireNonNull(simulationManager, "Unable to access simulationManager: not initialized");
         return simulationManager.stepCount();
     }
 
@@ -365,7 +365,8 @@ public final class DefaultMainViewModel<
 
     private void handleActionButton() {
         if (!getSimulationState().isRunning() && (isTimerRunning() || isBatchRunning())) {
-            throw new IllegalStateException("Simulation is running but state is not RUNNING_TIMED or RUNNING_BATCH: " + getSimulationState());
+            throw new IllegalStateException("simulationState must be RUNNING_TIMED or RUNNING_BATCH, but was: "
+                    + getSimulationState());
         }
 
         if (getSimulationState().isStartable()) {
@@ -486,7 +487,7 @@ public final class DefaultMainViewModel<
         try {
             AppLogger.infof("%s: Simulation initialization started. generation=%d, request=%s", LOG_COMPONENT, generation, request);
             SM manager = simulationManagerFactory.apply(request.config(), SimulationInitializationCancellation.interruptionAware());
-            Objects.requireNonNull(manager, "Simulation manager factory returned null.");
+            Objects.requireNonNull(manager, "Unable to create simulationManager: factory returned null");
             AppLogger.infof("%s: Simulation manager was created; scheduling initialization completion. generation=%d, request=%s",
                     LOG_COMPONENT, generation, request);
             Platform.runLater(() -> completeInitialization(request, generation, startNanos, manager));

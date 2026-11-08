@@ -58,16 +58,16 @@ public record SimulationUserActionDescriptor<CTX extends SimulationUserActionCon
      */
     public SimulationUserActionDescriptor {
         if (toolId.isBlank()) {
-            throw new IllegalArgumentException("toolId must not be blank");
+            throw new IllegalArgumentException("toolId must not be blank, but was: \"" + toolId + '"');
         }
         if (SELECT_TOOL_ID.equals(toolId)) {
-            throw new IllegalArgumentException("toolId must not use the reserved Select id");
+            throw new IllegalArgumentException("toolId must not be SELECT_TOOL_ID, but was: " + toolId);
         }
         if (labelKey.isBlank()) {
-            throw new IllegalArgumentException("labelKey must not be blank");
+            throw new IllegalArgumentException("labelKey must not be blank, but was: \"" + labelKey + '"');
         }
         if (tooltipKey.isBlank()) {
-            throw new IllegalArgumentException("tooltipKey must not be blank");
+            throw new IllegalArgumentException("tooltipKey must not be blank, but was: \"" + tooltipKey + '"');
         }
     }
 

@@ -14,7 +14,7 @@ final class SimulationInitializationCanceledExceptionTest {
         var exception = new SimulationInitializationCanceledException();
 
         assertAll(
-                () -> assertEquals("Simulation initialization was canceled.", exception.getMessage()),
+                () -> assertEquals("Simulation initialization was canceled", exception.getMessage()),
                 () -> assertNull(exception.getCause()),
                 () -> assertArrayEquals(new Throwable[0], exception.getSuppressed()),
                 () -> assertArrayEquals(new StackTraceElement[0], exception.getStackTrace())

@@ -54,7 +54,7 @@ public final class SnakeStepLogic implements AgentStepLogic<SnakeEntity, SnakeSt
                                  int stepIndex,
                                  SnakeStatistics statistics) {
         if (!(agentCell.entity() instanceof SnakeHead snakeHead)) {
-            throw new IllegalArgumentException("Provided cell does not contain a SnakeHead entity. Cell: " + agentCell);
+            throw new IllegalArgumentException("agentCell must contain a SnakeHead, but was: " + agentCell);
         }
         var headCoordinate = agentCell.coordinate();
 
@@ -149,7 +149,8 @@ public final class SnakeStepLogic implements AgentStepLogic<SnakeEntity, SnakeSt
                     }
                 }
             } else {
-                throw new IllegalStateException("Multiple edge behaviors for the same neighbor coordinate. " + cellNeighborsWithEdgeBehavior);
+                throw new IllegalStateException("Unable to collect neighbors: multiple edge behaviors per coordinate, "
+                        + "neighbors=" + cellNeighborsWithEdgeBehavior);
             }
         }
         return new MoveContext(

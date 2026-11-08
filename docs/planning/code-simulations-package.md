@@ -125,7 +125,7 @@ sources. "Types" counts the top-level types in main sources of a group.
 |----|---------------------------------------------------------------|------:|-------------|
 | A1 | File endings                                                  |     - | done        |
 | A2 | Javadoc paragraphs                                            |     - | done        |
-| B1 | Exception messages                                            |     - | open        |
+| B1 | Exception messages                                            |     - | done        |
 | B2 | Log messages                                                  |     - | open        |
 | B3 | Member order                                                  |     - | open        |
 | B4 | Edge behavior checks and direction rings                      |     - | open        |
@@ -210,6 +210,7 @@ as `core`, `ui`, and `engine` do since `code-other-classes.md`; adapt the tests 
 - Problem: The compact constructor throws `"value must be finite: " + value` and `"stepCount must be >= 0"`; the second
   message lacks the rejected value.
 - Proposal: `value must be finite, but was: ...` and `stepCount must be >= 0, but was: ...`.
+- Status: done (2026-11-08).
 
 #### Exception message of ReproductionOption
 
@@ -220,6 +221,24 @@ as `core`, `ui`, and `engine` do since `code-other-classes.md`; adapt the tests 
   period, and without the rejected value. No test asserts the text.
 - Proposal: `partnerCell must contain a Pet agent, but was: ` plus the agent entity of `partnerCell`; the same for the
   similar message of `ActionCandidate`.
+- Status: done (2026-11-08); the entity is appended with its `toString()`.
+
+### Decisions
+
+- All deviating messages of `throw` statements and `requireNonNull(..)` calls in main sources follow the three forms
+  of `java.md` now; already conforming messages and the test fixtures stay unchanged, except for the final period of
+  the fixture message in `DefaultObservationViewModelTest`.
+- Blank checks append the value in quotation marks, as `AppStorage` does: `toolId must not be blank, but was: "..."`.
+- Checks of related values name both values as `name=value` pairs after `but was:` (e.g., `StatisticsMetric`,
+  `AbstractObservationView`, and the grid model records).
+- Precondition failures of the ET Pets actions, the placement checks of `EtpetsSimulationManager`, the parsers of
+  `ConwayTransitionRules` and `LangtonMovementRules`, and the `requireNonNull(..)` checks of the simulation manager use
+  `Unable to ...`; the messages lose the `EtpetsAgentLogic:` prefix.
+- `SimulationInitializationCanceledException` keeps its own message without the final period; its test is adapted.
+- `LabMainView` names the switch value as the local variable `checkerGroup`; `ConwayTransitionRules.parse(..)` checks
+  the slash count with one check instead of two, with the same behavior.
+- The three checks of unsupported cell shapes in `ReboundingSimulationManager`, `ReboundingEditToolBarViewModel`, and
+  `SnakeStepLogic` stay unchanged until B4 replaces them.
 
 ### B2. Log messages
 
@@ -256,6 +275,8 @@ commit.
   `SnakeConfig.isValid()`, which allows only `NEIGHBORHOOD_MODE_DEFAULT`. `EtpetsAgentLogic` checks only `VALID`
   and stays unchanged. Existing tests (e.g., `SnakeMoveStrategiesTest`, `LabNeighborhoodHighlightsTest`) keep the
   ring constants and actions as test data.
+- Note (B1, 2026-11-08): B1 left the messages of the three cell shape checks that B4 replaces unchanged; a check that
+  stays adopts the forms of `java.md`.
 
 ### B5. Constructor parameters of step runners and step logic
 
@@ -379,6 +400,16 @@ Notes:
   the public API or an observable property instead. Otherwise expose the state as a package-private accessor
   (`java.md`, "Test Access"). Remove the helpers.
 
+#### Null check of the simulation manager factory
+
+- Origin: B1 (2026-11-08)
+- Types: `DefaultMainViewModel`, `DefaultMainViewModelTest`
+- Problem: `initializeSimulation(..)` checks the non-null result of `simulationManagerFactory.apply(..)` with
+  `requireNonNull(..)`, which `java.md` ("Nullability") allows only for `@Nullable` values. The test wraps checked
+  exceptions three times in a plain `RuntimeException` (`java.md`, "Exceptions").
+- Proposal: Remove the check unless the factory contract becomes `@Nullable`; throw a specific exception in the test
+  helpers.
+
 ### C6. `core.view`: config and control views
 
 `SimulationConfigView`, `SimulationControlView`, `AbstractConfigView`, `AbstractControlView`, `DefaultControlView`,
@@ -488,6 +519,14 @@ Families and their known deviations:
 ### D2. Rebounding
 
 ### D3. Snake
+
+#### Empty check of the move strategies
+
+- Origin: B1 (2026-11-08)
+- Types: `SnakeEditToolBarViewModel`
+- Problem: The constructor throws if `SnakeMoveStrategies.strategies()` is empty, which cannot occur for the constant
+  catalog.
+- Proposal: Remove the check as dead code.
 
 ### D4. Sugarscape
 

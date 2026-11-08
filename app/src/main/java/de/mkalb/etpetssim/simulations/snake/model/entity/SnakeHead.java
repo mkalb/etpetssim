@@ -30,7 +30,7 @@ public final class SnakeHead implements SnakeEntity {
                      int initialPendingGrowth,
                      int stepIndexOfSpawn) {
         if (initialPendingGrowth < 0) {
-            throw new IllegalArgumentException("initialPendingGrowth must be non-negative");
+            throw new IllegalArgumentException("initialPendingGrowth must be >= 0, but was: " + initialPendingGrowth);
         }
         this.id = id;
         this.strategy = strategy;
