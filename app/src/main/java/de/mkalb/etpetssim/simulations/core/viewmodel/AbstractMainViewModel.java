@@ -16,6 +16,7 @@ import java.util.Optional;
 
 /**
  * Base class for main view models that coordinate config, observation and selection state.
+ *
  * <p>Thin common base of all main view models. Regular simulations use {@link DefaultMainViewModel}, which adds the
  * timed and batch execution lifecycle; the lab view model extends this class directly because it does not run timed
  * steps.
@@ -35,11 +36,10 @@ public abstract class AbstractMainViewModel<
     protected final SimulationConfigViewModel<CON> configViewModel;
     protected final SimulationObservationViewModel<STA> observationViewModel;
     private final ObjectProperty<SimulationState> simulationState;
-    private final ObjectProperty<SimulationNotificationType> notificationTypeProperty =
+    private final ObjectProperty<SimulationNotificationType> notificationType =
             new SimpleObjectProperty<>(SimulationNotificationType.NONE);
 
     private final ObjectProperty<@Nullable GridCoordinate> lastClickedCoordinate = new SimpleObjectProperty<>();
-    private final ObjectProperty<@Nullable GridCoordinate> previousClickedCoordinate = new SimpleObjectProperty<>();
 
     protected AbstractMainViewModel(ObjectProperty<SimulationState> simulationState,
                                     SimulationConfigViewModel<CON> configViewModel,
@@ -67,12 +67,12 @@ public abstract class AbstractMainViewModel<
 
     @Override
     public final ObjectProperty<SimulationNotificationType> notificationTypeProperty() {
-        return notificationTypeProperty;
+        return notificationType;
     }
 
     @Override
     public final void setNotificationType(SimulationNotificationType notificationType) {
-        notificationTypeProperty.set(notificationType);
+        this.notificationType.set(notificationType);
     }
 
     /**
@@ -100,43 +100,28 @@ public abstract class AbstractMainViewModel<
         return lastClickedCoordinate;
     }
 
-    public final ObjectProperty<@Nullable GridCoordinate> previousClickedCoordinateProperty() {
-        return previousClickedCoordinate;
-    }
-
     /**
      * Returns the most recently clicked coordinate.
      *
      * @return the coordinate, or empty if no click is stored or the last click was cleared
      */
-    public Optional<GridCoordinate> getLastClickedCoordinate() {
+    public final Optional<GridCoordinate> getLastClickedCoordinate() {
         return Optional.ofNullable(lastClickedCoordinate.get());
     }
 
     /**
-     * Returns the coordinate clicked before the most recent click.
-     *
-     * @return the coordinate, or empty if no previous click is stored
-     */
-    public Optional<GridCoordinate> getPreviousClickedCoordinate() {
-        return Optional.ofNullable(previousClickedCoordinate.get());
-    }
-
-    /**
-     * Shifts click history and stores a new last-clicked coordinate.
+     * Stores a new last-clicked coordinate.
      *
      * @param coordinate new coordinate, or {@code null} to clear the current click
      */
     public final void updateClickedCoordinateProperties(@Nullable GridCoordinate coordinate) {
-        previousClickedCoordinate.set(lastClickedCoordinate.get());
         lastClickedCoordinate.set(coordinate);
     }
 
     /**
-     * Clears current and previous click coordinates.
+     * Clears the last-clicked coordinate.
      */
     public final void resetClickedCoordinateProperties() {
-        previousClickedCoordinate.set(null);
         lastClickedCoordinate.set(null);
     }
 

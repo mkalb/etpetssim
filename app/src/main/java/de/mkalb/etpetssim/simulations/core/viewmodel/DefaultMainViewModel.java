@@ -75,7 +75,6 @@ public final class DefaultMainViewModel<
     private final ChangeListener<SimulationState> simulationStateListener;
     private final ChangeListener<@Nullable GridCoordinate> lastClickedCoordinateListener;
     private final ObjectProperty<@Nullable GC> selectedGridCell = new SimpleObjectProperty<>();
-    private final ObjectProperty<@Nullable GridCoordinate> lastSelectedCoordinate = new SimpleObjectProperty<>();
     private final ObjectProperty<@Nullable ENT> lastSelectedEntity = new SimpleObjectProperty<>();
     private final BiFunction<GM, GridCoordinate, GC> selectedGridCellProvider;
     private final SimulationUserAction<ENT, GM, CON, STA, SM, CTX> simulationUserAction;
@@ -142,7 +141,7 @@ public final class DefaultMainViewModel<
         actionButtonRequestedListener = (_, _, newVal) -> {
             if (newVal) {
                 handleActionButton();
-                controlViewModel.actionButtonRequestedProperty().set(false); // reset
+                controlViewModel.actionButtonRequestedProperty().set(false);
             }
         };
         controlViewModel.actionButtonRequestedProperty().addListener(actionButtonRequestedListener);
@@ -150,7 +149,7 @@ public final class DefaultMainViewModel<
         cancelButtonRequestedListener = (_, _, newVal) -> {
             if (newVal) {
                 handleCancelButton();
-                controlViewModel.cancelButtonRequestedProperty().set(false); // reset
+                controlViewModel.cancelButtonRequestedProperty().set(false);
             }
         };
         controlViewModel.cancelButtonRequestedProperty().addListener(cancelButtonRequestedListener);
@@ -164,13 +163,13 @@ public final class DefaultMainViewModel<
 
         // Initialize selected grid cell handling
         observationViewModel.bindSelectedGridCellProperty(selectedGridCell);
-        lastClickedCoordinateListener = ((_, _, newValue) -> {
+        lastClickedCoordinateListener = (_, _, newValue) -> {
             if ((newValue != null) && hasSimulationManager() && isSelectionState(getSimulationState())) {
                 refreshSelectedGridCell(getCurrentGridModel(), newValue);
             } else {
                 selectedGridCell.set(null);
             }
-        });
+        };
         lastClickedCoordinateProperty().addListener(lastClickedCoordinateListener);
     }
 
@@ -200,15 +199,6 @@ public final class DefaultMainViewModel<
     }
 
     /**
-     * Exposes the coordinate of the last non-null selected cell.
-     *
-     * @return last-selected coordinate property
-     */
-    public ObjectProperty<@Nullable GridCoordinate> lastSelectedCoordinateProperty() {
-        return lastSelectedCoordinate;
-    }
-
-    /**
      * Exposes the entity of the last non-null selected cell.
      *
      * @return last-selected entity property
@@ -223,15 +213,6 @@ public final class DefaultMainViewModel<
 
     public ObjectProperty<String> selectedUserActionToolIdProperty() {
         return editToolBarViewModel.selectedUserActionToolIdProperty();
-    }
-
-    /**
-     * Clears selection-related properties.
-     */
-    public void resetSelectedProperties() {
-        selectedGridCell.set(null);
-        lastSelectedCoordinate.set(null);
-        lastSelectedEntity.set(null);
     }
 
     /**
@@ -422,11 +403,21 @@ public final class DefaultMainViewModel<
         return timer.isRunning();
     }
 
+    boolean hasViewListeners() {
+        return !NO_OP_SIMULATION_INITIALIZED_LISTENER.equals(simulationInitializedListener)
+                || !NO_OP_SIMULATION_STEP_LISTENER.equals(simulationStepListener)
+                || !NO_OP_SIMULATION_RESET_LISTENER.equals(simulationResetListener);
+    }
+
+    private void resetSelectedProperties() {
+        selectedGridCell.set(null);
+        lastSelectedEntity.set(null);
+    }
+
     private void refreshSelectedGridCell(GM currentGridModel, GridCoordinate coordinate) {
         try {
             var cell = selectedGridCellProvider.apply(currentGridModel, coordinate);
             selectedGridCell.set(cell);
-            lastSelectedCoordinate.set(cell.coordinate());
             lastSelectedEntity.set(cell.entity());
             AppLogger.infof("%s: Cell selected: %s", LOG_COMPONENT, cell.toDisplayString());
         } catch (RuntimeException e) {
@@ -565,7 +556,6 @@ public final class DefaultMainViewModel<
                     generation, request);
             SM manager = simulationManagerFactory.apply(request.config(),
                     SimulationInitializationCancellation.interruptionAware());
-            Objects.requireNonNull(manager, "Unable to create simulationManager: factory returned null");
             AppLogger
                     .infof("%s: Simulation manager was created; scheduling initialization completion: generation=%d, "
                                     + "request=%s",
@@ -873,7 +863,7 @@ public final class DefaultMainViewModel<
                     LOG_COMPONENT, lifecycleGeneration, getSimulationState());
             initializationFuture.cancel(true);
         }
-        lifecycleGeneration++;
+        ++lifecycleGeneration;
         initializationFuture = null;
     }
 

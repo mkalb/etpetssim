@@ -38,7 +38,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -170,23 +169,12 @@ final class DefaultMainViewModelTest {
         return List.copyOf(states.subList(states.indexOf(firstState), states.size()));
     }
 
-    private static Object getField(Object target, String fieldName) {
+    private static void awaitRelease(CountDownLatch releaseConstruction) {
         try {
-            Field field = DefaultMainViewModel.class.getDeclaredField(fieldName);
-            field.setAccessible(true);
-            return field.get(target);
-        } catch (ReflectiveOperationException e) {
-            throw new AssertionError("Failed to read field: " + fieldName, e);
-        }
-    }
-
-    private static Object getStaticField(String fieldName) {
-        try {
-            Field field = DefaultMainViewModel.class.getDeclaredField(fieldName);
-            field.setAccessible(true);
-            return field.get(null);
-        } catch (ReflectiveOperationException e) {
-            throw new AssertionError("Failed to read static field: " + fieldName, e);
+            releaseConstruction.await();
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new IllegalStateException("Unable to await the release of the construction", e);
         }
     }
 
@@ -364,20 +352,12 @@ final class DefaultMainViewModelTest {
             fixture.mainViewModel().setSimulationInitializedListener(() -> {});
             fixture.mainViewModel().setSimulationStepListener(_ -> {});
             fixture.mainViewModel().setSimulationResetListener(() -> {});
-            fixture.mainViewModel().shutdownSimulation();
-        });
+            assertTrue(fixture.mainViewModel().hasViewListeners());
 
-        assertAll(
-                () -> assertSame(
-                        getStaticField("NO_OP_SIMULATION_INITIALIZED_LISTENER"),
-                        getField(fixture.mainViewModel(), "simulationInitializedListener")),
-                () -> assertSame(
-                        getStaticField("NO_OP_SIMULATION_STEP_LISTENER"),
-                        getField(fixture.mainViewModel(), "simulationStepListener")),
-                () -> assertSame(
-                        getStaticField("NO_OP_SIMULATION_RESET_LISTENER"),
-                        getField(fixture.mainViewModel(), "simulationResetListener"))
-        );
+            fixture.mainViewModel().shutdownSimulation();
+
+            assertFalse(fixture.mainViewModel().hasViewListeners());
+        });
     }
 
     @Test
@@ -458,12 +438,7 @@ final class DefaultMainViewModelTest {
         Fixture fixture = FXTestSupport.supplyAndWaitNonNull(() -> createFixture((config, cancellation) -> {
             constructedOnFxThread.set(Platform.isFxApplicationThread());
             constructionStarted.countDown();
-            try {
-                releaseConstruction.await();
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                throw new RuntimeException(e);
-            }
+            awaitRelease(releaseConstruction);
             return new ConwaySimulationManager(config, cancellation);
         }, lifecycleExecutor));
         CountDownLatch initializationCompleted = new CountDownLatch(1);
@@ -494,12 +469,7 @@ final class DefaultMainViewModelTest {
         ExecutorService lifecycleExecutor = Executors.newSingleThreadExecutor();
         Fixture fixture = FXTestSupport.supplyAndWaitNonNull(() -> createFixture((config, cancellation) -> {
             constructionStarted.countDown();
-            try {
-                releaseConstruction.await();
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                throw new RuntimeException(e);
-            }
+            awaitRelease(releaseConstruction);
             return new ConwaySimulationManager(config, cancellation);
         }, lifecycleExecutor));
 
@@ -534,12 +504,7 @@ final class DefaultMainViewModelTest {
         ExecutorService lifecycleExecutor = Executors.newSingleThreadExecutor();
         Fixture fixture = FXTestSupport.supplyAndWaitNonNull(() -> createFixture((config, cancellation) -> {
             constructionStarted.countDown();
-            try {
-                releaseConstruction.await();
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                throw new RuntimeException(e);
-            }
+            awaitRelease(releaseConstruction);
             return new ConwaySimulationManager(config, cancellation);
         }, lifecycleExecutor));
 

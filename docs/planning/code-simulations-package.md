@@ -136,7 +136,7 @@ sources. "Types" counts the top-level types in main sources of a group.
 | C2 | `core.model`: managers, statistics base, and user actions     |    10 | done        |
 | C3 | `core.model`: statistics history and extrema                  |     8 | done        |
 | C4 | `core.viewmodel`: config, control, and observation            |     7 | done        |
-| C5 | `core.viewmodel`: main ViewModels and user action descriptors |     5 | open        |
+| C5 | `core.viewmodel`: main ViewModels and user action descriptors |     5 | done        |
 | C6 | `core.view`: config and control views                         |     6 | open        |
 | C7 | `core.view`: observation views and statistics chart           |     3 | open        |
 | C8 | `core.view`: main views, edit tool bar, and canvas drawing    |     8 | open        |
@@ -794,6 +794,7 @@ Notes:
 - Proposal: Look at every call of the two helpers and decide per field whether the test can check the behavior through
   the public API or an observable property instead. Otherwise expose the state as a package-private accessor
   (`java.md`, "Test Access"). Remove the helpers.
+- Status: done (2026-11-08).
 
 #### Null check of the simulation manager factory
 
@@ -803,7 +804,68 @@ Notes:
   `requireNonNull(..)`, which `java.md` ("Nullability") allows only for `@Nullable` values. The test wraps checked
   exceptions three times in a plain `RuntimeException` (`java.md`, "Exceptions").
 - Proposal: Remove the check unless the factory contract becomes `@Nullable`; throw a specific exception in the test
-  helpers.
+  helpers. Note (2026-11-08): the three test factories repeat the same wait on a latch; one private helper
+  `awaitRelease(CountDownLatch)` that throws an `IllegalStateException` replaces the three `RuntimeException`s.
+- Status: done (2026-11-08).
+
+#### Unused click and selection state
+
+- Origin: C5 (2026-11-08)
+- Types: `AbstractMainViewModel`, `DefaultMainViewModel`
+- Problem: `AbstractMainViewModel` keeps a `previousClickedCoordinate` with `previousClickedCoordinateProperty()` and
+  `getPreviousClickedCoordinate()`, which nothing in main or test sources reads. `DefaultMainViewModel` keeps a
+  `lastSelectedCoordinate` with `lastSelectedCoordinateProperty()`, which nothing reads either (only
+  `lastSelectedEntityProperty()` is used, by `SnakeMainView`), and `resetSelectedProperties()` is public but called
+  only by the class itself.
+- Proposal: Remove `previousClickedCoordinate` and its two accessors (`updateClickedCoordinateProperties(..)` and
+  `resetClickedCoordinateProperties()` then only set the last click), remove `lastSelectedCoordinate` and its
+  accessor, and make `resetSelectedProperties()` private. An API change.
+- Status: done (2026-11-08).
+
+#### Details of AbstractMainViewModel and DefaultMainViewModel
+
+- Origin: C5 (2026-11-08)
+- Types: `AbstractMainViewModel`, `DefaultMainViewModel`
+- Problem: The type Javadoc of `AbstractMainViewModel` lacks the empty line before its `<p>` paragraph; the field
+  `notificationTypeProperty` carries the accessor suffix; `getLastClickedCoordinate()` is the only public method of
+  the class that is not `final`. In `DefaultMainViewModel`, two `// reset` comments restate the code, the listener
+  lambda of `lastClickedCoordinateListener` has redundant parentheses, and the generation counter is incremented once
+  with `lifecycleGeneration++` and twice with `++lifecycleGeneration`.
+- Proposal: Add the empty line, rename the field to `notificationType`, make `getLastClickedCoordinate()` `final`,
+  remove the two comments and the parentheses, and use `++lifecycleGeneration` everywhere.
+- Status: done (2026-11-08).
+
+#### Sealed base classes in simulations.core
+
+- Origin: review guidelines ("Base classes"), C5 (2026-11-08)
+- Types: `AbstractMainViewModel` and all other `Abstract*` and `Base*` classes of `simulations.core`
+- Problem: The guideline asks for `sealed` where the subclasses are known. All base classes of `simulations.core`
+  have subclasses in the simulation packages (e.g., `AbstractMainViewModel`: `DefaultMainViewModel` and
+  `LabMainViewModel`); a `permits` clause would make `simulations.core` name types of the simulations, which
+  `simulations.md` ("Package Isolation") forbids.
+- Proposal: Record as cross-group decision: the base classes of `simulations.core` stay non-sealed; `sealed` applies
+  only to closed families inside one simulation (e.g., `CreatureBase`, `ResourceBase`).
+- Status: done (2026-11-08).
+
+### Decisions
+
+- The only reflection test checked that `shutdownSimulation()` releases the three view callbacks; it uses the new
+  package-private query `DefaultMainViewModel.hasViewListeners()` now, and the helpers `getField(..)` and
+  `getStaticField(..)` are removed. The query compares the listeners with the no-op constants through `equals(..)`,
+  which is the identity comparison for lambdas, instead of `!=` with a suppression (maintainer).
+- `initializeSimulation(..)` no longer checks the non-null result of the factory. The three test factories wait with
+  the helper `awaitRelease(CountDownLatch)`, which throws an `IllegalStateException`; the two factories that ignore
+  interruptions on purpose stay unchanged.
+- API change: `previousClickedCoordinateProperty()`, `getPreviousClickedCoordinate()`, and
+  `lastSelectedCoordinateProperty()` with their fields are removed, and `resetSelectedProperties()` is private.
+  `updateClickedCoordinateProperties(..)` and `resetClickedCoordinateProperties()` set only the last click.
+- `AbstractMainViewModel` has the field `notificationType`, a `final` `getLastClickedCoordinate()`, and a type Javadoc
+  with the empty line before its second paragraph; `DefaultMainViewModel` lost two restating comments and redundant
+  parentheses and uses `++lifecycleGeneration` everywhere.
+- The `@SuppressWarnings("OptionalIsPresent")` of `applyUserAction(SimulationUserActionDescriptor)` stays, because
+  `map(..)` would put the side effect of the action into an `Optional` chain.
+- The base classes of `simulations.core` stay non-sealed (cross-group decision).
+- No rule change; `SimulationUserActionDescriptor` and `EditToolBarViewModel` need no change.
 
 ### C6. `core.view`: config and control views
 
@@ -984,6 +1046,9 @@ Decisions of this plan:
 
 - Step runners take the grid model, the config, and further inputs; step logic takes the `GridStructure`, the config,
   and further inputs (`simulations.md`, "Naming"; B5, D).
+- The `Abstract*` and `Base*` classes of `simulations.core` are not `sealed`, because their subclasses lie in the
+  simulation packages and a `permits` clause would break the package isolation of `simulations.md`; `sealed` is for
+  closed families inside one simulation, such as `CreatureBase` and `ResourceBase` (C5, C6 to C8, D).
 
 ## Deferred findings
 
