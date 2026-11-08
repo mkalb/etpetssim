@@ -4,16 +4,12 @@
 
 **Related issues:** #23
 
-**Draft:** This plan was split off from `code-other-classes.md` (2026-10-29) and is not refined yet. Its detailed
-refinement (workflow, commit points, categories, findings, and the copied decisions) follows only after
-`code-other-classes.md` is done, because its categories 2 to 4 still change the rules and decisions that apply here.
-Do not start a category before that refinement.
-
 Temporary working document: an inventory of the instantiable classes of the `simulations` package and its
 sub-packages that no sibling plan covers (classes, including abstract base classes, that are neither records, enums,
 nor classes with a private constructor), grouped into categories, and the workflow for aligning them. It continues
-`code-other-classes.md`, which aligns the code outside `simulations`. The maintainer deletes it after all categories
-are done and pushed.
+`code-other-classes.md`, which aligned the code outside `simulations`. The plan was split off from
+`code-other-classes.md` (2026-10-29) and refined after it and `code-warning-suppressions.md` (#68) were done
+(2026-11-08). The maintainer deletes it after all categories are done and pushed.
 
 ## Workflow
 
@@ -21,6 +17,10 @@ are done and pushed.
 
 - Every class in this inventory complies with `.claude/rules`, in particular its Javadoc and its unit tests. Where a
   rule is missing, unclear, or contradicts a sound existing convention, propose to adjust or extend the rule.
+- Every class is checked against the review checklist of #23 (Javadoc, names, design, dead code and comments,
+  contracts, modern Java 27, and tests); the rules of `.claude/rules` implement most of its points.
+- The plan aligns the classes; simulation-specific improvements (new behavior, balancing, and domain changes) stay in
+  #24, also for ET Pets and the Lab.
 - The classes are as similar as sensible and possible in style, layout, format, Javadoc, naming (class, fields, and
   methods), member order, constructors, annotations, suppressions, and test coverage: strictly within a category, and
   also across category boundaries and with the classes aligned in `code-other-classes.md`.
@@ -61,10 +61,8 @@ are done and pushed.
 
 ### Order
 
-- `code-other-classes.md` comes first; its decisions apply here (see "Cross-category decisions"). All its categories,
-  including the member order (category 2) and the Javadoc rules (category 3), are done before this plan is refined
-  and category 1 starts.
-- `code-warning-suppressions.md` (#68) is done before this plan starts (maintainer, 2026-10-30).
+- `code-other-classes.md` and `code-warning-suppressions.md` (#68) are done; their decisions apply here (see
+  "Cross-category decisions").
 - The sibling plans `code-interface-types.md`, `code-record-types.md`, `code-private-constructor-classes.md`, and
   `code-enum-types.md` are done; their decisions apply here. They stay in `docs/planning` as reference until this
   plan is done and are then deleted together with it and `code-other-classes.md`.
@@ -96,9 +94,9 @@ in all later categories:
   be abstract, `Base*` for complete base implementations such as `BaseTimedSimulationStatistics`, `*Base` for
   abstract entity base classes, and domain-specific entity factories such as `CreatureFactory`). Concrete classes
   are already `final`; keep them `final`.
-- Member order of views and ViewModels: constants, fields, constructor, public methods, protected methods, private
-  helpers (e.g., `build*` and listener methods); decide in categories 2 and 3, based on the general member order
-  decision of `code-other-classes.md` (category 2).
+- Member order: `java.md` ("Code Style") settles it for all classes. The scan of `code-other-classes.md` (category
+  2) found 49 of 232 types in `simulations` that deviate, almost only in the visibility order of the methods (private
+  helpers next to their callers, protected before public); reorder the classes of each category and their tests.
 - Section line comments in views and ViewModels (e.g., `// Rules - NeighborhoodMode` in `WatorConfigViewModel`):
   align them with the four groups of the configs (`// Structure`, `// Layout`, `// Initialization`, `// Rules`) where
   the class follows the config components.
@@ -140,7 +138,7 @@ Status values in the summary table: `open`, `in progress`, `done`.
 ## Summary
 
 Sources: `docs/generated/JavaTypeInventory.csv` and `docs/generated/JavaMethodInventory.csv` (regenerated on
-2026-10-28): 128 classes. Each class appears in exactly one category. The tables are generated from the CSV files;
+2026-11-08): 128 classes. Each class appears in exactly one category. The tables are generated from the CSV files;
 verify them against the sources when a category starts.
 
 Table format:
@@ -214,16 +212,16 @@ Base classes and shared ViewModels in `simulations.core.viewmodel`.
 | Class | Modifiers | Supertypes | Constructors | Methods (pub/prot/pkg/priv) | Tests |
 |-------|-----------|------------|--------------|-----------------------------|-------|
 | `simulations.core.viewmodel.AbstractConfigViewModel` | abstract | SimulationConfigViewModel | protected `(ReadOnlyObjectProperty, CommonConfigSettings)` | 11/1/0/1; nested private record `ConfigValidationRule`; public record `CommonConfigSettings` | `AbstractConfigViewModelTest` |
-| `simulations.core.viewmodel.AbstractMainViewModel` | abstract | SimulationMainViewModel | protected `(ObjectProperty, SimulationConfigViewModel, SimulationObservationViewModel)` | 12/3/0/1 | - |
+| `simulations.core.viewmodel.AbstractMainViewModel` | abstract | SimulationMainViewModel | protected `(ObjectProperty, SimulationConfigViewModel, SimulationObservationViewModel)` | 13/2/0/1 | - |
 | `simulations.core.viewmodel.DefaultControlViewModel` | final | SimulationControlViewModel | `(ReadOnlyObjectProperty)` | 19/0/0/0 (1 static) | `DefaultControlViewModelTest` |
-| `simulations.core.viewmodel.DefaultMainViewModel` | final | AbstractMainViewModel | `(ObjectProperty, SimulationConfigViewModel, DefaultControlViewModel, DefaultObservationViewModel, BiFunction, BiFunction, SimulationUserAction)`; package-private `(ObjectProperty, SimulationConfigViewModel, DefaultControlViewModel, DefaultObservationViewModel, BiFunction, BiFunction, SimulationUserAction, ExecutorService)` | 20/0/0/27 (2 static); nested private record `ExecutorSimulationTerminationHandle`; private record `SimulationStartRequest` | `DefaultMainViewModelTest` |
+| `simulations.core.viewmodel.DefaultMainViewModel` | final | AbstractMainViewModel | `(ObjectProperty, SimulationConfigViewModel, DefaultControlViewModel, DefaultObservationViewModel, BiFunction, BiFunction, SimulationUserAction)`; package-private `(ObjectProperty, SimulationConfigViewModel, DefaultControlViewModel, DefaultObservationViewModel, BiFunction, BiFunction, SimulationUserAction, ExecutorService)` | 20/0/1/26 (2 static); nested private record `ExecutorSimulationTerminationHandle`; private record `SimulationStartRequest` | `DefaultMainViewModelTest` |
 | `simulations.core.viewmodel.DefaultObservationViewModel` | final | SimulationObservationViewModel | `(ReadOnlyObjectProperty)` | 15/0/0/0 | `DefaultObservationViewModelTest` |
 | `simulations.core.viewmodel.EditToolBarViewModel` | package-private final | - | implicit | 0/0/6/0 | - |
 | `simulations.core.viewmodel.SeedProperty` | final | - | `(String)` | 3/0/6/0 (6 static) | - |
 
 Notes:
 
-- `DefaultMainViewModel` is the largest class of this plan (about 900 lines, 27 private methods); its package-private
+- `DefaultMainViewModel` is the largest class of this plan (about 900 lines, 26 private methods); its package-private
   constructor takes an `ExecutorService` for the tests.
 - JavaFX classes: no new tests (see "Rules for this refactoring"), also not for `AbstractMainViewModel`,
   `EditToolBarViewModel`, and `SeedProperty`.
@@ -264,7 +262,7 @@ Base classes and shared views in `simulations.core.view`.
 | `simulations.core.view.AbstractConfigView` | abstract | SimulationConfigView | protected `(VM)` | 0/12/0/0 | - |
 | `simulations.core.view.AbstractControlView` | abstract | SimulationControlView | protected `(VM)` | 1/4/0/0 | - |
 | `simulations.core.view.AbstractDefaultMainView` | abstract | AbstractMainView | protected `(DefaultMainViewModel, CFV, SimulationControlView, OV, GridEntityDescriptorRegistry)` | 1/10/0/10 | - |
-| `simulations.core.view.AbstractMainView` | abstract | SimulationMainView | protected `(VM, CFV, CLV, OV, GridEntityDescriptorRegistry)` | 2/16/0/5 (2 static) | `AbstractMainViewTest` |
+| `simulations.core.view.AbstractMainView` | abstract | SimulationMainView | protected `(VM, CFV, CLV, OV, GridEntityDescriptorRegistry)` | 2/18/0/5 (2 static) | `AbstractMainViewTest` |
 | `simulations.core.view.AbstractObservationView` | abstract | SimulationObservationView | protected `(VM, GridEntityDescriptorRegistry)` | 3/15/0/2; nested private record `MetricLabels` | - |
 | `simulations.core.view.DefaultControlView` | final | AbstractControlView | `(DefaultControlViewModel)` | 1/3/0/4 | - |
 | `simulations.core.view.DrawCallThrottler` | package-private final | - | package-private `(int, int)` | 0/0/3/0 | - |
@@ -405,12 +403,19 @@ Notes:
   samples, extrema, and golden values for Conway, Forest, and Wa-Tor) and through the user action tests. Test gaps
   for the later separate optimization: the five `*StepLogic` classes and `LangtonStepRunner`, which contains the
   Langton rules itself (six package-private methods).
-- `EtpetsSimulationManager` duplicates the former `shuffleCoordinates(..)` and `createCoordinates(..)` of
-  `GridInitializers`; as decided in `code-other-classes.md` (deferred finding "Shuffle with cancellation checks"), it
-  uses `Collections.shuffle(list, random)` and `structure.coordinatesList()` instead. The random sequence stays the
-  same; a manual test with the maximum grid of ET Pets was fast (2026-10-30).
 
 ### Findings
+
+#### Shuffle and coordinates of EtpetsSimulationManager
+
+- Origin: `code-other-classes.md`, deferred finding "Shuffle with cancellation checks" (2026-10-30)
+- Types: `EtpetsSimulationManager`
+- Problem: The class still has the private `shuffleCoordinates(..)` (a Fisher-Yates shuffle with cancellation checks)
+  and `createCoordinates(..)`, which `GridInitializers` dropped in `code-other-classes.md`.
+- Proposal: Use `Collections.shuffle(list, random)` and `structure.coordinatesList()` as decided there; the random
+  sequence of a seed stays the same (same swaps with the same `nextInt(..)` calls), and a manual test with the maximum
+  grid of ET Pets was fast (2026-10-30). Check that the remaining checkpoints still follow `simulations.md` ("Model
+  Initialization").
 
 #### Constructor parameters of the step runners
 
@@ -432,10 +437,10 @@ Notes:
   with a private constructor, not in this plan), which are changed together with this finding
 - Problem: Six checks compare an edge behavior action with `EdgeBehaviorAction.VALID` and `WRAPPED`
   (`ConwayStepLogic`, `ForestStepLogic`, `SnakeStepLogic`, `WatorStepLogic`, `SugarSimulationManager`, and
-  `SugarAgentLogic`), although `EdgeBehaviorAction.isWithinGrid()` exists. `ReboundingEditToolBarViewModel.updateAvailableDirections(..)`,
-  `ReboundingSimulationManager.resolveDirectionRing(..)`, and the constructor of `SnakeStepLogic` select the direction
-  ring by cell shape and neighborhood mode themselves instead of calling
-  `CellNeighborhoods.directionRing(neighborhoodMode, cellShape)`.
+  `SugarAgentLogic`), although `EdgeBehaviorAction.isWithinGrid()` exists.
+  `ReboundingEditToolBarViewModel.updateAvailableDirections(..)`, `ReboundingSimulationManager.resolveDirectionRing(..)`,
+  and the constructor of `SnakeStepLogic` select the direction ring by cell shape and neighborhood mode themselves
+  instead of calling `CellNeighborhoods.directionRing(neighborhoodMode, cellShape)`.
 - Proposal: Use `action.isWithinGrid()` and `directionRing(..)`; `ReboundingSimulationManager` drops
   `resolveDirectionRing(..)`. `directionRing(..)` rejects `TRIANGLE` with an `IllegalArgumentException`, which
   replaces the `IllegalStateException` of the Rebounding classes. `directionRing(..)` returns a ring for square cells
@@ -535,8 +540,8 @@ Notes:
   Langton, and Rebounding have an implicit constructor, those of Etpets, Snake, and Sugar an explicit one that
   selects the first choice.
 - Only `LangtonEditToolBarViewModel` has a test; JavaFX classes get no new tests in this plan.
-- `ReboundingEditToolBarViewModel.updateAvailableDirections(..)` calls `CellNeighborhoods.directionRing(..)` since
-  category 5 (finding "Edge behavior checks and direction rings").
+- `ReboundingEditToolBarViewModel.updateAvailableDirections(..)` is changed in category 5 (finding "Edge behavior
+  checks and direction rings").
 
 ## 9. Simulation views
 
@@ -562,7 +567,7 @@ Views in the `view` packages of the simulations and the start screen.
 | `snake.view.SnakeMainView` | final | AbstractDefaultMainView | `(DefaultMainViewModel, SnakeEditToolBarViewModel, GridEntityDescriptorRegistry, SnakeConfigView, DefaultControlView, SnakeObservationView)` | 0/5/0/5 (4 static) | - |
 | `sugar.view.SugarMainView` | final | AbstractDefaultMainView | `(DefaultMainViewModel, SugarEditToolBarViewModel, GridEntityDescriptorRegistry, SugarConfigView, DefaultControlView, SugarObservationView)` | 0/5/0/4 | - |
 | `wator.view.WatorMainView` | final | AbstractDefaultMainView | `(DefaultMainViewModel, GridEntityDescriptorRegistry, WatorConfigView, DefaultControlView, WatorObservationView)` | 0/4/0/2 | - |
-| `start.StartMainView` | final | SimulationMainView, SimulationControlView | `(Stage, BiConsumer)` | 4/0/0/0 | - |
+| `start.StartMainView` | final | SimulationMainView, SimulationControlView | `(Stage, BiConsumer)` | 4/0/0/2 | - |
 | `conway.view.ConwayObservationView` | final | AbstractObservationView | `(DefaultObservationViewModel, GridEntityDescriptorRegistry)` | 1/1/0/0 | - |
 | `etpets.view.EtpetsObservationView` | final | AbstractObservationView | `(DefaultObservationViewModel, GridEntityDescriptorRegistry)` | 1/2/0/0 | - |
 | `forest.view.ForestObservationView` | final | AbstractObservationView | `(DefaultObservationViewModel, GridEntityDescriptorRegistry)` | 1/1/0/0 | - |
@@ -583,27 +588,30 @@ Notes:
 
 ## Cross-category decisions
 
-Decisions of `code-other-classes.md` that apply to all categories of this plan (copied on 2026-10-29; see there for
-the details and the rule changes, and update this copy in the refinement after `code-other-classes.md` is done):
+Decisions of `code-other-classes.md` (2026-10-29 to 2026-10-30) and `code-warning-suppressions.md` (#68) that apply
+to all categories of this plan. Most are rules now; check the classes against the current rules, not against this
+summary:
 
-- Constructors: no redundant initializations of fields to their default values (`java.md`, "Code Style"); no null
-  checks of non-null parameters (`java.md`, "Nullability"); a constructor has Javadoc only when it explains something
-  that the name, signature, and type Javadoc do not show (e.g., a precondition or how a parameter is used), and then
-  its summary sentence starts with "Creates a ..." (`java.md`, "Javadoc"); Javadoc that only restates the class name
-  and parameters is removed.
-- Javadoc writes the literals `true`, `false`, and `null` as `{@code ...}` (`java.md`, "Javadoc").
+- Rules from `code-other-classes.md`, all in `java.md`: no explicit initialization of fields to their default value
+  ("Code Style"); member order ("Code Style"); one final newline and one blank line before the closing brace of a
+  non-empty type body ("Code Style"); no `requireNonNull(..)` of non-null parameters and no documented
+  `NullPointerException` ("Nullability", "Tags"); the Javadoc rules of category 3 ("Javadoc": constructor Javadoc only
+  when it explains something, "Creates a ..." summaries, `{@code true}`, `@return` instead of `{@return ...}`, `@see`
+  rarely, `<p>` directly before the first word); `toDisplayString()` with `name()` for enum values ("Naming
+  Conventions"); the three forms of exception messages ("Exceptions").
 - Public methods and constructors without a caller in main sources are removed (API change with approval) unless the
-  maintainer keeps them for a planned use; core classes, the base types of `engine`, `engine.model`,
-  `engine.model.entity`, and `engine.neighborhood`, and `FXGridCanvasPainter` keep their complete API (`core.md`,
-  `engine.md`, and `ui.md`).
+  maintainer keeps them for a planned use; `core`, all `engine` packages, and the drawing toolkit of `ui` keep their
+  complete API (`core.md`, `engine.md`, and `ui.md`).
 - Code in `simulations` checks edge behavior actions with `EdgeBehaviorAction.isWithinGrid()` instead of comparing
   with `VALID` and `WRAPPED`, and selects a direction ring with `CellNeighborhoods.directionRing(..)` (category 5,
   finding "Edge behavior checks and direction rings").
-- Open (decided in category 2 of `code-other-classes.md`): members are ordered as constants, fields,
-  constructors, public methods (including overridden lifecycle methods such as `start(..)`), package-private methods,
-  `toString()`, then private helpers, followed by nested types.
-- Class-level `@SuppressWarnings` are narrowed to the members that need them, with the maintainer's approval per case
-  (`java.md`, "Suppressions Policy").
+- Lists are shuffled with `Collections.shuffle(list, random)`, without cancellation checks during the shuffle; all
+  grid coordinates in row-major order come from `GridStructure.coordinatesList()` (category 5, finding "Shuffle and
+  coordinates of EtpetsSimulationManager").
+- `@SuppressWarnings` stay as narrow as possible; #68 reviewed all suppressions, so add or remove one only with the
+  maintainer's approval (`java.md`, "Suppressions Policy").
+- Tests do not use reflection on private members; state is checked through the API, an observable property, or a
+  package-private accessor without the `*ForTesting` suffix (`java.md`, "Test Access", #69).
 
 Decisions of this plan:
 
@@ -614,14 +622,12 @@ None yet.
 ### Blank line before the end of constant-only enums
 
 - Origin: `code-other-classes.md`, script check of the file endings (2026-10-30)
-- Types: `etpets.model.entity.PetActionType`, `lab.shared.LabColorMode`
-- Problem: Enums with only constants end with `}` directly after the last constant, while `StatisticsChartGroup`,
-  `NoUserActionContext`, `SimulationStartMode`, `SimulationTerminationCheckMode`, `SimulationUserActionScope`, and
-  `WatorUserActionContext` have one blank line before the class end, as `.editorconfig` sets; IntelliJ keeps both,
-  because `ij_java_keep_blank_lines_before_right_brace = 1` neither adds nor removes the line. `ui.CellShapeSide` got
-  the blank line in `code-other-classes.md`; empty bodies (`{` and `}`) stay without one.
-- Proposal: Add the blank line in both enums; they belong to no category of this plan, so change them with the
-  category that touches their package, or in a final cleanup.
+- Types: `etpets.model.entity.PetActionType`
+- Problem: The enum ends with `}` directly after the last constant, while `java.md` ("Code Style") requires one blank
+  line before the closing brace of a non-empty type body; IntelliJ neither adds nor removes the line.
+  `lab.shared.LabColorMode` got the blank line in the meantime (2026-11-08).
+- Proposal: Add the blank line; the enum belongs to no category of this plan, so change it with category 7, which
+  touches `etpets.model.entity`, or in the first script check.
 
 ### Exception messages of StatisticsExtremum
 
