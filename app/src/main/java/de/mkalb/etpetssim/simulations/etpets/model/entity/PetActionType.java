@@ -8,4 +8,5 @@ public enum PetActionType {
     REPRODUCE,
     MOVE,
     WAIT
+
 }

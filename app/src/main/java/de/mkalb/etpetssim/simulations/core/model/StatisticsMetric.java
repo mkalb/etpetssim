@@ -81,4 +81,3 @@ public record StatisticsMetric<STA extends SimulationStatistics>(
     }
 
 }
-

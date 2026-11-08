@@ -31,4 +31,3 @@ public record StatisticsExtrema(
     }
 
 }
-

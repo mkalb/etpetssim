@@ -105,4 +105,3 @@ final class StatisticsHistoryTest {
     }
 
 }
-

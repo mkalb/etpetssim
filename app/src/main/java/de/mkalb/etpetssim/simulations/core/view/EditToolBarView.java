@@ -277,5 +277,3 @@ final class EditToolBarView<CTX extends SimulationUserActionContext> {
     }
 
 }
-
-

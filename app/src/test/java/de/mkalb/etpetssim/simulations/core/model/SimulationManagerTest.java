@@ -619,4 +619,3 @@ final class SimulationManagerTest {
     }
 
 }
-
