@@ -17,17 +17,17 @@ final class StatisticsHistoryTest {
     }
 
     @Test
-    void testConstructorUsesDefaultCapacity() {
+    void testConstructor() {
         StatisticsHistory history = new StatisticsHistory();
 
-        assertEquals(StatisticsHistory.DEFAULT_CAPACITY, history.capacity());
+        assertTrue(history.toList().isEmpty());
     }
 
     @Test
-    void testConstructorWithCapacityUsesCapacity() {
+    void testConstructorWithCapacity() {
         StatisticsHistory history = new StatisticsHistory(2);
 
-        assertEquals(2, history.capacity());
+        assertTrue(history.toList().isEmpty());
     }
 
     @Test
@@ -35,29 +35,6 @@ final class StatisticsHistoryTest {
         assertAll(
                 () -> assertThrows(IllegalArgumentException.class, () -> new StatisticsHistory(0)),
                 () -> assertThrows(IllegalArgumentException.class, () -> new StatisticsHistory(-1))
-        );
-    }
-
-    @Test
-    void testConstructorWithCapacityCreatesEmptyHistory() {
-        StatisticsHistory history = new StatisticsHistory(2);
-
-        assertAll(
-                () -> assertEquals(0, history.size()),
-                () -> assertTrue(history.toList().isEmpty())
-        );
-    }
-
-    @Test
-    void testClearRemovesSamples() {
-        StatisticsHistory history = new StatisticsHistory(2);
-        history.add(sample(0));
-
-        history.clear();
-
-        assertAll(
-                () -> assertEquals(0, history.size()),
-                () -> assertTrue(history.toList().isEmpty())
         );
     }
 
@@ -71,7 +48,6 @@ final class StatisticsHistoryTest {
 
         var samples = history.toList();
         assertAll(
-                () -> assertEquals(2, history.size()),
                 () -> assertEquals(2, samples.size()),
                 () -> assertEquals(1, samples.getFirst().stepCount()),
                 () -> assertEquals(2, samples.getLast().stepCount())
@@ -100,7 +76,7 @@ final class StatisticsHistoryTest {
         assertAll(
                 () -> assertEquals(1, snapshot.size()),
                 () -> assertEquals(0, snapshot.getFirst().stepCount()),
-                () -> assertEquals(2, history.size())
+                () -> assertEquals(2, history.toList().size())
         );
     }
 

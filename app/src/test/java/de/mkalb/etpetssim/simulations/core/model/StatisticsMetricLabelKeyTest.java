@@ -1,6 +1,5 @@
 package de.mkalb.etpetssim.simulations.core.model;
 
-import de.mkalb.etpetssim.core.AppResources;
 import de.mkalb.etpetssim.simulations.conway.model.ConwayStatistics;
 import de.mkalb.etpetssim.simulations.etpets.model.EtpetsStatistics;
 import de.mkalb.etpetssim.simulations.forest.model.ForestStatistics;
@@ -11,29 +10,12 @@ import de.mkalb.etpetssim.simulations.sugar.model.SugarStatistics;
 import de.mkalb.etpetssim.simulations.wator.model.WatorStatistics;
 import org.junit.jupiter.api.Test;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
-import java.util.Properties;
-import java.util.Set;
 import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static de.mkalb.etpetssim.testsupport.LocalizationTestSupport.assertKeysInAllBundles;
 
 final class StatisticsMetricLabelKeyTest {
-
-    private static Set<String> loadMainPropertyKeys(String fileName) throws IOException {
-        InputStream stream = AppResources.getResourceAsStream("i18n/" + fileName)
-                .orElseThrow(() -> new AssertionError("Production bundle not found: " + fileName));
-
-        Properties props = new Properties();
-        try (var reader = new InputStreamReader(stream, StandardCharsets.UTF_8)) {
-            props.load(reader);
-        }
-        return props.stringPropertyNames();
-    }
 
     private static List<String> allLabelKeys() {
         return Stream.<List<? extends StatisticsMetric<?>>>of(
@@ -51,23 +33,8 @@ final class StatisticsMetricLabelKeyTest {
     }
 
     @Test
-    void testAllLabelKeysResolveInEnglishBundle() throws IOException {
-        Set<String> enKeys = loadMainPropertyKeys("messages_en_US.properties");
-
-        for (String labelKey : allLabelKeys()) {
-            assertTrue(enKeys.contains(labelKey),
-                    "Missing en_US key: " + labelKey);
-        }
-    }
-
-    @Test
-    void testAllLabelKeysResolveInGermanBundle() throws IOException {
-        Set<String> deKeys = loadMainPropertyKeys("messages_de_DE.properties");
-
-        for (String labelKey : allLabelKeys()) {
-            assertTrue(deKeys.contains(labelKey),
-                    "Missing de_DE key: " + labelKey);
-        }
+    void testLabelKeysExistInAllBundles() {
+        assertKeysInAllBundles(allLabelKeys());
     }
 
 }

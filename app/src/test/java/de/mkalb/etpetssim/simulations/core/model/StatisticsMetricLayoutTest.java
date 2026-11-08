@@ -17,6 +17,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 final class StatisticsMetricLayoutTest {
@@ -142,21 +143,21 @@ final class StatisticsMetricLayoutTest {
 
     @Test
     void testChartWindowSizes() {
-        assertChartWindowSizes(ConwayStatistics.metrics(), 50, 0, 0);
-        assertChartWindowSizes(EtpetsStatistics.metrics(), 1_000, 0, 0);
-        assertChartWindowSizes(ForestStatistics.metrics(), 0, StatisticsMetric.DEFAULT_CHART_WINDOW_SIZE,
-                StatisticsMetric.DEFAULT_CHART_WINDOW_SIZE);
-        assertChartWindowSizes(LangtonStatistics.metrics(), 0, 0);
-        assertChartWindowSizes(ReboundingStatistics.metrics(), 0, 0);
-        assertChartWindowSizes(SnakeStatistics.metrics(), 0, 0, 0, 0, 0);
-        assertChartWindowSizes(SugarStatistics.metrics(), 0, 0);
-        assertChartWindowSizes(WatorStatistics.metrics(), 500, 500);
+        assertAll(
+                () -> assertChartWindowSizes(ConwayStatistics.metrics(), 50, 0, 0),
+                () -> assertChartWindowSizes(EtpetsStatistics.metrics(), 1_000, 0, 0),
+                () -> assertChartWindowSizes(ForestStatistics.metrics(), 0,
+                        StatisticsMetric.DEFAULT_CHART_WINDOW_SIZE, StatisticsMetric.DEFAULT_CHART_WINDOW_SIZE),
+                () -> assertChartWindowSizes(LangtonStatistics.metrics(), 0, 0),
+                () -> assertChartWindowSizes(ReboundingStatistics.metrics(), 0, 0),
+                () -> assertChartWindowSizes(SnakeStatistics.metrics(), 0, 0, 0, 0, 0),
+                () -> assertChartWindowSizes(SugarStatistics.metrics(), 0, 0),
+                () -> assertChartWindowSizes(WatorStatistics.metrics(), 500, 500)
+        );
     }
 
     @Test
     void testChartedMetricsShareWindowSizeWithinGroup() {
-        // StatisticsHistoryChartView is built per simulation, so the shared-window-size invariant
-        // is scoped to one simulation's metrics() list, not across simulations reusing the same group.
         Stream.<List<? extends StatisticsMetric<?>>>of(
                 ConwayStatistics.metrics(),
                 EtpetsStatistics.metrics(),
@@ -172,6 +173,8 @@ final class StatisticsMetricLayoutTest {
                     .collect(Collectors.groupingBy(
                             StatisticsMetric::chartGroup,
                             Collectors.mapping(StatisticsMetric::chartWindowSize, Collectors.toSet())));
+            // StatisticsHistoryChartView is built per simulation, so the shared-window-size invariant
+            // is scoped to one simulation's metrics() list, not across simulations reusing the same group.
             windowSizesByGroup.forEach((group, windowSizes) -> assertEquals(1, windowSizes.size(),
                     "Metrics in chartGroup " + group + " must share the same chartWindowSize, but found "
                             + windowSizes));

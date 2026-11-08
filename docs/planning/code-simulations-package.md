@@ -134,7 +134,7 @@ sources. "Types" counts the top-level types in main sources of a group.
 | B7 | Line length                                                   |     - | done        |
 | C1 | `core.shared`                                                 |    10 | done        |
 | C2 | `core.model`: managers, statistics base, and user actions     |    10 | done        |
-| C3 | `core.model`: statistics history and extrema                  |     8 | open        |
+| C3 | `core.model`: statistics history and extrema                  |     8 | done        |
 | C4 | `core.viewmodel`: config, control, and observation            |     7 | open        |
 | C5 | `core.viewmodel`: main ViewModels and user action descriptors |     5 | open        |
 | C6 | `core.view`: config and control views                         |     6 | open        |
@@ -597,6 +597,76 @@ Notes:
 - First analysis (2026-11-08): `StatisticsHistory` is used only by `AbstractTimedSimulationManager` in the same
   package; `size()`, `clear()`, `capacity()`, `DEFAULT_CAPACITY`, and the constructor with a capacity have no caller in
   main sources.
+- Inventory (2026-11-08, verified against the sources): the enums `StatisticsChartGroup` and `StatisticsExtremaMode`,
+  the records `StatisticsExtrema`, `StatisticsExtremum`, `StatisticsMetric`, and `StatisticsSample`, the public class
+  `StatisticsHistory`, and the package-private class `StatisticsExtremaTracker`. Each has a test class; the topic
+  tests `StatisticsMetricLayoutTest` and `StatisticsMetricLabelKeyTest` check the metrics catalogs of all eight timed
+  simulations, and `ExtremaGoldenValueAnalyzer` is a manual utility for `SimulationManagerTest`.
+- `StatisticsExtremaMode.MIN` has no caller in main sources; it stays as part of the closed set of modes. The records,
+  enums, and `StatisticsExtremaTracker` follow the rules otherwise.
+
+#### Public API of StatisticsHistory
+
+- Origin: first analysis of C3 (2026-11-08)
+- Types: `StatisticsHistory`, `StatisticsHistoryTest`
+- Problem: `StatisticsHistory` is public, but only `AbstractTimedSimulationManager` in the same package uses it, with
+  the default constructor, `add(..)`, and `toList()`. `size()`, `clear()`, `capacity()`, and the public constant
+  `DEFAULT_CAPACITY` serve only the tests, and the constructor with a capacity lets the tests use a small history.
+- Proposal: Make the class package-private like `StatisticsExtremaTracker`, remove `size()`, `clear()`, and
+  `capacity()`, make `DEFAULT_CAPACITY` private, and keep the constructor with a capacity package-private for the
+  tests (`java.md`, "Test Access"). Adapt the thread-safety paragraph and the tests, which check the size through
+  `toList()`. An API change.
+- Status: done (2026-11-08).
+
+#### Constructor Javadoc of StatisticsMetric
+
+- Origin: C3 (2026-11-08)
+- Types: `StatisticsMetric`
+- Problem: The two convenience constructors start their Javadoc with "Convenience constructor ..." instead of
+  "Creates a ...". The `@param chartWindowSize` of the record repeats the invariants of the compact constructor
+  (`0` for `NONE`, positive otherwise), which `java.md` ("Tags") wants only in its `@throws`. The second convenience
+  constructor puts three parameters on its first line, unlike the other signatures (B7).
+- Proposal: "Creates a metric that is not charted." and "Creates a metric with `DEFAULT_CHART_WINDOW_SIZE` for a
+  charted group and `0` for `NONE`."; reduce `@param chartWindowSize` to the meaning and the rule that metrics of the
+  same chart group use the same value, which the constructor cannot check; one parameter per line.
+- Status: done (2026-11-08).
+
+#### Bundle check of the metric label keys
+
+- Origin: C3 (2026-11-08)
+- Types: `StatisticsMetricLabelKeyTest`
+- Problem: The test loads the two bundles itself with one test per locale, while `junit.md` ("Common Contract
+  Patterns") requires `LocalizationTestSupport.assertKeysInAllBundles(..)` for resource-key tests.
+- Proposal: Replace the two tests and the loader with one test `testLabelKeysExistInAllBundles` that passes all label
+  keys to `assertKeysInAllBundles(..)`.
+- Status: done (2026-11-08).
+
+#### Comment and assertions in StatisticsMetricLayoutTest
+
+- Origin: initial script check (C3)
+- Types: `StatisticsMetricLayoutTest`
+- Problem: In `testChartedMetricsShareWindowSizeWithinGroup`, the two-line comment precedes the stream setup, not an
+  assertion (`junit.md`, "Test Method Style"). `testChartWindowSizes` runs eight checks without `assertAll(..)`, so
+  the first failure hides the others.
+- Proposal: Move the comment directly above the assertion inside the lambda, and group the eight checks with
+  `assertAll(..)`.
+- Status: done (2026-11-08).
+
+### Decisions
+
+- API change: `StatisticsHistory` is package-private; `size()`, `clear()`, and `capacity()` are removed,
+  `DEFAULT_CAPACITY` is private, and both constructors, `add(..)`, and `toList()` are package-private. The default
+  constructor lost its Javadoc, which linked the now private constant. The field `samples` is declared as `Deque`
+  instead of `ArrayDeque` (IntelliJ warning, maintainer). `StatisticsHistoryTest` checks the empty history and the
+  size through `toList()`; the tests of `capacity()` and `clear()` are removed.
+- `StatisticsMetric` documents its convenience constructors with "Creates a metric ...", keeps only the
+  cross-metric rule in `@param chartWindowSize`, and puts one parameter per line in the second convenience
+  constructor.
+- `StatisticsMetricLabelKeyTest` has one test `testLabelKeysExistInAllBundles` with
+  `LocalizationTestSupport.assertKeysInAllBundles(..)` instead of its own bundle loader.
+- `StatisticsMetricLayoutTest` groups the window size checks with `assertAll(..)` and places the comment directly
+  above the assertion.
+- No rule change; the group has no test gaps.
 
 ### C4. `core.viewmodel`: config, control, and observation
 

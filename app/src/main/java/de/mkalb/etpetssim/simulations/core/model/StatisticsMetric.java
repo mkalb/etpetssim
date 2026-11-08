@@ -11,10 +11,8 @@ import java.util.function.ToDoubleFunction;
  * @param extractor       function extracting the metric from live statistics
  * @param extremaMode     min/max tracking policy
  * @param chartGroup      chart group assignment; {@link StatisticsChartGroup#NONE} means not charted
- * @param chartWindowSize number of trailing history samples rendered on the chart for this metric;
- *                        must be {@code 0} when {@code chartGroup} is {@link StatisticsChartGroup#NONE},
- *                        and {@code > 0} otherwise; metrics sharing the same {@code chartGroup} must
- *                        use the same value
+ * @param chartWindowSize number of trailing history samples rendered on the chart for this metric; metrics sharing
+ *                        the same {@code chartGroup} must use the same value
  */
 public record StatisticsMetric<STA extends SimulationStatistics>(
         String key,
@@ -55,7 +53,7 @@ public record StatisticsMetric<STA extends SimulationStatistics>(
     }
 
     /**
-     * Convenience constructor for metrics that are not charted ({@code chartGroup = NONE}).
+     * Creates a metric that is not charted.
      *
      * @param key         technical metric key
      * @param labelKey    localization key used for display labels
@@ -70,8 +68,8 @@ public record StatisticsMetric<STA extends SimulationStatistics>(
     }
 
     /**
-     * Convenience constructor using {@link #DEFAULT_CHART_WINDOW_SIZE} for charted metrics and {@code 0} for
-     * uncharted metrics.
+     * Creates a metric with {@link #DEFAULT_CHART_WINDOW_SIZE} for a charted group and {@code 0} for
+     * {@link StatisticsChartGroup#NONE}.
      *
      * @param key         technical metric key
      * @param labelKey    localization key used for display labels
@@ -79,7 +77,9 @@ public record StatisticsMetric<STA extends SimulationStatistics>(
      * @param extremaMode min/max tracking policy
      * @param chartGroup  chart group assignment
      */
-    public StatisticsMetric(String key, String labelKey, ToDoubleFunction<STA> extractor,
+    public StatisticsMetric(String key,
+                            String labelKey,
+                            ToDoubleFunction<STA> extractor,
                             StatisticsExtremaMode extremaMode,
                             StatisticsChartGroup chartGroup) {
         this(key, labelKey, extractor, extremaMode, chartGroup,
