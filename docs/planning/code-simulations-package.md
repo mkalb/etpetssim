@@ -131,7 +131,7 @@ sources. "Types" counts the top-level types in main sources of a group.
 | B4 | Edge behavior checks and direction rings                      |     - | done        |
 | B5 | Constructor parameters of step runners and step logic         |     - | done        |
 | B6 | Metrics catalogs of the statistics                            |     - | done        |
-| B7 | Line length                                                   |     - | open        |
+| B7 | Line length                                                   |     - | done        |
 | C1 | `core.shared`                                                 |    10 | open        |
 | C2 | `core.model`: managers, statistics base, and user actions     |    10 | open        |
 | C3 | `core.model`: statistics history and extrema                  |     8 | open        |
@@ -380,6 +380,22 @@ commit.
 Wrap all lines over 120 characters in main and test sources (`java.md`, "Code Style"); 385 lines in the initial
 check, most in `core.model` tests (57), `lab.view` (30), `core.viewmodel` (29), `etpets.model` (28), `wator.view` (22),
 and `core.view` (22). Runs after B1 to B6, because they change lines; wrap only, without other changes.
+
+### Decisions
+
+- A script wrapped 353 of the 368 lines that were over 120 characters after B6 (2026-11-08), 15 lines were wrapped by
+  hand; no line of `simulations` in main and test sources is longer than 120 characters now.
+- Method signatures put one parameter per line, aligned with the first parameter; if the aligned lines are still too
+  long, the first parameter starts on a new line with continuation indent.
+- Other code breaks at the lowest nesting level and as far right as possible: after a comma, before an operator,
+  before a method call in a chain, and only last after `=`; type arguments are broken only where a single type is too
+  long (the constructors of the main views).
+- Long string literals are split at a space into two concatenated literals; Javadoc and line comments are rewrapped
+  at word boundaries, and commented-out code is wrapped like code.
+- The trailing `TODO` comment in `EtpetsAgentLogic` moved to its own line above the code; apart from this, only
+  whitespace and the concatenations of split literals changed.
+- After the IntelliJ reformat of the maintainer, the type arguments of five main view constructors were wrapped once
+  more, because the formatter aligns their continuation lines further right.
 
 ## Phase C: groups of `simulations.core`
 

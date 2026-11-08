@@ -61,22 +61,27 @@ public final class ReboundingMainView
     private static final String REBOUNDING_TOOL_ID_REMOVE_REBOUNDER = "rebounding.removeRebounder";
     private static final String REBOUNDING_TOOL_ID_REMOVE_WALL = "rebounding.removeWall";
     private static final String REBOUNDING_TOOLBAR_ADD_REBOUNDER = "rebounding.toolbar.addrebounder";
-    private static final String REBOUNDING_TOOLBAR_ADD_REBOUNDER_DIRECTION = "rebounding.toolbar.addrebounder.direction";
-    private static final String REBOUNDING_TOOLBAR_ADD_REBOUNDER_DIRECTION_TOOLTIP = "rebounding.toolbar.addrebounder.direction.tooltip";
+    private static final String REBOUNDING_TOOLBAR_ADD_REBOUNDER_DIRECTION =
+            "rebounding.toolbar.addrebounder.direction";
+    private static final String REBOUNDING_TOOLBAR_ADD_REBOUNDER_DIRECTION_TOOLTIP =
+            "rebounding.toolbar.addrebounder.direction.tooltip";
     private static final String REBOUNDING_TOOLBAR_ADD_REBOUNDER_TOOLTIP = "rebounding.toolbar.addrebounder.tooltip";
     private static final String REBOUNDING_TOOLBAR_ADD_WALL = "rebounding.toolbar.addwall";
     private static final String REBOUNDING_TOOLBAR_ADD_WALL_TOOLTIP = "rebounding.toolbar.addwall.tooltip";
     private static final String REBOUNDING_TOOLBAR_FILL_WALLS = "rebounding.toolbar.fillwalls";
     private static final String REBOUNDING_TOOLBAR_FILL_WALLS_TOOLTIP = "rebounding.toolbar.fillwalls.tooltip";
     private static final String REBOUNDING_TOOLBAR_REMOVE_REBOUNDER = "rebounding.toolbar.removerebounder";
-    private static final String REBOUNDING_TOOLBAR_REMOVE_REBOUNDER_TOOLTIP = "rebounding.toolbar.removerebounder.tooltip";
+    private static final String REBOUNDING_TOOLBAR_REMOVE_REBOUNDER_TOOLTIP =
+            "rebounding.toolbar.removerebounder.tooltip";
     private static final String REBOUNDING_TOOLBAR_REMOVE_WALL = "rebounding.toolbar.removewall";
     private static final String REBOUNDING_TOOLBAR_REMOVE_WALL_TOOLTIP = "rebounding.toolbar.removewall.tooltip";
 
     private final ReboundingEditToolBarViewModel editToolBarViewModel;
     private @Nullable CellDrawer<ReboundingEntity> cellDrawer;
 
-    public ReboundingMainView(DefaultMainViewModel<ReboundingEntity, GridCell<ReboundingEntity>, WritableGridModel<ReboundingEntity>, ReboundingConfig, ReboundingStatistics, ReboundingSimulationManager, ReboundingUserActionContext> viewModel,
+    public ReboundingMainView(DefaultMainViewModel<ReboundingEntity, GridCell<ReboundingEntity>,
+                                      WritableGridModel<ReboundingEntity>, ReboundingConfig, ReboundingStatistics,
+                                      ReboundingSimulationManager, ReboundingUserActionContext> viewModel,
                               ReboundingEditToolBarViewModel editToolBarViewModel,
                               GridEntityDescriptorRegistry entityDescriptorRegistry,
                               ReboundingConfigView configView,
@@ -134,7 +139,10 @@ public final class ReboundingMainView
     }
 
     @Override
-    protected void drawSimulation(CanvasPainters painters, WritableGridModel<ReboundingEntity> currentGridModel, int stepCount, int lastDrawnStepCount) {
+    protected void drawSimulation(CanvasPainters painters,
+                                  WritableGridModel<ReboundingEntity> currentGridModel,
+                                  int stepCount,
+                                  int lastDrawnStepCount) {
         if (cellDrawer == null) {
             AppLogger.warn("ReboundingMainView: Skipping canvas draw: cellDrawer is not initialized");
             return;
@@ -224,7 +232,8 @@ public final class ReboundingMainView
 
         if (selectedToolId != null) {
             var enabledBinding = Bindings.createBooleanBinding(
-                    () -> REBOUNDING_TOOL_ID_ADD_REBOUNDER.equals(selectedToolId.get()) && !availableDirections.isEmpty(),
+                    () -> REBOUNDING_TOOL_ID_ADD_REBOUNDER.equals(selectedToolId.get())
+                            && !availableDirections.isEmpty(),
                     selectedToolId,
                     availableDirections);
             directionLabel.disableProperty().bind(enabledBinding.not());

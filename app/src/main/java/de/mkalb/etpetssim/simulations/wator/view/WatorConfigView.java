@@ -23,23 +23,32 @@ public final class WatorConfigView
     private static final String WATOR_CONFIG_FISH_MAX_AGE = "wator.config.fishmaxage";
     private static final String WATOR_CONFIG_FISH_MAX_AGE_TOOLTIP = "wator.config.fishmaxage.tooltip";
     private static final String WATOR_CONFIG_FISH_MIN_REPRODUCTION_AGE = "wator.config.fishminreproductionage";
-    private static final String WATOR_CONFIG_FISH_MIN_REPRODUCTION_AGE_TOOLTIP = "wator.config.fishminreproductionage.tooltip";
-    private static final String WATOR_CONFIG_FISH_MIN_REPRODUCTION_INTERVAL = "wator.config.fishminreproductioninterval";
-    private static final String WATOR_CONFIG_FISH_MIN_REPRODUCTION_INTERVAL_TOOLTIP = "wator.config.fishminreproductioninterval.tooltip";
+    private static final String WATOR_CONFIG_FISH_MIN_REPRODUCTION_AGE_TOOLTIP =
+            "wator.config.fishminreproductionage.tooltip";
+    private static final String WATOR_CONFIG_FISH_MIN_REPRODUCTION_INTERVAL =
+            "wator.config.fishminreproductioninterval";
+    private static final String WATOR_CONFIG_FISH_MIN_REPRODUCTION_INTERVAL_TOOLTIP =
+            "wator.config.fishminreproductioninterval.tooltip";
     private static final String WATOR_CONFIG_SHARK_MAX_AGE = "wator.config.sharkmaxage";
     private static final String WATOR_CONFIG_SHARK_MAX_AGE_TOOLTIP = "wator.config.sharkmaxage.tooltip";
     private static final String WATOR_CONFIG_SHARK_BIRTH_ENERGY = "wator.config.sharkbirthenergy";
     private static final String WATOR_CONFIG_SHARK_BIRTH_ENERGY_TOOLTIP = "wator.config.sharkbirthenergy.tooltip";
     private static final String WATOR_CONFIG_SHARK_ENERGY_LOSS_PER_STEP = "wator.config.sharkenergylossperstep";
-    private static final String WATOR_CONFIG_SHARK_ENERGY_LOSS_PER_STEP_TOOLTIP = "wator.config.sharkenergylossperstep.tooltip";
+    private static final String WATOR_CONFIG_SHARK_ENERGY_LOSS_PER_STEP_TOOLTIP =
+            "wator.config.sharkenergylossperstep.tooltip";
     private static final String WATOR_CONFIG_SHARK_ENERGY_GAIN_PER_FISH = "wator.config.sharkenergygainperfish";
-    private static final String WATOR_CONFIG_SHARK_ENERGY_GAIN_PER_FISH_TOOLTIP = "wator.config.sharkenergygainperfish.tooltip";
+    private static final String WATOR_CONFIG_SHARK_ENERGY_GAIN_PER_FISH_TOOLTIP =
+            "wator.config.sharkenergygainperfish.tooltip";
     private static final String WATOR_CONFIG_SHARK_MIN_REPRODUCTION_AGE = "wator.config.sharkminreproductionage";
-    private static final String WATOR_CONFIG_SHARK_MIN_REPRODUCTION_AGE_TOOLTIP = "wator.config.sharkminreproductionage.tooltip";
+    private static final String WATOR_CONFIG_SHARK_MIN_REPRODUCTION_AGE_TOOLTIP =
+            "wator.config.sharkminreproductionage.tooltip";
     private static final String WATOR_CONFIG_SHARK_MIN_REPRODUCTION_ENERGY = "wator.config.sharkminreproductionenergy";
-    private static final String WATOR_CONFIG_SHARK_MIN_REPRODUCTION_ENERGY_TOOLTIP = "wator.config.sharkminreproductionenergy.tooltip";
-    private static final String WATOR_CONFIG_SHARK_MIN_REPRODUCTION_INTERVAL = "wator.config.sharkminreproductioninterval";
-    private static final String WATOR_CONFIG_SHARK_MIN_REPRODUCTION_INTERVAL_TOOLTIP = "wator.config.sharkminreproductioninterval.tooltip";
+    private static final String WATOR_CONFIG_SHARK_MIN_REPRODUCTION_ENERGY_TOOLTIP =
+            "wator.config.sharkminreproductionenergy.tooltip";
+    private static final String WATOR_CONFIG_SHARK_MIN_REPRODUCTION_INTERVAL =
+            "wator.config.sharkminreproductioninterval";
+    private static final String WATOR_CONFIG_SHARK_MIN_REPRODUCTION_INTERVAL_TOOLTIP =
+            "wator.config.sharkminreproductioninterval.tooltip";
 
     // Titles
     private static final String WATOR_CONFIG_TITLE_FISH_RULES = "wator.config.title.fishrules";
@@ -87,7 +96,8 @@ public final class WatorConfigView
         var sharkRulesPane = createSharkRulesPane();
         sharkRulesPane.setExpanded(false);
 
-        return createConfigMainBox(structurePane, layoutPane, initializationPane, rulesPane, fishRulesPane, sharkRulesPane);
+        return createConfigMainBox(structurePane, layoutPane, initializationPane, rulesPane, fishRulesPane,
+                sharkRulesPane);
     }
 
     private TitledPane createFishRulesPane() {
@@ -101,14 +111,16 @@ public final class WatorConfigView
         var fishMinReproductionAgeControl = FXComponentFactory.createLabeledIntSpinner(
                 viewModel.fishMinReproductionAgeProperty(),
                 AppLocalization.getText(WATOR_CONFIG_FISH_MIN_REPRODUCTION_AGE),
-                formatIntRangeTooltip(WATOR_CONFIG_FISH_MIN_REPRODUCTION_AGE_TOOLTIP, viewModel.fishMinReproductionAgeProperty()),
+                formatIntRangeTooltip(WATOR_CONFIG_FISH_MIN_REPRODUCTION_AGE_TOOLTIP,
+                        viewModel.fishMinReproductionAgeProperty()),
                 FXStyleClasses.CONFIG_SPINNER
         );
 
         var fishMinReproductionIntervalControl = FXComponentFactory.createLabeledIntSpinner(
                 viewModel.fishMinReproductionIntervalProperty(),
                 AppLocalization.getText(WATOR_CONFIG_FISH_MIN_REPRODUCTION_INTERVAL),
-                formatIntRangeTooltip(WATOR_CONFIG_FISH_MIN_REPRODUCTION_INTERVAL_TOOLTIP, viewModel.fishMinReproductionIntervalProperty()),
+                formatIntRangeTooltip(WATOR_CONFIG_FISH_MIN_REPRODUCTION_INTERVAL_TOOLTIP,
+                        viewModel.fishMinReproductionIntervalProperty()),
                 FXStyleClasses.CONFIG_SPINNER
         );
 
@@ -137,35 +149,40 @@ public final class WatorConfigView
         var sharkEnergyLossPerStepControl = FXComponentFactory.createLabeledIntSpinner(
                 viewModel.sharkEnergyLossPerStepProperty(),
                 AppLocalization.getText(WATOR_CONFIG_SHARK_ENERGY_LOSS_PER_STEP),
-                formatIntRangeTooltip(WATOR_CONFIG_SHARK_ENERGY_LOSS_PER_STEP_TOOLTIP, viewModel.sharkEnergyLossPerStepProperty()),
+                formatIntRangeTooltip(WATOR_CONFIG_SHARK_ENERGY_LOSS_PER_STEP_TOOLTIP,
+                        viewModel.sharkEnergyLossPerStepProperty()),
                 FXStyleClasses.CONFIG_SPINNER
         );
 
         var sharkEnergyGainPerFishControl = FXComponentFactory.createLabeledIntSpinner(
                 viewModel.sharkEnergyGainPerFishProperty(),
                 AppLocalization.getText(WATOR_CONFIG_SHARK_ENERGY_GAIN_PER_FISH),
-                formatIntRangeTooltip(WATOR_CONFIG_SHARK_ENERGY_GAIN_PER_FISH_TOOLTIP, viewModel.sharkEnergyGainPerFishProperty()),
+                formatIntRangeTooltip(WATOR_CONFIG_SHARK_ENERGY_GAIN_PER_FISH_TOOLTIP,
+                        viewModel.sharkEnergyGainPerFishProperty()),
                 FXStyleClasses.CONFIG_SPINNER
         );
 
         var sharkMinReproductionAgeControl = FXComponentFactory.createLabeledIntSpinner(
                 viewModel.sharkMinReproductionAgeProperty(),
                 AppLocalization.getText(WATOR_CONFIG_SHARK_MIN_REPRODUCTION_AGE),
-                formatIntRangeTooltip(WATOR_CONFIG_SHARK_MIN_REPRODUCTION_AGE_TOOLTIP, viewModel.sharkMinReproductionAgeProperty()),
+                formatIntRangeTooltip(WATOR_CONFIG_SHARK_MIN_REPRODUCTION_AGE_TOOLTIP,
+                        viewModel.sharkMinReproductionAgeProperty()),
                 FXStyleClasses.CONFIG_SPINNER
         );
 
         var sharkMinReproductionEnergyControl = FXComponentFactory.createLabeledIntSpinner(
                 viewModel.sharkMinReproductionEnergyProperty(),
                 AppLocalization.getText(WATOR_CONFIG_SHARK_MIN_REPRODUCTION_ENERGY),
-                formatIntRangeTooltip(WATOR_CONFIG_SHARK_MIN_REPRODUCTION_ENERGY_TOOLTIP, viewModel.sharkMinReproductionEnergyProperty()),
+                formatIntRangeTooltip(WATOR_CONFIG_SHARK_MIN_REPRODUCTION_ENERGY_TOOLTIP,
+                        viewModel.sharkMinReproductionEnergyProperty()),
                 FXStyleClasses.CONFIG_SPINNER
         );
 
         var sharkMinReproductionIntervalControl = FXComponentFactory.createLabeledIntSpinner(
                 viewModel.sharkMinReproductionIntervalProperty(),
                 AppLocalization.getText(WATOR_CONFIG_SHARK_MIN_REPRODUCTION_INTERVAL),
-                formatIntRangeTooltip(WATOR_CONFIG_SHARK_MIN_REPRODUCTION_INTERVAL_TOOLTIP, viewModel.sharkMinReproductionIntervalProperty()),
+                formatIntRangeTooltip(WATOR_CONFIG_SHARK_MIN_REPRODUCTION_INTERVAL_TOOLTIP,
+                        viewModel.sharkMinReproductionIntervalProperty()),
                 FXStyleClasses.CONFIG_SPINNER
         );
 

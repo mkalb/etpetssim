@@ -60,8 +60,10 @@ public final class ForestStepLogic implements SynchronousStepLogic<ForestEntity,
     }
 
     private boolean hasBurningNeighbor(GridCell<ForestEntity> cell, ReadableGridModel<ForestEntity> model) {
-        return CellNeighborhoods.cellNeighborsIgnoringEdgeBehavior(cell.coordinate(), config.neighborhoodMode(), structure.cellShape())
-                .map(neighbor -> CellNeighborhoods.applyEdgeBehaviorToCoordinate(neighbor.neighborCoordinate(), structure))
+        return CellNeighborhoods.cellNeighborsIgnoringEdgeBehavior(cell.coordinate(), config.neighborhoodMode(),
+                        structure.cellShape())
+                .map(neighbor -> CellNeighborhoods.applyEdgeBehaviorToCoordinate(neighbor.neighborCoordinate(),
+                        structure))
                 .filter(r -> r.action().isWithinGrid())
                 .map(EdgeBehaviorResult::mapped)
                 .map(model::getEntity)

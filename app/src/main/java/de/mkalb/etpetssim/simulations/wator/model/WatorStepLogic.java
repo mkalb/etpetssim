@@ -34,7 +34,8 @@ public final class WatorStepLogic implements AgentStepLogic<WatorEntity, WatorSt
         List<GridCell<WatorEntity>> fishCells = new ArrayList<>();
         List<GridCell<WatorEntity>> waterCells = new ArrayList<>();
 
-        for (var result : CellNeighborhoods.neighborEdgeBehaviorResults(agentCell.coordinate(), config.neighborhoodMode(), model.structure())) {
+        for (var result : CellNeighborhoods.neighborEdgeBehaviorResults(agentCell.coordinate(),
+                config.neighborhoodMode(), model.structure())) {
             if (result.action().isWithinGrid()) {
                 WatorEntity neighborEntity = model.getEntity(result.mapped());
                 if (neighborEntity.isFish()) {
@@ -72,12 +73,15 @@ public final class WatorStepLogic implements AgentStepLogic<WatorEntity, WatorSt
             // Reproduce, if conditions are met
             if (fish.ageAtStepIndex(stepIndex) >= config.fishMinReproductionAge()) {
                 if (fish.stepIndexOfLastReproduction().isEmpty() ||
-                        ((stepIndex - fish.stepIndexOfLastReproduction().getAsInt()) >= config.fishMinReproductionInterval())) {
+                        ((stepIndex
+                                - fish.stepIndexOfLastReproduction().getAsInt()) >= config
+                                .fishMinReproductionInterval())) {
                     Fish childFish = creatureFactory.createFish(stepIndex);
                     statistics.incrementFishCells();
                     fish.reproduce(childFish);
                     model.setEntity(fishOriginalCoordinate, childFish);
-                    // AppLogger.info("WatorStepLogic - Fish at coordinate: " + fishNewCoordinate + " reproduced with child at: " + fishOriginalCoordinate);
+                    // AppLogger.info("WatorStepLogic - Fish at coordinate: " + fishNewCoordinate
+                    //         + " reproduced with child at: " + fishOriginalCoordinate);
                 }
             }
         }
@@ -92,7 +96,8 @@ public final class WatorStepLogic implements AgentStepLogic<WatorEntity, WatorSt
 
     private void performSharkStep(GridCell<WatorEntity> agentCell, WritableGridModel<WatorEntity> model, int stepIndex,
                                   WatorStatistics statistics,
-                                  Shark shark, List<GridCell<WatorEntity>> fishCells, List<GridCell<WatorEntity>> waterCells) {
+                                  Shark shark, List<GridCell<WatorEntity>> fishCells,
+                                  List<GridCell<WatorEntity>> waterCells) {
         GridCoordinate sharkOriginalCoordinate = agentCell.coordinate();
         GridCoordinate sharkNewCoordinate = sharkOriginalCoordinate;
 
@@ -106,24 +111,29 @@ public final class WatorStepLogic implements AgentStepLogic<WatorEntity, WatorSt
             sharkNewCoordinate = fishCell.coordinate();
             shark.adjustEnergy(config.sharkEnergyGainPerFish());
             statistics.decrementFishCells();
-            // AppLogger.info("WatorStepLogic - Shark at coordinate: " + sharkOriginalCoordinate + " ate fish at: " + sharkNewCoordinate);
+            // AppLogger.info("WatorStepLogic - Shark at coordinate: " + sharkOriginalCoordinate + " ate fish at: "
+            //         + sharkNewCoordinate);
         } else if (!waterCells.isEmpty()) {
             GridCell<WatorEntity> waterCell = pickRandomCell(waterCells);
             model.setSwappedEntities(agentCell, waterCell);
             sharkNewCoordinate = waterCell.coordinate();
-            //    // AppLogger.info("WatorStepLogic - Moving shark from coordinate: " + coordinate + " to: " + sharkCoordinate);
+            //    // AppLogger.info("WatorStepLogic - Moving shark from coordinate: " + coordinate
+            //    //         + " to: " + sharkCoordinate);
         }
         // Reproduce, if conditions are met
         if (!sharkOriginalCoordinate.equals(sharkNewCoordinate)) {
             if (shark.ageAtStepIndex(stepIndex) >= config.sharkMinReproductionAge()) {
                 if (shark.currentEnergy() >= config.sharkMinReproductionEnergy()) {
                     if (shark.stepIndexOfLastReproduction().isEmpty() ||
-                            ((stepIndex - shark.stepIndexOfLastReproduction().getAsInt()) >= config.sharkMinReproductionInterval())) {
+                            ((stepIndex
+                                    - shark.stepIndexOfLastReproduction().getAsInt()) >= config
+                                    .sharkMinReproductionInterval())) {
                         Shark childShark = creatureFactory.createShark(stepIndex, config.sharkBirthEnergy());
                         statistics.incrementSharkCells();
                         shark.reproduce(childShark);
                         model.setEntity(sharkOriginalCoordinate, childShark);
-                        // AppLogger.info("WatorStepLogic - Reproducing shark at coordinate: " + sharkNewCoordinate + " with child at: " + sharkOriginalCoordinate);
+                        // AppLogger.info("WatorStepLogic - Reproducing shark at coordinate: " + sharkNewCoordinate
+                        //         + " with child at: " + sharkOriginalCoordinate);
                     }
                 }
             }

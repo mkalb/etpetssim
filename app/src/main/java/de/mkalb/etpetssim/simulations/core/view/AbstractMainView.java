@@ -350,7 +350,8 @@ public abstract class AbstractMainView<
             AppLogger.infof("%s: Cell font created: font=%s", LOG_COMPONENT, cellFont);
         } else {
             cellFont = null;
-            AppLogger.infof("%s: Cell font not created because font size is too small: fontSize=%.1f", LOG_COMPONENT, fontSize);
+            AppLogger.infof("%s: Cell font not created because font size is too small: fontSize=%.1f", LOG_COMPONENT,
+                    fontSize);
         }
         double fontSizeEmoji = computeCellEmojiFontSize(cellDimension, structure.cellShape());
         if (fontSizeEmoji >= MIN_EMOJI_FONT_SIZE) {
@@ -358,7 +359,8 @@ public abstract class AbstractMainView<
             AppLogger.infof("%s: Cell emoji font created: font=%s", LOG_COMPONENT, cellEmojiFont);
         } else {
             cellEmojiFont = null;
-            AppLogger.infof("%s: Cell emoji font not created because font size is too small: fontSize=%.1f", LOG_COMPONENT, fontSizeEmoji);
+            AppLogger.infof("%s: Cell emoji font not created because font size is too small: fontSize=%.1f",
+                    LOG_COMPONENT, fontSizeEmoji);
         }
 
         return newPainters;

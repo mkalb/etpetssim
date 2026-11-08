@@ -37,7 +37,8 @@ public final class ConwaySimulationManager
 
         var runner = new SynchronousStepRunner<>(model, new ConwayStepLogic(structure, config));
         var terminationCondition = new ConwayTerminationCondition();
-        executor = new TimedSimulationExecutor<>(new DefaultSimulationExecutor<>(runner, runner::currentGridModel, terminationCondition, statistics));
+        executor = new TimedSimulationExecutor<>(new DefaultSimulationExecutor<>(runner, runner::currentGridModel,
+                terminationCondition, statistics));
 
         initializeGrid(config, model, random, cancellation);
         cancellation.checkCanceled();

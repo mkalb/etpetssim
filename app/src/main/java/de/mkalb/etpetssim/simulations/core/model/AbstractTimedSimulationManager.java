@@ -151,7 +151,9 @@ public abstract class AbstractTimedSimulationManager<
         for (var metric : metrics) {
             double value = metric.extractor().applyAsDouble(liveStatistics);
             if (!Double.isFinite(value)) {
-                AppLogger.errorf("AbstractTimedSimulationManager: Replacing non-finite metric value with NaN: key: %s, value: %f",
+                AppLogger
+                        .errorf("AbstractTimedSimulationManager: Replacing non-finite metric value with NaN: key: %s, "
+                                        + "value: %f",
                         metric.key(), value);
                 value = Double.NaN;
             }

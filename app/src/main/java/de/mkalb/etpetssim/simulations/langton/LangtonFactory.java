@@ -32,7 +32,8 @@ public final class LangtonFactory {
         // Common
         ReadOnlyObjectWrapper<SimulationState> simulationState = new ReadOnlyObjectWrapper<>(SimulationState.READY);
         ReadOnlyObjectProperty<SimulationState> readOnlySimulationState = simulationState.getReadOnlyProperty();
-        var entityDescriptorRegistry = GridEntityDescriptorRegistry.ofCollection(LangtonEntity.allEntityDescriptorProviders());
+        var entityDescriptorRegistry = GridEntityDescriptorRegistry
+                .ofCollection(LangtonEntity.allEntityDescriptorProviders());
 
         // ViewModel
         var configViewModel = new LangtonConfigViewModel(readOnlySimulationState);
@@ -48,7 +49,8 @@ public final class LangtonFactory {
         var configView = new LangtonConfigView(configViewModel);
         var controlView = new DefaultControlView(controlViewModel);
         var observationView = new LangtonObservationView(observationViewModel, entityDescriptorRegistry);
-        return new LangtonMainView(viewModel, editToolBarViewModel, entityDescriptorRegistry, configView, controlView, observationView);
+        return new LangtonMainView(viewModel, editToolBarViewModel, entityDescriptorRegistry, configView, controlView,
+                observationView);
     }
 
 }

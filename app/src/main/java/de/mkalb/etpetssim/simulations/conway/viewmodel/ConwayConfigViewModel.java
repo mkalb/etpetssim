@@ -80,7 +80,8 @@ public final class ConwayConfigViewModel
     // Rules
     private final List<BooleanProperty> surviveProperties = new ArrayList<>();
     private final List<BooleanProperty> birthProperties = new ArrayList<>();
-    private final ObjectProperty<ConwayTransitionRules> transitionRules = new SimpleObjectProperty<>(TRANSITION_RULES_DEFAULT);
+    private final ObjectProperty<ConwayTransitionRules> transitionRules =
+            new SimpleObjectProperty<>(TRANSITION_RULES_DEFAULT);
     private final IntegerProperty maxNeighborCount = new SimpleIntegerProperty(0);
 
     public ConwayConfigViewModel(ReadOnlyObjectProperty<SimulationState> simulationState) {

@@ -76,7 +76,8 @@ public final class ReboundingStepLogic implements AgentStepLogic<ReboundingEntit
         }
     }
 
-    private CompassDirection computeBounceDirection(CompassDirection currentDirection, GridCoordinate blockedCoordinate) {
+    private CompassDirection computeBounceDirection(CompassDirection currentDirection,
+                                                    GridCoordinate blockedCoordinate) {
         if (currentDirection.level() == 0) {
             return currentDirection.opposite();
         } else if (currentDirection.level() == 1) {

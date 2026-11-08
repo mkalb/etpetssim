@@ -17,7 +17,8 @@ public final class ReboundingStatistics
     public static final String KEY_MOVING_ENTITY_CELLS = "movingEntityCells";
 
     private static final String REBOUNDING_OBSERVATION_CELLS_WALL = "rebounding.observation.cells.wall";
-    private static final String REBOUNDING_OBSERVATION_CELLS_MOVING_ENTITY = "rebounding.observation.cells.movingentity";
+    private static final String REBOUNDING_OBSERVATION_CELLS_MOVING_ENTITY =
+            "rebounding.observation.cells.movingentity";
 
     private static final List<StatisticsMetric<ReboundingStatistics>> METRICS = List.of(
             new StatisticsMetric<>(KEY_WALL_CELLS, REBOUNDING_OBSERVATION_CELLS_WALL,

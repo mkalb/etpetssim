@@ -107,14 +107,17 @@ public record WatorConfig(
                 && isInRangeDouble(sharkPercent, SHARK_PERCENT_MIN, SHARK_PERCENT_MAX)
                 && isInRangeInt(fishMaxAge, FISH_MAX_AGE_MIN, FISH_MAX_AGE_MAX)
                 && isInRangeInt(fishMinReproductionAge, FISH_MIN_REPRODUCTION_AGE_MIN, FISH_MIN_REPRODUCTION_AGE_MAX)
-                && isInRangeInt(fishMinReproductionInterval, FISH_MIN_REPRODUCTION_INTERVAL_MIN, FISH_MIN_REPRODUCTION_INTERVAL_MAX)
+                && isInRangeInt(fishMinReproductionInterval, FISH_MIN_REPRODUCTION_INTERVAL_MIN,
+                FISH_MIN_REPRODUCTION_INTERVAL_MAX)
                 && isInRangeInt(sharkMaxAge, SHARK_MAX_AGE_MIN, SHARK_MAX_AGE_MAX)
                 && isInRangeInt(sharkBirthEnergy, SHARK_BIRTH_ENERGY_MIN, SHARK_BIRTH_ENERGY_MAX)
                 && isInRangeInt(sharkEnergyLossPerStep, SHARK_ENERGY_LOSS_PER_STEP_MIN, SHARK_ENERGY_LOSS_PER_STEP_MAX)
                 && isInRangeInt(sharkEnergyGainPerFish, SHARK_ENERGY_GAIN_PER_FISH_MIN, SHARK_ENERGY_GAIN_PER_FISH_MAX)
                 && isInRangeInt(sharkMinReproductionAge, SHARK_MIN_REPRODUCTION_AGE_MIN, SHARK_MIN_REPRODUCTION_AGE_MAX)
-                && isInRangeInt(sharkMinReproductionEnergy, SHARK_MIN_REPRODUCTION_ENERGY_MIN, SHARK_MIN_REPRODUCTION_ENERGY_MAX)
-                && isInRangeInt(sharkMinReproductionInterval, SHARK_MIN_REPRODUCTION_INTERVAL_MIN, SHARK_MIN_REPRODUCTION_INTERVAL_MAX);
+                && isInRangeInt(sharkMinReproductionEnergy, SHARK_MIN_REPRODUCTION_ENERGY_MIN,
+                SHARK_MIN_REPRODUCTION_ENERGY_MAX)
+                && isInRangeInt(sharkMinReproductionInterval, SHARK_MIN_REPRODUCTION_INTERVAL_MIN,
+                SHARK_MIN_REPRODUCTION_INTERVAL_MAX);
     }
 
     private boolean hasValidCombinedRanges() {

@@ -121,9 +121,11 @@ public final class ConwayConfigView
                 FXStyleClasses.CONFIG_COMBOBOX
         );
 
-        bindVisibilityToCellShape(presetTriangleControl.label(), presetTriangleControl.controlRegion(), CellShape.TRIANGLE);
+        bindVisibilityToCellShape(presetTriangleControl.label(), presetTriangleControl.controlRegion(),
+                CellShape.TRIANGLE);
         bindVisibilityToCellShape(presetSquareControl.label(), presetSquareControl.controlRegion(), CellShape.SQUARE);
-        bindVisibilityToCellShape(presetHexagonControl.label(), presetHexagonControl.controlRegion(), CellShape.HEXAGON);
+        bindVisibilityToCellShape(presetHexagonControl.label(), presetHexagonControl.controlRegion(),
+                CellShape.HEXAGON);
 
         var inputControl = FXComponentFactory.createLabeledStringTextBox(
                 viewModel.ruleProperty().stringProperty(),
@@ -156,10 +158,11 @@ public final class ConwayConfigView
         return label;
     }
 
-    private FXComponentFactory.LabeledControl<GridPane> createTransitionRulesControl(List<BooleanProperty> surviveProperties,
-                                                                                     List<BooleanProperty> birthProperties,
-                                                                                     ObjectProperty<ConwayTransitionRules> transitionRulesProperty,
-                                                                                     IntegerProperty maxNeighborCountProperty) {
+    private FXComponentFactory.LabeledControl<GridPane> createTransitionRulesControl(
+            List<BooleanProperty> surviveProperties,
+            List<BooleanProperty> birthProperties,
+            ObjectProperty<ConwayTransitionRules> transitionRulesProperty,
+            IntegerProperty maxNeighborCountProperty) {
         Label label = new Label();
         label.textProperty().bind(Bindings.createStringBinding(
                 () -> AppLocalization.getFormattedText(CONWAY_CONFIG_RULES,
@@ -180,13 +183,16 @@ public final class ConwayConfigView
         gridPane.getStyleClass().add(ConwayStyleClasses.CONWAY_TRANSITIONRULES_GRIDPANE);
 
         gridPane.add(createRulesLabel("", tooltip, HPos.LEFT, ConwayStyleClasses.CONWAY_TRANSITIONRULES_LABEL), 0, 0);
-        gridPane.add(createRulesLabel(AppLocalization.getText(CONWAY_CONFIG_RULES_SURVIVE), tooltip, HPos.LEFT, ConwayStyleClasses.CONWAY_TRANSITIONRULES_LABEL), 0, 1);
-        gridPane.add(createRulesLabel(AppLocalization.getText(CONWAY_CONFIG_RULES_BIRTH), tooltip, HPos.LEFT, ConwayStyleClasses.CONWAY_TRANSITIONRULES_LABEL), 0, 2);
+        gridPane.add(createRulesLabel(AppLocalization.getText(CONWAY_CONFIG_RULES_SURVIVE), tooltip, HPos.LEFT,
+                ConwayStyleClasses.CONWAY_TRANSITIONRULES_LABEL), 0, 1);
+        gridPane.add(createRulesLabel(AppLocalization.getText(CONWAY_CONFIG_RULES_BIRTH), tooltip, HPos.LEFT,
+                ConwayStyleClasses.CONWAY_TRANSITIONRULES_LABEL), 0, 2);
 
         // Add digit labels (row 0)
         for (int i = ConwayTransitionRules.MIN_NEIGHBOR_COUNT; i <= ConwayTransitionRules.MAX_NEIGHBOR_COUNT; i++) {
             int index = i - ConwayTransitionRules.MIN_NEIGHBOR_COUNT;
-            Label digitLabel = createRulesLabel(String.valueOf(i), tooltip, HPos.CENTER, ConwayStyleClasses.CONWAY_TRANSITIONRULES_DIGIT_LABEL);
+            Label digitLabel = createRulesLabel(String.valueOf(i), tooltip, HPos.CENTER,
+                    ConwayStyleClasses.CONWAY_TRANSITIONRULES_DIGIT_LABEL);
             gridPane.add(digitLabel, 1 + index, 0);
             GridPane.setHalignment(digitLabel, HPos.CENTER);
         }

@@ -64,7 +64,8 @@ final class EtpetsUserActionTest {
         EtpetsSimulationManager manager = new EtpetsSimulationManager(createConfig());
         EtpetsUserAction userAction = new EtpetsUserAction();
         GridCoordinate coordinate = new GridCoordinate(0, 0);
-        manager.currentGridModel().terrainModel().setEntity(coordinate, new Trail(EtpetsBalance.TRAIL_INTENSITY_DEFAULT));
+        manager.currentGridModel().terrainModel().setEntity(coordinate,
+                new Trail(EtpetsBalance.TRAIL_INTENSITY_DEFAULT));
 
         userAction.apply(
                 manager,

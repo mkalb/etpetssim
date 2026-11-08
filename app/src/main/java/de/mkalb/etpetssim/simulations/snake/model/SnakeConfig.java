@@ -94,7 +94,8 @@ public record SnakeConfig(
                 && isInRangeInt(initialPendingGrowth, INITIAL_PENDING_GROWTH_MIN, INITIAL_PENDING_GROWTH_MAX)
                 && isInRangeInt(growthPerFood, GROWTH_PER_FOOD_MIN, GROWTH_PER_FOOD_MAX)
                 && isInRangeInt(basePointsPerFood, BASE_POINTS_PER_FOOD_MIN, BASE_POINTS_PER_FOOD_MAX)
-                && isInRangeDouble(segmentLengthMultiplier, SEGMENT_LENGTH_MULTIPLIER_MIN, SEGMENT_LENGTH_MULTIPLIER_MAX);
+                && isInRangeDouble(segmentLengthMultiplier, SEGMENT_LENGTH_MULTIPLIER_MIN,
+                SEGMENT_LENGTH_MULTIPLIER_MAX);
     }
 
 }

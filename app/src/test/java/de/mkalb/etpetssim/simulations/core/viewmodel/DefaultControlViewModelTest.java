@@ -37,7 +37,8 @@ final class DefaultControlViewModelTest {
                     () -> assertEquals(700.0d, viewModel.stepDurationProperty().getValue()),
                     () -> assertEquals(100, viewModel.stepCountProperty().getValue()),
                     () -> assertEquals(SimulationStartMode.START_IMMEDIATELY, viewModel.startModeProperty().getValue()),
-                    () -> assertEquals(SimulationTerminationCheckMode.CHECKED, viewModel.terminationCheckProperty().getValue())
+                    () -> assertEquals(SimulationTerminationCheckMode.CHECKED,
+                            viewModel.terminationCheckProperty().getValue())
             );
         });
     }
@@ -157,7 +158,8 @@ final class DefaultControlViewModelTest {
 
             for (SimulationMode simulationMode : SimulationMode.values()) {
                 viewModel.simulationModeProperty().setValue(simulationMode);
-                assertEquals(simulationMode == SimulationMode.BATCH_SINGLE, viewModel.isModeBatchSingle(), simulationMode.name());
+                assertEquals(simulationMode == SimulationMode.BATCH_SINGLE, viewModel.isModeBatchSingle(),
+                        simulationMode.name());
             }
         });
     }
@@ -169,7 +171,8 @@ final class DefaultControlViewModelTest {
 
             for (SimulationMode simulationMode : SimulationMode.values()) {
                 viewModel.simulationModeProperty().setValue(simulationMode);
-                assertEquals(simulationMode == SimulationMode.BATCH_CONTINUOUS, viewModel.isModeBatchContinuous(), simulationMode.name());
+                assertEquals(simulationMode == SimulationMode.BATCH_CONTINUOUS, viewModel.isModeBatchContinuous(),
+                        simulationMode.name());
             }
         });
     }
@@ -193,7 +196,8 @@ final class DefaultControlViewModelTest {
 
             for (SimulationTerminationCheckMode terminationCheckMode : SimulationTerminationCheckMode.values()) {
                 viewModel.terminationCheckProperty().setValue(terminationCheckMode);
-                assertEquals(terminationCheckMode == SimulationTerminationCheckMode.CHECKED, viewModel.isTerminationChecked());
+                assertEquals(terminationCheckMode == SimulationTerminationCheckMode.CHECKED,
+                        viewModel.isTerminationChecked());
             }
         });
     }

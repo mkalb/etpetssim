@@ -56,7 +56,8 @@ final class EtpetsScoreMath {
 
         double resourceBonus = 0.0d;
         if (hasResourceLookAhead) {
-            resourceBonus = PET_MOVE_RESOURCE_BASE_WEIGHT + (PET_MOVE_RESOURCE_SURVIVAL_PRESSURE_WEIGHT * survivalPressure);
+            resourceBonus = PET_MOVE_RESOURCE_BASE_WEIGHT
+                    + (PET_MOVE_RESOURCE_SURVIVAL_PRESSURE_WEIGHT * survivalPressure);
         }
 
         double partnerBonus = hasPartnerLookAhead ? PET_MOVE_PARTNER_WEIGHT : 0.0d;
@@ -114,19 +115,24 @@ final class EtpetsScoreMath {
             return 0.0d;
         }
         int trailIntensityAboveThreshold = trailIntensity - PET_MOVE_TRAIL_BONUS_INTENSITY_THRESHOLD;
-        double normalizedTrailIntensity = 1.0d - Math.exp(-(trailIntensityAboveThreshold / PET_MOVE_TRAIL_BONUS_INTENSITY_SCALE));
-        double trailBonusCurveNumerator = 1.0d - Math.exp(-PET_MOVE_TRAIL_BONUS_CURVE_SHARPNESS * normalizedTrailIntensity);
+        double normalizedTrailIntensity = 1.0d
+                - Math.exp(-(trailIntensityAboveThreshold / PET_MOVE_TRAIL_BONUS_INTENSITY_SCALE));
+        double trailBonusCurveNumerator = 1.0d
+                - Math.exp(-PET_MOVE_TRAIL_BONUS_CURVE_SHARPNESS * normalizedTrailIntensity);
         double trailBonusCurveDenominator = 1.0d - Math.exp(-PET_MOVE_TRAIL_BONUS_CURVE_SHARPNESS);
         return PET_MOVE_TRAIL_BONUS_MAX * (trailBonusCurveNumerator / trailBonusCurveDenominator);
     }
 
-    private static double computeExplorationBonus(double energyRatio, double movementCostModifier, boolean isGroundWithoutTrail) {
+    private static double computeExplorationBonus(double energyRatio,
+                                                  double movementCostModifier,
+                                                  boolean isGroundWithoutTrail) {
         if (!isGroundWithoutTrail) {
             return 0.0d;
         }
         double movementCostModifierSpan = PET_TRAITS_MOVEMENT_COST_MODIFIER_MAX
                 - PET_TRAITS_MOVEMENT_COST_MODIFIER_MIN;
-        double movementCostModifierNormalized = clampToUnitRange((movementCostModifier - PET_TRAITS_MOVEMENT_COST_MODIFIER_MIN) / movementCostModifierSpan);
+        double movementCostModifierNormalized = clampToUnitRange((movementCostModifier
+                - PET_TRAITS_MOVEMENT_COST_MODIFIER_MIN) / movementCostModifierSpan);
         double movementEfficiency = clampToUnitRange(1.0d - movementCostModifierNormalized);
         double explorationDrive = Math.pow(energyRatio, PET_MOVE_EXPLORATION_ENERGY_EXPONENT)
                 * Math.pow(movementEfficiency, PET_MOVE_EXPLORATION_COST_EXPONENT);
@@ -137,7 +143,9 @@ final class EtpetsScoreMath {
         return hasOscillationHistoryMatch ? PET_MOVE_OSCILLATION_HISTORY_MATCH_PENALTY : 0.0d;
     }
 
-    private static double computeLowMobilityPenalty(boolean hasLowMobilityPenalty, double survivalPressure, boolean hasResourceLookAhead) {
+    private static double computeLowMobilityPenalty(boolean hasLowMobilityPenalty,
+                                                    double survivalPressure,
+                                                    boolean hasResourceLookAhead) {
         if (!hasLowMobilityPenalty) {
             return 0.0d;
         }

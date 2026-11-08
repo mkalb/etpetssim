@@ -43,9 +43,11 @@ public final class LangtonEditToolBarViewModel {
         selectedDirection.set(resolveSelectedDirection(directions));
     }
 
-    public Optional<LangtonUserActionContext.AddAnt> resolveSelectedAddAntContext(LangtonConfig config,
-                                                                                  @Nullable GridCoordinate selectedCoordinate) {
-        return LangtonDirectionOptions.resolveInitialDirection(config.cellShape(), selectedCoordinate, selectedDirection.get())
+    public Optional<LangtonUserActionContext.AddAnt> resolveSelectedAddAntContext(
+            LangtonConfig config,
+            @Nullable GridCoordinate selectedCoordinate) {
+        return LangtonDirectionOptions.resolveInitialDirection(config.cellShape(), selectedCoordinate,
+                        selectedDirection.get())
                 .map(LangtonUserActionContext.AddAnt::new);
     }
 

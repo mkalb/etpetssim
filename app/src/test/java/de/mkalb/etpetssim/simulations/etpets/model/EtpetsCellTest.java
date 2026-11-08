@@ -79,7 +79,8 @@ final class EtpetsCellTest {
                 () -> assertSame(plant,
                         new EtpetsCell(COORDINATE, TerrainConstant.ROCK, plant, NoAgent.NO_AGENT).entity()),
                 () -> assertSame(TerrainConstant.ROCK,
-                        new EtpetsCell(COORDINATE, TerrainConstant.ROCK, NoResource.NO_RESOURCE, NoAgent.NO_AGENT).entity())
+                        new EtpetsCell(COORDINATE, TerrainConstant.ROCK, NoResource.NO_RESOURCE,
+                                NoAgent.NO_AGENT).entity())
         );
     }
 

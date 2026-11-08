@@ -16,7 +16,8 @@ public final class ReboundingConfigView
     private static final String REBOUNDING_CONFIG_VERTICAL_WALLS = "rebounding.config.verticalwalls";
     private static final String REBOUNDING_CONFIG_VERTICAL_WALLS_TOOLTIP = "rebounding.config.verticalwalls.tooltip";
     private static final String REBOUNDING_CONFIG_MOVING_ENTITY_PERCENT = "rebounding.config.movingentitypercent";
-    private static final String REBOUNDING_CONFIG_MOVING_ENTITY_PERCENT_TOOLTIP = "rebounding.config.movingentitypercent.tooltip";
+    private static final String REBOUNDING_CONFIG_MOVING_ENTITY_PERCENT_TOOLTIP =
+            "rebounding.config.movingentitypercent.tooltip";
 
     public ReboundingConfigView(ReboundingConfigViewModel viewModel) {
         super(viewModel);
@@ -40,7 +41,8 @@ public final class ReboundingConfigView
         var movingEntityPercentControl = FXComponentFactory.createLabeledPercentSlider(
                 viewModel.movingEntityPercentProperty(),
                 AppLocalization.getText(REBOUNDING_CONFIG_MOVING_ENTITY_PERCENT),
-                formatPercentRangeTooltip(REBOUNDING_CONFIG_MOVING_ENTITY_PERCENT_TOOLTIP, viewModel.movingEntityPercentProperty()),
+                formatPercentRangeTooltip(REBOUNDING_CONFIG_MOVING_ENTITY_PERCENT_TOOLTIP,
+                        viewModel.movingEntityPercentProperty()),
                 FXStyleClasses.CONFIG_SLIDER
         );
 

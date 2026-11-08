@@ -121,7 +121,10 @@ public final class SnakeHead implements SnakeEntity {
         return snakeSegments.size();
     }
 
-    public Optional<GridCoordinate> move(GridCoordinate lastHeadCoordinate, CompassDirection moveDirection, int additionalGrowth, int addedPoints) {
+    public Optional<GridCoordinate> move(GridCoordinate lastHeadCoordinate,
+                                         CompassDirection moveDirection,
+                                         int additionalGrowth,
+                                         int addedPoints) {
         snakeSegments.addFirst(lastHeadCoordinate);
         direction = moveDirection;
         pendingGrowth += additionalGrowth;
@@ -156,7 +159,8 @@ public final class SnakeHead implements SnakeEntity {
                 id,
                 (direction == null) ? "+" : direction.arrow(),
                 dead ? ("†" + deaths) : ("*" + stepIndexOfSpawn),
-                (pendingGrowth > 0) ? (snakeSegments.size() + "+" + pendingGrowth) : String.valueOf(snakeSegments.size()),
+                (pendingGrowth > 0) ? (snakeSegments.size() + "+" + pendingGrowth)
+                        : String.valueOf(snakeSegments.size()),
                 points,
                 strategy.displayName());
     }

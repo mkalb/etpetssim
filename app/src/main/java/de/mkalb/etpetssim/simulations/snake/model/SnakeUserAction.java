@@ -44,7 +44,8 @@ public final class SnakeUserAction
                     int nextSnakeId = manager.nextSnakeId();
                     int stepIndexOfSpawn = manager.stepCount() - 1;
                     model.setEntity(coordinate,
-                            new SnakeHead(nextSnakeId, addSnake.strategy(), manager.config().initialPendingGrowth(), stepIndexOfSpawn));
+                            new SnakeHead(nextSnakeId, addSnake.strategy(), manager.config().initialPendingGrowth(),
+                                    stepIndexOfSpawn));
                     manager.incrementNextSnakeId();
                     statistics.incrementSnakeHeadCells();
                     statistics.incrementLivingSnakeHeadCells();

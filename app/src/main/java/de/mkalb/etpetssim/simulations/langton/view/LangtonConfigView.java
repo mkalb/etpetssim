@@ -56,9 +56,11 @@ public final class LangtonConfigView
                 FXStyleClasses.CONFIG_COMBOBOX
         );
 
-        bindVisibilityToCellShape(presetTriangleControl.label(), presetTriangleControl.controlRegion(), CellShape.TRIANGLE);
+        bindVisibilityToCellShape(presetTriangleControl.label(), presetTriangleControl.controlRegion(),
+                CellShape.TRIANGLE);
         bindVisibilityToCellShape(presetSquareControl.label(), presetSquareControl.controlRegion(), CellShape.SQUARE);
-        bindVisibilityToCellShape(presetHexagonControl.label(), presetHexagonControl.controlRegion(), CellShape.HEXAGON);
+        bindVisibilityToCellShape(presetHexagonControl.label(), presetHexagonControl.controlRegion(),
+                CellShape.HEXAGON);
 
         var ruleControl = FXComponentFactory.createLabeledStringTextBox(
                 viewModel.ruleProperty().stringProperty(),

@@ -69,7 +69,9 @@ public final class WatorMainView
 
     private int maxColorSharkEnergy = 1;
 
-    public WatorMainView(DefaultMainViewModel<WatorEntity, GridCell<WatorEntity>, WritableGridModel<WatorEntity>, WatorConfig, WatorStatistics, WatorSimulationManager, WatorUserActionContext> viewModel,
+    public WatorMainView(DefaultMainViewModel<WatorEntity, GridCell<WatorEntity>, WritableGridModel<WatorEntity>,
+                                 WatorConfig, WatorStatistics, WatorSimulationManager,
+                                 WatorUserActionContext> viewModel,
                          GridEntityDescriptorRegistry entityDescriptorRegistry,
                          WatorConfigView configView,
                          DefaultControlView controlView,
@@ -93,10 +95,12 @@ public final class WatorMainView
 
         maxColorSharkEnergy = computeMaxColorSharkEnergy(config);
         entityColors.put(EntityDescriptors.FISH.descriptorId(),
-                computeBrightnessVariantsMap(entityDescriptorRegistry.requireByDescriptorId(EntityDescriptors.FISH.descriptorId()),
+                computeBrightnessVariantsMap(entityDescriptorRegistry
+                                .requireByDescriptorId(EntityDescriptors.FISH.descriptorId()),
                         0, config.fishMaxAge() - 1, FISH_GROUP_COUNT, FISH_MAX_FACTOR_DELTA));
         entityColors.put(EntityDescriptors.SHARK.descriptorId(),
-                computeBrightnessVariantsMap(entityDescriptorRegistry.requireByDescriptorId(EntityDescriptors.SHARK.descriptorId()),
+                computeBrightnessVariantsMap(entityDescriptorRegistry
+                                .requireByDescriptorId(EntityDescriptors.SHARK.descriptorId()),
                         1, maxColorSharkEnergy, SHARK_GROUP_COUNT, SHARK_MAX_FACTOR_DELTA));
 
         double strokeLineWidth = computeStrokeLineWidth(cellDimension);
@@ -164,7 +168,10 @@ public final class WatorMainView
     }
 
     @Override
-    protected void drawSimulation(CanvasPainters painters, WritableGridModel<WatorEntity> currentGridModel, int stepCount, int lastDrawnStepCount) {
+    protected void drawSimulation(CanvasPainters painters,
+                                  WritableGridModel<WatorEntity> currentGridModel,
+                                  int stepCount,
+                                  int lastDrawnStepCount) {
         if (cellDrawer == null) {
             AppLogger.warn("WatorMainView: Skipping canvas draw: cellDrawer is not initialized");
             return;

@@ -84,7 +84,8 @@ public final class EtpetsMainView extends AbstractDefaultMainView<
     private static final String ETPETS_TOOL_ID_SET_TERRAIN = "etpets.setTerrain";
     private static final String ETPETS_TOOLBAR_SET_RESOURCE = "etpets.toolbar.setresource";
     private static final String ETPETS_TOOLBAR_SET_RESOURCE_OPTION = "etpets.toolbar.setresource.option";
-    private static final String ETPETS_TOOLBAR_SET_RESOURCE_OPTION_TOOLTIP = "etpets.toolbar.setresource.option.tooltip";
+    private static final String ETPETS_TOOLBAR_SET_RESOURCE_OPTION_TOOLTIP =
+            "etpets.toolbar.setresource.option.tooltip";
     private static final String ETPETS_TOOLBAR_SET_RESOURCE_TOOLTIP = "etpets.toolbar.setresource.tooltip";
     private static final String ETPETS_TOOLBAR_SET_TERRAIN = "etpets.toolbar.setterrain";
     private static final String ETPETS_TOOLBAR_SET_TERRAIN_OPTION = "etpets.toolbar.setterrain.option";
@@ -101,7 +102,8 @@ public final class EtpetsMainView extends AbstractDefaultMainView<
     private @Nullable CellDrawer<ResourceEntity> cellResourceDrawer;
     private @Nullable CellDrawer<AgentEntity> cellAgentDrawer;
 
-    public EtpetsMainView(DefaultMainViewModel<EtpetsEntity, EtpetsCell, EtpetsGridModel, EtpetsConfig, EtpetsStatistics, EtpetsSimulationManager, EtpetsUserActionContext> viewModel,
+    public EtpetsMainView(DefaultMainViewModel<EtpetsEntity, EtpetsCell, EtpetsGridModel, EtpetsConfig,
+                                  EtpetsStatistics, EtpetsSimulationManager, EtpetsUserActionContext> viewModel,
                           EtpetsEditToolBarViewModel editToolBarViewModel,
                           GridEntityDescriptorRegistry entityDescriptorRegistry,
                           EtpetsConfigView configView,
@@ -224,7 +226,10 @@ public final class EtpetsMainView extends AbstractDefaultMainView<
     }
 
     @Override
-    protected void drawSimulation(CanvasPainters painters, EtpetsGridModel currentGridModel, int stepCount, int lastDrawnStepCount) {
+    protected void drawSimulation(CanvasPainters painters,
+                                  EtpetsGridModel currentGridModel,
+                                  int stepCount,
+                                  int lastDrawnStepCount) {
         if ((cellTerrainDrawer == null) || (cellResourceDrawer == null) || (cellAgentDrawer == null)) {
             AppLogger.warn("EtpetsMainView: Skipping canvas draw: cell drawers are not initialized");
             return;
@@ -239,12 +244,14 @@ public final class EtpetsMainView extends AbstractDefaultMainView<
         var rockDescriptor = entityDescriptorRegistry.requireByDescriptorId(EtpetsEntity.DESCRIPTOR_ID_ROCK);
         terrainModel.filteredCoordinates(e -> EtpetsEntity.DESCRIPTOR_ID_ROCK.equals(e.descriptorId()))
                 .forEach(coordinate ->
-                        painters.dynamic().drawCell(coordinate, rockDescriptor.color(), rockDescriptor.borderColor(), NO_STROKE_LINE_WIDTH));
+                        painters.dynamic().drawCell(coordinate, rockDescriptor.color(), rockDescriptor.borderColor(),
+                                NO_STROKE_LINE_WIDTH));
 
         var waterDescriptor = entityDescriptorRegistry.requireByDescriptorId(EtpetsEntity.DESCRIPTOR_ID_WATER);
         terrainModel.filteredCoordinates(e -> EtpetsEntity.DESCRIPTOR_ID_WATER.equals(e.descriptorId()))
                 .forEach(coordinate ->
-                        painters.dynamic().drawCell(coordinate, waterDescriptor.color(), waterDescriptor.borderColor(), NO_STROKE_LINE_WIDTH));
+                        painters.dynamic().drawCell(coordinate, waterDescriptor.color(), waterDescriptor.borderColor(),
+                                NO_STROKE_LINE_WIDTH));
 
         terrainModel.filteredCells(e -> e instanceof Trail)
                 .forEach(cell -> cellTerrainDrawer.draw(
@@ -499,7 +506,8 @@ public final class EtpetsMainView extends AbstractDefaultMainView<
 
         if (selectedToolId != null) {
             var enabledBinding = Bindings.createBooleanBinding(
-                    () -> ETPETS_TOOL_ID_SET_RESOURCE.equals(selectedToolId.get()) && !availableResourceChoices.isEmpty(),
+                    () -> ETPETS_TOOL_ID_SET_RESOURCE.equals(selectedToolId.get())
+                            && !availableResourceChoices.isEmpty(),
                     selectedToolId,
                     availableResourceChoices);
             resourceLabel.disableProperty().bind(enabledBinding.not());

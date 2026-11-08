@@ -18,7 +18,9 @@ public final class ReboundingTerminationCondition implements SimulationTerminati
      * @return {@code true} if the simulation should terminate, otherwise {@code false}
      */
     @Override
-    public boolean isFinished(ReadableGridModel<ReboundingEntity> model, int stepCount, ReboundingStatistics statistics) {
+    public boolean isFinished(ReadableGridModel<ReboundingEntity> model,
+                              int stepCount,
+                              ReboundingStatistics statistics) {
         return (statistics.movingEntityCells() <= 1);
     }
 

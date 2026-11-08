@@ -77,7 +77,8 @@ public abstract class AbstractConfigView<CON extends SimulationConfig, VM extend
      * @return the titled pane
      */
     @SafeVarargs
-    protected final TitledPane createConfigTitledPane(String title, boolean configControlsEnabledOnlyIfSimulationCanStart,
+    protected final TitledPane createConfigTitledPane(String title,
+                                                      boolean configControlsEnabledOnlyIfSimulationCanStart,
                                                       FXComponentFactory.LabeledControl<? extends Region>... content) {
         VBox box = new VBox();
         for (FXComponentFactory.LabeledControl<? extends Region> labeledControl : content) {
@@ -170,8 +171,9 @@ public abstract class AbstractConfigView<CON extends SimulationConfig, VM extend
 
     @SuppressWarnings("unchecked")
     @SafeVarargs
-    protected final TitledPane createLayoutPane(boolean configControlsEnabledOnlyIfSimulationCanStart,
-                                                FXComponentFactory.LabeledControl<? extends Region>... additionalContent) {
+    protected final TitledPane createLayoutPane(
+            boolean configControlsEnabledOnlyIfSimulationCanStart,
+            FXComponentFactory.LabeledControl<? extends Region>... additionalContent) {
         var cellEdgeLengthControl = FXComponentFactory.createLabeledIntSlider(
                 viewModel.cellEdgeLengthProperty(),
                 AppLocalization.getText(SimulationLocalizationKeys.CONFIG_CELL_EDGE_LENGTH),
@@ -225,7 +227,8 @@ public abstract class AbstractConfigView<CON extends SimulationConfig, VM extend
         );
     }
 
-    protected final FXComponentFactory.LabeledControl<? extends Region> createNeighborhoodModeControl(InputChoiceProperty<NeighborhoodMode> neighborhoodModeProperty) {
+    protected final FXComponentFactory.LabeledControl<? extends Region> createNeighborhoodModeControl(
+            InputChoiceProperty<NeighborhoodMode> neighborhoodModeProperty) {
         return FXComponentFactory.createLabeledChoiceComboBox(
                 neighborhoodModeProperty,
                 AppLocalization.getText(NeighborhoodMode.labelResourceKey()),

@@ -106,11 +106,15 @@ final class SimulationTypeTest {
         assertEquals(List.of("etpets"), SimulationType.ET_PETS.cliArguments());
         assertEquals(List.of("wator", "wa-tor"), SimulationType.WATOR.cliArguments());
         assertEquals(List.of("sugarscape", "sugar"), SimulationType.SUGARSCAPE.cliArguments());
-        assertEquals(List.of("conwayslife", "conways-life", "conway", "conways", "life", "cgol"), SimulationType.CONWAYS_LIFE.cliArguments());
-        assertEquals(List.of("langton", "langtonsant", "langtons-ant", "ant"), SimulationType.LANGTONS_ANT.cliArguments());
-        assertEquals(List.of("forestfire", "forest-fire", "forest", "fire", "forestfiremodel"), SimulationType.FOREST_FIRE.cliArguments());
+        assertEquals(List.of("conwayslife", "conways-life", "conway", "conways", "life", "cgol"),
+                SimulationType.CONWAYS_LIFE.cliArguments());
+        assertEquals(List.of("langton", "langtonsant", "langtons-ant", "ant"),
+                SimulationType.LANGTONS_ANT.cliArguments());
+        assertEquals(List.of("forestfire", "forest-fire", "forest", "fire", "forestfiremodel"),
+                SimulationType.FOREST_FIRE.cliArguments());
         assertEquals(List.of("snake", "snakes"), SimulationType.SNAKE.cliArguments());
-        assertEquals(List.of("reboundingentities", "rebounding-entities", "rebounding-entity", "rebounding", "rebound", "rebounders"), SimulationType.REBOUNDING_ENTITIES.cliArguments());
+        assertEquals(List.of("reboundingentities", "rebounding-entities", "rebounding-entity", "rebounding", "rebound",
+                "rebounders"), SimulationType.REBOUNDING_ENTITIES.cliArguments());
         assertEquals(List.of("simulationlab", "lab"), SimulationType.SIMULATION_LAB.cliArguments());
     }
 
@@ -126,7 +130,8 @@ final class SimulationTypeTest {
                 .toList();
         assertAll(
                 () -> assertEquals(allArguments.size(), Set.copyOf(allArguments).size()),
-                () -> assertTrue(allArguments.stream().allMatch(argument -> argument.equals(argument.toLowerCase(Locale.ROOT))))
+                () -> assertTrue(allArguments.stream()
+                        .allMatch(argument -> argument.equals(argument.toLowerCase(Locale.ROOT))))
         );
     }
 
@@ -160,7 +165,8 @@ final class SimulationTypeTest {
     @Test
     void testCssUrl() {
         for (SimulationType simulationType : SimulationType.values()) {
-            assertEquals(!simulationType.cssPath().isBlank(), simulationType.cssUrl().isPresent(), simulationType.name());
+            assertEquals(!simulationType.cssPath().isBlank(), simulationType.cssUrl().isPresent(),
+                    simulationType.name());
         }
     }
 

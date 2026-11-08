@@ -235,7 +235,8 @@ final class SimulationManagerTest {
             List<StatisticsMetric<STA>> metrics) {
         var history = manager.statisticsHistory();
         Map<String, Double> expectedValues = new LinkedHashMap<>();
-        metrics.forEach(metric -> expectedValues.put(metric.key(), metric.extractor().applyAsDouble(manager.statistics())));
+        metrics.forEach(metric -> expectedValues.put(metric.key(),
+                metric.extractor().applyAsDouble(manager.statistics())));
         assertAll(
                 manager.getClass().getSimpleName(),
                 () -> assertEquals(1, history.size()),
@@ -298,11 +299,16 @@ final class SimulationManagerTest {
     @Test
     void testConstructorRecordsStepZeroSampleForAllTimedManagers() {
         assertAll(
-                () -> assertStepZeroSample(new ConwaySimulationManager(createConwayConfig()), ConwayStatistics.metrics()),
-                () -> assertStepZeroSample(new EtpetsSimulationManager(createEtpetsConfig()), EtpetsStatistics.metrics()),
-                () -> assertStepZeroSample(new ForestSimulationManager(createForestConfig()), ForestStatistics.metrics()),
-                () -> assertStepZeroSample(new LangtonSimulationManager(createLangtonConfig()), LangtonStatistics.metrics()),
-                () -> assertStepZeroSample(new ReboundingSimulationManager(createReboundingConfig()), ReboundingStatistics.metrics()),
+                () -> assertStepZeroSample(new ConwaySimulationManager(createConwayConfig()),
+                        ConwayStatistics.metrics()),
+                () -> assertStepZeroSample(new EtpetsSimulationManager(createEtpetsConfig()),
+                        EtpetsStatistics.metrics()),
+                () -> assertStepZeroSample(new ForestSimulationManager(createForestConfig()),
+                        ForestStatistics.metrics()),
+                () -> assertStepZeroSample(new LangtonSimulationManager(createLangtonConfig()),
+                        LangtonStatistics.metrics()),
+                () -> assertStepZeroSample(new ReboundingSimulationManager(createReboundingConfig()),
+                        ReboundingStatistics.metrics()),
                 () -> assertStepZeroSample(new SnakeSimulationManager(createSnakeConfig()), SnakeStatistics.metrics()),
                 () -> assertStepZeroSample(new SugarSimulationManager(createSugarConfig()), SugarStatistics.metrics()),
                 () -> assertStepZeroSample(new WatorSimulationManager(createWatorConfig()), WatorStatistics.metrics())
@@ -378,16 +384,23 @@ final class SimulationManagerTest {
         manager.executeSteps(20, false, () -> {
         });
 
-        double genericAliveMax = manager.statisticsExtrema().maximumValues().get(ConwayStatistics.KEY_ALIVE_CELLS).value();
+        double genericAliveMax = manager.statisticsExtrema().maximumValues().get(ConwayStatistics.KEY_ALIVE_CELLS)
+                .value();
         assertAll(
-                () -> assertTrue(manager.statisticsExtrema().minimumValues().containsKey(ConwayStatistics.KEY_ALIVE_CELLS)),
-                () -> assertTrue(manager.statisticsExtrema().maximumValues().containsKey(ConwayStatistics.KEY_ALIVE_CELLS)),
+                () -> assertTrue(manager.statisticsExtrema().minimumValues()
+                        .containsKey(ConwayStatistics.KEY_ALIVE_CELLS)),
+                () -> assertTrue(manager.statisticsExtrema().maximumValues()
+                        .containsKey(ConwayStatistics.KEY_ALIVE_CELLS)),
                 () -> assertTrue(Double.isFinite(genericAliveMax)),
                 () -> assertTrue(genericAliveMax >= 0.0d),
-                () -> assertFalse(manager.statisticsExtrema().minimumValues().containsKey(ConwayStatistics.KEY_CHANGED_CELLS)),
-                () -> assertTrue(manager.statisticsExtrema().maximumValues().containsKey(ConwayStatistics.KEY_CHANGED_CELLS)),
-                () -> assertTrue(manager.statisticsExtrema().minimumValues().containsKey(ConwayStatistics.KEY_DEAD_CELLS)),
-                () -> assertTrue(manager.statisticsExtrema().maximumValues().containsKey(ConwayStatistics.KEY_DEAD_CELLS))
+                () -> assertFalse(manager.statisticsExtrema().minimumValues()
+                        .containsKey(ConwayStatistics.KEY_CHANGED_CELLS)),
+                () -> assertTrue(manager.statisticsExtrema().maximumValues()
+                        .containsKey(ConwayStatistics.KEY_CHANGED_CELLS)),
+                () -> assertTrue(manager.statisticsExtrema().minimumValues()
+                        .containsKey(ConwayStatistics.KEY_DEAD_CELLS)),
+                () -> assertTrue(manager.statisticsExtrema().maximumValues()
+                        .containsKey(ConwayStatistics.KEY_DEAD_CELLS))
         );
     }
 
@@ -424,13 +437,17 @@ final class SimulationManagerTest {
         var genericExtrema = manager.statisticsExtrema();
         assertAll(
                 () -> assertTrue(genericExtrema.minimumValues().containsKey(WatorStatistics.KEY_FISH_CELLS)),
-                () -> assertTrue(Double.isFinite(genericExtrema.minimumValues().get(WatorStatistics.KEY_FISH_CELLS).value())),
+                () -> assertTrue(Double
+                        .isFinite(genericExtrema.minimumValues().get(WatorStatistics.KEY_FISH_CELLS).value())),
                 () -> assertTrue(genericExtrema.maximumValues().containsKey(WatorStatistics.KEY_FISH_CELLS)),
-                () -> assertTrue(Double.isFinite(genericExtrema.maximumValues().get(WatorStatistics.KEY_FISH_CELLS).value())),
+                () -> assertTrue(Double
+                        .isFinite(genericExtrema.maximumValues().get(WatorStatistics.KEY_FISH_CELLS).value())),
                 () -> assertTrue(genericExtrema.minimumValues().containsKey(WatorStatistics.KEY_SHARK_CELLS)),
-                () -> assertTrue(Double.isFinite(genericExtrema.minimumValues().get(WatorStatistics.KEY_SHARK_CELLS).value())),
+                () -> assertTrue(Double
+                        .isFinite(genericExtrema.minimumValues().get(WatorStatistics.KEY_SHARK_CELLS).value())),
                 () -> assertTrue(genericExtrema.maximumValues().containsKey(WatorStatistics.KEY_SHARK_CELLS)),
-                () -> assertTrue(Double.isFinite(genericExtrema.maximumValues().get(WatorStatistics.KEY_SHARK_CELLS).value()))
+                () -> assertTrue(Double
+                        .isFinite(genericExtrema.maximumValues().get(WatorStatistics.KEY_SHARK_CELLS).value()))
         );
     }
 
@@ -444,14 +461,19 @@ final class SimulationManagerTest {
         var genericExtrema = manager.statisticsExtrema();
         assertAll(
                 () -> assertTrue(genericExtrema.minimumValues().containsKey(EtpetsStatistics.KEY_ACTIVE_PET_CELLS)),
-                () -> assertTrue(Double.isFinite(genericExtrema.minimumValues().get(EtpetsStatistics.KEY_ACTIVE_PET_CELLS).value())),
+                () -> assertTrue(Double
+                        .isFinite(genericExtrema.minimumValues().get(EtpetsStatistics.KEY_ACTIVE_PET_CELLS).value())),
                 () -> assertTrue(genericExtrema.maximumValues().containsKey(EtpetsStatistics.KEY_ACTIVE_PET_CELLS)),
-                () -> assertTrue(Double.isFinite(genericExtrema.maximumValues().get(EtpetsStatistics.KEY_ACTIVE_PET_CELLS).value())),
+                () -> assertTrue(Double
+                        .isFinite(genericExtrema.maximumValues().get(EtpetsStatistics.KEY_ACTIVE_PET_CELLS).value())),
                 () -> assertFalse(genericExtrema.minimumValues().containsKey(EtpetsStatistics.KEY_EGG_CELLS)),
                 () -> assertTrue(genericExtrema.maximumValues().containsKey(EtpetsStatistics.KEY_EGG_CELLS)),
-                () -> assertTrue(Double.isFinite(genericExtrema.maximumValues().get(EtpetsStatistics.KEY_EGG_CELLS).value())),
-                () -> assertFalse(genericExtrema.minimumValues().containsKey(EtpetsStatistics.KEY_CUMULATIVE_PET_DEATH_COUNT)),
-                () -> assertFalse(genericExtrema.maximumValues().containsKey(EtpetsStatistics.KEY_CUMULATIVE_PET_DEATH_COUNT))
+                () -> assertTrue(Double
+                        .isFinite(genericExtrema.maximumValues().get(EtpetsStatistics.KEY_EGG_CELLS).value())),
+                () -> assertFalse(genericExtrema.minimumValues()
+                        .containsKey(EtpetsStatistics.KEY_CUMULATIVE_PET_DEATH_COUNT)),
+                () -> assertFalse(genericExtrema.maximumValues()
+                        .containsKey(EtpetsStatistics.KEY_CUMULATIVE_PET_DEATH_COUNT))
         );
     }
 
@@ -466,14 +488,18 @@ final class SimulationManagerTest {
         assertAll(
                 () -> assertFalse(genericExtrema.minimumValues().containsKey(SnakeStatistics.KEY_SNAKE_HEAD_CELLS)),
                 () -> assertFalse(genericExtrema.maximumValues().containsKey(SnakeStatistics.KEY_SNAKE_HEAD_CELLS)),
-                () -> assertFalse(genericExtrema.minimumValues().containsKey(SnakeStatistics.KEY_LIVING_SNAKE_HEAD_CELLS)),
-                () -> assertFalse(genericExtrema.maximumValues().containsKey(SnakeStatistics.KEY_LIVING_SNAKE_HEAD_CELLS)),
+                () -> assertFalse(genericExtrema.minimumValues()
+                        .containsKey(SnakeStatistics.KEY_LIVING_SNAKE_HEAD_CELLS)),
+                () -> assertFalse(genericExtrema.maximumValues()
+                        .containsKey(SnakeStatistics.KEY_LIVING_SNAKE_HEAD_CELLS)),
                 () -> assertFalse(genericExtrema.minimumValues().containsKey(SnakeStatistics.KEY_WALL_CELLS)),
                 () -> assertFalse(genericExtrema.maximumValues().containsKey(SnakeStatistics.KEY_WALL_CELLS)),
                 () -> assertFalse(genericExtrema.minimumValues().containsKey(SnakeStatistics.KEY_FOOD_CELLS)),
                 () -> assertFalse(genericExtrema.maximumValues().containsKey(SnakeStatistics.KEY_FOOD_CELLS)),
-                () -> assertFalse(genericExtrema.minimumValues().containsKey(SnakeStatistics.KEY_CUMULATIVE_SNAKE_DEATH_COUNT)),
-                () -> assertFalse(genericExtrema.maximumValues().containsKey(SnakeStatistics.KEY_CUMULATIVE_SNAKE_DEATH_COUNT))
+                () -> assertFalse(genericExtrema.minimumValues()
+                        .containsKey(SnakeStatistics.KEY_CUMULATIVE_SNAKE_DEATH_COUNT)),
+                () -> assertFalse(genericExtrema.maximumValues()
+                        .containsKey(SnakeStatistics.KEY_CUMULATIVE_SNAKE_DEATH_COUNT))
         );
     }
 
@@ -502,9 +528,13 @@ final class SimulationManagerTest {
 
         var genericExtrema = manager.statisticsExtrema();
         assertAll(
-                () -> assertFalse(genericExtrema.minimumValues().containsKey(ReboundingStatistics.KEY_MOVING_ENTITY_CELLS)),
-                () -> assertTrue(genericExtrema.maximumValues().containsKey(ReboundingStatistics.KEY_MOVING_ENTITY_CELLS)),
-                () -> assertTrue(Double.isFinite(genericExtrema.maximumValues().get(ReboundingStatistics.KEY_MOVING_ENTITY_CELLS).value())),
+                () -> assertFalse(genericExtrema.minimumValues()
+                        .containsKey(ReboundingStatistics.KEY_MOVING_ENTITY_CELLS)),
+                () -> assertTrue(genericExtrema.maximumValues()
+                        .containsKey(ReboundingStatistics.KEY_MOVING_ENTITY_CELLS)),
+                () -> assertTrue(Double
+                        .isFinite(genericExtrema.maximumValues().get(ReboundingStatistics.KEY_MOVING_ENTITY_CELLS)
+                                .value())),
                 () -> assertFalse(genericExtrema.minimumValues().containsKey(ReboundingStatistics.KEY_WALL_CELLS)),
                 () -> assertTrue(genericExtrema.maximumValues().containsKey(ReboundingStatistics.KEY_WALL_CELLS))
         );
@@ -539,17 +569,23 @@ final class SimulationManagerTest {
         }
 
         assertAll(
-                () -> assertEquals(3575, batch.statisticsExtrema().minimumValues().get(ConwayStatistics.KEY_ALIVE_CELLS).value(),
+                () -> assertEquals(3575,
+                        batch.statisticsExtrema().minimumValues().get(ConwayStatistics.KEY_ALIVE_CELLS).value(),
                         "batch: minAliveCells"),
-                () -> assertEquals(6945, batch.statisticsExtrema().maximumValues().get(ConwayStatistics.KEY_ALIVE_CELLS).value(),
+                () -> assertEquals(6945,
+                        batch.statisticsExtrema().maximumValues().get(ConwayStatistics.KEY_ALIVE_CELLS).value(),
                         "batch: maxAliveCells"),
-                () -> assertEquals(6475, batch.statisticsExtrema().maximumValues().get(ConwayStatistics.KEY_CHANGED_CELLS).value(),
+                () -> assertEquals(6475,
+                        batch.statisticsExtrema().maximumValues().get(ConwayStatistics.KEY_CHANGED_CELLS).value(),
                         "batch: maxChangedCells"),
-                () -> assertEquals(3575, singleStep.statisticsExtrema().minimumValues().get(ConwayStatistics.KEY_ALIVE_CELLS).value(),
+                () -> assertEquals(3575,
+                        singleStep.statisticsExtrema().minimumValues().get(ConwayStatistics.KEY_ALIVE_CELLS).value(),
                         "singleStep: minAliveCells"),
-                () -> assertEquals(6945, singleStep.statisticsExtrema().maximumValues().get(ConwayStatistics.KEY_ALIVE_CELLS).value(),
+                () -> assertEquals(6945,
+                        singleStep.statisticsExtrema().maximumValues().get(ConwayStatistics.KEY_ALIVE_CELLS).value(),
                         "singleStep: maxAliveCells"),
-                () -> assertEquals(6475, singleStep.statisticsExtrema().maximumValues().get(ConwayStatistics.KEY_CHANGED_CELLS).value(),
+                () -> assertEquals(6475,
+                        singleStep.statisticsExtrema().maximumValues().get(ConwayStatistics.KEY_CHANGED_CELLS).value(),
                         "singleStep: maxChangedCells")
         );
     }
@@ -567,21 +603,29 @@ final class SimulationManagerTest {
         }
 
         assertAll(
-                () -> assertEquals(4000, batch.statisticsExtrema().maximumValues().get(ForestStatistics.KEY_EMPTY_CELLS).value(),
+                () -> assertEquals(4000,
+                        batch.statisticsExtrema().maximumValues().get(ForestStatistics.KEY_EMPTY_CELLS).value(),
                         "batch: maxEmptyCells"),
-                () -> assertEquals(1000, batch.statisticsExtrema().minimumValues().get(ForestStatistics.KEY_TREE_CELLS).value(),
+                () -> assertEquals(1000,
+                        batch.statisticsExtrema().minimumValues().get(ForestStatistics.KEY_TREE_CELLS).value(),
                         "batch: minTreeCells"),
-                () -> assertEquals(1037, batch.statisticsExtrema().maximumValues().get(ForestStatistics.KEY_TREE_CELLS).value(),
+                () -> assertEquals(1037,
+                        batch.statisticsExtrema().maximumValues().get(ForestStatistics.KEY_TREE_CELLS).value(),
                         "batch: maxTreeCells"),
-                () -> assertEquals(17, batch.statisticsExtrema().maximumValues().get(ForestStatistics.KEY_BURNING_CELLS).value(),
+                () -> assertEquals(17,
+                        batch.statisticsExtrema().maximumValues().get(ForestStatistics.KEY_BURNING_CELLS).value(),
                         "batch: maxBurningCells"),
-                () -> assertEquals(4000, singleStep.statisticsExtrema().maximumValues().get(ForestStatistics.KEY_EMPTY_CELLS).value(),
+                () -> assertEquals(4000,
+                        singleStep.statisticsExtrema().maximumValues().get(ForestStatistics.KEY_EMPTY_CELLS).value(),
                         "singleStep: maxEmptyCells"),
-                () -> assertEquals(1000, singleStep.statisticsExtrema().minimumValues().get(ForestStatistics.KEY_TREE_CELLS).value(),
+                () -> assertEquals(1000,
+                        singleStep.statisticsExtrema().minimumValues().get(ForestStatistics.KEY_TREE_CELLS).value(),
                         "singleStep: minTreeCells"),
-                () -> assertEquals(1037, singleStep.statisticsExtrema().maximumValues().get(ForestStatistics.KEY_TREE_CELLS).value(),
+                () -> assertEquals(1037,
+                        singleStep.statisticsExtrema().maximumValues().get(ForestStatistics.KEY_TREE_CELLS).value(),
                         "singleStep: maxTreeCells"),
-                () -> assertEquals(17, singleStep.statisticsExtrema().maximumValues().get(ForestStatistics.KEY_BURNING_CELLS).value(),
+                () -> assertEquals(17,
+                        singleStep.statisticsExtrema().maximumValues().get(ForestStatistics.KEY_BURNING_CELLS).value(),
                         "singleStep: maxBurningCells")
         );
     }
@@ -599,21 +643,29 @@ final class SimulationManagerTest {
         }
 
         assertAll(
-                () -> assertEquals(1900, batch.statisticsExtrema().minimumValues().get(WatorStatistics.KEY_FISH_CELLS).value(),
+                () -> assertEquals(1900,
+                        batch.statisticsExtrema().minimumValues().get(WatorStatistics.KEY_FISH_CELLS).value(),
                         "batch: minFishCells"),
-                () -> assertEquals(6127, batch.statisticsExtrema().maximumValues().get(WatorStatistics.KEY_FISH_CELLS).value(),
+                () -> assertEquals(6127,
+                        batch.statisticsExtrema().maximumValues().get(WatorStatistics.KEY_FISH_CELLS).value(),
                         "batch: maxFishCells"),
-                () -> assertEquals(1000, batch.statisticsExtrema().minimumValues().get(WatorStatistics.KEY_SHARK_CELLS).value(),
+                () -> assertEquals(1000,
+                        batch.statisticsExtrema().minimumValues().get(WatorStatistics.KEY_SHARK_CELLS).value(),
                         "batch: minSharkCells"),
-                () -> assertEquals(3002, batch.statisticsExtrema().maximumValues().get(WatorStatistics.KEY_SHARK_CELLS).value(),
+                () -> assertEquals(3002,
+                        batch.statisticsExtrema().maximumValues().get(WatorStatistics.KEY_SHARK_CELLS).value(),
                         "batch: maxSharkCells"),
-                () -> assertEquals(1900, singleStep.statisticsExtrema().minimumValues().get(WatorStatistics.KEY_FISH_CELLS).value(),
+                () -> assertEquals(1900,
+                        singleStep.statisticsExtrema().minimumValues().get(WatorStatistics.KEY_FISH_CELLS).value(),
                         "singleStep: minFishCells"),
-                () -> assertEquals(6127, singleStep.statisticsExtrema().maximumValues().get(WatorStatistics.KEY_FISH_CELLS).value(),
+                () -> assertEquals(6127,
+                        singleStep.statisticsExtrema().maximumValues().get(WatorStatistics.KEY_FISH_CELLS).value(),
                         "singleStep: maxFishCells"),
-                () -> assertEquals(1000, singleStep.statisticsExtrema().minimumValues().get(WatorStatistics.KEY_SHARK_CELLS).value(),
+                () -> assertEquals(1000,
+                        singleStep.statisticsExtrema().minimumValues().get(WatorStatistics.KEY_SHARK_CELLS).value(),
                         "singleStep: minSharkCells"),
-                () -> assertEquals(3002, singleStep.statisticsExtrema().maximumValues().get(WatorStatistics.KEY_SHARK_CELLS).value(),
+                () -> assertEquals(3002,
+                        singleStep.statisticsExtrema().maximumValues().get(WatorStatistics.KEY_SHARK_CELLS).value(),
                         "singleStep: maxSharkCells")
         );
     }

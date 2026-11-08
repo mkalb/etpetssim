@@ -26,7 +26,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 final class LangtonGridModelTest {
 
     private static GridStructure createStructure(int width, int height) {
-        return new GridStructure(new GridTopology(CellShape.SQUARE, GridEdgeBehavior.BLOCK_XY), new GridSize(width, height));
+        return new GridStructure(new GridTopology(CellShape.SQUARE, GridEdgeBehavior.BLOCK_XY),
+                new GridSize(width, height));
     }
 
     private static WritableGridModel<TerrainConstant> createTerrainModel(GridStructure structure) {

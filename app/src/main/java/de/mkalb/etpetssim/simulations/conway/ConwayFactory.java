@@ -40,7 +40,8 @@ public final class ConwayFactory {
         var editToolBarViewModel = new ConwayEditToolBarViewModel();
         var controlViewModel = new DefaultControlViewModel(readOnlySimulationState);
         var observationViewModel =
-                new DefaultObservationViewModel<ConwayEntity, GridCell<ConwayEntity>, ConwayStatistics>(readOnlySimulationState);
+                new DefaultObservationViewModel<ConwayEntity, GridCell<ConwayEntity>,
+                        ConwayStatistics>(readOnlySimulationState);
         var viewModel =
                 new DefaultMainViewModel<>(simulationState, configViewModel, controlViewModel, observationViewModel,
                         ConwaySimulationManager::new, ReadableGridModel::getGridCell, new ConwayUserAction());
@@ -49,7 +50,8 @@ public final class ConwayFactory {
         var configView = new ConwayConfigView(configViewModel);
         var controlView = new DefaultControlView(controlViewModel);
         var observationView = new ConwayObservationView(observationViewModel, entityDescriptorRegistry);
-        return new ConwayMainView(viewModel, editToolBarViewModel, entityDescriptorRegistry, configView, controlView, observationView);
+        return new ConwayMainView(viewModel, editToolBarViewModel, entityDescriptorRegistry, configView, controlView,
+                observationView);
     }
 
 }

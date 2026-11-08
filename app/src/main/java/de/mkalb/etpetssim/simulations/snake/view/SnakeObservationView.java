@@ -36,7 +36,8 @@ public final class SnakeObservationView
     private final Label snakeMaxSegmentCountLabel = new Label();
     private final Label snakePointsLabel = new Label();
 
-    public SnakeObservationView(DefaultObservationViewModel<SnakeEntity, GridCell<SnakeEntity>, SnakeStatistics> viewModel,
+    public SnakeObservationView(DefaultObservationViewModel<SnakeEntity, GridCell<SnakeEntity>,
+                                        SnakeStatistics> viewModel,
                                 GridEntityDescriptorRegistry entityDescriptorRegistry) {
         super(viewModel, entityDescriptorRegistry);
 

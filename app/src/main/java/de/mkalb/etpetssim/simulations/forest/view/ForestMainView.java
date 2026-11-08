@@ -48,7 +48,9 @@ public final class ForestMainView
 
     private @Nullable CellDrawer<ForestEntity> cellDrawer;
 
-    public ForestMainView(DefaultMainViewModel<ForestEntity, GridCell<ForestEntity>, WritableGridModel<ForestEntity>, ForestConfig, ForestStatistics, ForestSimulationManager, NoUserActionContext> viewModel,
+    public ForestMainView(DefaultMainViewModel<ForestEntity, GridCell<ForestEntity>, WritableGridModel<ForestEntity>,
+                                  ForestConfig, ForestStatistics, ForestSimulationManager,
+                                  NoUserActionContext> viewModel,
                           GridEntityDescriptorRegistry entityDescriptorRegistry,
                           ForestConfigView configView,
                           DefaultControlView controlView,
@@ -132,7 +134,10 @@ public final class ForestMainView
     }
 
     @Override
-    protected void drawSimulation(CanvasPainters painters, WritableGridModel<ForestEntity> currentGridModel, int stepCount, int lastDrawnStepCount) {
+    protected void drawSimulation(CanvasPainters painters,
+                                  WritableGridModel<ForestEntity> currentGridModel,
+                                  int stepCount,
+                                  int lastDrawnStepCount) {
         CellDrawer<ForestEntity> drawer = cellDrawer;
         if (drawer == null) {
             AppLogger.warn("ForestMainView: Skipping canvas draw: drawer is not initialized");

@@ -34,8 +34,10 @@ public final class DefaultControlViewModel
             STEP_DURATION_MIN, STEP_DURATION_MAX);
     private final InputIntegerProperty stepCount = InputIntegerProperty.of(STEP_COUNT_INITIAL,
             STEP_COUNT_MIN, STEP_COUNT_MAX, STEP_COUNT_STEP);
-    private final InputChoiceProperty<SimulationStartMode> startMode = InputChoiceProperty.ofEnum(SimulationStartMode.START_IMMEDIATELY, SimulationStartMode.class, Enum::toString);
-    private final InputChoiceProperty<SimulationTerminationCheckMode> terminationCheckMode = InputChoiceProperty.ofEnum(SimulationTerminationCheckMode.CHECKED, SimulationTerminationCheckMode.class, Enum::toString);
+    private final InputChoiceProperty<SimulationStartMode> startMode = InputChoiceProperty
+            .ofEnum(SimulationStartMode.START_IMMEDIATELY, SimulationStartMode.class, Enum::toString);
+    private final InputChoiceProperty<SimulationTerminationCheckMode> terminationCheckMode = InputChoiceProperty
+            .ofEnum(SimulationTerminationCheckMode.CHECKED, SimulationTerminationCheckMode.class, Enum::toString);
 
     private final BooleanProperty actionButtonRequested = new SimpleBooleanProperty(false);
     private final BooleanProperty cancelButtonRequested = new SimpleBooleanProperty(false);
@@ -50,7 +52,8 @@ public final class DefaultControlViewModel
      * @param simulationState shared simulation state
      * @return configured control view model
      */
-    public static DefaultControlViewModel createWithMinStepDuration(ReadOnlyObjectProperty<SimulationState> simulationState) {
+    public static DefaultControlViewModel createWithMinStepDuration(
+            ReadOnlyObjectProperty<SimulationState> simulationState) {
         DefaultControlViewModel controlViewModel = new DefaultControlViewModel(simulationState);
         controlViewModel.stepDuration.setValue(STEP_DURATION_MIN);
         return controlViewModel;

@@ -54,7 +54,8 @@ public final class EtpetsSimulationManager
 
         var runner = new EtpetsStepRunner(model, random, idSequence);
         var terminationCondition = new EtpetsTerminationCondition();
-        executor = new TimedSimulationExecutor<>(new DefaultSimulationExecutor<>(runner, runner::model, terminationCondition, statistics));
+        executor = new TimedSimulationExecutor<>(new DefaultSimulationExecutor<>(runner, runner::model,
+                terminationCondition, statistics));
 
         initializeTerrain(model, random, cancellation);
         initializeResources(model, random, cancellation);
@@ -102,7 +103,9 @@ public final class EtpetsSimulationManager
     }
 
     @SuppressWarnings("CommentedOutCode")
-    private void initializeTerrain(EtpetsGridModel model, Random random, SimulationInitializationCancellation cancellation) {
+    private void initializeTerrain(EtpetsGridModel model,
+                                   Random random,
+                                   SimulationInitializationCancellation cancellation) {
         int totalCells = structure.cellCount();
         int rockCount = computePercentCount(totalCells, config().rockPercent());
         int waterCount = computePercentCount(totalCells, config().waterPercent());
@@ -140,7 +143,9 @@ public final class EtpetsSimulationManager
     }
 
     @SuppressWarnings("CommentedOutCode")
-    private void initializeResources(EtpetsGridModel model, Random random, SimulationInitializationCancellation cancellation) {
+    private void initializeResources(EtpetsGridModel model,
+                                     Random random,
+                                     SimulationInitializationCancellation cancellation) {
         int totalCells = structure.cellCount();
         int plantCount = computePercentCount(totalCells, config().plantPercent());
         int insectCount = computePercentCount(totalCells, config().insectPercent());
@@ -170,7 +175,8 @@ public final class EtpetsSimulationManager
             }
             double maxAmount = EtpetsBalance.PLANT_MAX_AMOUNT_MIN + random.nextInt(plantRange);
             double regenerationPerStep = EtpetsBalance.PLANT_REGENERATION_PER_STEP_BASE
-                    + random.nextDouble(-EtpetsBalance.PLANT_REGENERATION_PER_STEP_DELTA, EtpetsBalance.PLANT_REGENERATION_PER_STEP_DELTA);
+                    + random.nextDouble(-EtpetsBalance.PLANT_REGENERATION_PER_STEP_DELTA,
+                    EtpetsBalance.PLANT_REGENERATION_PER_STEP_DELTA);
             model.resourceModel().setEntity(available.get(offset + i),
                     new Plant(maxAmount, maxAmount, regenerationPerStep));
         }
@@ -181,7 +187,8 @@ public final class EtpetsSimulationManager
             }
             double maxAmount = EtpetsBalance.INSECT_MAX_AMOUNT_MIN + random.nextInt(insectRange);
             double regenerationPerStep = EtpetsBalance.INSECT_REGENERATION_PER_STEP_BASE
-                    + random.nextDouble(-EtpetsBalance.INSECT_REGENERATION_PER_STEP_DELTA, EtpetsBalance.INSECT_REGENERATION_PER_STEP_DELTA);
+                    + random.nextDouble(-EtpetsBalance.INSECT_REGENERATION_PER_STEP_DELTA,
+                    EtpetsBalance.INSECT_REGENERATION_PER_STEP_DELTA);
             model.resourceModel().setEntity(available.get(offset + i),
                     new Insect(maxAmount, maxAmount, regenerationPerStep));
         }
@@ -193,7 +200,8 @@ public final class EtpetsSimulationManager
                                 EtpetsIdSequence idSequence,
                                 SimulationInitializationCancellation cancellation) {
         // Only for testing / debugging
-        // for (int i = EtpetsBalance.PET_EGG_INCUBATION_REMAINING_MIN; i <= EtpetsBalance.PET_EGG_INCUBATION_REMAINING_MAX; i++) {
+        // for (int i = EtpetsBalance.PET_EGG_INCUBATION_REMAINING_MIN;
+        //         i <= EtpetsBalance.PET_EGG_INCUBATION_REMAINING_MAX; i++) {
         //     model.agentModel().setEntity(new GridCoordinate(i, 7), new PetEgg(
         //             idSequence.next(),
         //             -1,
@@ -222,7 +230,8 @@ public final class EtpetsSimulationManager
             int initialAge = EtpetsBalance.PET_INITIAL_AGE_MIN + random.nextInt(initialAgeRange);
             int stepIndexOfBirth = -1 - initialAge;
 
-            int currentEnergy = maxEnergy - random.nextInt(EtpetsBalance.PET_INITIAL_CURRENT_ENERGY_REDUCTION_DELTA + 1);
+            int currentEnergy = maxEnergy
+                    - random.nextInt(EtpetsBalance.PET_INITIAL_CURRENT_ENERGY_REDUCTION_DELTA + 1);
 
             PetTraits trait = new PetTraits(
                     maxEnergy,

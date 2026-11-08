@@ -62,7 +62,10 @@ public record StatisticsMetric<STA extends SimulationStatistics>(
      * @param extractor   function extracting the metric from live statistics
      * @param extremaMode min/max tracking policy
      */
-    public StatisticsMetric(String key, String labelKey, ToDoubleFunction<STA> extractor, StatisticsExtremaMode extremaMode) {
+    public StatisticsMetric(String key,
+                            String labelKey,
+                            ToDoubleFunction<STA> extractor,
+                            StatisticsExtremaMode extremaMode) {
         this(key, labelKey, extractor, extremaMode, StatisticsChartGroup.NONE, 0);
     }
 
@@ -76,7 +79,8 @@ public record StatisticsMetric<STA extends SimulationStatistics>(
      * @param extremaMode min/max tracking policy
      * @param chartGroup  chart group assignment
      */
-    public StatisticsMetric(String key, String labelKey, ToDoubleFunction<STA> extractor, StatisticsExtremaMode extremaMode,
+    public StatisticsMetric(String key, String labelKey, ToDoubleFunction<STA> extractor,
+                            StatisticsExtremaMode extremaMode,
                             StatisticsChartGroup chartGroup) {
         this(key, labelKey, extractor, extremaMode, chartGroup,
                 (chartGroup == StatisticsChartGroup.NONE) ? 0 : DEFAULT_CHART_WINDOW_SIZE);

@@ -135,7 +135,8 @@ public enum SimulationType {
             "simulation.rebounding.subtitle",
             "simulation.rebounding.url",
             "",
-            List.of("reboundingentities", "rebounding-entities", "rebounding-entity", "rebounding", "rebound", "rebounders")
+            List.of("reboundingentities", "rebounding-entities", "rebounding-entity", "rebounding", "rebound",
+                    "rebounders")
     ),
 
     /**

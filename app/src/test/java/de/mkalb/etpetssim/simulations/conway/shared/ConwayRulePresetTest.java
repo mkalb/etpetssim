@@ -81,7 +81,8 @@ final class ConwayRulePresetTest {
         List<ConwayRulePreset> sortedPart = presets.subList(leadingCount, presets.size());
         assertAll(
                 () -> assertEquals(family.leadingPresets(), presets.subList(0, leadingCount)),
-                () -> assertEquals(sortedPart.stream().sorted(Comparator.comparing(ConwayRulePreset::displayName)).toList(),
+                () -> assertEquals(sortedPart.stream().sorted(Comparator.comparing(ConwayRulePreset::displayName))
+                                .toList(),
                         sortedPart)
         );
     }

@@ -26,7 +26,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 final class EtpetsGridModelTest {
 
     private static GridStructure createStructure(int width, int height) {
-        return new GridStructure(new GridTopology(CellShape.SQUARE, GridEdgeBehavior.BLOCK_XY), new GridSize(width, height));
+        return new GridStructure(new GridTopology(CellShape.SQUARE, GridEdgeBehavior.BLOCK_XY),
+                new GridSize(width, height));
     }
 
     private static WritableGridModel<TerrainEntity> createTerrainModel(GridStructure structure) {
@@ -73,11 +74,14 @@ final class EtpetsGridModelTest {
 
         assertAll(
                 () -> assertThrows(IllegalArgumentException.class, () -> new EtpetsGridModel(structure,
-                        createTerrainModel(otherStructure), createResourceModel(structure), createAgentModel(structure))),
+                        createTerrainModel(otherStructure), createResourceModel(structure),
+                        createAgentModel(structure))),
                 () -> assertThrows(IllegalArgumentException.class, () -> new EtpetsGridModel(structure,
-                        createTerrainModel(structure), createResourceModel(otherStructure), createAgentModel(structure))),
+                        createTerrainModel(structure), createResourceModel(otherStructure),
+                        createAgentModel(structure))),
                 () -> assertThrows(IllegalArgumentException.class, () -> new EtpetsGridModel(structure,
-                        createTerrainModel(structure), createResourceModel(structure), createAgentModel(otherStructure)))
+                        createTerrainModel(structure), createResourceModel(structure),
+                        createAgentModel(otherStructure)))
         );
     }
 

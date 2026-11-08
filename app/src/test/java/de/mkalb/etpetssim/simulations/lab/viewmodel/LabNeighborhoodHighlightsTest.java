@@ -43,7 +43,8 @@ final class LabNeighborhoodHighlightsTest {
 
         SortedMap<GridCoordinate, RadiusRingCell<GridCell<LabEntity>>> ring1 = new TreeMap<>();
         ring1.put(east, ringCell(1, east));
-        SortedMap<Integer, SortedMap<GridCoordinate, RadiusRingCell<GridCell<LabEntity>>>> ringCellsByRadius = new TreeMap<>();
+        SortedMap<Integer, SortedMap<GridCoordinate, RadiusRingCell<GridCell<LabEntity>>>> ringCellsByRadius =
+                new TreeMap<>();
         ringCellsByRadius.put(1, ring1);
         ringCellsByRadius.put(0, new TreeMap<>(Map.of(center, ringCell(0, center))));
 
@@ -74,8 +75,10 @@ final class LabNeighborhoodHighlightsTest {
                 () -> assertEquals(List.of(0, 1), new ArrayList<>(highlights.ringCellsByRadius().keySet())),
                 () -> assertEquals(Set.of(east), highlights.ringCellsByRadius().get(1).keySet()),
                 () -> assertEquals(List.of(east, west), highlights.validNeighborCoordinates()),
-                () -> assertEquals(List.of(east, west), new ArrayList<>(highlights.validNeighborsWithEdgeBehavior().keySet())),
-                () -> assertEquals(List.of(neighbor(center, east)), highlights.validNeighborsWithEdgeBehavior().get(east)),
+                () -> assertEquals(List.of(east, west),
+                        new ArrayList<>(highlights.validNeighborsWithEdgeBehavior().keySet())),
+                () -> assertEquals(List.of(neighbor(center, east)),
+                        highlights.validNeighborsWithEdgeBehavior().get(east)),
                 () -> assertEquals(List.of(new EdgeBehaviorResult(east, east, EdgeBehaviorAction.VALID)),
                         highlights.neighborEdgeBehaviorResults()),
                 () -> assertThrows(UnsupportedOperationException.class,
@@ -89,7 +92,8 @@ final class LabNeighborhoodHighlightsTest {
                 () -> assertThrows(UnsupportedOperationException.class,
                         () -> highlights.validNeighborsWithEdgeBehavior().get(east).add(neighbor(center, west))),
                 () -> assertThrows(UnsupportedOperationException.class,
-                        () -> highlights.neighborEdgeBehaviorResults().add(new EdgeBehaviorResult(west, west, EdgeBehaviorAction.VALID)))
+                        () -> highlights.neighborEdgeBehaviorResults().add(new EdgeBehaviorResult(west, west,
+                                EdgeBehaviorAction.VALID)))
         );
     }
 

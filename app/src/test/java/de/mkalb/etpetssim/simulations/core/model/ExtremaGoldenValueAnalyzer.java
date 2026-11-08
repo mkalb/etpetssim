@@ -119,7 +119,8 @@ public final class ExtremaGoldenValueAnalyzer {
         sb.append("=== Conway (seed=").append(SEED).append(", steps=").append(STEP_COUNT).append(") ===\n");
         sb.append("  minAliveCells    = ").append(minimumValue(extrema, ConwayStatistics.KEY_ALIVE_CELLS)).append('\n');
         sb.append("  maxAliveCells    = ").append(maximumValue(extrema, ConwayStatistics.KEY_ALIVE_CELLS)).append('\n');
-        sb.append("  maxChangedCells  = ").append(maximumValue(extrema, ConwayStatistics.KEY_CHANGED_CELLS)).append('\n');
+        sb.append("  maxChangedCells  = ").append(maximumValue(extrema,
+                ConwayStatistics.KEY_CHANGED_CELLS)).append('\n');
     }
 
     private static void appendForest(StringBuilder sb) {
@@ -131,7 +132,8 @@ public final class ExtremaGoldenValueAnalyzer {
         sb.append("  maxEmptyCells   = ").append(maximumValue(extrema, ForestStatistics.KEY_EMPTY_CELLS)).append('\n');
         sb.append("  minTreeCells    = ").append(minimumValue(extrema, ForestStatistics.KEY_TREE_CELLS)).append('\n');
         sb.append("  maxTreeCells    = ").append(maximumValue(extrema, ForestStatistics.KEY_TREE_CELLS)).append('\n');
-        sb.append("  maxBurningCells = ").append(maximumValue(extrema, ForestStatistics.KEY_BURNING_CELLS)).append('\n');
+        sb.append("  maxBurningCells = ").append(maximumValue(extrema,
+                ForestStatistics.KEY_BURNING_CELLS)).append('\n');
     }
 
     private static void appendWator(StringBuilder sb) {

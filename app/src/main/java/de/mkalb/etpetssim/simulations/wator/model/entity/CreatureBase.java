@@ -72,7 +72,8 @@ public abstract sealed class CreatureBase implements WatorEntity, Comparable<Cre
     }
 
     public final OptionalInt stepIndexOfLastReproduction() {
-        return reproductionStepIndices.isEmpty() ? OptionalInt.empty() : OptionalInt.of(reproductionStepIndices.getLast());
+        return reproductionStepIndices.isEmpty() ? OptionalInt.empty()
+                : OptionalInt.of(reproductionStepIndices.getLast());
     }
 
     public final void reproduce(CreatureBase child) {

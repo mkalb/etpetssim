@@ -18,9 +18,12 @@ public final class ForestConfigView
 
     // Rules
     private static final String FOREST_CONFIG_TREE_GROWTH_PROBABILITY = "forest.config.treegrowthprobability";
-    private static final String FOREST_CONFIG_TREE_GROWTH_PROBABILITY_TOOLTIP = "forest.config.treegrowthprobability.tooltip";
-    private static final String FOREST_CONFIG_LIGHTNING_IGNITION_PROBABILITY = "forest.config.lightningignitionprobability";
-    private static final String FOREST_CONFIG_LIGHTNING_IGNITION_PROBABILITY_TOOLTIP = "forest.config.lightningignitionprobability.tooltip";
+    private static final String FOREST_CONFIG_TREE_GROWTH_PROBABILITY_TOOLTIP =
+            "forest.config.treegrowthprobability.tooltip";
+    private static final String FOREST_CONFIG_LIGHTNING_IGNITION_PROBABILITY =
+            "forest.config.lightningignitionprobability";
+    private static final String FOREST_CONFIG_LIGHTNING_IGNITION_PROBABILITY_TOOLTIP =
+            "forest.config.lightningignitionprobability.tooltip";
 
     public ForestConfigView(ForestConfigViewModel viewModel) {
         super(viewModel);
@@ -52,14 +55,16 @@ public final class ForestConfigView
                 viewModel.treeGrowthProbabilityProperty(),
                 ForestConfigViewModel.TREE_GROWTH_DECIMALS,
                 AppLocalization.getText(FOREST_CONFIG_TREE_GROWTH_PROBABILITY),
-                formatDoubleRangeTooltip(FOREST_CONFIG_TREE_GROWTH_PROBABILITY_TOOLTIP, viewModel.treeGrowthProbabilityProperty()),
+                formatDoubleRangeTooltip(FOREST_CONFIG_TREE_GROWTH_PROBABILITY_TOOLTIP,
+                        viewModel.treeGrowthProbabilityProperty()),
                 FXStyleClasses.CONFIG_SLIDER
         );
         var lightningIgnitionProbabilityControl = FXComponentFactory.createLabeledDoubleSlider(
                 viewModel.lightningIgnitionProbabilityProperty(),
                 ForestConfigViewModel.LIGHTNING_IGNITION_DECIMALS,
                 AppLocalization.getText(FOREST_CONFIG_LIGHTNING_IGNITION_PROBABILITY),
-                formatDoubleRangeTooltip(FOREST_CONFIG_LIGHTNING_IGNITION_PROBABILITY_TOOLTIP, viewModel.lightningIgnitionProbabilityProperty()),
+                formatDoubleRangeTooltip(FOREST_CONFIG_LIGHTNING_IGNITION_PROBABILITY_TOOLTIP,
+                        viewModel.lightningIgnitionProbabilityProperty()),
                 FXStyleClasses.CONFIG_SLIDER
         );
 

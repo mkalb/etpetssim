@@ -23,7 +23,8 @@ public final class SnakeStatistics
     private static final String SNAKE_OBSERVATION_CELLS_LIVING_SNAKE_HEAD = "snake.observation.cells.livingsnakehead";
     private static final String SNAKE_OBSERVATION_CELLS_WALL = "snake.observation.cells.wall";
     private static final String SNAKE_OBSERVATION_CELLS_FOOD = "snake.observation.cells.food";
-    private static final String SNAKE_OBSERVATION_CUMULATIVE_SNAKE_DEATH_COUNT = "snake.observation.cumulativesnakedeathcount";
+    private static final String SNAKE_OBSERVATION_CUMULATIVE_SNAKE_DEATH_COUNT =
+            "snake.observation.cumulativesnakedeathcount";
 
     private static final List<StatisticsMetric<SnakeStatistics>> METRICS = List.of(
             new StatisticsMetric<>(KEY_SNAKE_HEAD_CELLS, SNAKE_OBSERVATION_CELLS_SNAKE_HEAD,

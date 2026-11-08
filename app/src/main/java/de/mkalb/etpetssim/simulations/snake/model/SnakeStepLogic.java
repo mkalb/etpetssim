@@ -95,7 +95,8 @@ public final class SnakeStepLogic implements AgentStepLogic<SnakeEntity, SnakeSt
                 (config.basePointsPerFood() + (int) (snakeHead.segmentCount() * config.segmentLengthMultiplier()))
                 : 0;
         // Move the snake head to newCoordinate
-        Optional<GridCoordinate> tailToClear = snakeHead.move(headCoordinate, moveDecision.direction(), additionalGrowth, addedPoints);
+        Optional<GridCoordinate> tailToClear = snakeHead.move(headCoordinate, moveDecision.direction(),
+                additionalGrowth, addedPoints);
         model.setEntity(moveDecision.targetCoordinate(), snakeHead);
         model.setEntity(headCoordinate, TerrainConstant.SNAKE_SEGMENT);
         // Remove tail segment if not growing

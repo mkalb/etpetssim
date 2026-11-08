@@ -154,7 +154,8 @@ final class SimulationConfigTest {
 
         assertAll(
                 () -> assertTrue(config.hasExpectedSelection(config.neighborhoodMode(), NeighborhoodMode.EDGES_ONLY)),
-                () -> assertFalse(config.hasExpectedSelection(config.neighborhoodMode(), NeighborhoodMode.EDGES_AND_VERTICES)),
+                () -> assertFalse(config.hasExpectedSelection(config.neighborhoodMode(),
+                        NeighborhoodMode.EDGES_AND_VERTICES)),
                 () -> assertTrue(config.hasExpectedSelection(5, 5)),
                 () -> assertFalse(config.hasExpectedSelection(5, 6))
         );

@@ -21,7 +21,8 @@ public final class SnakeConfigView
     private static final String SNAKE_CONFIG_SNAKES = "snake.config.snakes";
     private static final String SNAKE_CONFIG_SNAKES_TOOLTIP = "snake.config.snakes.tooltip";
     private static final String SNAKE_CONFIG_INITIAL_PENDING_GROWTH = "snake.config.initialpendinggrowth";
-    private static final String SNAKE_CONFIG_INITIAL_PENDING_GROWTH_TOOLTIP = "snake.config.initialpendinggrowth.tooltip";
+    private static final String SNAKE_CONFIG_INITIAL_PENDING_GROWTH_TOOLTIP =
+            "snake.config.initialpendinggrowth.tooltip";
 
     // Rules
     private static final String SNAKE_CONFIG_DEATH_MODE_TOOLTIP = "snake.config.deathmode.tooltip";
@@ -30,7 +31,8 @@ public final class SnakeConfigView
     private static final String SNAKE_CONFIG_BASE_POINTS_PER_FOOD = "snake.config.basepointsperfood";
     private static final String SNAKE_CONFIG_BASE_POINTS_PER_FOOD_TOOLTIP = "snake.config.basepointsperfood.tooltip";
     private static final String SNAKE_CONFIG_SEGMENT_LENGTH_MULTIPLIER = "snake.config.segmentlengthmultiplier";
-    private static final String SNAKE_CONFIG_SEGMENT_LENGTH_MULTIPLIER_TOOLTIP = "snake.config.segmentlengthmultiplier.tooltip";
+    private static final String SNAKE_CONFIG_SEGMENT_LENGTH_MULTIPLIER_TOOLTIP =
+            "snake.config.segmentlengthmultiplier.tooltip";
 
     public SnakeConfigView(SnakeConfigViewModel viewModel) {
         super(viewModel);
@@ -66,7 +68,8 @@ public final class SnakeConfigView
         var initialPendingGrowthControl = FXComponentFactory.createLabeledIntSpinner(
                 viewModel.initialPendingGrowthProperty(),
                 AppLocalization.getText(SNAKE_CONFIG_INITIAL_PENDING_GROWTH),
-                formatIntRangeTooltip(SNAKE_CONFIG_INITIAL_PENDING_GROWTH_TOOLTIP, viewModel.initialPendingGrowthProperty()),
+                formatIntRangeTooltip(SNAKE_CONFIG_INITIAL_PENDING_GROWTH_TOOLTIP,
+                        viewModel.initialPendingGrowthProperty()),
                 FXStyleClasses.CONFIG_SPINNER
         );
 
@@ -97,7 +100,8 @@ public final class SnakeConfigView
                 viewModel.segmentLengthMultiplierProperty(),
                 SnakeConfigViewModel.SEGMENT_LENGTH_MULTIPLIER_DECIMALS,
                 AppLocalization.getText(SNAKE_CONFIG_SEGMENT_LENGTH_MULTIPLIER),
-                formatDoubleRangeTooltip(SNAKE_CONFIG_SEGMENT_LENGTH_MULTIPLIER_TOOLTIP, viewModel.segmentLengthMultiplierProperty()),
+                formatDoubleRangeTooltip(SNAKE_CONFIG_SEGMENT_LENGTH_MULTIPLIER_TOOLTIP,
+                        viewModel.segmentLengthMultiplierProperty()),
                 FXStyleClasses.CONFIG_SLIDER
         );
 

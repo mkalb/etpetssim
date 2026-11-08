@@ -24,7 +24,8 @@ public final class WatorObservationView
 
     private final Label ageLabel = new Label();
 
-    public WatorObservationView(DefaultObservationViewModel<WatorEntity, GridCell<WatorEntity>, WatorStatistics> viewModel,
+    public WatorObservationView(DefaultObservationViewModel<WatorEntity, GridCell<WatorEntity>,
+                                        WatorStatistics> viewModel,
                                 GridEntityDescriptorRegistry entityDescriptorRegistry) {
         super(viewModel, entityDescriptorRegistry);
 

@@ -29,7 +29,8 @@ final class ReboundingUserActionTest {
         );
     }
 
-    private static GridCell<ReboundingEntity> selectedCell(ReboundingSimulationManager manager, GridCoordinate coordinate) {
+    private static GridCell<ReboundingEntity> selectedCell(ReboundingSimulationManager manager,
+                                                           GridCoordinate coordinate) {
         return new GridCell<>(coordinate, manager.currentGridModel().getEntity(coordinate));
     }
 

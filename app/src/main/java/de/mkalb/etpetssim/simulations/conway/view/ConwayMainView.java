@@ -71,7 +71,9 @@ public final class ConwayMainView
     private final ConwayEditToolBarViewModel editToolBarViewModel;
     private @Nullable CoordinateDrawer coordinateDrawer;
 
-    public ConwayMainView(DefaultMainViewModel<ConwayEntity, GridCell<ConwayEntity>, WritableGridModel<ConwayEntity>, ConwayConfig, ConwayStatistics, ConwaySimulationManager, ConwayUserActionContext> viewModel,
+    public ConwayMainView(DefaultMainViewModel<ConwayEntity, GridCell<ConwayEntity>, WritableGridModel<ConwayEntity>,
+                                  ConwayConfig, ConwayStatistics, ConwaySimulationManager,
+                                  ConwayUserActionContext> viewModel,
                           ConwayEditToolBarViewModel editToolBarViewModel,
                           GridEntityDescriptorRegistry entityDescriptorRegistry,
                           ConwayConfigView configView,
@@ -147,7 +149,10 @@ public final class ConwayMainView
     }
 
     @Override
-    protected void drawSimulation(CanvasPainters painters, WritableGridModel<ConwayEntity> currentGridModel, int stepCount, int lastDrawnStepCount) {
+    protected void drawSimulation(CanvasPainters painters,
+                                  WritableGridModel<ConwayEntity> currentGridModel,
+                                  int stepCount,
+                                  int lastDrawnStepCount) {
         if (coordinateDrawer == null) {
             AppLogger.warn("ConwayMainView: Skipping canvas draw: coordinateDrawer is not initialized");
             return;
@@ -224,7 +229,8 @@ public final class ConwayMainView
 
         if (selectedToolId != null) {
             var enabledBinding = Bindings.createBooleanBinding(
-                    () -> CONWAY_TOOL_ID_PLACE_PATTERN.equals(selectedToolId.get()) && !availablePatternChoices.isEmpty(),
+                    () -> CONWAY_TOOL_ID_PLACE_PATTERN.equals(selectedToolId.get())
+                            && !availablePatternChoices.isEmpty(),
                     selectedToolId,
                     availablePatternChoices);
             patternLabel.disableProperty().bind(enabledBinding.not());

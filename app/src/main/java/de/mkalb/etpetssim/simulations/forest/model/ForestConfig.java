@@ -67,7 +67,8 @@ public record ForestConfig(
     private boolean hasValidRanges() {
         return isInRangeDouble(treeDensity, TREE_DENSITY_MIN, TREE_DENSITY_MAX)
                 && isInRangeDouble(treeGrowthProbability, TREE_GROWTH_PROBABILITY_MIN, TREE_GROWTH_PROBABILITY_MAX)
-                && isInRangeDouble(lightningIgnitionProbability, LIGHTNING_IGNITION_PROBABILITY_MIN, LIGHTNING_IGNITION_PROBABILITY_MAX);
+                && isInRangeDouble(lightningIgnitionProbability, LIGHTNING_IGNITION_PROBABILITY_MIN,
+                LIGHTNING_IGNITION_PROBABILITY_MAX);
     }
 
 }

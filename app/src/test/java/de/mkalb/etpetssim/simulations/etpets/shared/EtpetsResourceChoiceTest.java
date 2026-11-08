@@ -10,7 +10,8 @@ final class EtpetsResourceChoiceTest {
 
     @Test
     void testLabelKey() {
-        assertKeysInAllBundles(Arrays.stream(EtpetsResourceChoice.values()).map(EtpetsResourceChoice::labelKey).toList());
+        assertKeysInAllBundles(Arrays.stream(EtpetsResourceChoice.values()).map(EtpetsResourceChoice::labelKey)
+                .toList());
     }
 
 }

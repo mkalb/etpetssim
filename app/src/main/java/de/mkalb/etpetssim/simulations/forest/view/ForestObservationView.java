@@ -17,7 +17,8 @@ public final class ForestObservationView
         ForestStatistics,
         DefaultObservationViewModel<ForestEntity, GridCell<ForestEntity>, ForestStatistics>> {
 
-    public ForestObservationView(DefaultObservationViewModel<ForestEntity, GridCell<ForestEntity>, ForestStatistics> viewModel,
+    public ForestObservationView(DefaultObservationViewModel<ForestEntity, GridCell<ForestEntity>,
+                                         ForestStatistics> viewModel,
                                  GridEntityDescriptorRegistry entityDescriptorRegistry) {
         super(viewModel, entityDescriptorRegistry);
 

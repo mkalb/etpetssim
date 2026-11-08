@@ -41,7 +41,8 @@ final class NoUserActionTest {
     @Test
     void testApplyDoesNotMutateStateWithSelectedCell() {
         ForestSimulationManager manager = new ForestSimulationManager(createConfig());
-        NoUserAction<ForestEntity, WritableGridModel<ForestEntity>, ForestConfig, ForestStatistics, ForestSimulationManager> userAction =
+        NoUserAction<ForestEntity, WritableGridModel<ForestEntity>, ForestConfig, ForestStatistics,
+                ForestSimulationManager> userAction =
                 new NoUserAction<>();
         GridCoordinate coordinate = new GridCoordinate(0, 0);
         manager.currentGridModel().setEntity(coordinate, ForestEntity.TREE);
@@ -58,7 +59,8 @@ final class NoUserActionTest {
     @Test
     void testApplyDoesNotMutateStateWithoutSelectedCell() {
         ForestSimulationManager manager = new ForestSimulationManager(createConfig());
-        NoUserAction<ForestEntity, WritableGridModel<ForestEntity>, ForestConfig, ForestStatistics, ForestSimulationManager> userAction =
+        NoUserAction<ForestEntity, WritableGridModel<ForestEntity>, ForestConfig, ForestStatistics,
+                ForestSimulationManager> userAction =
                 new NoUserAction<>();
 
         userAction.apply(manager, NoUserActionContext.NO_CONTEXT, null);

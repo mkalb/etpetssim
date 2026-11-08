@@ -11,7 +11,8 @@ final class SimulationNotificationTypeTest {
     @Test
     void testResourceKey() {
         assertKeysInAllBundles(
-                Arrays.stream(SimulationNotificationType.values()).map(SimulationNotificationType::resourceKey).toList());
+                Arrays.stream(SimulationNotificationType.values()).map(SimulationNotificationType::resourceKey)
+                        .toList());
     }
 
 }

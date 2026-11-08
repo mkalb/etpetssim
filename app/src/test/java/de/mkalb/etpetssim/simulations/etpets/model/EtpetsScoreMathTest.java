@@ -37,7 +37,8 @@ final class EtpetsScoreMathTest {
     @Test
     void testComputeRawMoveScoreAddsBonuses() {
         double base = baseMoveScore();
-        double trailScore = moveScore(1.0d, false, false, false, false, false, EtpetsBalance.TRAIL_INTENSITY_MAX, false);
+        double trailScore = moveScore(1.0d, false, false, false, false, false, EtpetsBalance.TRAIL_INTENSITY_MAX,
+                false);
 
         assertAll(
                 () -> assertEquals(base + EtpetsBalance.PET_MOVE_RESOURCE_BASE_WEIGHT,

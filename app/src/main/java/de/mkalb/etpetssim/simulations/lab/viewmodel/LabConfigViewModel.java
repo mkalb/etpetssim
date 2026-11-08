@@ -64,7 +64,8 @@ public final class LabConfigViewModel
     );
 
     // Layout
-    private final InputChoiceProperty<LabColorMode> colorMode = InputChoiceProperty.ofList(COLOR_MODE_DEFAULT, COLOR_MODE_VALUES,
+    private final InputChoiceProperty<LabColorMode> colorMode = InputChoiceProperty.ofList(COLOR_MODE_DEFAULT,
+            COLOR_MODE_VALUES,
             e -> AppLocalization.getText(e.resourceKey()));
 
     // Rules - NeighborhoodMode

@@ -57,7 +57,8 @@ public final class LabMainViewModel
     public LabMainViewModel(ObjectProperty<SimulationState> simulationState,
                             LabConfigViewModel configViewModel,
                             LabControlViewModel controlViewModel,
-                            DefaultObservationViewModel<LabEntity, GridCell<LabEntity>, LabStatistics> observationViewModel) {
+                            DefaultObservationViewModel<LabEntity, GridCell<LabEntity>,
+                                    LabStatistics> observationViewModel) {
         super(simulationState, configViewModel, observationViewModel);
         // Keep references to the view models to add/remove listeners and access properties.
         labObservationViewModel = observationViewModel;
@@ -162,7 +163,8 @@ public final class LabMainViewModel
         drawTestRequestedListener = listener;
     }
 
-    public Optional<LabNeighborhoodHighlights> computeNeighborhoodHighlights(GridCoordinate center, GridStructure gridStructure) {
+    public Optional<LabNeighborhoodHighlights> computeNeighborhoodHighlights(GridCoordinate center,
+                                                                             GridStructure gridStructure) {
         if (simulationManager == null) {
             return Optional.empty();
         }

@@ -173,7 +173,8 @@ final class StatisticsMetricLayoutTest {
                             StatisticsMetric::chartGroup,
                             Collectors.mapping(StatisticsMetric::chartWindowSize, Collectors.toSet())));
             windowSizesByGroup.forEach((group, windowSizes) -> assertEquals(1, windowSizes.size(),
-                    "Metrics in chartGroup " + group + " must share the same chartWindowSize, but found " + windowSizes));
+                    "Metrics in chartGroup " + group + " must share the same chartWindowSize, but found "
+                            + windowSizes));
         });
     }
 

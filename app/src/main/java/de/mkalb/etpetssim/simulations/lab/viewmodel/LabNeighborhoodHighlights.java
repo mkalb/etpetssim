@@ -30,7 +30,8 @@ public record LabNeighborhoodHighlights(
         List<EdgeBehaviorResult> neighborEdgeBehaviorResults) {
 
     public LabNeighborhoodHighlights {
-        SortedMap<Integer, SortedMap<GridCoordinate, RadiusRingCell<GridCell<LabEntity>>>> ringCellsByRadiusCopy = new TreeMap<>();
+        SortedMap<Integer, SortedMap<GridCoordinate, RadiusRingCell<GridCell<LabEntity>>>> ringCellsByRadiusCopy =
+                new TreeMap<>();
         ringCellsByRadius.forEach((radius, cellsByCoordinate) ->
                 ringCellsByRadiusCopy.put(radius, Collections.unmodifiableSortedMap(new TreeMap<>(cellsByCoordinate))));
         ringCellsByRadius = Collections.unmodifiableSortedMap(ringCellsByRadiusCopy);

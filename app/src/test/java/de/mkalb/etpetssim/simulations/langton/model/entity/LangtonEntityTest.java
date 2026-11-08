@@ -17,7 +17,8 @@ final class LangtonEntityTest {
         List<GridEntityDescriptorProvider> providers = LangtonEntity.allEntityDescriptorProviders();
         List<String> descriptorIds = providers.stream().map(GridEntityDescriptorProvider::descriptorId).toList();
         assertAll(
-                () -> assertEquals(EntityDescriptors.values().length + TerrainConstant.values().length, providers.size()),
+                () -> assertEquals(EntityDescriptors.values().length + TerrainConstant.values().length,
+                        providers.size()),
                 () -> assertEquals(descriptorIds.size(), Set.copyOf(descriptorIds).size()),
                 () -> assertThrows(UnsupportedOperationException.class, () -> providers.add(TerrainConstant.UNVISITED))
         );

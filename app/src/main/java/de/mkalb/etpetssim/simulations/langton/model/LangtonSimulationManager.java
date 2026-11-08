@@ -38,7 +38,8 @@ public final class LangtonSimulationManager
 
         var runner = new LangtonStepRunner(model, config);
         var terminationCondition = new LangtonTerminationCondition();
-        executor = new TimedSimulationExecutor<>(new DefaultSimulationExecutor<>(runner, runner::model, terminationCondition, statistics));
+        executor = new TimedSimulationExecutor<>(new DefaultSimulationExecutor<>(runner, runner::model,
+                terminationCondition, statistics));
 
         initializeGrid(model);
         cancellation.checkCanceled();
@@ -76,7 +77,8 @@ public final class LangtonSimulationManager
     private void initializeGrid(LangtonGridModel model) {
         Ant ant = new Ant(CompassDirection.N);
         // Start at the middle of the grid but round down to an even number. This avoids problems with TRIANGLE.
-        GridCoordinate coordinate = new GridCoordinate(halveToEven(structure.size().width()), halveToEven(structure.size().height()));
+        GridCoordinate coordinate = new GridCoordinate(halveToEven(structure.size().width()),
+                halveToEven(structure.size().height()));
         model.antModel().setEntity(coordinate, ant);
         model.terrainModel().setEntity(coordinate, TerrainConstant.COLOR_1);
     }

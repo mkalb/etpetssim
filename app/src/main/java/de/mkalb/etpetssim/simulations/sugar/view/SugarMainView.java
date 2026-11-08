@@ -84,7 +84,8 @@ public final class SugarMainView
     private @Nullable CellDrawer<AgentEntity> cellAgentDrawer;
     private int maxColorAgentEnergy = 1;
 
-    public SugarMainView(DefaultMainViewModel<SugarEntity, SugarCell, SugarGridModel, SugarConfig, SugarStatistics, SugarSimulationManager, SugarUserActionContext> viewModel,
+    public SugarMainView(DefaultMainViewModel<SugarEntity, SugarCell, SugarGridModel, SugarConfig, SugarStatistics,
+                                 SugarSimulationManager, SugarUserActionContext> viewModel,
                          SugarEditToolBarViewModel editToolBarViewModel,
                          GridEntityDescriptorRegistry entityDescriptorRegistry,
                          SugarConfigView configView,
@@ -110,10 +111,12 @@ public final class SugarMainView
 
         maxColorAgentEnergy = computeMaxColorAgentEnergy(config);
         entityColors.put(SugarEntity.DESCRIPTOR_ID_SUGAR,
-                computeBrightnessVariantsMap(entityDescriptorRegistry.requireByDescriptorId(SugarEntity.DESCRIPTOR_ID_SUGAR),
+                computeBrightnessVariantsMap(entityDescriptorRegistry
+                                .requireByDescriptorId(SugarEntity.DESCRIPTOR_ID_SUGAR),
                         1, config.maxSugarAmount(), config.maxSugarAmount(), SUGAR_MAX_FACTOR_DELTA));
         entityColors.put(SugarEntity.DESCRIPTOR_ID_AGENT,
-                computeBrightnessVariantsMap(entityDescriptorRegistry.requireByDescriptorId(SugarEntity.DESCRIPTOR_ID_AGENT),
+                computeBrightnessVariantsMap(entityDescriptorRegistry
+                                .requireByDescriptorId(SugarEntity.DESCRIPTOR_ID_AGENT),
                         1, maxColorAgentEnergy, AGENT_GROUP_COUNT, AGENT_MAX_FACTOR_DELTA));
 
         double strokeLineWidth = computeStrokeLineWidth(cellDimension);
@@ -162,7 +165,10 @@ public final class SugarMainView
     }
 
     @Override
-    protected void drawSimulation(CanvasPainters painters, SugarGridModel currentGridModel, int stepCount, int lastDrawnStepCount) {
+    protected void drawSimulation(CanvasPainters painters,
+                                  SugarGridModel currentGridModel,
+                                  int stepCount,
+                                  int lastDrawnStepCount) {
         if ((cellResourceDrawer == null) || (cellAgentDrawer == null)) {
             AppLogger.warn("SugarMainView: Skipping canvas draw: cell drawers are not initialized");
             return;

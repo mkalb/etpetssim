@@ -43,7 +43,8 @@ public enum TerrainConstant implements LangtonEntity, ConstantGridEntityDescript
     COLOR_14(14, Color.DEEPPINK),
     COLOR_15(15, Color.GOLD);
 
-    private static final Map<Integer, TerrainConstant> BY_RULE_INDEX = HashMap.newHashMap(TerrainConstant.values().length);
+    private static final Map<Integer, TerrainConstant> BY_RULE_INDEX = HashMap
+            .newHashMap(TerrainConstant.values().length);
 
     static {
         for (TerrainConstant constant : values()) {

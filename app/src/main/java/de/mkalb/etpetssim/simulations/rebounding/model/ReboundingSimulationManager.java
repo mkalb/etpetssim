@@ -49,9 +49,11 @@ public final class ReboundingSimulationManager
         var model = new SparseGridModel<ReboundingEntity>(structure, TerrainConstant.GROUND);
 
         var agentStepLogic = new ReboundingStepLogic(structure, config);
-        var runner = new AsynchronousStepRunner<>(model, ReboundingEntity::isRebounder, AgentOrderingStrategies.byPosition(), agentStepLogic);
+        var runner = new AsynchronousStepRunner<>(model, ReboundingEntity::isRebounder,
+                AgentOrderingStrategies.byPosition(), agentStepLogic);
         var terminationCondition = new ReboundingTerminationCondition();
-        executor = new TimedSimulationExecutor<>(new DefaultSimulationExecutor<>(runner, runner::model, terminationCondition, statistics));
+        executor = new TimedSimulationExecutor<>(new DefaultSimulationExecutor<>(runner, runner::model,
+                terminationCondition, statistics));
 
         initializeGrid(config, model, random, cancellation);
         cancellation.checkCanceled();
@@ -133,9 +135,10 @@ public final class ReboundingSimulationManager
         return positions;
     }
 
-    private GridInitializer<ReboundingEntity> createMovingEntityInitializer(ReboundingConfig config,
-                                                                            Random random,
-                                                                            SimulationInitializationCancellation cancellation) {
+    private GridInitializer<ReboundingEntity> createMovingEntityInitializer(
+            ReboundingConfig config,
+            Random random,
+            SimulationInitializationCancellation cancellation) {
         int movingEntityCount = computeMovingEntityCount(config);
         if (movingEntityCount == 0) {
             return GridInitializers.identity();

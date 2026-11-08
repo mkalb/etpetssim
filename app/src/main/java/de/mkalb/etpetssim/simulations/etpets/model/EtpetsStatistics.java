@@ -20,7 +20,8 @@ public final class EtpetsStatistics
 
     private static final String ETPETS_OBSERVATION_CELLS_ACTIVE_PETS = "etpets.observation.cells.activepets";
     private static final String ETPETS_OBSERVATION_CELLS_EGGS = "etpets.observation.cells.eggs";
-    private static final String ETPETS_OBSERVATION_CUMULATIVE_PET_DEATH_COUNT = "etpets.observation.cumulativepetdeathcount";
+    private static final String ETPETS_OBSERVATION_CUMULATIVE_PET_DEATH_COUNT =
+            "etpets.observation.cumulativepetdeathcount";
     private static final int CHART_WINDOW_SIZE = 1_000;
 
     private static final List<StatisticsMetric<EtpetsStatistics>> METRICS = List.of(

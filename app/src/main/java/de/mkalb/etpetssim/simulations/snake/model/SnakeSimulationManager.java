@@ -71,7 +71,8 @@ public final class SnakeSimulationManager
         var agentStepLogic = new SnakeStepLogic(structure, config, random);
         var runner = new AsynchronousStepRunner<>(model, SnakeEntity::isAgent, AGENT_ORDERING_STRATEGY, agentStepLogic);
         var terminationCondition = new SnakeTerminationCondition();
-        executor = new TimedSimulationExecutor<>(new DefaultSimulationExecutor<>(runner, runner::model, terminationCondition, statistics));
+        executor = new TimedSimulationExecutor<>(new DefaultSimulationExecutor<>(runner, runner::model,
+                terminationCondition, statistics));
 
         initializeGrid(config, model, random, cancellation);
         nextSnakeId = config.snakes();

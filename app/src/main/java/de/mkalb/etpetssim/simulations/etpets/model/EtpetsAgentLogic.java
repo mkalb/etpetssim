@@ -338,8 +338,8 @@ public final class EtpetsAgentLogic {
         return switch (actionCandidate.type()) {
             case WAIT -> applyWaitAction(currentCoordinate, gridModel);
             case MOVE -> applyMoveAction(pet, currentCoordinate, actionCandidate.moveTarget(), gridModel);
-            case EAT ->
-                    applyEatAction(actionCandidate, pet, currentCoordinate, actionCandidate.interactionTarget(), gridModel);
+            case EAT -> applyEatAction(actionCandidate, pet, currentCoordinate, actionCandidate.interactionTarget(),
+                    gridModel);
             case REPRODUCE -> applyReproduceAction(actionCandidate, pet, gridModel, stepIndex, random, idSequence);
         };
     }
@@ -580,10 +580,11 @@ public final class EtpetsAgentLogic {
         return (secondPet.parentBId() != null) && idsA.contains(secondPet.parentBId());
     }
 
-    private static Optional<GridCoordinate> findEggPlacementCoordinate(GridStructure structure,
-                                                                       GridCoordinate sourceCoordinate,
-                                                                       GridCoordinate partnerCoordinate,
-                                                                       Map<GridCoordinate, RadiusRingCell<EtpetsCell>> snapshotCellsByCoordinate) {
+    private static Optional<GridCoordinate> findEggPlacementCoordinate(
+            GridStructure structure,
+            GridCoordinate sourceCoordinate,
+            GridCoordinate partnerCoordinate,
+            Map<GridCoordinate, RadiusRingCell<EtpetsCell>> snapshotCellsByCoordinate) {
         // TODO Optimize method
         List<GridCoordinate> sourceNeighbors = computeValidNeighborCoordinates(structure, sourceCoordinate);
         Set<GridCoordinate> sourceNeighborSet = new HashSet<>(sourceNeighbors);
@@ -591,7 +592,8 @@ public final class EtpetsAgentLogic {
 
         List<GridCoordinate> candidates = new ArrayList<>();
         for (GridCoordinate coordinate : partnerNeighbors) {
-            if (!sourceNeighborSet.contains(coordinate) || coordinate.equals(sourceCoordinate) || coordinate.equals(partnerCoordinate)) {
+            if (!sourceNeighborSet.contains(coordinate) || coordinate.equals(sourceCoordinate)
+                    || coordinate.equals(partnerCoordinate)) {
                 continue;
             }
 
@@ -615,7 +617,8 @@ public final class EtpetsAgentLogic {
         if (candidates.isEmpty()) {
             return Optional.empty();
         }
-        candidates.sort(EtpetsDeterminism::compareCoordinates); // TODO replace compareCoordinates with random or better solution
+        // TODO replace compareCoordinates with random or better solution
+        candidates.sort(EtpetsDeterminism::compareCoordinates);
         return Optional.of(candidates.getFirst());
     }
 
@@ -670,7 +673,8 @@ public final class EtpetsAgentLogic {
                                 int stepIndex,
                                 EtpetsIdSequence idSequence) {
         PetTraits traits = egg.petGenome().traits();
-        int birthEnergy = Math.toIntExact(Math.round(traits.maxEnergy() * EtpetsBalance.PET_CURRENT_ENERGY_BIRTH_FACTOR));
+        int birthEnergy = Math
+                .toIntExact(Math.round(traits.maxEnergy() * EtpetsBalance.PET_CURRENT_ENERGY_BIRTH_FACTOR));
         return new Pet(
                 idSequence.next(),
                 egg.parentAId(),

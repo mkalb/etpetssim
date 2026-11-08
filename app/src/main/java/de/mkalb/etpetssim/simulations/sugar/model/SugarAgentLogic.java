@@ -125,7 +125,8 @@ public final class SugarAgentLogic {
             Optional<CellNeighborWithEdgeBehavior> directNeighbor = findReachableNeighbor(originalCoordinate, direction,
                     config, structure);
             // The agent looks further in the same direction only through a free direct neighbor
-            if (directNeighbor.isEmpty() || !agentModel.isDefaultEntity(directNeighbor.get().mappedNeighborCoordinate())) {
+            if (directNeighbor.isEmpty()
+                    || !agentModel.isDefaultEntity(directNeighbor.get().mappedNeighborCoordinate())) {
                 continue;
             }
             CellNeighborWithEdgeBehavior neighbor = directNeighbor.get();
@@ -151,7 +152,8 @@ public final class SugarAgentLogic {
                                                                                 CompassDirection direction,
                                                                                 SugarConfig config,
                                                                                 GridStructure structure) {
-        return CellNeighborhoods.cellNeighborWithEdgeBehavior(coordinate, config.neighborhoodMode(), structure, direction)
+        return CellNeighborhoods.cellNeighborWithEdgeBehavior(coordinate, config.neighborhoodMode(), structure,
+                        direction)
                 .filter(neighbor -> neighbor.edgeBehaviorAction().isWithinGrid());
     }
 

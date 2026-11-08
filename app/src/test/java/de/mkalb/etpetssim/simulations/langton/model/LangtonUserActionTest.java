@@ -33,7 +33,8 @@ final class LangtonUserActionTest {
                 LangtonConstraints.CELL_DISPLAY_MODE_DEFAULT,
                 1L,
                 LangtonConstraints.NEIGHBORHOOD_MODE_DEFAULT,
-                LangtonMovementRules.parse((cellShape == CellShape.TRIANGLE) ? "URR" : LangtonConstraints.MOVEMENT_RULES_DEFAULT)
+                LangtonMovementRules.parse((cellShape == CellShape.TRIANGLE) ? "URR"
+                        : LangtonConstraints.MOVEMENT_RULES_DEFAULT)
         );
     }
 
@@ -62,7 +63,8 @@ final class LangtonUserActionTest {
 
         assertAll(
                 () -> assertInstanceOf(Ant.class, manager.currentGridModel().antModel().getEntity(coordinate)),
-                () -> assertEquals(CompassDirection.W, ((Ant) manager.currentGridModel().antModel().getEntity(coordinate)).direction()),
+                () -> assertEquals(CompassDirection.W,
+                        ((Ant) manager.currentGridModel().antModel().getEntity(coordinate)).direction()),
                 () -> assertEquals(antCellsBefore + 1, manager.statistics().antCells()),
                 () -> assertEquals(visitedCellsBefore + 1, manager.statistics().visitedCells())
         );
@@ -82,7 +84,8 @@ final class LangtonUserActionTest {
         assertAll(
                 () -> assertTrue(coordinate.isTriangleCellPointingDown()),
                 () -> assertInstanceOf(Ant.class, manager.currentGridModel().antModel().getEntity(coordinate)),
-                () -> assertEquals(CompassDirection.N, ((Ant) manager.currentGridModel().antModel().getEntity(coordinate)).direction())
+                () -> assertEquals(CompassDirection.N,
+                        ((Ant) manager.currentGridModel().antModel().getEntity(coordinate)).direction())
         );
     }
 
@@ -121,7 +124,8 @@ final class LangtonUserActionTest {
         assertAll(
                 () -> assertFalse(coordinate.isTriangleCellPointingDown()),
                 () -> assertInstanceOf(Ant.class, manager.currentGridModel().antModel().getEntity(coordinate)),
-                () -> assertEquals(CompassDirection.S, ((Ant) manager.currentGridModel().antModel().getEntity(coordinate)).direction())
+                () -> assertEquals(CompassDirection.S,
+                        ((Ant) manager.currentGridModel().antModel().getEntity(coordinate)).direction())
         );
     }
 

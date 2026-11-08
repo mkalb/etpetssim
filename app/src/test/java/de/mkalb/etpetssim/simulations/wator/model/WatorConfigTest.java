@@ -109,7 +109,9 @@ final class WatorConfigTest {
                 () -> assertTrue(isValidWith(v -> v.sharkMinReproductionAge = SHARK_MIN_REPRODUCTION_AGE_MAX)),
                 () -> assertTrue(isValidWith(v -> v.sharkMinReproductionEnergy = SHARK_MIN_REPRODUCTION_ENERGY_MIN)),
                 () -> assertTrue(isValidWith(v -> v.sharkMinReproductionEnergy = SHARK_MIN_REPRODUCTION_ENERGY_MAX)),
-                () -> assertTrue(isValidWith(v -> v.sharkMinReproductionInterval = SHARK_MIN_REPRODUCTION_INTERVAL_MIN)),
+                () ->
+                        assertTrue(isValidWith(v -> v.sharkMinReproductionInterval =
+                                SHARK_MIN_REPRODUCTION_INTERVAL_MIN)),
                 () -> assertTrue(isValidWith(v -> v.sharkMinReproductionInterval = SHARK_MIN_REPRODUCTION_INTERVAL_MAX))
         );
     }
@@ -154,8 +156,10 @@ final class WatorConfigTest {
     @Test
     void testIsValidRejectsFishMinReproductionIntervalOutsideRange() {
         assertAll(
-                () -> assertFalse(isValidWith(v -> v.fishMinReproductionInterval = FISH_MIN_REPRODUCTION_INTERVAL_MIN - 1)),
-                () -> assertFalse(isValidWith(v -> v.fishMinReproductionInterval = FISH_MIN_REPRODUCTION_INTERVAL_MAX + 1))
+                () -> assertFalse(isValidWith(v -> v.fishMinReproductionInterval = FISH_MIN_REPRODUCTION_INTERVAL_MIN
+                        - 1)),
+                () -> assertFalse(isValidWith(v -> v.fishMinReproductionInterval = FISH_MIN_REPRODUCTION_INTERVAL_MAX
+                        + 1))
         );
     }
 
@@ -202,16 +206,20 @@ final class WatorConfigTest {
     @Test
     void testIsValidRejectsSharkMinReproductionEnergyOutsideRange() {
         assertAll(
-                () -> assertFalse(isValidWith(v -> v.sharkMinReproductionEnergy = SHARK_MIN_REPRODUCTION_ENERGY_MIN - 1)),
-                () -> assertFalse(isValidWith(v -> v.sharkMinReproductionEnergy = SHARK_MIN_REPRODUCTION_ENERGY_MAX + 1))
+                () -> assertFalse(isValidWith(v -> v.sharkMinReproductionEnergy = SHARK_MIN_REPRODUCTION_ENERGY_MIN
+                        - 1)),
+                () -> assertFalse(isValidWith(v -> v.sharkMinReproductionEnergy = SHARK_MIN_REPRODUCTION_ENERGY_MAX
+                        + 1))
         );
     }
 
     @Test
     void testIsValidRejectsSharkMinReproductionIntervalOutsideRange() {
         assertAll(
-                () -> assertFalse(isValidWith(v -> v.sharkMinReproductionInterval = SHARK_MIN_REPRODUCTION_INTERVAL_MIN - 1)),
-                () -> assertFalse(isValidWith(v -> v.sharkMinReproductionInterval = SHARK_MIN_REPRODUCTION_INTERVAL_MAX + 1))
+                () -> assertFalse(isValidWith(v -> v.sharkMinReproductionInterval = SHARK_MIN_REPRODUCTION_INTERVAL_MIN
+                        - 1)),
+                () -> assertFalse(isValidWith(v -> v.sharkMinReproductionInterval = SHARK_MIN_REPRODUCTION_INTERVAL_MAX
+                        + 1))
         );
     }
 

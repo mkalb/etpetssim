@@ -79,7 +79,8 @@ final class ForestConfigTest {
     @Test
     void testIsValidRejectsTreeGrowthProbabilityOutsideRange() {
         assertAll(
-                () -> assertFalse(isValidWith(v -> v.treeGrowthProbability = Math.nextDown(TREE_GROWTH_PROBABILITY_MIN))),
+                () -> assertFalse(isValidWith(v -> v.treeGrowthProbability = Math
+                        .nextDown(TREE_GROWTH_PROBABILITY_MIN))),
                 () -> assertFalse(isValidWith(v -> v.treeGrowthProbability = Math.nextUp(TREE_GROWTH_PROBABILITY_MAX)))
         );
     }

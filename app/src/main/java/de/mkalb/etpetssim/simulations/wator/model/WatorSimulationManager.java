@@ -46,9 +46,11 @@ public final class WatorSimulationManager
 
         creatureFactory = new CreatureFactory();
         var agentStepLogic = new WatorStepLogic(config, random, creatureFactory);
-        var runner = new AsynchronousStepRunner<>(model, WatorEntity::isAgent, AgentOrderingStrategies.byPosition(), agentStepLogic);
+        var runner = new AsynchronousStepRunner<>(model, WatorEntity::isAgent, AgentOrderingStrategies.byPosition(),
+                agentStepLogic);
         var terminationCondition = new WatorTerminationCondition();
-        executor = new TimedSimulationExecutor<>(new DefaultSimulationExecutor<>(runner, runner::model, terminationCondition, statistics));
+        executor = new TimedSimulationExecutor<>(new DefaultSimulationExecutor<>(runner, runner::model,
+                terminationCondition, statistics));
 
         initializeGrid(model, random, cancellation);
         cancellation.checkCanceled();

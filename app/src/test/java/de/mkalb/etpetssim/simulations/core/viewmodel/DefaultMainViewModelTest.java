@@ -84,7 +84,8 @@ final class DefaultMainViewModelTest {
         var controlViewModel = new DefaultControlViewModel(simulationState);
         controlViewModel.startModeProperty().setValue(SimulationStartMode.START_PAUSED);
         var observationViewModel =
-                new DefaultObservationViewModel<ConwayEntity, GridCell<ConwayEntity>, ConwayStatistics>(simulationState);
+                new DefaultObservationViewModel<ConwayEntity, GridCell<ConwayEntity>,
+                        ConwayStatistics>(simulationState);
         return new Fixture(
                 new DefaultMainViewModel<>(
                         simulationState,
@@ -194,7 +195,8 @@ final class DefaultMainViewModelTest {
         Fixture fixture = FXTestSupport.supplyAndWaitNonNull(DefaultMainViewModelTest::createFixture);
         AtomicInteger resetCallCount = new AtomicInteger();
 
-        FXTestSupport.runAndWait(() -> fixture.mainViewModel().setSimulationResetListener(resetCallCount::incrementAndGet));
+        FXTestSupport
+                .runAndWait(() -> fixture.mainViewModel().setSimulationResetListener(resetCallCount::incrementAndGet));
         startAndAwaitInitialization(fixture);
         FXTestSupport.runAndWait(() -> {
             assertEquals(1, resetCallCount.get());
@@ -255,7 +257,8 @@ final class DefaultMainViewModelTest {
 
         assertAll(
                 () -> assertSame(firstTerminationHandle, secondTerminationHandle),
-                () -> assertTrue(firstTerminationHandle.awaitTermination(FXTestSupport.DEFAULT_TIMEOUT_SECONDS, TimeUnit.SECONDS))
+                () -> assertTrue(firstTerminationHandle.awaitTermination(FXTestSupport.DEFAULT_TIMEOUT_SECONDS,
+                        TimeUnit.SECONDS))
         );
     }
 
@@ -274,7 +277,8 @@ final class DefaultMainViewModelTest {
 
         assertAll(
                 () -> assertSame(firstTerminationHandle, secondTerminationHandle),
-                () -> assertTrue(firstTerminationHandle.awaitTermination(FXTestSupport.DEFAULT_TIMEOUT_SECONDS, TimeUnit.SECONDS))
+                () -> assertTrue(firstTerminationHandle.awaitTermination(FXTestSupport.DEFAULT_TIMEOUT_SECONDS,
+                        TimeUnit.SECONDS))
         );
     }
 
@@ -476,7 +480,8 @@ final class DefaultMainViewModelTest {
         assertFalse(constructedOnFxThread.get());
         releaseConstruction.countDown();
         assertTrue(initializationCompleted.await(FXTestSupport.DEFAULT_TIMEOUT_SECONDS, TimeUnit.SECONDS));
-        FXTestSupport.runAndWait(() -> assertEquals(SimulationState.PAUSED, fixture.mainViewModel().getSimulationState()));
+        FXTestSupport.runAndWait(() -> assertEquals(SimulationState.PAUSED,
+                fixture.mainViewModel().getSimulationState()));
         FXTestSupport.runAndWait(fixture.mainViewModel()::shutdownSimulation);
     }
 

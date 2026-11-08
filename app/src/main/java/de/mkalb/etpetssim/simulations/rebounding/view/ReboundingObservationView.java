@@ -24,7 +24,8 @@ public final class ReboundingObservationView
 
     private final Label directionLabel = new Label();
 
-    public ReboundingObservationView(DefaultObservationViewModel<ReboundingEntity, GridCell<ReboundingEntity>, ReboundingStatistics> viewModel,
+    public ReboundingObservationView(DefaultObservationViewModel<ReboundingEntity, GridCell<ReboundingEntity>,
+                                             ReboundingStatistics> viewModel,
                                      GridEntityDescriptorRegistry entityDescriptorRegistry) {
         super(viewModel, entityDescriptorRegistry);
 

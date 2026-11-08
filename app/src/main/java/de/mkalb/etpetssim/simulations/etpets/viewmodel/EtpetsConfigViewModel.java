@@ -41,7 +41,8 @@ import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsConstraints.WATE
 
 public final class EtpetsConfigViewModel extends AbstractConfigViewModel<EtpetsConfig> {
 
-    private static final String ETPETS_CONFIG_VALIDATION_COMBINED_PERCENTS = "etpets.config.validation.combinedpercents";
+    private static final String ETPETS_CONFIG_VALIDATION_COMBINED_PERCENTS =
+            "etpets.config.validation.combinedpercents";
 
     private static final CommonConfigSettings COMMON_SETTINGS = new CommonConfigSettings(
             CELL_SHAPE_DEFAULT,

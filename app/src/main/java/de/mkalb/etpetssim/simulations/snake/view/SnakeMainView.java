@@ -89,7 +89,9 @@ public final class SnakeMainView
 
     private final SnakeEditToolBarViewModel editToolBarViewModel;
 
-    public SnakeMainView(DefaultMainViewModel<SnakeEntity, GridCell<SnakeEntity>, WritableGridModel<SnakeEntity>, SnakeConfig, SnakeStatistics, SnakeSimulationManager, SnakeUserActionContext> viewModel,
+    public SnakeMainView(DefaultMainViewModel<SnakeEntity, GridCell<SnakeEntity>, WritableGridModel<SnakeEntity>,
+                                 SnakeConfig, SnakeStatistics, SnakeSimulationManager,
+                                 SnakeUserActionContext> viewModel,
                          SnakeEditToolBarViewModel editToolBarViewModel,
                          GridEntityDescriptorRegistry entityDescriptorRegistry,
                          SnakeConfigView configView,
@@ -148,12 +150,17 @@ public final class SnakeMainView
     }
 
     @Override
-    protected void drawSimulation(CanvasPainters painters, WritableGridModel<SnakeEntity> currentGridModel, int stepCount, int lastDrawnStepCount) {
+    protected void drawSimulation(CanvasPainters painters,
+                                  WritableGridModel<SnakeEntity> currentGridModel,
+                                  int stepCount,
+                                  int lastDrawnStepCount) {
         painters.dynamic().clearCanvasBackground();
 
         var wallDescriptor = entityDescriptorRegistry.requireByDescriptorId(SnakeEntity.DESCRIPTOR_ID_WALL);
-        var growthFoodDescriptor = entityDescriptorRegistry.requireByDescriptorId(SnakeEntity.DESCRIPTOR_ID_GROWTH_FOOD);
-        var snakeSegmentDescriptor = entityDescriptorRegistry.requireByDescriptorId(SnakeEntity.DESCRIPTOR_ID_SNAKE_SEGMENT);
+        var growthFoodDescriptor = entityDescriptorRegistry
+                .requireByDescriptorId(SnakeEntity.DESCRIPTOR_ID_GROWTH_FOOD);
+        var snakeSegmentDescriptor = entityDescriptorRegistry
+                .requireByDescriptorId(SnakeEntity.DESCRIPTOR_ID_SNAKE_SEGMENT);
         var snakeHeadDescriptor = entityDescriptorRegistry.requireByDescriptorId(SnakeEntity.DESCRIPTOR_ID_SNAKE_HEAD);
 
         // Alive colors are defined in EntityDescriptors.
@@ -175,10 +182,12 @@ public final class SnakeMainView
 
         currentGridModel.filteredCoordinates(SnakeEntity::isWall)
                 .forEach(coordinate ->
-                        painters.dynamic().drawCell(coordinate, wallDescriptor.color(), wallDescriptor.borderColor(), WALL_STROKE_LINE_WIDTH));
+                        painters.dynamic().drawCell(coordinate, wallDescriptor.color(), wallDescriptor.borderColor(),
+                                WALL_STROKE_LINE_WIDTH));
         currentGridModel.filteredCoordinates(SnakeEntity::isFood)
                 .forEach(coordinate ->
-                        painters.dynamic().drawCellInnerCircle(coordinate, growthFoodDescriptor.color(), growthFoodDescriptor.borderColor(), FOOD_STROKE_LINE_WIDTH, StrokeType.INSIDE));
+                        painters.dynamic().drawCellInnerCircle(coordinate, growthFoodDescriptor.color(),
+                                growthFoodDescriptor.borderColor(), FOOD_STROKE_LINE_WIDTH, StrokeType.INSIDE));
         currentGridModel.filteredCells(e -> e instanceof SnakeHead)
                 .forEach(cell -> {
                     if (cell.entity() instanceof SnakeHead head) {
@@ -206,9 +215,11 @@ public final class SnakeMainView
                             snakeSegmentColorBorder = segmentAliveBorderColor;
                         }
                         for (GridCoordinate coordinate : head.currentSegments()) {
-                            painters.dynamic().drawCell(coordinate, snakeSegmentColor, snakeSegmentColorBorder, SNAKE_SEGMENT_STROKE_LINE_WIDTH);
+                            painters.dynamic().drawCell(coordinate, snakeSegmentColor, snakeSegmentColorBorder,
+                                    SNAKE_SEGMENT_STROKE_LINE_WIDTH);
                         }
-                        painters.dynamic().drawCellInnerCircle(cell.coordinate(), snakeHeadColor, snakeHeadColorBorder, SNAKE_HEAD_STROKE_LINE_WIDTH,
+                        painters.dynamic().drawCellInnerCircle(cell.coordinate(), snakeHeadColor, snakeHeadColorBorder,
+                                SNAKE_HEAD_STROKE_LINE_WIDTH,
                                 StrokeType.OUTSIDE);
                     }
                 });

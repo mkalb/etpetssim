@@ -41,7 +41,8 @@ public final class ReboundingFactory {
         var editToolBarViewModel = new ReboundingEditToolBarViewModel();
         var controlViewModel = DefaultControlViewModel.createWithMinStepDuration(readOnlySimulationState);
         var observationViewModel =
-                new DefaultObservationViewModel<ReboundingEntity, GridCell<ReboundingEntity>, ReboundingStatistics>(readOnlySimulationState);
+                new DefaultObservationViewModel<ReboundingEntity, GridCell<ReboundingEntity>,
+                        ReboundingStatistics>(readOnlySimulationState);
         var viewModel =
                 new DefaultMainViewModel<>(simulationState, configViewModel, controlViewModel, observationViewModel,
                         ReboundingSimulationManager::new, ReadableGridModel::getGridCell, new ReboundingUserAction());
@@ -50,7 +51,8 @@ public final class ReboundingFactory {
         var configView = new ReboundingConfigView(configViewModel);
         var controlView = new DefaultControlView(controlViewModel);
         var observationView = new ReboundingObservationView(observationViewModel, entityDescriptorRegistry);
-        return new ReboundingMainView(viewModel, editToolBarViewModel, entityDescriptorRegistry, configView, controlView, observationView);
+        return new ReboundingMainView(viewModel, editToolBarViewModel, entityDescriptorRegistry, configView,
+                controlView, observationView);
     }
 
 }

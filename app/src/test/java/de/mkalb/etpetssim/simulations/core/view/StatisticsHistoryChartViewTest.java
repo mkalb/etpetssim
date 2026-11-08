@@ -148,7 +148,8 @@ final class StatisticsHistoryChartViewTest {
         });
 
         assertNotNull(managed, "Managed flag must not be null");
-        assertTrue(managed, "A group with all-zero values must be visible from the first sample, not hidden until nonzero");
+        assertTrue(managed,
+                "A group with all-zero values must be visible from the first sample, not hidden until nonzero");
     }
 
     @Test
@@ -286,7 +287,8 @@ final class StatisticsHistoryChartViewTest {
             return ((ValueAxis<Number>) view.chartsForTesting().getFirst().getYAxis()).getUpperBound();
         });
 
-        assertEquals(100.0, yUpper, "Ceiling must grow immediately from computeNiceCeiling(50)=50 to computeNiceCeiling(80)=100");
+        assertEquals(100.0, yUpper,
+                "Ceiling must grow immediately from computeNiceCeiling(50)=50 to computeNiceCeiling(80)=100");
     }
 
     @Test
@@ -305,7 +307,8 @@ final class StatisticsHistoryChartViewTest {
             return ((ValueAxis<Number>) view.chartsForTesting().getFirst().getYAxis()).getUpperBound();
         });
 
-        assertEquals(500.0, yUpper, "Ceiling must stay at 500 since the latest value did not drop below the 20% threshold");
+        assertEquals(500.0, yUpper,
+                "Ceiling must stay at 500 since the latest value did not drop below the 20% threshold");
     }
 
     @Test
@@ -333,7 +336,9 @@ final class StatisticsHistoryChartViewTest {
             return ((ValueAxis<Number>) view.chartsForTesting().getFirst().getYAxis()).getUpperBound();
         });
 
-        assertEquals(50.0, yUpper, "Once the peak leaves the window and the latest value stays low, the ceiling must shrink to computeNiceCeiling(50)=50");
+        assertEquals(50.0, yUpper,
+                "Once the peak leaves the window and the latest value stays low, the ceiling must shrink to "
+                        + "computeNiceCeiling(50)=50");
     }
 
     @Test
@@ -352,7 +357,9 @@ final class StatisticsHistoryChartViewTest {
             return ((ValueAxis<Number>) view.chartsForTesting().getFirst().getYAxis()).getUpperBound();
         });
 
-        assertEquals(200.0, yUpper, "After a reset, the ceiling must be computed fresh (computeNiceCeiling(150)=200), not inherited from the previous run");
+        assertEquals(200.0, yUpper,
+                "After a reset, the ceiling must be computed fresh (computeNiceCeiling(150)=200), not inherited from "
+                        + "the previous run");
     }
 
     @Test

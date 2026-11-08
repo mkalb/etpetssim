@@ -70,7 +70,8 @@ public final class EtpetsConfigView
 
         var initializationPane = createConfigTitledPane(
                 AppLocalization.getText(SimulationLocalizationKeys.CONFIG_TITLE_INITIALIZATION), true,
-                seedControl, rockPercentControl, waterPercentControl, plantPercentControl, insectPercentControl, petCountControl);
+                seedControl, rockPercentControl, waterPercentControl, plantPercentControl, insectPercentControl,
+                petCountControl);
 
         // Rules
         var rulesPane = createConfigTitledPane(

@@ -54,7 +54,8 @@ public final class SugarSimulationManager
 
         var runner = new SugarStepRunner(model, config, random);
         var terminationCondition = new SugarTerminationCondition();
-        executor = new TimedSimulationExecutor<>(new DefaultSimulationExecutor<>(runner, runner::model, terminationCondition, statistics));
+        executor = new TimedSimulationExecutor<>(new DefaultSimulationExecutor<>(runner, runner::model,
+                terminationCondition, statistics));
 
         initializeGrid(config, model, random, cancellation);
         cancellation.checkCanceled();
@@ -186,13 +187,15 @@ public final class SugarSimulationManager
                 }
                 index++;
                 GridCoordinate current = queue.remove();
-                for (var result : CellNeighborhoods.neighborEdgeBehaviorResults(current, config.neighborhoodMode(), structure)) {
+                for (var result : CellNeighborhoods.neighborEdgeBehaviorResults(current, config.neighborhoodMode(),
+                        structure)) {
                     if (result.action().isWithinGrid()) {
                         GridCoordinate mapped = result.mapped();
                         if (!visited.contains(mapped)) {
                             visited.add(mapped);
                             queue.add(mapped);
-                            int sugarAmount = computeSugarAmount(minSugarAmount, sugarRange, radiusLimit, radiusLevel, random);
+                            int sugarAmount = computeSugarAmount(minSugarAmount, sugarRange, radiusLimit, radiusLevel,
+                                    random);
                             if ((sugarAmount >= minSugarAmount) && (sugarAmount <= maxSugarAmount)) {
                                 sugarMap.put(mapped, sugarAmount);
                             }
@@ -207,7 +210,11 @@ public final class SugarSimulationManager
     }
 
     @SuppressWarnings("NumericCastThatLosesPrecision")
-    private int computeSugarAmount(int minSugarAmount, int sugarRange, int radiusLimit, int radiusLevel, Random random) {
+    private int computeSugarAmount(int minSugarAmount,
+                                   int sugarRange,
+                                   int radiusLimit,
+                                   int radiusLevel,
+                                   Random random) {
         // linear interpolation: near peaks -> max, at edge -> min
         if (radiusLimit <= 0) {
             return minSugarAmount;

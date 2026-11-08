@@ -66,7 +66,8 @@ public final class DefaultControlView
 
     @Override
     protected Optional<Pane> createControlConfigPane() {
-        var simulationModeControl = FXComponentFactory.createLabeledChoiceRadioButtons(viewModel.simulationModeProperty(),
+        var simulationModeControl = FXComponentFactory
+                .createLabeledChoiceRadioButtons(viewModel.simulationModeProperty(),
                 FXComponentFactory.createVBox(FXStyleClasses.CONFIG_RADIOBUTTON_BOX),
                 AppLocalization.getText(SimulationMode.labelResourceKey()),
                 AppLocalization.getText(SimulationLocalizationKeys.CONTROL_SIMULATION_MODE_TOOLTIP),
@@ -105,7 +106,8 @@ public final class DefaultControlView
 
         bindNotStartableDisabled(startModeControl.controlRegion());
 
-        var terminationCheckControl = FXComponentFactory.createLabeledChoiceCheckBox(viewModel.terminationCheckProperty(),
+        var terminationCheckControl = FXComponentFactory
+                .createLabeledChoiceCheckBox(viewModel.terminationCheckProperty(),
                 SimulationTerminationCheckMode.CHECKED,
                 SimulationTerminationCheckMode.UNCHECKED,
                 AppLocalization.getText(SimulationLocalizationKeys.CONTROL_TERMINATION_CHECK),
@@ -124,15 +126,18 @@ public final class DefaultControlView
         VBox stepCountBox = new VBox(stepCountControl.label(), stepCountControl.controlRegion());
         stepCountBox.getStyleClass().add(FXStyleClasses.CONTROL_CONFIG_VBOX);
 
-        VBox pauseBox = new VBox(startModeControl.label(), startModeControl.controlRegion(), terminationCheckControl.label(), terminationCheckControl.controlRegion());
+        VBox pauseBox = new VBox(startModeControl.label(), startModeControl.controlRegion(),
+                terminationCheckControl.label(), terminationCheckControl.controlRegion());
         pauseBox.getStyleClass().add(FXStyleClasses.CONTROL_CONFIG_VBOX);
 
         // Show stepDurationBox only in TIMED mode
-        stepDurationBox.visibleProperty().bind(viewModel.simulationModeProperty().property().isEqualTo(SimulationMode.TIMED));
+        stepDurationBox.visibleProperty()
+                .bind(viewModel.simulationModeProperty().property().isEqualTo(SimulationMode.TIMED));
         stepDurationBox.managedProperty().bind(stepDurationBox.visibleProperty());
 
         // Show stepCountBox only in BATCH mode (not TIMED mode)
-        stepCountBox.visibleProperty().bind(viewModel.simulationModeProperty().property().isNotEqualTo(SimulationMode.TIMED));
+        stepCountBox.visibleProperty()
+                .bind(viewModel.simulationModeProperty().property().isNotEqualTo(SimulationMode.TIMED));
         stepCountBox.managedProperty().bind(stepCountBox.visibleProperty());
 
         // Place both boxes in a StackPane

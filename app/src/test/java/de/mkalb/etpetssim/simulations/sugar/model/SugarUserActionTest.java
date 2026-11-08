@@ -83,7 +83,8 @@ final class SugarUserActionTest {
                 SugarCell.from(manager.currentGridModel(), coordinate));
 
         assertAll(
-                () -> assertSame(NoResource.NO_RESOURCE, manager.currentGridModel().resourceModel().getEntity(coordinate)),
+                () -> assertSame(NoResource.NO_RESOURCE,
+                        manager.currentGridModel().resourceModel().getEntity(coordinate)),
                 () -> assertEquals(resourceCellsBefore - 1, manager.statistics().resourceCells())
         );
     }

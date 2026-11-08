@@ -76,7 +76,8 @@ public final class LangtonMainView
     private @Nullable CellDrawer<AntEntity> cellAntDrawer;
     private @Nullable LangtonConfig currentConfig;
 
-    public LangtonMainView(DefaultMainViewModel<LangtonEntity, LangtonCell, LangtonGridModel, LangtonConfig, LangtonStatistics, LangtonSimulationManager, LangtonUserActionContext> viewModel,
+    public LangtonMainView(DefaultMainViewModel<LangtonEntity, LangtonCell, LangtonGridModel, LangtonConfig,
+                                   LangtonStatistics, LangtonSimulationManager, LangtonUserActionContext> viewModel,
                            LangtonEditToolBarViewModel editToolBarViewModel,
                            GridEntityDescriptorRegistry entityDescriptorRegistry,
                            LangtonConfigView configView,
@@ -123,10 +124,13 @@ public final class LangtonMainView
                     && (cellDimension.innerRadius() > 5.0d)
                     && (descriptor.borderColor() != null)
                     && (cell.entity() instanceof Ant ant)) {
-                painter.drawCellInnerCircle(cell.coordinate(), descriptor.color(), descriptor.borderColor(), 1.0d, StrokeType.INSIDE);
-                painter.drawCenteredTextInCell(cell.coordinate(), ant.direction().arrow(), descriptor.borderColor(), cellEmojiFont);
+                painter.drawCellInnerCircle(cell.coordinate(), descriptor.color(), descriptor.borderColor(), 1.0d,
+                        StrokeType.INSIDE);
+                painter.drawCenteredTextInCell(cell.coordinate(), ant.direction().arrow(), descriptor.borderColor(),
+                        cellEmojiFont);
             } else if (cellDimension.innerRadius() > 2.0d) {
-                painter.drawCellInnerCircle(cell.coordinate(), descriptor.color(), null, NO_STROKE_LINE_WIDTH, StrokeType.INSIDE);
+                painter.drawCellInnerCircle(cell.coordinate(), descriptor.color(), null, NO_STROKE_LINE_WIDTH,
+                        StrokeType.INSIDE);
             } else {
                 painter.drawCell(cell.coordinate(), descriptor.color(), null, NO_STROKE_LINE_WIDTH);
             }
@@ -148,7 +152,10 @@ public final class LangtonMainView
     }
 
     @Override
-    protected void drawSimulation(CanvasPainters painters, LangtonGridModel currentGridModel, int stepCount, int lastDrawnStepCount) {
+    protected void drawSimulation(CanvasPainters painters,
+                                  LangtonGridModel currentGridModel,
+                                  int stepCount,
+                                  int lastDrawnStepCount) {
         if ((cellTerrainDrawer == null) || (cellAntDrawer == null)) {
             AppLogger.warn("LangtonMainView: Skipping canvas draw: cell drawers are not initialized");
             return;

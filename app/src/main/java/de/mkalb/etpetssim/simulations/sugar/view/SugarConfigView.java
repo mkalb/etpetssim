@@ -26,7 +26,8 @@ public final class SugarConfigView
 
     // Rules
     private static final String SUGAR_CONFIG_SUGAR_REGENERATION_RATE = "sugar.config.sugarregenerationrate";
-    private static final String SUGAR_CONFIG_SUGAR_REGENERATION_RATE_TOOLTIP = "sugar.config.sugarregenerationrate.tooltip";
+    private static final String SUGAR_CONFIG_SUGAR_REGENERATION_RATE_TOOLTIP =
+            "sugar.config.sugarregenerationrate.tooltip";
     private static final String SUGAR_CONFIG_AGENT_METABOLISM_RATE = "sugar.config.agentmetabolismrate";
     private static final String SUGAR_CONFIG_AGENT_METABOLISM_RATE_TOOLTIP = "sugar.config.agentmetabolismrate.tooltip";
     private static final String SUGAR_CONFIG_AGENT_VISION_RANGE = "sugar.config.agentvisionrange";
@@ -74,25 +75,29 @@ public final class SugarConfigView
         var agentInitialEnergyControl = FXComponentFactory.createLabeledIntSpinner(
                 viewModel.agentInitialEnergyProperty(),
                 AppLocalization.getText(SUGAR_CONFIG_AGENT_INITIAL_ENERGY),
-                formatIntRangeTooltip(SUGAR_CONFIG_AGENT_INITIAL_ENERGY_TOOLTIP, viewModel.agentInitialEnergyProperty()),
+                formatIntRangeTooltip(SUGAR_CONFIG_AGENT_INITIAL_ENERGY_TOOLTIP,
+                        viewModel.agentInitialEnergyProperty()),
                 FXStyleClasses.CONFIG_SPINNER
         );
 
         var initializationPane = createConfigTitledPane(
                 AppLocalization.getText(SimulationLocalizationKeys.CONFIG_TITLE_INITIALIZATION), true,
-                seedControl, agentPercentControl, sugarPeaksControl, sugarRadiusLimitControl, maxSugarAmountControl, agentInitialEnergyControl);
+                seedControl, agentPercentControl, sugarPeaksControl, sugarRadiusLimitControl, maxSugarAmountControl,
+                agentInitialEnergyControl);
 
         // Rules
         var sugarRegenerationRateControl = FXComponentFactory.createLabeledIntSpinner(
                 viewModel.sugarRegenerationRateProperty(),
                 AppLocalization.getText(SUGAR_CONFIG_SUGAR_REGENERATION_RATE),
-                formatIntRangeTooltip(SUGAR_CONFIG_SUGAR_REGENERATION_RATE_TOOLTIP, viewModel.sugarRegenerationRateProperty()),
+                formatIntRangeTooltip(SUGAR_CONFIG_SUGAR_REGENERATION_RATE_TOOLTIP,
+                        viewModel.sugarRegenerationRateProperty()),
                 FXStyleClasses.CONFIG_SPINNER
         );
         var agentMetabolismRateControl = FXComponentFactory.createLabeledIntSpinner(
                 viewModel.agentMetabolismRateProperty(),
                 AppLocalization.getText(SUGAR_CONFIG_AGENT_METABOLISM_RATE),
-                formatIntRangeTooltip(SUGAR_CONFIG_AGENT_METABOLISM_RATE_TOOLTIP, viewModel.agentMetabolismRateProperty()),
+                formatIntRangeTooltip(SUGAR_CONFIG_AGENT_METABOLISM_RATE_TOOLTIP,
+                        viewModel.agentMetabolismRateProperty()),
                 FXStyleClasses.CONFIG_SPINNER
         );
         var agentVisionRangeControl = FXComponentFactory.createLabeledIntSpinner(

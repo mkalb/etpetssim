@@ -17,7 +17,8 @@ public final class ConwayObservationView
         ConwayStatistics,
         DefaultObservationViewModel<ConwayEntity, GridCell<ConwayEntity>, ConwayStatistics>> {
 
-    public ConwayObservationView(DefaultObservationViewModel<ConwayEntity, GridCell<ConwayEntity>, ConwayStatistics> viewModel,
+    public ConwayObservationView(DefaultObservationViewModel<ConwayEntity, GridCell<ConwayEntity>,
+                                         ConwayStatistics> viewModel,
                                  GridEntityDescriptorRegistry entityDescriptorRegistry) {
         super(viewModel, entityDescriptorRegistry);
 

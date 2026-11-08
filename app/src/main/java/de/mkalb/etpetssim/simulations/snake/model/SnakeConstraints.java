@@ -29,11 +29,13 @@ public final class SnakeConstraints {
     public static final int GRID_WIDTH_DEFAULT = 80;
     public static final int GRID_WIDTH_MIN = GridSize.MIN_SIZE;
     public static final int GRID_WIDTH_MAX = 1_000;
-    public static final int GRID_WIDTH_STEP = Math.max(GridTopology.SQUARE_MAX_REQUIRED_WIDTH_MULTIPLE, GridTopology.HEXAGON_MAX_REQUIRED_WIDTH_MULTIPLE);
+    public static final int GRID_WIDTH_STEP = Math.max(GridTopology.SQUARE_MAX_REQUIRED_WIDTH_MULTIPLE,
+            GridTopology.HEXAGON_MAX_REQUIRED_WIDTH_MULTIPLE);
     public static final int GRID_HEIGHT_DEFAULT = 40;
     public static final int GRID_HEIGHT_MIN = GridSize.MIN_SIZE;
     public static final int GRID_HEIGHT_MAX = 1_000;
-    public static final int GRID_HEIGHT_STEP = Math.max(GridTopology.SQUARE_MAX_REQUIRED_HEIGHT_MULTIPLE, GridTopology.HEXAGON_MAX_REQUIRED_HEIGHT_MULTIPLE);
+    public static final int GRID_HEIGHT_STEP = Math.max(GridTopology.SQUARE_MAX_REQUIRED_HEIGHT_MULTIPLE,
+            GridTopology.HEXAGON_MAX_REQUIRED_HEIGHT_MULTIPLE);
 
     // Layout
     public static final int CELL_EDGE_LENGTH_DEFAULT = 6;

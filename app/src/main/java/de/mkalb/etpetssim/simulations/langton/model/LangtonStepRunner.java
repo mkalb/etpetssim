@@ -39,7 +39,8 @@ public final class LangtonStepRunner
         var antModel = model.antModel();
         var terrainModel = model.terrainModel();
 
-        for (GridCell<AntEntity> agentCell : antModel.filteredCellsSortedBy(LangtonEntity::isAgent, AgentOrderingStrategies.byPosition())) {
+        for (GridCell<AntEntity> agentCell : antModel.filteredCellsSortedBy(LangtonEntity::isAgent,
+                AgentOrderingStrategies.byPosition())) {
             if (!(agentCell.entity() instanceof Ant ant)) {
                 continue;
             }
@@ -77,13 +78,19 @@ public final class LangtonStepRunner
         statistics.adjustCellCounts(-1, 0);
     }
 
-    void moveAnt(GridCell<AntEntity> agentCell, GridCoordinate newCoordinate, WritableGridModel<AntEntity> antModel, Ant ant, TerrainConstant terrainEntity) {
+    void moveAnt(GridCell<AntEntity> agentCell,
+                 GridCoordinate newCoordinate,
+                 WritableGridModel<AntEntity> antModel,
+                 Ant ant,
+                 TerrainConstant terrainEntity) {
         antModel.setEntityToDefault(agentCell.coordinate());
         antModel.setEntity(newCoordinate, agentCell.entity());
         ant.changeDirection(computeNewAntDirection(ant.direction(), terrainEntity.ruleIndex()));
     }
 
-    void switchTerrain(GridCoordinate coordinate, TerrainConstant terrainEntity, WritableGridModel<TerrainConstant> terrainModel) {
+    void switchTerrain(GridCoordinate coordinate,
+                       TerrainConstant terrainEntity,
+                       WritableGridModel<TerrainConstant> terrainModel) {
         int newRuleIndex = (terrainEntity.ruleIndex() + 1) % config.movementRules().ruleCount();
         terrainModel.setEntity(coordinate, TerrainConstant.requireByRuleIndex(newRuleIndex));
     }

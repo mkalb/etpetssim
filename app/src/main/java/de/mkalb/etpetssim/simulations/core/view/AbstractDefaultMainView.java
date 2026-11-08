@@ -63,8 +63,10 @@ public abstract class AbstractDefaultMainView<
 
     protected static final double NO_STROKE_LINE_WIDTH = 0.0d;
 
-    private static final Color SKIP_OVERLAY_TEXT_COLOR = FXPaintFactory.adjustColorAlpha(FXPaintFactory.BORDER_COLOR, 0.95);
-    private static final Color SKIP_OVERLAY_BACKGROUND_COLOR = FXPaintFactory.adjustColorAlpha(FXPaintFactory.BACKGROUND_COLOR, 0.95);
+    private static final Color SKIP_OVERLAY_TEXT_COLOR = FXPaintFactory.adjustColorAlpha(FXPaintFactory.BORDER_COLOR,
+            0.95);
+    private static final Color SKIP_OVERLAY_BACKGROUND_COLOR = FXPaintFactory
+            .adjustColorAlpha(FXPaintFactory.BACKGROUND_COLOR, 0.95);
     private static final String SKIP_OVERLAY_SYMBOL = "⏳"; // Hourglass Not Done
     private static final double SKIP_FONT_SIZE = 48.0d;
     private static final double SKIP_PADDING = 24.0d;
@@ -78,7 +80,8 @@ public abstract class AbstractDefaultMainView<
     private static final int DRAW_THROTTLER_HISTORY_SIZE = 3;
     private static final int DRAW_THROTTLER_MAX_SKIPS = 4;
 
-    private final DrawCallThrottler drawThrottler = new DrawCallThrottler(DRAW_THROTTLER_HISTORY_SIZE, DRAW_THROTTLER_MAX_SKIPS);
+    private final DrawCallThrottler drawThrottler = new DrawCallThrottler(DRAW_THROTTLER_HISTORY_SIZE,
+            DRAW_THROTTLER_MAX_SKIPS);
 
     private int lastDrawnStepCount = Integer.MIN_VALUE;
 
@@ -185,7 +188,8 @@ public abstract class AbstractDefaultMainView<
      *                           than {@code 1} means that intermediate steps were not drawn
      */
     @SuppressWarnings("ParameterHidesMemberVariable")
-    protected abstract void drawSimulation(CanvasPainters painters, GM currentGridModel, int stepCount, int lastDrawnStepCount);
+    protected abstract void drawSimulation(CanvasPainters painters, GM currentGridModel, int stepCount,
+                                           int lastDrawnStepCount);
 
     private void applySelectedCellUserActionAndRedraw() {
         boolean changed = viewModel.applySelectedCellUserAction(createUserActionDescriptors());
@@ -201,7 +205,8 @@ public abstract class AbstractDefaultMainView<
             AppLogger.warnf("%s: Skipping canvas redraw: painters are not initialized", LOG_COMPONENT);
             return;
         }
-        drawSimulation(currentPainters, viewModel.getCurrentGridModel(), viewModel.getStepCount(), viewModel.getStepCount());
+        drawSimulation(currentPainters, viewModel.getCurrentGridModel(), viewModel.getStepCount(),
+                viewModel.getStepCount());
     }
 
     private void handleSimulationInitialized() {
@@ -209,7 +214,8 @@ public abstract class AbstractDefaultMainView<
 
         AppLogger.infof("%s: Starting simulation view initialization: step=%d", LOG_COMPONENT, stepCount);
 
-        CanvasPainters newPainters = recreatePaintersAndResizeCanvases(viewModel.getStructure(), viewModel.getCellEdgeLength());
+        CanvasPainters newPainters = recreatePaintersAndResizeCanvases(viewModel.getStructure(),
+                viewModel.getCellEdgeLength());
 
         updateCanvasBorderPane(viewModel.getStructure());
 
@@ -248,7 +254,8 @@ public abstract class AbstractDefaultMainView<
         int stepCount = simulationStepEvent.stepCount();
         if (simulationStepEvent.batchModeRunning()) {
             if (DEBUG_MODE) {
-                AppLogger.infof("%s: Handling simulation step in view for batch mode: event=%s", LOG_COMPONENT, simulationStepEvent);
+                AppLogger.infof("%s: Handling simulation step in view for batch mode: event=%s", LOG_COMPONENT,
+                        simulationStepEvent);
             }
 
             controlView.setStepCount(stepCount);
@@ -263,15 +270,18 @@ public abstract class AbstractDefaultMainView<
 
             CanvasPainters currentPainters = painters();
             if (currentPainters == null) {
-                AppLogger.warnf("%s: Skipping step draw: painters are not initialized, event=%s", LOG_COMPONENT, simulationStepEvent);
+                AppLogger.warnf("%s: Skipping step draw: painters are not initialized, event=%s", LOG_COMPONENT,
+                        simulationStepEvent);
                 return;
             }
 
             // Never draw the same step twice
             if (lastDrawnStepCount != stepCount) {
-                throttleAndDrawSimulationStep(currentPainters, stepCount, simulationStepEvent.finalStep(), viewModel.getThrottleDrawMillis());
+                throttleAndDrawSimulationStep(currentPainters, stepCount, simulationStepEvent.finalStep(),
+                        viewModel.getThrottleDrawMillis());
             } else if (DEBUG_MODE) {
-                AppLogger.infof("%s: Skipping draw because step was already drawn: event=%s", LOG_COMPONENT, simulationStepEvent);
+                AppLogger.infof("%s: Skipping draw because step was already drawn: event=%s", LOG_COMPONENT,
+                        simulationStepEvent);
             }
         }
     }
@@ -293,14 +303,19 @@ public abstract class AbstractDefaultMainView<
         }
     }
 
-    private void throttleAndDrawSimulationStep(CanvasPainters currentPainters, int stepCount, boolean finalStep, long throttleDrawMillis) {
+    private void throttleAndDrawSimulationStep(CanvasPainters currentPainters,
+                                               int stepCount,
+                                               boolean finalStep,
+                                               long throttleDrawMillis) {
         if (finalStep || !drawThrottler.shouldSkip(throttleDrawMillis)) {
             clearSkipOverlay(currentPainters.overlay());
             drawAndMeasureSimulationStep(currentPainters, stepCount);
         } else {
             showSkipOverlay(currentPainters.overlay());
             if (DEBUG_MODE) {
-                AppLogger.infof("%s: Skipping draw for step %d due to high average draw time: averageMillis=%d, thresholdMillis=%d",
+                AppLogger
+                        .infof("%s: Skipping draw for step %d due to high average draw time: averageMillis=%d, "
+                                        + "thresholdMillis=%d",
                         LOG_COMPONENT,
                         stepCount,
                         drawThrottler.getAverageDurationMillis(),
