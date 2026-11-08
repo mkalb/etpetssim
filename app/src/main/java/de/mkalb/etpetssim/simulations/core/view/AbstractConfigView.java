@@ -22,6 +22,7 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -33,7 +34,7 @@ import java.util.List;
 public abstract class AbstractConfigView<CON extends SimulationConfig, VM extends AbstractConfigViewModel<CON>>
         implements SimulationConfigView {
 
-    protected static final double PERCENT_SCALE = 100.0d;
+    private static final double PERCENT_SCALE = 100.0d;
 
     protected final VM viewModel;
 
@@ -68,6 +69,7 @@ public abstract class AbstractConfigView<CON extends SimulationConfig, VM extend
 
     /**
      * Creates a titled config pane that stacks the labels and control regions of the given controls.
+     *
      * <p>A pane without controls is disabled and not collapsible.
      *
      * @param title                                         the pane title
@@ -115,16 +117,9 @@ public abstract class AbstractConfigView<CON extends SimulationConfig, VM extend
         controlRegion.managedProperty().bind(controlRegion.visibleProperty());
     }
 
-    @SuppressWarnings("unchecked")
-    protected final FXComponentFactory.LabeledControl<? extends Region>[] toLabeledControlArray(
-            List<FXComponentFactory.LabeledControl<? extends Region>> content) {
-        return content.toArray(new FXComponentFactory.LabeledControl[0]);
-    }
-
     protected final TitledPane createStructurePane(boolean configControlsEnabledOnlyIfSimulationCanStart) {
         List<FXComponentFactory.LabeledControl<? extends Region>> content = new ArrayList<>(4);
 
-        // cellShapeProperty
         if (viewModel.cellShapeProperty().hasMultipleValidValues()) {
             content.add(FXComponentFactory.createLabeledChoiceComboBox(
                     viewModel.cellShapeProperty(),
@@ -134,7 +129,6 @@ public abstract class AbstractConfigView<CON extends SimulationConfig, VM extend
             ));
         }
 
-        // gridEdgeBehaviorProperty
         if (viewModel.gridEdgeBehaviorProperty().hasMultipleValidValues()) {
             content.add(FXComponentFactory.createLabeledChoiceComboBox(
                     viewModel.gridEdgeBehaviorProperty(),
@@ -144,7 +138,6 @@ public abstract class AbstractConfigView<CON extends SimulationConfig, VM extend
             ));
         }
 
-        // gridWidthProperty
         content.add(FXComponentFactory.createLabeledIntSpinner(
                 viewModel.gridWidthProperty(),
                 AppLocalization.getText(SimulationLocalizationKeys.CONFIG_GRID_WIDTH),
@@ -153,7 +146,6 @@ public abstract class AbstractConfigView<CON extends SimulationConfig, VM extend
                 FXStyleClasses.CONFIG_SPINNER
         ));
 
-        // gridHeightProperty
         content.add(FXComponentFactory.createLabeledIntSpinner(
                 viewModel.gridHeightProperty(),
                 AppLocalization.getText(SimulationLocalizationKeys.CONFIG_GRID_HEIGHT),
@@ -169,47 +161,36 @@ public abstract class AbstractConfigView<CON extends SimulationConfig, VM extend
         );
     }
 
-    @SuppressWarnings("unchecked")
     @SafeVarargs
     protected final TitledPane createLayoutPane(
             boolean configControlsEnabledOnlyIfSimulationCanStart,
             FXComponentFactory.LabeledControl<? extends Region>... additionalContent) {
-        var cellEdgeLengthControl = FXComponentFactory.createLabeledIntSlider(
+        List<FXComponentFactory.LabeledControl<? extends Region>> content =
+                new ArrayList<>(2 + additionalContent.length);
+
+        content.add(FXComponentFactory.createLabeledIntSlider(
                 viewModel.cellEdgeLengthProperty(),
                 AppLocalization.getText(SimulationLocalizationKeys.CONFIG_CELL_EDGE_LENGTH),
-                formatDoubleRangeTooltip(SimulationLocalizationKeys.CONFIG_CELL_EDGE_LENGTH_TOOLTIP,
+                formatIntRangeTooltip(SimulationLocalizationKeys.CONFIG_CELL_EDGE_LENGTH_TOOLTIP,
                         viewModel.cellEdgeLengthProperty()),
                 FXStyleClasses.CONFIG_SLIDER
-        );
+        ));
 
-        // Only add cellDisplayModeControl if there are multiple valid values
-        int baseControls = 1;
-        FXComponentFactory.LabeledControl<? extends Region> cellDisplayModeControl;
         if (viewModel.cellDisplayModeProperty().hasMultipleValidValues()) {
-            cellDisplayModeControl = FXComponentFactory.createLabeledChoiceComboBox(
+            content.add(FXComponentFactory.createLabeledChoiceComboBox(
                     viewModel.cellDisplayModeProperty(),
                     AppLocalization.getText(CellDisplayMode.labelResourceKey()),
                     AppLocalization.getText(SimulationLocalizationKeys.CONFIG_CELL_DISPLAY_MODE_TOOLTIP),
                     FXStyleClasses.CONFIG_COMBOBOX
-            );
-            baseControls = 2;
-        } else {
-            cellDisplayModeControl = null;
+            ));
         }
 
-        var content = new FXComponentFactory.LabeledControl[baseControls + additionalContent.length];
-        content[0] = cellEdgeLengthControl;
-        if (cellDisplayModeControl != null) {
-            content[1] = cellDisplayModeControl;
-        }
-        if (additionalContent.length > 0) {
-            System.arraycopy(additionalContent, 0, content, baseControls, additionalContent.length);
-        }
+        Collections.addAll(content, additionalContent);
 
         return createConfigTitledPane(
                 AppLocalization.getText(SimulationLocalizationKeys.CONFIG_TITLE_LAYOUT),
                 configControlsEnabledOnlyIfSimulationCanStart,
-                content
+                toLabeledControlArray(content)
         );
     }
 
@@ -248,15 +229,21 @@ public abstract class AbstractConfigView<CON extends SimulationConfig, VM extend
                 property.min(), property.max());
     }
 
-    @SuppressWarnings("SameParameterValue")
-    protected final String formatDoubleRangeTooltip(String key, InputDoubleIntRangeProperty property) {
+    protected final String formatIntRangeTooltip(String key, InputIntegerProperty property) {
         return AppLocalization.getFormattedText(key,
                 property.min(), property.max());
     }
 
-    protected final String formatIntRangeTooltip(String key, InputIntegerProperty property) {
+    @SuppressWarnings("SameParameterValue")
+    protected final String formatIntRangeTooltip(String key, InputDoubleIntRangeProperty property) {
         return AppLocalization.getFormattedText(key,
                 property.min(), property.max());
+    }
+
+    @SuppressWarnings("unchecked")
+    private FXComponentFactory.LabeledControl<? extends Region>[] toLabeledControlArray(
+            List<FXComponentFactory.LabeledControl<? extends Region>> content) {
+        return content.toArray(new FXComponentFactory.LabeledControl[0]);
     }
 
 }

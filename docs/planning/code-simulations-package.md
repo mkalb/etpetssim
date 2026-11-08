@@ -137,7 +137,7 @@ sources. "Types" counts the top-level types in main sources of a group.
 | C3 | `core.model`: statistics history and extrema                  |     8 | done        |
 | C4 | `core.viewmodel`: config, control, and observation            |     7 | done        |
 | C5 | `core.viewmodel`: main ViewModels and user action descriptors |     5 | done        |
-| C6 | `core.view`: config and control views                         |     6 | open        |
+| C6 | `core.view`: config and control views                         |     6 | done        |
 | C7 | `core.view`: observation views and statistics chart           |     3 | open        |
 | C8 | `core.view`: main views, edit tool bar, and canvas drawing    |     8 | open        |
 | C9 | `core` root package and `start`                               |     6 | open        |
@@ -881,7 +881,57 @@ and `SimulationLocalizationKeys`.
   reports as `SameParameterValue` (suppressed). No subclass calls it; the overload for `InputDoubleProperty` is used
   by the config views of Forest and Snake.
 - Proposal: Decide whether the overload stays `protected` as the counterpart for subclasses or becomes `private`;
-  then check whether the suppression is still needed. An API change if it becomes `private`.
+  then check whether the suppression is still needed. An API change if it becomes `private`. Note (C6,
+  2026-11-08): inlining the call into `createLayoutPane(..)` removes the overload and the suppression; the tooltip
+  text stays the same.
+- Status: done (2026-11-08); the overload stays `protected` for future simulations (maintainer) and is renamed to
+  `formatIntRangeTooltip(..)`, because the property has `int` bounds and the key uses `%d` placeholders.
+
+Notes:
+
+- Inventory (2026-11-08, verified against the sources): the interfaces `SimulationConfigView` and
+  `SimulationControlView`, the abstract classes `AbstractConfigView` (nine subclasses) and `AbstractControlView`
+  (`DefaultControlView` and `LabControlView`), the final class `DefaultControlView`, and the constant holder
+  `SimulationLocalizationKeys` with its test; all 52 keys have callers in main sources. The views are JavaFX types;
+  no new tests in this plan.
+
+#### Members of AbstractConfigView used only by the class
+
+- Origin: C6 (2026-11-08)
+- Types: `AbstractConfigView`
+- Problem: `PERCENT_SCALE` and `toLabeledControlArray(..)` are `protected`, but only the class itself uses them.
+  `createLayoutPane(..)` builds a raw `LabeledControl[]` with `System.arraycopy(..)` and suppresses `unchecked`,
+  while `createStructurePane(..)` collects its controls in a list and converts it with `toLabeledControlArray(..)`.
+- Proposal: Make `PERCENT_SCALE` and `toLabeledControlArray(..)` private (an API change without callers outside the
+  class), and let `createLayoutPane(..)` collect its controls in a list like `createStructurePane(..)`; its
+  `@SuppressWarnings("unchecked")` is removed (the one of `toLabeledControlArray(..)` stays).
+- Status: done (2026-11-08).
+
+#### Comments, Javadoc, and declarations of the config and control views
+
+- Origin: C6 (2026-11-08)
+- Types: `AbstractConfigView`, `AbstractControlView`, `DefaultControlView`
+- Problem: The Javadoc of `createConfigTitledPane(..)` lacks the empty line before its `<p>` paragraph. The four
+  comments `// cellShapeProperty` to `// gridHeightProperty`, `// Only add cellDisplayModeControl if there are
+  multiple valid values`, and `// Place both boxes in a StackPane` restate the code. `AbstractControlView` and
+  `DefaultControlView` put `implements` and `extends` on a second line, although the declaration fits in one line
+  (C2).
+- Proposal: Add the empty line, remove the six comments, and join both declarations into one line.
+- Status: done (2026-11-08).
+
+### Decisions
+
+- API change: `AbstractConfigView.formatDoubleRangeTooltip(String, InputDoubleIntRangeProperty)` is renamed to
+  `formatIntRangeTooltip(String, InputDoubleIntRangeProperty)` and placed next to the other overload; it stays
+  `protected` with its `@SuppressWarnings("SameParameterValue")`. `formatDoubleRangeTooltip(..)` is left only for
+  `InputDoubleProperty`.
+- API change: `PERCENT_SCALE` and `toLabeledControlArray(..)` are private. `createLayoutPane(..)` collects its
+  controls in a list and converts them with `toLabeledControlArray(..)`; its `@SuppressWarnings("unchecked")` and
+  the `System.arraycopy(..)` are removed (maintainer).
+- The Javadoc of `createConfigTitledPane(..)` has the empty line before its second paragraph, six restating comments
+  are removed, and `AbstractControlView` and `DefaultControlView` declare their supertype on one line;
+  `AbstractConfigView` keeps two lines, because one would exceed 120 characters.
+- No rule change; the views get no new tests in this plan.
 
 ### C7. `core.view`: observation views and statistics chart
 

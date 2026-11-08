@@ -16,8 +16,7 @@ import java.util.Optional;
  *
  * @param <VM> control view model type
  */
-public abstract class AbstractControlView<VM extends SimulationControlViewModel>
-        implements SimulationControlView {
+public abstract class AbstractControlView<VM extends SimulationControlViewModel> implements SimulationControlView {
 
     protected final VM viewModel;
 

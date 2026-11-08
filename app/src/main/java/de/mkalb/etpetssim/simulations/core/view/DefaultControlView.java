@@ -21,8 +21,7 @@ import java.util.Optional;
 /**
  * Default JavaFX implementation of the simulation control view.
  */
-public final class DefaultControlView
-        extends AbstractControlView<DefaultControlViewModel> {
+public final class DefaultControlView extends AbstractControlView<DefaultControlViewModel> {
 
     private final Label stepNumberLabel = new Label();
 
@@ -140,7 +139,6 @@ public final class DefaultControlView
                 .bind(viewModel.simulationModeProperty().property().isNotEqualTo(SimulationMode.TIMED));
         stepCountBox.managedProperty().bind(stepCountBox.visibleProperty());
 
-        // Place both boxes in a StackPane
         StackPane stepConfigPane = new StackPane(stepDurationBox, stepCountBox);
 
         HBox configBox = new HBox(simulationModeBox, stepConfigPane, pauseBox);
