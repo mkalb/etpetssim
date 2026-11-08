@@ -11,6 +11,7 @@ import javafx.application.Application;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Locale;
+import java.util.Optional;
 
 /**
  * Application launcher and bootstrap entry point.
@@ -68,15 +69,15 @@ public final class EtpetssimLauncher {
     /**
      * Initializes application logging from parsed arguments.
      *
-     * <p>If the log file is requested but its directory cannot be created, logging continues without a file and the
-     * error is logged.
+     * <p>An unknown log level is ignored with a warning, and the default log level is used. If the log file is
+     * requested but its directory cannot be created, logging continues without a file and the error is logged.
      *
      * @param arguments parsed command-line arguments
      */
     private static void initializeAppLogger(AppArgs arguments) {
-        var logLevel = arguments.getValue(AppArgs.Key.LOG_LEVEL)
-                .flatMap(AppLogger.LogLevel::fromLevelName)
-                .orElse(AppLogger.DEFAULT_LOG_LEVEL);
+        Optional<String> logLevelArgument = arguments.getValue(AppArgs.Key.LOG_LEVEL);
+        Optional<AppLogger.LogLevel> requestedLogLevel = logLevelArgument.flatMap(AppLogger.LogLevel::fromLevelName);
+        var logLevel = requestedLogLevel.orElse(AppLogger.DEFAULT_LOG_LEVEL);
         boolean useConsole = arguments.getBoolean(AppArgs.Key.LOG_CONSOLE, false);
         boolean useFile = arguments.getBoolean(AppArgs.Key.LOG_FILE, false);
         try {
@@ -87,6 +88,9 @@ public final class EtpetssimLauncher {
         } catch (IOException e) {
             AppLogger.initialize(logLevel, useConsole, null);
             AppLogger.error(e, "EtpetssimLauncher: Failed to initialize log file");
+        }
+        if (logLevelArgument.isPresent() && requestedLogLevel.isEmpty()) {
+            AppLogger.warnf("EtpetssimLauncher: Ignoring unknown log level argument: '%s'", logLevelArgument.get());
         }
     }
 
@@ -99,9 +103,11 @@ public final class EtpetssimLauncher {
      * @param arguments parsed command-line arguments
      */
     private static void initializeAppLocalization(AppArgs arguments) {
-        Locale defaultLocale = AppSettings.readLocale()
-                .map(AppLocalization.CountryLocale::countryLocale)
-                .orElseGet(Locale::getDefault);
+        Optional<Locale> settingsLocale = AppSettings.readLocale()
+                .map(AppLocalization.CountryLocale::countryLocale);
+        Locale defaultLocale = settingsLocale.orElseGet(Locale::getDefault);
+        AppLogger.debugf("EtpetssimLauncher: Resolved fallback locale: %s, source: %s", defaultLocale,
+                settingsLocale.isPresent() ? "settings" : "system");
         AppLocalization.initialize(arguments.getValue(AppArgs.Key.LOCALE).orElse(null), defaultLocale);
         Locale.setDefault(AppLocalization.locale());
     }
