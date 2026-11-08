@@ -285,8 +285,7 @@ public abstract class AbstractObservationView<
 
     /**
      * Handles a change of the selected grid cell.
-     * <p>
-     * The default implementation updates the selected cell section visibility
+     * <p>The default implementation updates the selected cell section visibility
      * and the standard coordinate and cell type labels.
      * Override to add simulation-specific selected cell behavior.
      *
@@ -369,8 +368,7 @@ public abstract class AbstractObservationView<
 
     /**
      * Creates a titled metrics section displaying current values and running extrema for each metric.
-     * <p>
-     * When any metric tracks extrema, a "min" / "max" header row is prepended; step-count context
+     * <p>When any metric tracks extrema, a "min" / "max" header row is prepended; step-count context
      * appears in a tooltip on each extremum value label on hover.
      * Call {@link #updateGenericMetricSection(Optional, StatisticsExtrema)} to refresh all values.
      *

@@ -124,7 +124,7 @@ sources. "Types" counts the top-level types in main sources of a group.
 | #  | Script fix, block, or group                                   | Types | Status      |
 |----|---------------------------------------------------------------|------:|-------------|
 | A1 | File endings                                                  |     - | done        |
-| A2 | Javadoc paragraphs                                            |     - | open        |
+| A2 | Javadoc paragraphs                                            |     - | done        |
 | B1 | Exception messages                                            |     - | open        |
 | B2 | Log messages                                                  |     - | open        |
 | B3 | Member order                                                  |     - | open        |

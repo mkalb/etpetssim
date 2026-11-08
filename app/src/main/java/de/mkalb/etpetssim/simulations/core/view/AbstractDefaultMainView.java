@@ -31,8 +31,7 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * Abstract base of the standard main view family for regular 2D simulations.
- * <p>
- * Binds {@link DefaultMainViewModel} and provides drawing and throttling support.
+ * <p>Binds {@link DefaultMainViewModel} and provides drawing and throttling support.
  *
  * @param <ENT> entity type stored in grid cells
  * @param <GC>  grid cell type used for cell selection

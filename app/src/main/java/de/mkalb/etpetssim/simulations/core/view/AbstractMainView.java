@@ -42,8 +42,7 @@ import java.util.Map;
 
 /**
  * Generic base view that composes config, control and observation regions.
- * <p>
- * Thin common base of all main views. Regular simulations extend {@link AbstractDefaultMainView}, which adds the
+ * <p>Thin common base of all main views. Regular simulations extend {@link AbstractDefaultMainView}, which adds the
  * timed-step rendering flow; the lab view extends this class directly because it draws on explicit requests instead.
  *
  * @param <VM>  main view model type
@@ -351,8 +350,7 @@ public abstract class AbstractMainView<
 
     /**
      * Replaces the base, dynamic, and overlay painters for the given structure and resizes their canvases.
-     * <p>
-     * The canvas size is limited; if the grid does not fit, the {@link SimulationNotificationType#CANVAS_SIZE_LIMIT}
+     * <p>The canvas size is limited; if the grid does not fit, the {@link SimulationNotificationType#CANVAS_SIZE_LIMIT}
      * notification is set. Also recreates {@link #cellFont} and {@link #cellEmojiFont}, which are {@code null} when
      * the cells are too small for readable text.
      *

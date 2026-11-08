@@ -29,8 +29,7 @@ final class DrawCallThrottler {
 
     /**
      * Returns whether a draw call should be skipped for the current step.
-     * <p>
-     * A draw is skipped only when the history window is full, its average duration exceeds the threshold, and fewer
+     * <p>A draw is skipped only when the history window is full, its average duration exceeds the threshold, and fewer
      * than {@code maxSkips} draws were skipped in a row.
      *
      * @param thresholdMillis the maximum average draw duration in milliseconds without skipping

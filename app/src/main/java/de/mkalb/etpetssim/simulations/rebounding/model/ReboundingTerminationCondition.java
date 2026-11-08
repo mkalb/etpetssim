@@ -9,8 +9,7 @@ public final class ReboundingTerminationCondition implements SimulationTerminati
 
     /**
      * Checks whether the rebounding simulation has finished.
-     * <p>
-     * The simulation terminates once at most one entity-occupied cell remains,
+     * <p>The simulation terminates once at most one entity-occupied cell remains,
      * i.e. when {@code statistics.movingEntityCells() <= 1}.
      *
      * @param model      the current simulation model

@@ -12,12 +12,10 @@ import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Encapsulates user seed input and derived seed preview for simulations.
- * <p>
- * Interpretation rules:
+ * <p>Interpretation rules:
  * blank input yields a random seed, numeric input yields the parsed {@code long} value,
  * and all other input is converted into a stable hash-based {@code long}.
- * <p>
- * The {@code labelProperty} is updated only by {@link #computeSeedAndUpdateLabel()}.
+ * <p>The {@code labelProperty} is updated only by {@link #computeSeedAndUpdateLabel()}.
  */
 public final class SeedProperty {
 

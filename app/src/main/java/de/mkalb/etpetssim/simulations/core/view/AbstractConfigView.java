@@ -68,8 +68,7 @@ public abstract class AbstractConfigView<CON extends SimulationConfig, VM extend
 
     /**
      * Creates a titled config pane that stacks the labels and control regions of the given controls.
-     * <p>
-     * A pane without controls is disabled and not collapsible.
+     * <p>A pane without controls is disabled and not collapsible.
      *
      * @param title                                         the pane title
      * @param configControlsEnabledOnlyIfSimulationCanStart whether the control regions are disabled while the

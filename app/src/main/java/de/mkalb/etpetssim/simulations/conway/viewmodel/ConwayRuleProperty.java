@@ -13,14 +13,12 @@ import java.util.function.Consumer;
 
 /**
  * Encapsulates the preset selection and free-text S/B input for Conway transition rules.
- * <p>
- * Three {@link InputChoiceProperty} instances hold shape-specific preset selections
+ * <p>Three {@link InputChoiceProperty} instances hold shape-specific preset selections
  * (one per {@link de.mkalb.etpetssim.engine.CellShape}). Selecting a preset sets the
  * {@link #stringProperty()} to the corresponding S/B rule string, which in turn
  * triggers the registered {@link #setRulesChangedListener(Consumer) rulesChangedListener} callback
  * so the ViewModel can update the checkbox grid.
- * <p>
- * Manual S/B text entered in the text field also triggers the callback; parsing errors
+ * <p>Manual S/B text entered in the text field also triggers the callback; parsing errors
  * are silently ignored and the checkbox grid remains unchanged.
  * The combo boxes are never updated by manual checkbox or text-field changes.
  */
