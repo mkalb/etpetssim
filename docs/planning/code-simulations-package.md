@@ -129,7 +129,7 @@ sources. "Types" counts the top-level types in main sources of a group.
 | B2 | Log messages                                                  |     - | done        |
 | B3 | Member order                                                  |     - | done        |
 | B4 | Edge behavior checks and direction rings                      |     - | done        |
-| B5 | Constructor parameters of step runners and step logic         |     - | open        |
+| B5 | Constructor parameters of step runners and step logic         |     - | done        |
 | B6 | Metrics catalogs of the statistics                            |     - | open        |
 | B7 | Line length                                                   |     - | open        |
 | C1 | `core.shared`                                                 |    10 | open        |
@@ -340,6 +340,17 @@ commit.
 - Proposal: Order the constructor parameters of all step runners as grid model, config, further inputs; decide
   whether `simulations.md` states this order for step runners and for the step logic constructors (structure, config,
   further inputs) too. An API change with one caller each.
+- Status: done (2026-11-08).
+
+### Decisions
+
+- API change: `EtpetsStepRunner(model, random, idSequence)`, `SugarStepRunner(model, config, random)`, and
+  `LangtonStepRunner(model, config)`; their callers in the simulation managers are adapted. Their private fields and
+  assignments follow the parameter order; the derived `structure` of `LangtonStepRunner` comes last.
+- The five step logic classes already take the structure, the config, and further inputs and stay unchanged;
+  `WatorStepLogic` needs no structure.
+- Rule change (`simulations.md`, "Naming"): constructors of step runners take the grid model, the config, and further
+  inputs; constructors of step logic take the `GridStructure`, the config, and further inputs.
 
 ### B6. Metrics catalogs of the statistics
 
@@ -625,7 +636,8 @@ this summary:
 
 Decisions of this plan:
 
-None yet.
+- Step runners take the grid model, the config, and further inputs; step logic takes the `GridStructure`, the config,
+  and further inputs (`simulations.md`, "Naming"; B5, D).
 
 ## Deferred findings
 

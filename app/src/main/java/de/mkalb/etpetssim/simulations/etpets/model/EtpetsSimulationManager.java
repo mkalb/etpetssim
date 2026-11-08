@@ -52,7 +52,7 @@ public final class EtpetsSimulationManager
 
         var idSequence = new EtpetsIdSequence(1);
 
-        var runner = new EtpetsStepRunner(random, model, idSequence);
+        var runner = new EtpetsStepRunner(model, random, idSequence);
         var terminationCondition = new EtpetsTerminationCondition();
         executor = new TimedSimulationExecutor<>(new DefaultSimulationExecutor<>(runner, runner::model, terminationCondition, statistics));
 

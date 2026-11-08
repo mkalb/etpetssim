@@ -52,7 +52,7 @@ public final class SugarSimulationManager
                 new SparseGridModel<>(structure, NoResource.NO_RESOURCE),
                 new SparseGridModel<>(structure, NoAgent.NO_AGENT));
 
-        var runner = new SugarStepRunner(config, random, model);
+        var runner = new SugarStepRunner(model, config, random);
         var terminationCondition = new SugarTerminationCondition();
         executor = new TimedSimulationExecutor<>(new DefaultSimulationExecutor<>(runner, runner::model, terminationCondition, statistics));
 

@@ -36,7 +36,7 @@ public final class LangtonSimulationManager
                 new ArrayGridModel<>(structure, TerrainConstant.UNVISITED),
                 new SparseGridModel<>(structure, NoAgent.NO_AGENT));
 
-        var runner = new LangtonStepRunner(config, model);
+        var runner = new LangtonStepRunner(model, config);
         var terminationCondition = new LangtonTerminationCondition();
         executor = new TimedSimulationExecutor<>(new DefaultSimulationExecutor<>(runner, runner::model, terminationCondition, statistics));
 

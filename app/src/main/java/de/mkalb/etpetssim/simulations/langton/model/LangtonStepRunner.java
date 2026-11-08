@@ -19,14 +19,14 @@ import de.mkalb.etpetssim.simulations.langton.shared.LangtonMovementRules;
 public final class LangtonStepRunner
         implements SimulationStepRunner<LangtonStatistics> {
 
-    private final GridStructure structure;
-    private final LangtonConfig config;
     private final LangtonGridModel model;
+    private final LangtonConfig config;
+    private final GridStructure structure;
 
-    public LangtonStepRunner(LangtonConfig config,
-                             LangtonGridModel model) {
-        this.config = config;
+    public LangtonStepRunner(LangtonGridModel model,
+                             LangtonConfig config) {
         this.model = model;
+        this.config = config;
         structure = model.structure();
     }
 

@@ -7,16 +7,16 @@ import java.util.Random;
 public final class SugarStepRunner
         implements SimulationStepRunner<SugarStatistics> {
 
+    private final SugarGridModel model;
     private final SugarConfig config;
     private final Random random;
-    private final SugarGridModel model;
 
-    public SugarStepRunner(SugarConfig config,
-                           Random random,
-                           SugarGridModel model) {
+    public SugarStepRunner(SugarGridModel model,
+                           SugarConfig config,
+                           Random random) {
+        this.model = model;
         this.config = config;
         this.random = random;
-        this.model = model;
     }
 
     public SugarGridModel model() {

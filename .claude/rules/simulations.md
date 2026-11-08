@@ -276,5 +276,7 @@ Use `CellDrawer` from `simulations.core.view`:
 - Static `<SimulationName><Layer>Logic` helper classes called from a step runner expose `apply(...)` with the
   parameters grid model, config, further inputs (e.g., `Random`), step index, and statistics, in this order;
   `perform...` is reserved for implementations of the step contracts.
+- Constructors of step runners take the grid model, the config, and further inputs (e.g., `Random`), in this order;
+  constructors of step logic take the `GridStructure`, the config, and further inputs.
 - Model, entity, and strategy types may use domain verbs of their simulation (e.g., `move`, `die`, `reproduce`,
   `consume`, `decideMove`) for state changes and decisions.

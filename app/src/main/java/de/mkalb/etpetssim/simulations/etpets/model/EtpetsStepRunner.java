@@ -7,15 +7,15 @@ import java.util.Random;
 public final class EtpetsStepRunner
         implements SimulationStepRunner<EtpetsStatistics> {
 
-    private final Random random;
     private final EtpetsGridModel model;
+    private final Random random;
     private final EtpetsIdSequence idSequence;
 
-    public EtpetsStepRunner(Random random,
-                            EtpetsGridModel model,
+    public EtpetsStepRunner(EtpetsGridModel model,
+                            Random random,
                             EtpetsIdSequence idSequence) {
-        this.random = random;
         this.model = model;
+        this.random = random;
         this.idSequence = idSequence;
     }
 
