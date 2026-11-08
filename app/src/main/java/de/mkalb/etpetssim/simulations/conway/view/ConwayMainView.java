@@ -149,7 +149,7 @@ public final class ConwayMainView
     @Override
     protected void drawSimulation(CanvasPainters painters, WritableGridModel<ConwayEntity> currentGridModel, int stepCount, int lastDrawnStepCount) {
         if (coordinateDrawer == null) {
-            AppLogger.warn("CoordinateDrawer is not initialized, cannot draw canvas.");
+            AppLogger.warn("ConwayMainView: Skipping canvas draw: coordinateDrawer is not initialized");
             return;
         }
 

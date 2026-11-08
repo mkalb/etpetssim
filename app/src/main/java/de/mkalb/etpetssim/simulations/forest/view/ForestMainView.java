@@ -135,7 +135,7 @@ public final class ForestMainView
     protected void drawSimulation(CanvasPainters painters, WritableGridModel<ForestEntity> currentGridModel, int stepCount, int lastDrawnStepCount) {
         CellDrawer<ForestEntity> drawer = cellDrawer;
         if (drawer == null) {
-            AppLogger.warn("CellDrawer is not initialized, cannot draw canvas.");
+            AppLogger.warn("ForestMainView: Skipping canvas draw: drawer is not initialized");
             return;
         }
 

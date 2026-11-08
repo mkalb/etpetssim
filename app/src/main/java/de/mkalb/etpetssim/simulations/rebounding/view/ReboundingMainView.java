@@ -136,7 +136,7 @@ public final class ReboundingMainView
     @Override
     protected void drawSimulation(CanvasPainters painters, WritableGridModel<ReboundingEntity> currentGridModel, int stepCount, int lastDrawnStepCount) {
         if (cellDrawer == null) {
-            AppLogger.warn("CellDrawer is not initialized, cannot draw canvas.");
+            AppLogger.warn("ReboundingMainView: Skipping canvas draw: cellDrawer is not initialized");
             return;
         }
 

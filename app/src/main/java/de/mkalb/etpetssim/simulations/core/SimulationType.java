@@ -294,7 +294,7 @@ public enum SimulationType {
             try {
                 return Optional.of(URI.create(text));
             } catch (IllegalArgumentException e) {
-                AppLogger.warn("SimulationType: Invalid URI format for simulation: " + name());
+                AppLogger.warn("SimulationType: Ignoring invalid URI for simulation: " + name());
                 return Optional.empty();
             }
         });

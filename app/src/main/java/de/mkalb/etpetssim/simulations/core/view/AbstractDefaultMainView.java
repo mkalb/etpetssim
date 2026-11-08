@@ -179,7 +179,7 @@ public abstract class AbstractDefaultMainView<
         observationView.updateObservationLabels();
         CanvasPainters currentPainters = painters();
         if (currentPainters == null) {
-            AppLogger.warnf("%s: Painters are not initialized, cannot redraw canvas.", LOG_COMPONENT);
+            AppLogger.warnf("%s: Skipping canvas redraw: painters are not initialized", LOG_COMPONENT);
             return;
         }
         drawSimulation(currentPainters, viewModel.getCurrentGridModel(), viewModel.getStepCount(), viewModel.getStepCount());
@@ -188,7 +188,7 @@ public abstract class AbstractDefaultMainView<
     private void handleSimulationInitialized() {
         int stepCount = viewModel.getStepCount();
 
-        AppLogger.infof("%s: Starting simulation view initialization. step=%d", LOG_COMPONENT, stepCount);
+        AppLogger.infof("%s: Starting simulation view initialization: step=%d", LOG_COMPONENT, stepCount);
 
         CanvasPainters newPainters = recreatePaintersAndResizeCanvases(viewModel.getStructure(), viewModel.getCellEdgeLength());
 
@@ -201,15 +201,15 @@ public abstract class AbstractDefaultMainView<
 
         initializeSimulation(newPainters, viewModel.getCurrentConfig(), newPainters.base().cellDimension());
 
-        AppLogger.infof("%s: Simulation initialized in the view. step=%d", LOG_COMPONENT, stepCount);
+        AppLogger.infof("%s: Simulation initialized in the view: step=%d", LOG_COMPONENT, stepCount);
 
         drawAndMeasureSimulationStep(newPainters, stepCount);
 
-        AppLogger.infof("%s: Initial simulation view draw completed. step=%d", LOG_COMPONENT, stepCount);
+        AppLogger.infof("%s: Initial simulation view draw completed: step=%d", LOG_COMPONENT, stepCount);
     }
 
     private void handleSimulationReset() {
-        AppLogger.infof("%s: Resetting simulation view.", LOG_COMPONENT);
+        AppLogger.infof("%s: Resetting simulation view", LOG_COMPONENT);
         clearCanvasLayers();
         controlView.setStepCount(0);
         observationView.initializeObservationLabels();
@@ -229,13 +229,13 @@ public abstract class AbstractDefaultMainView<
         int stepCount = simulationStepEvent.stepCount();
         if (simulationStepEvent.batchModeRunning()) {
             if (DEBUG_MODE) {
-                AppLogger.infof("%s: Handle simulation step in view for batch mode. event=%s", LOG_COMPONENT, simulationStepEvent);
+                AppLogger.infof("%s: Handling simulation step in view for batch mode: event=%s", LOG_COMPONENT, simulationStepEvent);
             }
 
             controlView.setStepCount(stepCount);
         } else {
             if (DEBUG_MODE) {
-                AppLogger.infof("%s: Handle simulation step in view. event=%s", LOG_COMPONENT, simulationStepEvent);
+                AppLogger.infof("%s: Handling simulation step in view: event=%s", LOG_COMPONENT, simulationStepEvent);
             }
 
             controlView.setStepCount(stepCount);
@@ -244,7 +244,7 @@ public abstract class AbstractDefaultMainView<
 
             CanvasPainters currentPainters = painters();
             if (currentPainters == null) {
-                AppLogger.warnf("%s: Painters are not initialized, cannot draw step. event=%s", LOG_COMPONENT, simulationStepEvent);
+                AppLogger.warnf("%s: Skipping step draw: painters are not initialized, event=%s", LOG_COMPONENT, simulationStepEvent);
                 return;
             }
 
@@ -252,7 +252,7 @@ public abstract class AbstractDefaultMainView<
             if (lastDrawnStepCount != stepCount) {
                 throttleAndDrawSimulationStep(currentPainters, stepCount, simulationStepEvent.finalStep(), viewModel.getThrottleDrawMillis());
             } else if (DEBUG_MODE) {
-                AppLogger.infof("%s: Skipping draw because step was already drawn. event=%s", LOG_COMPONENT, simulationStepEvent);
+                AppLogger.infof("%s: Skipping draw because step was already drawn: event=%s", LOG_COMPONENT, simulationStepEvent);
             }
         }
     }
@@ -270,7 +270,7 @@ public abstract class AbstractDefaultMainView<
         lastDrawnStepCount = stepCount;
 
         if (DEBUG_MODE) {
-            AppLogger.infof("%s: Drawn step %d in %dms. averageDrawMillis=%d",
+            AppLogger.infof("%s: Drawn step %d in %dms: averageDrawMillis=%d",
                     LOG_COMPONENT,
                     stepCount,
                     durationMillis,
@@ -285,7 +285,7 @@ public abstract class AbstractDefaultMainView<
         } else {
             showSkipOverlay(currentPainters.overlay());
             if (DEBUG_MODE) {
-                AppLogger.infof("%s: Skipping draw for step %d due to high average draw time. averageMillis=%d, thresholdMillis=%d",
+                AppLogger.infof("%s: Skipping draw for step %d due to high average draw time: averageMillis=%d, thresholdMillis=%d",
                         LOG_COMPONENT,
                         stepCount,
                         drawThrottler.getAverageDurationMillis(),

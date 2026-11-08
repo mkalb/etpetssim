@@ -324,7 +324,7 @@ public final class EtpetsMainView extends AbstractDefaultMainView<
     @Override
     protected void drawSimulation(CanvasPainters painters, EtpetsGridModel currentGridModel, int stepCount, int lastDrawnStepCount) {
         if ((cellTerrainDrawer == null) || (cellResourceDrawer == null) || (cellAgentDrawer == null)) {
-            AppLogger.warn("CellDrawer is not initialized, cannot draw canvas.");
+            AppLogger.warn("EtpetsMainView: Skipping canvas draw: cell drawers are not initialized");
             return;
         }
 

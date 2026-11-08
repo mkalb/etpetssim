@@ -323,7 +323,7 @@ public final class LabMainView
 
     private void drawBaseCanvas() {
         if (!viewModel.hasSimulationManager()) {
-            AppLogger.warn("Simulation manager is not initialized, cannot draw base canvas.");
+            AppLogger.warn("LabMainView: Skipping base canvas draw: simulation manager is not initialized");
             disableCanvas();
             return;
         }
@@ -377,7 +377,7 @@ public final class LabMainView
     private void drawModel() {
         CanvasPainters currentPainters = painters();
         if (currentPainters == null) {
-            AppLogger.warn("Painter is not initialized, cannot draw canvas.");
+            AppLogger.warn("LabMainView: Skipping canvas draw: painters are not initialized");
             return;
         }
         FXGridCanvasPainter basePainter = currentPainters.base();
@@ -391,7 +391,7 @@ public final class LabMainView
     private void drawTest() {
         CanvasPainters currentPainters = painters();
         if (currentPainters == null) {
-            AppLogger.warn("Painter is not initialized, cannot draw canvas.");
+            AppLogger.warn("LabMainView: Skipping canvas draw: painters are not initialized");
             return;
         }
         FXGridCanvasPainter basePainter = currentPainters.base();

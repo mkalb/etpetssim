@@ -150,7 +150,7 @@ public final class LangtonMainView
     @Override
     protected void drawSimulation(CanvasPainters painters, LangtonGridModel currentGridModel, int stepCount, int lastDrawnStepCount) {
         if ((cellTerrainDrawer == null) || (cellAntDrawer == null)) {
-            AppLogger.warn("CellDrawer is not initialized, cannot draw canvas.");
+            AppLogger.warn("LangtonMainView: Skipping canvas draw: cell drawers are not initialized");
             return;
         }
 

@@ -78,7 +78,8 @@ public final class LangtonRuleProperty {
                         + ", but was: " + rules);
             }
         } catch (IllegalArgumentException e) {
-            AppLogger.errorf(e, "Invalid Langton rule string '%s', falling back to '%s'", stringProperty.get(), MOVEMENT_RULES_DEFAULT);
+            AppLogger.warnf("LangtonRuleProperty: Ignoring invalid rule string: '%s', fallback: '%s', reason: %s",
+                    stringProperty.get(), MOVEMENT_RULES_DEFAULT, e);
             rules = LangtonMovementRules.parse(MOVEMENT_RULES_DEFAULT);
         }
         String rulesDisplayString = rules.toDisplayString();

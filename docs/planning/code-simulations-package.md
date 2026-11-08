@@ -100,8 +100,8 @@ later groups:
 - Log messages (block B2): align them with `core`, `ui`, and the root package where possible and sensible (aligned on
   2026-11-07): the class name as prefix, no final period, values after a colon as `name: value` pairs, `Ignoring ...`
   for ignored input, and `Failed to ...` for failures. Some messages are deliberately different and may keep their
-  form, e.g., the shared views and ViewModels prefix them with the simulation type (`"%s: ..."`) and append diagnostic
-  `name=value` pairs, and the commented-out diagnostic traces of the step logic (e.g., `WatorStepLogic`) stay as
+  form, e.g., the shared views and ViewModels prefix them with a fixed component name through `LOG_COMPONENT`
+  (`"%s: ..."`, e.g., `MainView`) and append diagnostic `name=value` pairs, and the commented-out diagnostic traces of the step logic (e.g., `WatorStepLogic`) stay as
   `java.md` ("Logging with AppLogger") allows.
 
 ### Documentation format
@@ -126,7 +126,7 @@ sources. "Types" counts the top-level types in main sources of a group.
 | A1 | File endings                                                  |     - | done        |
 | A2 | Javadoc paragraphs                                            |     - | done        |
 | B1 | Exception messages                                            |     - | done        |
-| B2 | Log messages                                                  |     - | open        |
+| B2 | Log messages                                                  |     - | done        |
 | B3 | Member order                                                  |     - | open        |
 | B4 | Edge behavior checks and direction rings                      |     - | open        |
 | B5 | Constructor parameters of step runners and step logic         |     - | open        |
@@ -245,6 +245,25 @@ as `core`, `ui`, and `engine` do since `code-other-classes.md`; adapt the tests 
 All `AppLogger` calls in `simulations` follow "Logging with AppLogger" in `java.md` and the log message guideline under
 "Review guidelines". Most calls are in `DefaultMainViewModel` (24), `AbstractDefaultMainView` (11), `AbstractMainView`
 (6), and `WatorStepLogic` (6, mostly commented-out traces).
+
+### Decisions
+
+- Messages without a component prefix get the class name: the main views of the simulations and the Lab log
+  `<Class>: Skipping canvas draw: <field> is not initialized`, `SimulationType` logs
+  `Ignoring invalid URI for simulation: ...`.
+- `LangtonRuleProperty` logs the ignored rule string with `warnf(..)` instead of `errorf(e, ..)`, with the default as
+  `fallback` and the exception itself as `reason`, because `getMessage()` may return `null`.
+- The shared views and ViewModels keep their fixed `LOG_COMPONENT` (`MainView` for `AbstractMainView` and
+  `AbstractDefaultMainView`) and their `name=value` pairs; their messages lose the final period, put the pairs after a
+  colon instead of a period, join two sentences with `; `, and use `Ignoring ...` for ignored user actions and
+  `Failed to ...` for failures. Batch state changes are logged as `transition=A -> B`. `logSimulationInfo(..)` of
+  `DefaultMainViewModel` appends the context as `; config=..., statistics=...`.
+- The pet and egg events of `EtpetsAgentLogic` stay at `info`, because the further development of ET Pets needs them
+  (maintainer); only their wording follows the guideline.
+- The commented-out traces in `WatorStepLogic` and `EtpetsAgentLogic` and the `DEBUG_MODE` traces of
+  `AbstractDefaultMainView` stay; the latter only lose their final period, and the two step messages say
+  `Handling ...` instead of `Handle ...`, like their neighbors.
+- Lines that were longer than 120 characters before stay for B7.
 
 ### B3. Member order
 

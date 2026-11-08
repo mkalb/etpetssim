@@ -250,7 +250,7 @@ final class EditToolBarView<CTX extends SimulationUserActionContext> {
             try {
                 cleanupAction.run();
             } catch (RuntimeException e) {
-                AppLogger.errorf(e, "%s: Failed to clean up edit toolbar resources.", LOG_COMPONENT);
+                AppLogger.errorf(e, "%s: Failed to clean up edit toolbar resources", LOG_COMPONENT);
             }
         }
         editToolBarCleanupActions.clear();

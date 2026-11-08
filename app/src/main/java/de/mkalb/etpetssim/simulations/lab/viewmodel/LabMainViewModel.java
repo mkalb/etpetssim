@@ -180,7 +180,7 @@ public final class LabMainViewModel
         LabConfig config = configViewModel.createConfig();
         if (!config.isValid()) {
             setSimulationState(SimulationState.ERROR);
-            AppLogger.warnf("%s: Cannot start simulation because configuration is invalid.", LOG_COMPONENT);
+            AppLogger.warnf("%s: Ignoring start request: configuration is invalid", LOG_COMPONENT);
             setNotificationType(SimulationNotificationType.INVALID_CONFIG);
             return;
         }

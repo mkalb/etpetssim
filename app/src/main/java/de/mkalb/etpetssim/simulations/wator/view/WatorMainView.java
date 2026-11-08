@@ -187,7 +187,7 @@ public final class WatorMainView
     @Override
     protected void drawSimulation(CanvasPainters painters, WritableGridModel<WatorEntity> currentGridModel, int stepCount, int lastDrawnStepCount) {
         if (cellDrawer == null) {
-            AppLogger.warn("CellDrawer is not initialized, cannot draw canvas.");
+            AppLogger.warn("WatorMainView: Skipping canvas draw: cellDrawer is not initialized");
             return;
         }
 

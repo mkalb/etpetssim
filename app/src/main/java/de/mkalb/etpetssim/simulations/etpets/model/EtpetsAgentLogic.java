@@ -691,7 +691,7 @@ public final class EtpetsAgentLogic {
     private static void logEggHatched(PetEgg egg,
                                       Pet newPet,
                                       GridCoordinate coordinate) {
-        AppLogger.infof("%s: Egg %s hatched into Pet %s at %s.",
+        AppLogger.infof("%s: Egg %s hatched into pet %s at %s",
                 LOG_COMPONENT,
                 egg.toDisplayString(),
                 newPet.toDisplayString(),
@@ -700,7 +700,7 @@ public final class EtpetsAgentLogic {
 
     private static void logPetDiedFromEnergyDepletion(Pet pet,
                                                       GridCoordinate coordinate) {
-        AppLogger.infof("%s: Pet %s died at %s (reason=energy-depletion).",
+        AppLogger.infof("%s: Pet %s died of energy depletion at %s",
                 LOG_COMPONENT,
                 pet.toDisplayString(),
                 coordinate.toDisplayString());
@@ -709,7 +709,7 @@ public final class EtpetsAgentLogic {
     private static void logPetDiedFromAgeMortality(Pet pet,
                                                    GridCoordinate coordinate,
                                                    double mortalityChance) {
-        AppLogger.infof("%s: Pet %s died at %s (reason=age-mortality, chance=%.6f).",
+        AppLogger.infof("%s: Pet %s died of age at %s, mortalityChance: %.6f",
                 LOG_COMPONENT,
                 pet.toDisplayString(),
                 coordinate.toDisplayString(),
