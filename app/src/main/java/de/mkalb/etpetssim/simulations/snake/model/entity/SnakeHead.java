@@ -166,13 +166,13 @@ public final class SnakeHead implements SnakeEntity {
         int size = snakeSegments.size();
         String segmentsStr = switch (size) {
             case 0 -> "#0 ()";
-            case 1 -> "#1 " + snakeSegments.peekFirst().toDisplayString();
+            case 1 -> "#1 " + snakeSegments.getFirst().toDisplayString();
             case 2 -> "#2 %s %s".formatted(
-                    snakeSegments.peekFirst().toDisplayString(),
-                    snakeSegments.peekLast().toDisplayString());
+                    snakeSegments.getFirst().toDisplayString(),
+                    snakeSegments.getLast().toDisplayString());
             default -> "#%d %s...%s".formatted(size,
-                    snakeSegments.peekFirst().toDisplayString(),
-                    snakeSegments.peekLast().toDisplayString());
+                    snakeSegments.getFirst().toDisplayString(),
+                    snakeSegments.getLast().toDisplayString());
         };
 
         return "SnakeHead{" +
