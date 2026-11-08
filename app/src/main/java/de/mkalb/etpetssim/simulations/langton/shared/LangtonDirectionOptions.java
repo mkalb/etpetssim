@@ -2,6 +2,7 @@ package de.mkalb.etpetssim.simulations.langton.shared;
 
 import de.mkalb.etpetssim.engine.CellShape;
 import de.mkalb.etpetssim.engine.GridCoordinate;
+import de.mkalb.etpetssim.engine.neighborhood.CellNeighborhoods;
 import de.mkalb.etpetssim.engine.neighborhood.CompassDirection;
 import org.jspecify.annotations.Nullable;
 
@@ -29,9 +30,8 @@ public final class LangtonDirectionOptions {
      */
     public static List<CompassDirection> selectableInitialDirections(CellShape cellShape) {
         return switch (cellShape) {
-            case SQUARE -> List.of(CompassDirection.N, CompassDirection.E, CompassDirection.S, CompassDirection.W);
-            case HEXAGON -> List.of(CompassDirection.N, CompassDirection.NE, CompassDirection.SE,
-                    CompassDirection.S, CompassDirection.SW, CompassDirection.NW);
+            case SQUARE -> CellNeighborhoods.SQUARE_EDGES_DIRECTION_RING;
+            case HEXAGON -> CellNeighborhoods.HEXAGON_DIRECTION_RING;
             case TRIANGLE -> List.of();
         };
     }

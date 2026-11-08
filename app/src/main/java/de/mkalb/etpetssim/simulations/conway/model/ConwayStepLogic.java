@@ -6,7 +6,6 @@ import de.mkalb.etpetssim.engine.executor.SynchronousStepLogic;
 import de.mkalb.etpetssim.engine.model.ReadableGridModel;
 import de.mkalb.etpetssim.engine.model.WritableGridModel;
 import de.mkalb.etpetssim.engine.neighborhood.CellNeighborhoods;
-import de.mkalb.etpetssim.engine.neighborhood.EdgeBehaviorAction;
 import de.mkalb.etpetssim.simulations.conway.model.entity.ConwayEntity;
 
 import java.util.HashMap;
@@ -38,7 +37,7 @@ public final class ConwayStepLogic implements SynchronousStepLogic<ConwayEntity,
         for (var coordinate : alive) {
             int aliveNeighbors = 0;
             for (var result : CellNeighborhoods.neighborEdgeBehaviorResults(coordinate, config.neighborhoodMode(), structure)) {
-                if ((result.action() == EdgeBehaviorAction.VALID) || (result.action() == EdgeBehaviorAction.WRAPPED)) {
+                if (result.action().isWithinGrid()) {
                     if (alive.contains(result.mapped())) {
                         aliveNeighbors++;
                     } else {

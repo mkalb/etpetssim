@@ -128,7 +128,7 @@ sources. "Types" counts the top-level types in main sources of a group.
 | B1 | Exception messages                                            |     - | done        |
 | B2 | Log messages                                                  |     - | done        |
 | B3 | Member order                                                  |     - | done        |
-| B4 | Edge behavior checks and direction rings                      |     - | open        |
+| B4 | Edge behavior checks and direction rings                      |     - | done        |
 | B5 | Constructor parameters of step runners and step logic         |     - | open        |
 | B6 | Metrics catalogs of the statistics                            |     - | open        |
 | B7 | Line length                                                   |     - | open        |
@@ -309,6 +309,20 @@ commit.
   ring constants and actions as test data.
 - Note (B1, 2026-11-08): B1 left the messages of the three cell shape checks that B4 replaces unchanged; a check that
   stays adopts the forms of `java.md`.
+- Status: done (2026-11-08).
+
+### Decisions
+
+- The six checks use `isWithinGrid()`; the imports of `EdgeBehaviorAction` that became unused are removed.
+  `EtpetsAgentLogic` (checks only `VALID`) and the `VALID` argument in `SugarAgentLogic` stay unchanged.
+- `ReboundingSimulationManager`, `ReboundingEditToolBarViewModel`, and `SnakeStepLogic` select their ring with
+  `CellNeighborhoods.directionRing(..)`; `resolveDirectionRing(..)` and the three own cell shape checks are removed.
+  Triangle cells now fail with the `IllegalArgumentException` of the engine; `ReboundingConstraints` and
+  `SnakeConstraints` allow only square and hexagon cells.
+- `SnakeStepLogic` relies on `SnakeConfig.isValid()`, which allows only `EDGES_ONLY`, instead of rejecting square
+  cells with `EDGES_AND_VERTICES` itself (`simulations.md`, "Configuration and Input").
+- `LangtonDirectionOptions.selectableInitialDirections(..)` returns `SQUARE_EDGES_DIRECTION_RING` and
+  `HEXAGON_DIRECTION_RING` instead of its own identical lists (found in B4).
 
 ### B5. Constructor parameters of step runners and step logic
 

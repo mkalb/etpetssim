@@ -1,6 +1,5 @@
 package de.mkalb.etpetssim.simulations.rebounding.model;
 
-import de.mkalb.etpetssim.engine.CellShape;
 import de.mkalb.etpetssim.engine.GridCoordinate;
 import de.mkalb.etpetssim.engine.GridStructure;
 import de.mkalb.etpetssim.engine.executor.AsynchronousStepRunner;
@@ -11,7 +10,6 @@ import de.mkalb.etpetssim.engine.model.SparseGridModel;
 import de.mkalb.etpetssim.engine.model.WritableGridModel;
 import de.mkalb.etpetssim.engine.neighborhood.CellNeighborhoods;
 import de.mkalb.etpetssim.engine.neighborhood.CompassDirection;
-import de.mkalb.etpetssim.engine.neighborhood.NeighborhoodMode;
 import de.mkalb.etpetssim.engine.support.AgentOrderingStrategies;
 import de.mkalb.etpetssim.engine.support.GridInitializer;
 import de.mkalb.etpetssim.engine.support.GridInitializers;
@@ -142,7 +140,8 @@ public final class ReboundingSimulationManager
         if (movingEntityCount == 0) {
             return GridInitializers.identity();
         }
-        List<CompassDirection> directionRing = resolveDirectionRing(config);
+        List<CompassDirection> directionRing = CellNeighborhoods.directionRing(config.neighborhoodMode(),
+                structure.cellShape());
         List<ReboundingEntity> movingEntities = new ArrayList<>(movingEntityCount);
         for (int i = 0; i < movingEntityCount; i++) {
             if (isCancellationCheckpoint(i)) {
@@ -155,17 +154,6 @@ public final class ReboundingSimulationManager
                 ReboundingEntity::isGround,
                 random,
                 cancellation::checkCanceled);
-    }
-
-    private List<CompassDirection> resolveDirectionRing(ReboundingConfig config) {
-        if (structure.cellShape() == CellShape.SQUARE) {
-            return (config.neighborhoodMode() == NeighborhoodMode.EDGES_AND_VERTICES)
-                    ? CellNeighborhoods.SQUARE_EDGES_AND_VERTICES_DIRECTION_RING
-                    : CellNeighborhoods.SQUARE_EDGES_DIRECTION_RING;
-        } else if (structure.cellShape() == CellShape.HEXAGON) {
-            return CellNeighborhoods.HEXAGON_DIRECTION_RING;
-        }
-        throw new IllegalStateException("Unsupported cell shape: " + structure.cellShape());
     }
 
     private void initializeStatistics(WritableGridModel<ReboundingEntity> model) {

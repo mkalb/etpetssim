@@ -5,7 +5,6 @@ import de.mkalb.etpetssim.engine.executor.AgentStepLogic;
 import de.mkalb.etpetssim.engine.model.GridCell;
 import de.mkalb.etpetssim.engine.model.WritableGridModel;
 import de.mkalb.etpetssim.engine.neighborhood.CellNeighborhoods;
-import de.mkalb.etpetssim.engine.neighborhood.EdgeBehaviorAction;
 import de.mkalb.etpetssim.simulations.wator.model.entity.CreatureFactory;
 import de.mkalb.etpetssim.simulations.wator.model.entity.Fish;
 import de.mkalb.etpetssim.simulations.wator.model.entity.Shark;
@@ -36,7 +35,7 @@ public final class WatorStepLogic implements AgentStepLogic<WatorEntity, WatorSt
         List<GridCell<WatorEntity>> waterCells = new ArrayList<>();
 
         for (var result : CellNeighborhoods.neighborEdgeBehaviorResults(agentCell.coordinate(), config.neighborhoodMode(), model.structure())) {
-            if ((result.action() == EdgeBehaviorAction.VALID) || (result.action() == EdgeBehaviorAction.WRAPPED)) {
+            if (result.action().isWithinGrid()) {
                 WatorEntity neighborEntity = model.getEntity(result.mapped());
                 if (neighborEntity.isFish()) {
                     fishCells.add(new GridCell<>(result.mapped(), neighborEntity));

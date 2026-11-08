@@ -152,8 +152,7 @@ public final class SugarAgentLogic {
                                                                                 SugarConfig config,
                                                                                 GridStructure structure) {
         return CellNeighborhoods.cellNeighborWithEdgeBehavior(coordinate, config.neighborhoodMode(), structure, direction)
-                .filter(neighbor -> (neighbor.edgeBehaviorAction() == EdgeBehaviorAction.VALID)
-                        || (neighbor.edgeBehaviorAction() == EdgeBehaviorAction.WRAPPED));
+                .filter(neighbor -> neighbor.edgeBehaviorAction().isWithinGrid());
     }
 
     private static void addMoveCandidateIfFreeWithSugar(List<AgentMoveCandidate> moveCandidates,

@@ -6,7 +6,6 @@ import de.mkalb.etpetssim.engine.executor.DefaultSimulationExecutor;
 import de.mkalb.etpetssim.engine.executor.TimedSimulationExecutor;
 import de.mkalb.etpetssim.engine.model.SparseGridModel;
 import de.mkalb.etpetssim.engine.neighborhood.CellNeighborhoods;
-import de.mkalb.etpetssim.engine.neighborhood.EdgeBehaviorAction;
 import de.mkalb.etpetssim.engine.support.GridInitializer;
 import de.mkalb.etpetssim.engine.support.GridInitializers;
 import de.mkalb.etpetssim.simulations.core.model.AbstractTimedSimulationManager;
@@ -188,7 +187,7 @@ public final class SugarSimulationManager
                 index++;
                 GridCoordinate current = queue.remove();
                 for (var result : CellNeighborhoods.neighborEdgeBehaviorResults(current, config.neighborhoodMode(), structure)) {
-                    if ((result.action() == EdgeBehaviorAction.VALID) || (result.action() == EdgeBehaviorAction.WRAPPED)) {
+                    if (result.action().isWithinGrid()) {
                         GridCoordinate mapped = result.mapped();
                         if (!visited.contains(mapped)) {
                             visited.add(mapped);

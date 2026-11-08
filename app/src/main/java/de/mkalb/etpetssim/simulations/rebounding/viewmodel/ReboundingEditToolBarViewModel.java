@@ -2,7 +2,6 @@ package de.mkalb.etpetssim.simulations.rebounding.viewmodel;
 
 import de.mkalb.etpetssim.engine.neighborhood.CellNeighborhoods;
 import de.mkalb.etpetssim.engine.neighborhood.CompassDirection;
-import de.mkalb.etpetssim.engine.neighborhood.NeighborhoodMode;
 import de.mkalb.etpetssim.simulations.rebounding.model.ReboundingConfig;
 import de.mkalb.etpetssim.simulations.rebounding.shared.ReboundingUserActionContext;
 import javafx.beans.property.ObjectProperty;
@@ -38,14 +37,8 @@ public final class ReboundingEditToolBarViewModel {
     }
 
     public void updateAvailableDirections(ReboundingConfig config) {
-        List<CompassDirection> directions = switch (config.cellShape()) {
-            case HEXAGON -> CellNeighborhoods.HEXAGON_DIRECTION_RING;
-            case SQUARE -> (config.neighborhoodMode() == NeighborhoodMode.EDGES_AND_VERTICES)
-                    ? CellNeighborhoods.SQUARE_EDGES_AND_VERTICES_DIRECTION_RING
-                    : CellNeighborhoods.SQUARE_EDGES_DIRECTION_RING;
-            case TRIANGLE ->
-                    throw new IllegalStateException("Unsupported cell shape for Rebounding: " + config.cellShape());
-        };
+        List<CompassDirection> directions = CellNeighborhoods.directionRing(config.neighborhoodMode(),
+                config.cellShape());
         availableDirections.setAll(directions);
         selectedDirection.set(directions.isEmpty() ? null : directions.getFirst());
     }

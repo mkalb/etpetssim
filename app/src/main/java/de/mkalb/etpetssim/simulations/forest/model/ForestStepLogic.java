@@ -6,7 +6,6 @@ import de.mkalb.etpetssim.engine.model.GridCell;
 import de.mkalb.etpetssim.engine.model.ReadableGridModel;
 import de.mkalb.etpetssim.engine.model.WritableGridModel;
 import de.mkalb.etpetssim.engine.neighborhood.CellNeighborhoods;
-import de.mkalb.etpetssim.engine.neighborhood.EdgeBehaviorAction;
 import de.mkalb.etpetssim.engine.neighborhood.EdgeBehaviorResult;
 import de.mkalb.etpetssim.simulations.forest.model.entity.ForestEntity;
 
@@ -63,7 +62,7 @@ public final class ForestStepLogic implements SynchronousStepLogic<ForestEntity,
     private boolean hasBurningNeighbor(GridCell<ForestEntity> cell, ReadableGridModel<ForestEntity> model) {
         return CellNeighborhoods.cellNeighborsIgnoringEdgeBehavior(cell.coordinate(), config.neighborhoodMode(), structure.cellShape())
                 .map(neighbor -> CellNeighborhoods.applyEdgeBehaviorToCoordinate(neighbor.neighborCoordinate(), structure))
-                .filter(r -> (r.action() == EdgeBehaviorAction.VALID) || (r.action() == EdgeBehaviorAction.WRAPPED))
+                .filter(r -> r.action().isWithinGrid())
                 .map(EdgeBehaviorResult::mapped)
                 .map(model::getEntity)
                 .anyMatch(ForestEntity::isBurning);

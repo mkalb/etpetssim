@@ -1,6 +1,5 @@
 package de.mkalb.etpetssim.simulations.snake.model;
 
-import de.mkalb.etpetssim.engine.CellShape;
 import de.mkalb.etpetssim.engine.GridCoordinate;
 import de.mkalb.etpetssim.engine.GridStructure;
 import de.mkalb.etpetssim.engine.executor.AgentStepLogic;
@@ -10,8 +9,6 @@ import de.mkalb.etpetssim.engine.model.WritableGridModel;
 import de.mkalb.etpetssim.engine.neighborhood.CellNeighborWithEdgeBehavior;
 import de.mkalb.etpetssim.engine.neighborhood.CellNeighborhoods;
 import de.mkalb.etpetssim.engine.neighborhood.CompassDirection;
-import de.mkalb.etpetssim.engine.neighborhood.EdgeBehaviorAction;
-import de.mkalb.etpetssim.engine.neighborhood.NeighborhoodMode;
 import de.mkalb.etpetssim.simulations.snake.model.entity.SnakeEntity;
 import de.mkalb.etpetssim.simulations.snake.model.entity.SnakeHead;
 import de.mkalb.etpetssim.simulations.snake.model.entity.TerrainConstant;
@@ -37,15 +34,7 @@ public final class SnakeStepLogic implements AgentStepLogic<SnakeEntity, SnakeSt
         this.random = random;
 
         maxNeighbors = structure.cellShape().vertexCount();
-        if (structure.cellShape() == CellShape.HEXAGON) {
-            neighborDirectionRing = CellNeighborhoods.HEXAGON_DIRECTION_RING;
-        } else if ((structure.cellShape() == CellShape.SQUARE)
-                && (config.neighborhoodMode() == NeighborhoodMode.EDGES_ONLY)) {
-            neighborDirectionRing = CellNeighborhoods.SQUARE_EDGES_DIRECTION_RING;
-        } else {
-            throw new IllegalArgumentException("Unsupported combination of cell shape and neighborhood mode: "
-                    + structure.cellShape() + ", " + config.neighborhoodMode());
-        }
+        neighborDirectionRing = CellNeighborhoods.directionRing(config.neighborhoodMode(), structure.cellShape());
     }
 
     @Override
@@ -139,8 +128,7 @@ public final class SnakeStepLogic implements AgentStepLogic<SnakeEntity, SnakeSt
         for (var cellNeighborWithEdgeBehaviorList : cellNeighborsWithEdgeBehavior.values()) {
             if (cellNeighborWithEdgeBehaviorList.size() == 1) {
                 var cellNeighborWithEdgeBehavior = cellNeighborWithEdgeBehaviorList.getFirst();
-                if ((cellNeighborWithEdgeBehavior.edgeBehaviorAction() == EdgeBehaviorAction.VALID)
-                        || (cellNeighborWithEdgeBehavior.edgeBehaviorAction() == EdgeBehaviorAction.WRAPPED)) {
+                if (cellNeighborWithEdgeBehavior.edgeBehaviorAction().isWithinGrid()) {
                     var neighborEntity = model.getEntity(cellNeighborWithEdgeBehavior.mappedNeighborCoordinate());
                     if (neighborEntity.isGround()) {
                         groundNeighbors.add(cellNeighborWithEdgeBehavior);
