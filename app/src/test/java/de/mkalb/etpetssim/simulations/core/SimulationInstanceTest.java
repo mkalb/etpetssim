@@ -9,9 +9,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 
-import java.util.Objects;
-import java.util.concurrent.atomic.AtomicReference;
-
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
@@ -24,28 +21,16 @@ final class SimulationInstanceTest {
         FXTestSupport.ensureStarted();
     }
 
-    private static <T> T requireValue(AtomicReference<T> reference) {
-        return Objects.requireNonNull(reference.get(), "Expected test fixture value");
-    }
-
     @Test
     void testOf() {
-        AtomicReference<SimulationInstance> ref = new AtomicReference<>();
-        AtomicReference<SimulationMainView> viewRef = new AtomicReference<>();
-        AtomicReference<Region> builtRegionRef = new AtomicReference<>();
-        FXTestSupport.runAndWait(() -> {
-            Region builtRegion = new Region();
-            StubMainView view = new StubMainView(builtRegion);
-            builtRegionRef.set(builtRegion);
-            viewRef.set(view);
-            ref.set(SimulationInstance.of(SimulationType.ET_PETS, view));
-        });
-        SimulationInstance instance = requireValue(ref);
+        StubMainView view = FXTestSupport.supplyAndWaitNonNull(() -> new StubMainView(new Region()));
+
+        SimulationInstance instance = SimulationInstance.of(SimulationType.ET_PETS, view);
 
         assertAll(
                 () -> assertEquals(SimulationType.ET_PETS, instance.simulationType()),
-                () -> assertSame(viewRef.get(), instance.simulationMainView()),
-                () -> assertSame(builtRegionRef.get(), instance.region())
+                () -> assertSame(view, instance.simulationMainView()),
+                () -> assertSame(view.region(), instance.region())
         );
     }
 

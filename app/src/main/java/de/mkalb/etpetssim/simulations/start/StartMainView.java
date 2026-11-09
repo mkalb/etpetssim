@@ -2,10 +2,10 @@ package de.mkalb.etpetssim.simulations.start;
 
 import de.mkalb.etpetssim.core.AppLocalization;
 import de.mkalb.etpetssim.core.AppLocalization.CountryLocale;
+import de.mkalb.etpetssim.core.AppLogger;
 import de.mkalb.etpetssim.core.AppSettings;
 import de.mkalb.etpetssim.simulations.core.SimulationTerminationHandle;
 import de.mkalb.etpetssim.simulations.core.SimulationType;
-import de.mkalb.etpetssim.simulations.core.view.SimulationControlView;
 import de.mkalb.etpetssim.simulations.core.view.SimulationMainView;
 import de.mkalb.etpetssim.ui.FXComponentFactory;
 import de.mkalb.etpetssim.ui.FXStyleClasses;
@@ -16,24 +16,27 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import org.jspecify.annotations.Nullable;
 
+import java.awt.desktop.AppForegroundListener;
 import java.util.Locale;
 import java.util.function.BiConsumer;
 
 /**
  * Main view for the start screen of the Extraterrestrial Pets Simulation application.
- * <p>Implements {@link SimulationMainView} and {@link SimulationControlView} and builds a vertical list of
- * buttons for each {@link SimulationType} that is configured to be shown on the start screen. Implemented
- * simulations are clickable and switch the stage to the selected type; unimplemented ones are disabled.
- * The class encapsulates both the view and minimal control behavior; no dedicated ViewModel is required.
+ *
+ * <p>Builds a vertical list of buttons for each {@link SimulationType} that is configured to be shown on the start
+ * screen; a button switches the stage to the selected type. The class encapsulates both the view and minimal control
+ * behavior; no dedicated ViewModel is required.
  */
-public final class StartMainView implements SimulationMainView, SimulationControlView {
+public final class StartMainView implements SimulationMainView {
 
     private static final String START_LANGUAGE_LABEL = "start.language.label";
     private static final String START_LANGUAGE_TOOLTIP = "start.language.tooltip";
 
     private final Stage stage;
     private final BiConsumer<Stage, SimulationType> stageUpdater;
+    private @Nullable Region mainRegion;
 
     /**
      * Creates a new start screen main view.
@@ -49,7 +52,14 @@ public final class StartMainView implements SimulationMainView, SimulationContro
 
     @Override
     public Region buildMainRegion() {
-        return buildControlRegion();
+        Region cachedMainRegion = mainRegion;
+        if (cachedMainRegion != null) {
+            return cachedMainRegion;
+        }
+
+        Region startRegion = createStartRegion();
+        mainRegion = startRegion;
+        return startRegion;
     }
 
     @Override
@@ -57,8 +67,7 @@ public final class StartMainView implements SimulationMainView, SimulationContro
         return SimulationTerminationHandle.completed();
     }
 
-    @Override
-    public Region buildControlRegion() {
+    private Region createStartRegion() {
         VBox vbox = new VBox();
         vbox.getStyleClass().add(FXStyleClasses.START_CONTROL_VBOX);
 
@@ -73,12 +82,8 @@ public final class StartMainView implements SimulationMainView, SimulationContro
 
             Button button = new Button(type.title());
             button.getStyleClass().add(FXStyleClasses.CONTROL_BUTTON);
-            if (type.isImplemented()) {
-                type.subtitle().ifPresent(subtitle -> button.setTooltip(new Tooltip(subtitle)));
-                button.setOnAction(_ -> stageUpdater.accept(stage, type));
-            } else {
-                button.setDisable(true);
-            }
+            type.subtitle().ifPresent(subtitle -> button.setTooltip(new Tooltip(subtitle)));
+            button.setOnAction(_ -> stageUpdater.accept(stage, type));
 
             vbox.getChildren().add(button);
         }
@@ -91,11 +96,6 @@ public final class StartMainView implements SimulationMainView, SimulationContro
         vbox.getChildren().addAll(languageControl.label(), languageControl.controlRegion());
 
         return vbox;
-    }
-
-    @Override
-    public void setStepCount(int stepCount) {
-        // Do nothing
     }
 
     private InputChoiceProperty<CountryLocale> createLanguageChoiceProperty() {

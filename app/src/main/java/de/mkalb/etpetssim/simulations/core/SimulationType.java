@@ -12,8 +12,8 @@ import java.util.Optional;
 /**
  * Available simulation types.
  *
- * <p>Each constant describes availability, start-screen visibility, localization keys,
- * an optional CSS resource, and accepted command-line aliases.
+ * <p>Each constant describes start-screen visibility, localization keys, an optional CSS resource, and accepted
+ * command-line aliases.
  *
  * <p>The declaration order defines the order of the simulations on the start screen.
  */
@@ -23,7 +23,6 @@ public enum SimulationType {
      * Application start screen used as the default entry view.
      */
     STARTSCREEN(
-            true,
             false,
             "simulation.start.title",
             "simulation.start.subtitle",
@@ -37,7 +36,6 @@ public enum SimulationType {
      */
     ET_PETS(
             true,
-            true,
             "simulation.etpets.title",
             "simulation.etpets.subtitle",
             "simulation.etpets.url",
@@ -50,7 +48,6 @@ public enum SimulationType {
      */
     WATOR(
             true,
-            true,
             "simulation.wator.title",
             "simulation.wator.subtitle",
             "simulation.wator.url",
@@ -62,7 +59,6 @@ public enum SimulationType {
      * <a href="https://en.wikipedia.org/wiki/Sugarscape">Sugarscape</a>.
      */
     SUGARSCAPE(
-            true,
             true,
             "simulation.sugar.title",
             "simulation.sugar.subtitle",
@@ -77,7 +73,6 @@ public enum SimulationType {
     @SuppressWarnings("SpellCheckingInspection")
     CONWAYS_LIFE(
             true,
-            true,
             "simulation.conway.title",
             "simulation.conway.subtitle",
             "simulation.conway.url",
@@ -91,7 +86,6 @@ public enum SimulationType {
     @SuppressWarnings("SpellCheckingInspection")
     LANGTONS_ANT(
             true,
-            true,
             "simulation.langton.title",
             "simulation.langton.subtitle",
             "simulation.langton.url",
@@ -103,7 +97,6 @@ public enum SimulationType {
      * <a href="https://en.wikipedia.org/wiki/Forest-fire_model">Forest-fire model</a>.
      */
     FOREST_FIRE(
-            true,
             true,
             "simulation.forest.title",
             "simulation.forest.subtitle",
@@ -117,7 +110,6 @@ public enum SimulationType {
      */
     SNAKE(
             true,
-            true,
             "simulation.snake.title",
             "simulation.snake.subtitle",
             "simulation.snake.url",
@@ -129,7 +121,6 @@ public enum SimulationType {
      * Custom rebounding-entities simulation.
      */
     REBOUNDING_ENTITIES(
-            true,
             true,
             "simulation.rebounding.title",
             "simulation.rebounding.subtitle",
@@ -145,7 +136,6 @@ public enum SimulationType {
      * <p>Hidden from the start screen; it is started only with a command-line alias.
      */
     SIMULATION_LAB(
-            true,
             false,
             "simulation.lab.title",
             "simulation.lab.subtitle",
@@ -154,7 +144,6 @@ public enum SimulationType {
             List.of("simulationlab", "lab")
     );
 
-    private final boolean implemented;
     private final boolean showOnStartScreen;
     private final String titleKey;
     private final String subtitleKey;
@@ -162,15 +151,12 @@ public enum SimulationType {
     private final String cssPath;
     private final List<String> cliArguments;
 
-    @SuppressWarnings("SameParameterValue")
-    SimulationType(boolean implemented,
-                   boolean showOnStartScreen,
+    SimulationType(boolean showOnStartScreen,
                    String titleKey,
                    String subtitleKey,
                    String urlKey,
                    String cssPath,
                    List<String> cliArguments) {
-        this.implemented = implemented;
         this.showOnStartScreen = showOnStartScreen;
         this.titleKey = titleKey;
         this.subtitleKey = subtitleKey;
@@ -182,13 +168,11 @@ public enum SimulationType {
     /**
      * Resolves a simulation type from a command-line alias.
      *
-     * @param arg             alias to match, case-insensitively
-     * @param onlyImplemented whether to restrict matching to implemented simulations
+     * @param arg alias to match, case-insensitively
      * @return an {@link Optional} containing the matching type, or empty if unmatched
      */
-    public static Optional<SimulationType> fromCliArgument(String arg, boolean onlyImplemented) {
+    public static Optional<SimulationType> fromCliArgument(String arg) {
         return Arrays.stream(values())
-                .filter(sim -> !onlyImplemented || sim.implemented)
                 .filter(sim -> sim.cliArguments.stream().anyMatch(a -> a.equalsIgnoreCase(arg)))
                 .findFirst();
     }
@@ -200,10 +184,6 @@ public enum SimulationType {
      */
     public static String labelResourceKey() {
         return "simulationtype.label";
-    }
-
-    public boolean isImplemented() {
-        return implemented;
     }
 
     public boolean isShownOnStartScreen() {

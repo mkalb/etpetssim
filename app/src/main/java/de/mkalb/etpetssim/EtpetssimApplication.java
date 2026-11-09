@@ -72,15 +72,14 @@ public final class EtpetssimApplication extends Application {
     /**
      * Resolves the initial simulation type from parsed arguments, restricted to implemented simulations.
      *
-     * <p>An unknown or not implemented simulation argument is ignored with a warning.
+     * <p>An unknown simulation argument is ignored with a warning.
      *
      * @param arguments parsed application arguments
      * @return an {@link Optional} containing the matching simulation type, or empty if none matches
      */
     private static Optional<SimulationType> resolveSimulationType(AppArgs arguments) {
         Optional<String> simulationArgument = arguments.getValue(AppArgs.Key.SIMULATION);
-        Optional<SimulationType> simulationType = simulationArgument
-                .flatMap(arg -> SimulationType.fromCliArgument(arg, true));
+        Optional<SimulationType> simulationType = simulationArgument.flatMap(SimulationType::fromCliArgument);
         if (simulationArgument.isPresent() && simulationType.isEmpty()) {
             AppLogger.warnf("EtpetssimApplication: Ignoring unsupported simulation argument: '%s'",
                     simulationArgument.get());

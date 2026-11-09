@@ -85,7 +85,7 @@ final class SimulationFactoryTest {
             AtomicReference<Stage> updatedStage = new AtomicReference<>();
             AtomicReference<SimulationType> updatedType = new AtomicReference<>();
             SimulationType expectedType = Arrays.stream(SimulationType.values())
-                    .filter(type -> type.isShownOnStartScreen() && type.isImplemented())
+                    .filter(SimulationType::isShownOnStartScreen)
                     .findFirst()
                     .orElseThrow();
 

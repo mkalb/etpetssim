@@ -140,7 +140,7 @@ sources. "Types" counts the top-level types in main sources of a group.
 | C6 | `core.view`: config and control views                         |     6 | done        |
 | C7 | `core.view`: observation views and statistics chart           |     3 | done        |
 | C8 | `core.view`: main views, edit tool bar, and canvas drawing    |     8 | done        |
-| C9 | `core` root package and `start`                               |     6 | open        |
+| C9 | `core` root package and `start`                               |     6 | done        |
 | D1 | Wa-Tor (reference)                                            |    21 | open        |
 | D2 | Rebounding                                                    |    18 | open        |
 | D3 | Snake                                                         |    25 | open        |
@@ -1238,7 +1238,93 @@ Notes:
 ### C9. `core` root package and `start`
 
 `SimulationFactory`, `SimulationInstance`, `SimulationTerminationHandle`, `SimulationType`, `StartFactory`, and
-`StartMainView`. `StartMainView` implements `SimulationMainView` and `SimulationControlView`.
+`StartMainView`.
+
+Notes:
+
+- Inventory (2026-11-09, verified against the sources): the utility classes `SimulationFactory` and `StartFactory`,
+  the record `SimulationInstance` with the package-private factory `of(..)`, the interface
+  `SimulationTerminationHandle` with the nested enum `CompletedSimulationTerminationHandle`, the enum
+  `SimulationType`, and the final class `StartMainView`. Tests exist for `SimulationFactory`, `SimulationInstance`,
+  `SimulationTerminationHandle`, and `SimulationType`; `StartMainView` is a JavaFX type and gets no new test in this
+  plan, and `StartFactory` is covered through `SimulationFactoryTest`.
+- `SimulationFactory`, `StartFactory`, and `SimulationTerminationHandle` follow the rules.
+
+#### Constant implemented flag of SimulationType
+
+- Origin: C9 (2026-11-09)
+- Types: `SimulationType`, `StartMainView`, `EtpetssimApplication`, `SimulationTypeTest`
+- Problem: All ten constants pass `implemented = true`; the constructor suppresses `SameParameterValue` for it.
+  `isImplemented()` is read only by `StartMainView`, whose branch for disabled buttons is dead, and by
+  `fromCliArgument(arg, onlyImplemented)`, whose only caller `EtpetssimApplication` passes `true`, which filters
+  nothing. `testIsImplemented` only repeats the constant.
+- Proposal: Remove the component `implemented`, `isImplemented()`, the parameter `onlyImplemented`, the disabled
+  branch of `StartMainView`, the suppression, and `testIsImplemented`; the type Javadoc of `SimulationType` and
+  `StartMainView` loses "availability" and "unimplemented ones are disabled". An API change.
+- Status: done (2026-11-09).
+
+#### SimulationControlView and region of StartMainView
+
+- Origin: C9 (2026-11-09)
+- Types: `StartMainView`, `SimulationMainView`
+- Problem: `StartMainView` implements `SimulationControlView` only to build its region in `buildControlRegion()`;
+  nothing uses it as a control view, so it needs the no-op `setStepCount(..)` with the comment `// Do nothing`.
+  `buildMainRegion()` builds a new region on every call, although `SimulationMainView` requires that repeated calls
+  return the same root region. The type Javadoc lacks the empty line before its `<p>` paragraph.
+- Proposal: Drop `SimulationControlView` and `setStepCount(..)`; `buildMainRegion()` builds the region once in a
+  private `createStartRegion()` and caches it like `AbstractMainView`; adapt the type Javadoc and the C9 intro of
+  this plan. An API change.
+- Status: done (2026-11-09).
+
+#### Tooltips of the start screen buttons
+
+- Origin: C9 (2026-11-09)
+- Types: `StartMainView`; `simulations.md` ("UI Construction")
+- Problem: The buttons of the start screen create a `Tooltip` with the subtitle of their `SimulationType` directly;
+  the rule allows this only for the edit toolbar buttons (C8) and computed texts without a fixed key.
+- Proposal: Generalize the C8 sentence of the rule: buttons without a label control get their own `Tooltip`, e.g.,
+  the edit toolbar buttons (with the keys named there) and the start screen buttons (with the subtitle of their
+  `SimulationType`). A rule change.
+- Status: done (2026-11-09).
+
+#### Javadoc of SimulationInstance
+
+- Origin: C9 (2026-11-09)
+- Types: `SimulationInstance`
+- Problem: The Javadoc of `of(..)` says "This method is package-private", which the modifier shows.
+- Proposal: Keep only "Callers must ensure that the provided type and view are compatible; used by
+  `SimulationFactory`."
+- Status: done (2026-11-09).
+
+#### Tests of SimulationInstance and SimulationType
+
+- Origin: C9 (2026-11-09)
+- Types: `SimulationInstanceTest`, `SimulationTypeTest`
+- Problem: `SimulationInstanceTest.testOf` passes the view and the region out of the FX thread through three
+  `AtomicReference`s and a helper, although only the stub must be created there. In `SimulationTypeTest`, the main
+  test of `cliArguments()` is named `testCliArgumentsReturnsExpectedValues`, and the tests after the resource keys do
+  not follow the declaration order (`fromCliArgument(..)` comes after `cliArguments()`; `junit.md`,
+  "Organization").
+- Proposal: Create the stub with `FXTestSupport.supplyAndWaitNonNull(..)` and remove the references and the helper;
+  rename the test to `testCliArguments` and move `testFromCliArgument` directly after the resource key tests.
+- Status: done (2026-11-09).
+
+### Decisions
+
+- API change: `SimulationType` has no component `implemented` and no `isImplemented()` any more, and
+  `fromCliArgument(String)` lost its parameter `onlyImplemented`; `EtpetssimApplication` passes the method reference,
+  `StartMainView` lost its branch for disabled buttons, and the constructor its suppression `SameParameterValue`.
+  `testIsImplemented` is removed, and `SimulationFactoryTest` selects the first type shown on the start screen.
+- API change: `StartMainView` implements only `SimulationMainView`; `buildControlRegion()` and `setStepCount(..)` are
+  removed. `buildMainRegion()` builds the region once in the private `createStartRegion()` and returns the cached
+  region afterwards, as the contract of `SimulationMainView` requires. A language change still rebuilds the start
+  screen, because the stage updater creates a new instance.
+- Rule change (`simulations.md`, "UI Construction"): buttons without a label control get their own `Tooltip`, with
+  the edit toolbar buttons and the start screen buttons as examples.
+- The Javadoc of `SimulationInstance.of(..)` no longer states its visibility and links `SimulationFactory`.
+- `SimulationInstanceTest.testOf` creates only the stub on the FX thread; `SimulationTypeTest` names the main test
+  `testCliArguments` and places `testFromCliArgument` after the resource key tests.
+- No test gaps; `StartMainView` is covered through `SimulationFactoryTest`.
 
 ## Phase D: simulation groups
 

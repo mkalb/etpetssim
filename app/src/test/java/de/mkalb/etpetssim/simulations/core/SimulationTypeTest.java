@@ -72,17 +72,16 @@ final class SimulationTypeTest {
     }
 
     @Test
-    void testIsImplemented() {
-        assertTrue(SimulationType.STARTSCREEN.isImplemented());
-        assertTrue(SimulationType.ET_PETS.isImplemented());
-        assertTrue(SimulationType.WATOR.isImplemented());
-        assertTrue(SimulationType.SUGARSCAPE.isImplemented());
-        assertTrue(SimulationType.CONWAYS_LIFE.isImplemented());
-        assertTrue(SimulationType.LANGTONS_ANT.isImplemented());
-        assertTrue(SimulationType.FOREST_FIRE.isImplemented());
-        assertTrue(SimulationType.SNAKE.isImplemented());
-        assertTrue(SimulationType.REBOUNDING_ENTITIES.isImplemented());
-        assertTrue(SimulationType.SIMULATION_LAB.isImplemented());
+    void testFromCliArgument() {
+        assertEquals(Optional.of(SimulationType.STARTSCREEN), SimulationType.fromCliArgument("start"));
+        assertEquals(Optional.of(SimulationType.STARTSCREEN), SimulationType.fromCliArgument("START"));
+        assertEquals(Optional.of(SimulationType.ET_PETS), SimulationType.fromCliArgument("etpets"));
+        assertEquals(Optional.of(SimulationType.WATOR), SimulationType.fromCliArgument("wator"));
+        assertEquals(Optional.of(SimulationType.WATOR), SimulationType.fromCliArgument("WA-TOR"));
+        assertEquals(Optional.of(SimulationType.CONWAYS_LIFE), SimulationType.fromCliArgument("conway"));
+        assertEquals(Optional.of(SimulationType.SIMULATION_LAB), SimulationType.fromCliArgument("lab"));
+
+        assertEquals(Optional.empty(), SimulationType.fromCliArgument("notfound"));
     }
 
     @Test
@@ -101,7 +100,7 @@ final class SimulationTypeTest {
 
     @SuppressWarnings("SpellCheckingInspection")
     @Test
-    void testCliArgumentsReturnsExpectedValues() {
+    void testCliArguments() {
         assertEquals(List.of("startscreen", "start"), SimulationType.STARTSCREEN.cliArguments());
         assertEquals(List.of("etpets"), SimulationType.ET_PETS.cliArguments());
         assertEquals(List.of("wator", "wa-tor"), SimulationType.WATOR.cliArguments());
@@ -133,19 +132,6 @@ final class SimulationTypeTest {
                 () -> assertTrue(allArguments.stream()
                         .allMatch(argument -> argument.equals(argument.toLowerCase(Locale.ROOT))))
         );
-    }
-
-    @Test
-    void testFromCliArgument() {
-        assertEquals(Optional.of(SimulationType.STARTSCREEN), SimulationType.fromCliArgument("start", false));
-        assertEquals(Optional.of(SimulationType.STARTSCREEN), SimulationType.fromCliArgument("START", false));
-        assertEquals(Optional.of(SimulationType.ET_PETS), SimulationType.fromCliArgument("etpets", true));
-        assertEquals(Optional.of(SimulationType.WATOR), SimulationType.fromCliArgument("wator", true));
-        assertEquals(Optional.of(SimulationType.WATOR), SimulationType.fromCliArgument("WA-TOR", true));
-        assertEquals(Optional.of(SimulationType.CONWAYS_LIFE), SimulationType.fromCliArgument("conway", true));
-        assertEquals(Optional.of(SimulationType.SIMULATION_LAB), SimulationType.fromCliArgument("lab", false));
-
-        assertEquals(Optional.empty(), SimulationType.fromCliArgument("notfound", false));
     }
 
     @Test
