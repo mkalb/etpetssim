@@ -9,6 +9,9 @@ import de.mkalb.etpetssim.simulations.rebounding.model.entity.TerrainConstant;
 import de.mkalb.etpetssim.simulations.rebounding.shared.ReboundingUserActionContext;
 import org.jspecify.annotations.Nullable;
 
+/**
+ * User action of Rebounding that adds or removes walls and rebounders.
+ */
 public final class ReboundingUserAction
         implements SimulationUserAction<
         ReboundingEntity,
@@ -25,63 +28,46 @@ public final class ReboundingUserAction
         var model = manager.currentGridModel();
         var statistics = manager.statistics();
 
+        if (context == ReboundingUserActionContext.FixedAction.FILL_WALLS) {
+            for (var coordinate : model.filteredCoordinates(ReboundingEntity::isGround)) {
+                model.setEntity(coordinate, TerrainConstant.WALL);
+                statistics.incrementWallCells();
+            }
+            return;
+        }
+        if (selectedCell == null) {
+            return;
+        }
+
+        var coordinate = selectedCell.coordinate();
+        var entity = model.getEntity(coordinate);
         switch (context) {
             case ReboundingUserActionContext.FixedAction fixedAction -> {
                 switch (fixedAction) {
                     case ADD_WALL -> {
-                        if (selectedCell == null) {
-                            return;
-                        }
-                        var coordinate = selectedCell.coordinate();
-                        var entity = model.getEntity(coordinate);
                         if (entity.isGround()) {
                             model.setEntity(coordinate, TerrainConstant.WALL);
                             statistics.incrementWallCells();
                         }
                     }
-                    case FILL_WALLS -> {
-                        var groundCoordinates = model.filteredCoordinates(ReboundingEntity::isGround);
-                        if (groundCoordinates.isEmpty()) {
-                            return;
-                        }
-                        for (var coordinate : groundCoordinates) {
-                            model.setEntity(coordinate, TerrainConstant.WALL);
-                            statistics.incrementWallCells();
-                        }
-                    }
                     case REMOVE_WALL -> {
-                        if (selectedCell == null) {
-                            return;
-                        }
-                        var coordinate = selectedCell.coordinate();
-                        var entity = model.getEntity(coordinate);
                         if (entity.isWall()) {
                             model.setEntityToDefault(coordinate);
                             statistics.decrementWallCells();
                         }
                     }
                     case REMOVE_REBOUNDER -> {
-                        if (selectedCell == null) {
-                            return;
-                        }
-                        var coordinate = selectedCell.coordinate();
-                        var entity = model.getEntity(coordinate);
                         if (entity.isRebounder()) {
                             model.setEntityToDefault(coordinate);
-                            statistics.decrementMovingEntityCells();
+                            statistics.decrementRebounderCells();
                         }
                     }
                 }
             }
             case ReboundingUserActionContext.AddRebounder addRebounder -> {
-                if (selectedCell == null) {
-                    return;
-                }
-                var coordinate = selectedCell.coordinate();
-                var entity = model.getEntity(coordinate);
                 if (entity.isGround()) {
                     model.setEntity(coordinate, new Rebounder(addRebounder.direction()));
-                    statistics.incrementMovingEntityCells();
+                    statistics.incrementRebounderCells();
                 }
             }
         }

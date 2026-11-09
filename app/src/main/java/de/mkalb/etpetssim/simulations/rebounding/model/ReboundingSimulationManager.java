@@ -27,6 +27,9 @@ import java.util.TreeSet;
 
 import static de.mkalb.etpetssim.engine.support.WorkCheckpoints.isCancellationCheckpoint;
 
+/**
+ * Simulation manager of Rebounding.
+ */
 public final class ReboundingSimulationManager
         extends AbstractTimedSimulationManager<ReboundingEntity, WritableGridModel<ReboundingEntity>, ReboundingConfig,
         ReboundingStatistics> {
@@ -55,7 +58,7 @@ public final class ReboundingSimulationManager
         executor = new TimedSimulationExecutor<>(new DefaultSimulationExecutor<>(runner, runner::model,
                 terminationCondition, statistics));
 
-        initializeGrid(config, model, random, cancellation);
+        initializeGrid(model, random, cancellation);
         cancellation.checkCanceled();
         initializeStatistics(model);
         recordInitialStatisticsSample();
@@ -83,29 +86,27 @@ public final class ReboundingSimulationManager
         return executor;
     }
 
-    private void initializeGrid(ReboundingConfig config,
-                                WritableGridModel<ReboundingEntity> model,
+    private void initializeGrid(WritableGridModel<ReboundingEntity> model,
                                 Random random,
                                 SimulationInitializationCancellation cancellation) {
-        createWallInitializer(config, cancellation).initialize(model);
-        createMovingEntityInitializer(config, random, cancellation).initialize(model);
+        createWallInitializer(cancellation).initialize(model);
+        createRebounderInitializer(random, cancellation).initialize(model);
     }
 
-    private int computeMovingEntityCount(ReboundingConfig config) {
-        return Math.toIntExact(Math.round(structure.cellCount() * config.movingEntityPercent()));
+    private int computeRebounderCount() {
+        return Math.toIntExact(Math.round(structure.cellCount() * config().rebounderPercent()));
     }
 
-    private GridInitializer<ReboundingEntity> createWallInitializer(ReboundingConfig config,
-                                                                    SimulationInitializationCancellation cancellation) {
+    private GridInitializer<ReboundingEntity> createWallInitializer(SimulationInitializationCancellation cancellation) {
         int width = structure.size().width();
         int height = structure.size().height();
-        int wallCount = config.verticalWalls();
-        int movingEntityCount = computeMovingEntityCount(config);
+        int wallCount = config().verticalWalls();
+        int rebounderCount = computeRebounderCount();
         int wallEntityCount = wallCount * height;
 
         if ((wallCount > 0)
                 && (width >= wallCount)
-                && ((movingEntityCount + wallEntityCount) <= structure.size().area())) {
+                && ((rebounderCount + wallEntityCount) <= structure.size().area())) {
             Set<Integer> wallXPositions = computeWallXPositions(width, wallCount);
             List<GridCell<ReboundingEntity>> cells = new ArrayList<>();
             int index = 0;
@@ -135,25 +136,24 @@ public final class ReboundingSimulationManager
         return positions;
     }
 
-    private GridInitializer<ReboundingEntity> createMovingEntityInitializer(
-            ReboundingConfig config,
+    private GridInitializer<ReboundingEntity> createRebounderInitializer(
             Random random,
             SimulationInitializationCancellation cancellation) {
-        int movingEntityCount = computeMovingEntityCount(config);
-        if (movingEntityCount == 0) {
+        int rebounderCount = computeRebounderCount();
+        if (rebounderCount == 0) {
             return GridInitializers.identity();
         }
-        List<CompassDirection> directionRing = CellNeighborhoods.directionRing(config.neighborhoodMode(),
+        List<CompassDirection> directionRing = CellNeighborhoods.directionRing(config().neighborhoodMode(),
                 structure.cellShape());
-        List<ReboundingEntity> movingEntities = new ArrayList<>(movingEntityCount);
-        for (int i = 0; i < movingEntityCount; i++) {
+        List<ReboundingEntity> rebounders = new ArrayList<>(rebounderCount);
+        for (int i = 0; i < rebounderCount; i++) {
             if (isCancellationCheckpoint(i)) {
                 cancellation.checkCanceled();
             }
-            movingEntities.add(new Rebounder(directionRing.get(random.nextInt(directionRing.size()))));
+            rebounders.add(new Rebounder(directionRing.get(random.nextInt(directionRing.size()))));
         }
         return GridInitializers.placeAllAtRandomPositions(
-                movingEntities,
+                rebounders,
                 ReboundingEntity::isGround,
                 random,
                 cancellation::checkCanceled);
@@ -161,8 +161,8 @@ public final class ReboundingSimulationManager
 
     private void initializeStatistics(WritableGridModel<ReboundingEntity> model) {
         int wallCellsInitial = Math.toIntExact(model.countEntities(ReboundingEntity::isWall));
-        int movingEntityCellsInitial = Math.toIntExact(model.countEntities(ReboundingEntity::isRebounder));
-        statistics.initializeStartupCellCounts(wallCellsInitial, movingEntityCellsInitial);
+        int rebounderCellsInitial = Math.toIntExact(model.countEntities(ReboundingEntity::isRebounder));
+        statistics.initializeStartupCellCounts(wallCellsInitial, rebounderCellsInitial);
     }
 
 }

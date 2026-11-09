@@ -13,6 +13,9 @@ import org.jspecify.annotations.Nullable;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Edit tool bar ViewModel of Rebounding with the direction of new rebounders.
+ */
 public final class ReboundingEditToolBarViewModel {
 
     private final ObservableList<CompassDirection> availableDirections = FXCollections.observableArrayList();

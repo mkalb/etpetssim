@@ -9,8 +9,8 @@ import de.mkalb.etpetssim.simulations.core.shared.CellDisplayMode;
 import static de.mkalb.etpetssim.simulations.rebounding.model.ReboundingConstraints.CELL_DISPLAY_MODE_VALUES;
 import static de.mkalb.etpetssim.simulations.rebounding.model.ReboundingConstraints.CELL_SHAPE_VALUES;
 import static de.mkalb.etpetssim.simulations.rebounding.model.ReboundingConstraints.GRID_EDGE_BEHAVIOR_VALUES;
-import static de.mkalb.etpetssim.simulations.rebounding.model.ReboundingConstraints.MOVING_ENTITY_PERCENT_MAX;
-import static de.mkalb.etpetssim.simulations.rebounding.model.ReboundingConstraints.MOVING_ENTITY_PERCENT_MIN;
+import static de.mkalb.etpetssim.simulations.rebounding.model.ReboundingConstraints.REBOUNDER_PERCENT_MAX;
+import static de.mkalb.etpetssim.simulations.rebounding.model.ReboundingConstraints.REBOUNDER_PERCENT_MIN;
 import static de.mkalb.etpetssim.simulations.rebounding.model.ReboundingConstraints.VERTICAL_WALLS_MAX;
 import static de.mkalb.etpetssim.simulations.rebounding.model.ReboundingConstraints.VERTICAL_WALLS_MIN;
 
@@ -20,16 +20,16 @@ import static de.mkalb.etpetssim.simulations.rebounding.model.ReboundingConstrai
  * <p>The components are grouped into structure, layout, initialization, and rules. Instances are created
  * from unvalidated input; check them with {@link #isValid()} before passing them to the model.
  *
- * @param cellShape           the configured cell shape
- * @param gridEdgeBehavior    the configured grid edge behavior
- * @param gridWidth           the grid width in cells
- * @param gridHeight          the grid height in cells
- * @param cellEdgeLength      the rendered cell edge length in pixels
- * @param cellDisplayMode     the cell display mode used by the UI
- * @param seed                the random seed used for initialization
- * @param verticalWalls       the number of generated vertical wall segments
- * @param movingEntityPercent the initial share of moving entity cells as a fraction of all cells
- * @param neighborhoodMode    the neighborhood mode used for motion and collisions
+ * @param cellShape        the configured cell shape
+ * @param gridEdgeBehavior the configured grid edge behavior
+ * @param gridWidth        the grid width in cells
+ * @param gridHeight       the grid height in cells
+ * @param cellEdgeLength   the rendered cell edge length in pixels
+ * @param cellDisplayMode  the cell display mode used by the UI
+ * @param seed             the random seed used for initialization
+ * @param verticalWalls    the number of generated vertical wall segments
+ * @param rebounderPercent the initial share of rebounder cells as a fraction of all cells
+ * @param neighborhoodMode the neighborhood mode used for motion and collisions
  */
 public record ReboundingConfig(
         // Structure
@@ -43,7 +43,7 @@ public record ReboundingConfig(
         // Initialization
         long seed,
         int verticalWalls,
-        double movingEntityPercent,
+        double rebounderPercent,
         // Rules
         NeighborhoodMode neighborhoodMode)
         implements SimulationConfig {
@@ -62,7 +62,7 @@ public record ReboundingConfig(
 
     private boolean hasValidRanges() {
         return isInRangeInt(verticalWalls, VERTICAL_WALLS_MIN, VERTICAL_WALLS_MAX)
-                && isInRangeDouble(movingEntityPercent, MOVING_ENTITY_PERCENT_MIN, MOVING_ENTITY_PERCENT_MAX);
+                && isInRangeDouble(rebounderPercent, REBOUNDER_PERCENT_MIN, REBOUNDER_PERCENT_MAX);
     }
 
 }

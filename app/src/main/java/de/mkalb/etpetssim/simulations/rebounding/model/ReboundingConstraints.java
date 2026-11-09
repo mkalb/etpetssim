@@ -46,9 +46,9 @@ public final class ReboundingConstraints {
     public static final int VERTICAL_WALLS_MIN = 0;
     public static final int VERTICAL_WALLS_MAX = 100;
     public static final int VERTICAL_WALLS_STEP = 1;
-    public static final double MOVING_ENTITY_PERCENT_DEFAULT = 0.02d;
-    public static final double MOVING_ENTITY_PERCENT_MIN = 0.0d;
-    public static final double MOVING_ENTITY_PERCENT_MAX = 0.1d;
+    public static final double REBOUNDER_PERCENT_DEFAULT = 0.02d;
+    public static final double REBOUNDER_PERCENT_MIN = 0.0d;
+    public static final double REBOUNDER_PERCENT_MAX = 0.1d;
 
     // Rules
     public static final NeighborhoodMode NEIGHBORHOOD_MODE_DEFAULT = NeighborhoodMode.EDGES_AND_VERTICES;

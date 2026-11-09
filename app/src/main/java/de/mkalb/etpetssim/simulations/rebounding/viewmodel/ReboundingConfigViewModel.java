@@ -27,18 +27,20 @@ import static de.mkalb.etpetssim.simulations.rebounding.model.ReboundingConstrai
 import static de.mkalb.etpetssim.simulations.rebounding.model.ReboundingConstraints.GRID_WIDTH_MAX;
 import static de.mkalb.etpetssim.simulations.rebounding.model.ReboundingConstraints.GRID_WIDTH_MIN;
 import static de.mkalb.etpetssim.simulations.rebounding.model.ReboundingConstraints.GRID_WIDTH_STEP;
-import static de.mkalb.etpetssim.simulations.rebounding.model.ReboundingConstraints.MOVING_ENTITY_PERCENT_DEFAULT;
-import static de.mkalb.etpetssim.simulations.rebounding.model.ReboundingConstraints.MOVING_ENTITY_PERCENT_MAX;
-import static de.mkalb.etpetssim.simulations.rebounding.model.ReboundingConstraints.MOVING_ENTITY_PERCENT_MIN;
 import static de.mkalb.etpetssim.simulations.rebounding.model.ReboundingConstraints.NEIGHBORHOOD_MODE_DEFAULT;
+import static de.mkalb.etpetssim.simulations.rebounding.model.ReboundingConstraints.REBOUNDER_PERCENT_DEFAULT;
+import static de.mkalb.etpetssim.simulations.rebounding.model.ReboundingConstraints.REBOUNDER_PERCENT_MAX;
+import static de.mkalb.etpetssim.simulations.rebounding.model.ReboundingConstraints.REBOUNDER_PERCENT_MIN;
 import static de.mkalb.etpetssim.simulations.rebounding.model.ReboundingConstraints.SEED_DEFAULT;
 import static de.mkalb.etpetssim.simulations.rebounding.model.ReboundingConstraints.VERTICAL_WALLS_DEFAULT;
 import static de.mkalb.etpetssim.simulations.rebounding.model.ReboundingConstraints.VERTICAL_WALLS_MAX;
 import static de.mkalb.etpetssim.simulations.rebounding.model.ReboundingConstraints.VERTICAL_WALLS_MIN;
 import static de.mkalb.etpetssim.simulations.rebounding.model.ReboundingConstraints.VERTICAL_WALLS_STEP;
 
-public final class ReboundingConfigViewModel
-        extends AbstractConfigViewModel<ReboundingConfig> {
+/**
+ * Config ViewModel of Rebounding.
+ */
+public final class ReboundingConfigViewModel extends AbstractConfigViewModel<ReboundingConfig> {
 
     private static final CommonConfigSettings COMMON_SETTINGS = new CommonConfigSettings(
             CELL_SHAPE_DEFAULT,
@@ -67,12 +69,12 @@ public final class ReboundingConfigViewModel
             VERTICAL_WALLS_MIN,
             VERTICAL_WALLS_MAX,
             VERTICAL_WALLS_STEP);
-    private final InputDoubleProperty movingEntityPercent = InputDoubleProperty.of(
-            MOVING_ENTITY_PERCENT_DEFAULT,
-            MOVING_ENTITY_PERCENT_MIN,
-            MOVING_ENTITY_PERCENT_MAX);
+    private final InputDoubleProperty rebounderPercent = InputDoubleProperty.of(
+            REBOUNDER_PERCENT_DEFAULT,
+            REBOUNDER_PERCENT_MIN,
+            REBOUNDER_PERCENT_MAX);
 
-    // Rules - NeighborhoodMode
+    // Rules
     private final InputChoiceProperty<NeighborhoodMode> neighborhoodMode = InputChoiceProperty.ofEnum(
             NEIGHBORHOOD_MODE_DEFAULT,
             NeighborhoodMode.class,
@@ -93,7 +95,7 @@ public final class ReboundingConfigViewModel
                 cellDisplayModeProperty().property().getValue(),
                 seedProperty().computeSeedAndUpdateLabel(),
                 verticalWalls.getValue(),
-                movingEntityPercent.getValue(),
+                rebounderPercent.getValue(),
                 neighborhoodMode.getValue()
         );
     }
@@ -102,8 +104,8 @@ public final class ReboundingConfigViewModel
         return verticalWalls;
     }
 
-    public InputDoubleProperty movingEntityPercentProperty() {
-        return movingEntityPercent;
+    public InputDoubleProperty rebounderPercentProperty() {
+        return rebounderPercent;
     }
 
     public InputChoiceProperty<NeighborhoodMode> neighborhoodModeProperty() {

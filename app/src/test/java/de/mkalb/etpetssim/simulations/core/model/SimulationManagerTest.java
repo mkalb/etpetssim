@@ -187,7 +187,7 @@ final class SimulationManagerTest {
                 ReboundingConstraints.CELL_DISPLAY_MODE_DEFAULT,
                 1L,
                 ReboundingConstraints.VERTICAL_WALLS_DEFAULT,
-                ReboundingConstraints.MOVING_ENTITY_PERCENT_DEFAULT,
+                ReboundingConstraints.REBOUNDER_PERCENT_DEFAULT,
                 ReboundingConstraints.NEIGHBORHOOD_MODE_DEFAULT
         );
     }
@@ -480,11 +480,11 @@ final class SimulationManagerTest {
         var genericExtrema = manager.statisticsExtrema();
         assertAll(
                 () -> assertFalse(genericExtrema.minimumValues()
-                        .containsKey(ReboundingStatistics.KEY_MOVING_ENTITY_CELLS)),
+                        .containsKey(ReboundingStatistics.KEY_REBOUNDER_CELLS)),
                 () -> assertTrue(genericExtrema.maximumValues()
-                        .containsKey(ReboundingStatistics.KEY_MOVING_ENTITY_CELLS)),
+                        .containsKey(ReboundingStatistics.KEY_REBOUNDER_CELLS)),
                 () -> assertTrue(Double
-                        .isFinite(genericExtrema.maximumValues().get(ReboundingStatistics.KEY_MOVING_ENTITY_CELLS)
+                        .isFinite(genericExtrema.maximumValues().get(ReboundingStatistics.KEY_REBOUNDER_CELLS)
                                 .value())),
                 () -> assertFalse(genericExtrema.minimumValues().containsKey(ReboundingStatistics.KEY_WALL_CELLS)),
                 () -> assertTrue(genericExtrema.maximumValues().containsKey(ReboundingStatistics.KEY_WALL_CELLS))

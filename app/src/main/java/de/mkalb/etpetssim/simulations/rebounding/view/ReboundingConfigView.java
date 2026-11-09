@@ -9,15 +9,17 @@ import de.mkalb.etpetssim.ui.FXComponentFactory;
 import de.mkalb.etpetssim.ui.FXStyleClasses;
 import javafx.scene.layout.Region;
 
-public final class ReboundingConfigView
-        extends AbstractConfigView<ReboundingConfig, ReboundingConfigViewModel> {
+/**
+ * Config view of Rebounding.
+ */
+public final class ReboundingConfigView extends AbstractConfigView<ReboundingConfig, ReboundingConfigViewModel> {
 
     // Initialization
     private static final String REBOUNDING_CONFIG_VERTICAL_WALLS = "rebounding.config.verticalwalls";
     private static final String REBOUNDING_CONFIG_VERTICAL_WALLS_TOOLTIP = "rebounding.config.verticalwalls.tooltip";
-    private static final String REBOUNDING_CONFIG_MOVING_ENTITY_PERCENT = "rebounding.config.movingentitypercent";
-    private static final String REBOUNDING_CONFIG_MOVING_ENTITY_PERCENT_TOOLTIP =
-            "rebounding.config.movingentitypercent.tooltip";
+    private static final String REBOUNDING_CONFIG_REBOUNDER_PERCENT = "rebounding.config.rebounderpercent";
+    private static final String REBOUNDING_CONFIG_REBOUNDER_PERCENT_TOOLTIP =
+            "rebounding.config.rebounderpercent.tooltip";
 
     public ReboundingConfigView(ReboundingConfigViewModel viewModel) {
         super(viewModel);
@@ -38,17 +40,17 @@ public final class ReboundingConfigView
                 formatIntRangeTooltip(REBOUNDING_CONFIG_VERTICAL_WALLS_TOOLTIP, viewModel.verticalWallsProperty()),
                 FXStyleClasses.CONFIG_SPINNER
         );
-        var movingEntityPercentControl = FXComponentFactory.createLabeledPercentSlider(
-                viewModel.movingEntityPercentProperty(),
-                AppLocalization.getText(REBOUNDING_CONFIG_MOVING_ENTITY_PERCENT),
-                formatPercentRangeTooltip(REBOUNDING_CONFIG_MOVING_ENTITY_PERCENT_TOOLTIP,
-                        viewModel.movingEntityPercentProperty()),
+        var rebounderPercentControl = FXComponentFactory.createLabeledPercentSlider(
+                viewModel.rebounderPercentProperty(),
+                AppLocalization.getText(REBOUNDING_CONFIG_REBOUNDER_PERCENT),
+                formatPercentRangeTooltip(REBOUNDING_CONFIG_REBOUNDER_PERCENT_TOOLTIP,
+                        viewModel.rebounderPercentProperty()),
                 FXStyleClasses.CONFIG_SLIDER
         );
 
         var initializationPane = createConfigTitledPane(
                 AppLocalization.getText(SimulationLocalizationKeys.CONFIG_TITLE_INITIALIZATION), true,
-                seedControl, verticalWallsControl, movingEntityPercentControl);
+                seedControl, verticalWallsControl, rebounderPercentControl);
 
         // Rules
         var neighborhoodModeControl = createNeighborhoodModeControl(viewModel.neighborhoodModeProperty());

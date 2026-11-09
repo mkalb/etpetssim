@@ -8,68 +8,64 @@ import de.mkalb.etpetssim.simulations.core.model.StatisticsMetric;
 import java.util.List;
 
 /**
- * Holds runtime statistics for a running simulation.
+ * Statistics of Rebounding with the wall and rebounder cell counts.
  */
-public final class ReboundingStatistics
-        extends BaseTimedSimulationStatistics {
+public final class ReboundingStatistics extends BaseTimedSimulationStatistics {
 
     public static final String KEY_WALL_CELLS = "wallCells";
-    public static final String KEY_MOVING_ENTITY_CELLS = "movingEntityCells";
+    public static final String KEY_REBOUNDER_CELLS = "rebounderCells";
 
     private static final String REBOUNDING_OBSERVATION_CELLS_WALL = "rebounding.observation.cells.wall";
-    private static final String REBOUNDING_OBSERVATION_CELLS_MOVING_ENTITY =
-            "rebounding.observation.cells.movingentity";
+    private static final String REBOUNDING_OBSERVATION_CELLS_REBOUNDER = "rebounding.observation.cells.rebounder";
 
     private static final List<StatisticsMetric<ReboundingStatistics>> METRICS = List.of(
             new StatisticsMetric<>(KEY_WALL_CELLS, REBOUNDING_OBSERVATION_CELLS_WALL,
                     ReboundingStatistics::wallCells,
                     StatisticsExtremaMode.MAX),
-            new StatisticsMetric<>(KEY_MOVING_ENTITY_CELLS, REBOUNDING_OBSERVATION_CELLS_MOVING_ENTITY,
-                    ReboundingStatistics::movingEntityCells,
+            new StatisticsMetric<>(KEY_REBOUNDER_CELLS, REBOUNDING_OBSERVATION_CELLS_REBOUNDER,
+                    ReboundingStatistics::rebounderCells,
                     StatisticsExtremaMode.MAX)
     );
 
     private int wallCells;
-    private int movingEntityCells;
+    private int rebounderCells;
 
     public ReboundingStatistics(GridStructure gridStructure) {
         super(gridStructure);
-        wallCells = 0;
-        movingEntityCells = 0;
     }
 
     public static List<StatisticsMetric<ReboundingStatistics>> metrics() {
         return METRICS;
     }
 
-    public void incrementWallCells() {
-        wallCells += 1;
-    }
-
-    public void decrementWallCells() {
-        wallCells -= 1;
-    }
-
-    public void decrementMovingEntityCells() {
-        movingEntityCells -= 1;
-    }
-
-    public void incrementMovingEntityCells() {
-        movingEntityCells += 1;
-    }
-
     public int wallCells() {
         return wallCells;
     }
 
-    public int movingEntityCells() {
-        return movingEntityCells;
+    public int rebounderCells() {
+        return rebounderCells;
     }
 
     void initializeStartupCellCounts(int wallCellsInitial,
-                                     int movingEntityCellsInitial) {
+                                     int rebounderCellsInitial) {
         wallCells = wallCellsInitial;
-        movingEntityCells = movingEntityCellsInitial;
+        rebounderCells = rebounderCellsInitial;
+    }
+
+    void incrementWallCells() {
+        wallCells++;
+    }
+
+    void decrementWallCells() {
+        wallCells--;
+    }
+
+    void incrementRebounderCells() {
+        rebounderCells++;
+    }
+
+    void decrementRebounderCells() {
+        rebounderCells--;
     }
 
     @Override
@@ -77,7 +73,7 @@ public final class ReboundingStatistics
         return "ReboundingStatistics{" +
                 baseToString() +
                 ", wallCells=" + wallCells +
-                ", movingEntityCells=" + movingEntityCells +
+                ", rebounderCells=" + rebounderCells +
                 '}';
     }
 

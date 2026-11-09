@@ -4,24 +4,17 @@ import de.mkalb.etpetssim.engine.executor.SimulationTerminationCondition;
 import de.mkalb.etpetssim.engine.model.ReadableGridModel;
 import de.mkalb.etpetssim.simulations.rebounding.model.entity.ReboundingEntity;
 
+/**
+ * Termination condition of Rebounding that ends the simulation when at most one rebounder is left.
+ */
 public final class ReboundingTerminationCondition implements SimulationTerminationCondition<ReboundingEntity,
         ReadableGridModel<ReboundingEntity>, ReboundingStatistics> {
 
-    /**
-     * Checks whether the rebounding simulation has finished.
-     * <p>The simulation terminates once at most one entity-occupied cell remains,
-     * i.e. when {@code statistics.movingEntityCells() <= 1}.
-     *
-     * @param model      the current simulation model
-     * @param stepCount  the number of simulation steps completed
-     * @param statistics the current rebounding statistics
-     * @return {@code true} if the simulation should terminate, otherwise {@code false}
-     */
     @Override
     public boolean isFinished(ReadableGridModel<ReboundingEntity> model,
                               int stepCount,
                               ReboundingStatistics statistics) {
-        return (statistics.movingEntityCells() <= 1);
+        return statistics.rebounderCells() <= 1;
     }
 
 }

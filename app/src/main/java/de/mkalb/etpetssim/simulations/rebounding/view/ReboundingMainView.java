@@ -40,6 +40,9 @@ import org.jspecify.annotations.Nullable;
 import java.util.List;
 import java.util.function.Function;
 
+/**
+ * Main view of Rebounding.
+ */
 public final class ReboundingMainView
         extends AbstractDefaultMainView<
         ReboundingEntity,
@@ -212,11 +215,8 @@ public final class ReboundingMainView
                 AppLocalization.getText(REBOUNDING_TOOLBAR_ADD_REBOUNDER_DIRECTION_TOOLTIP),
                 FXStyleClasses.SIMULATION_EDIT_TOOLBAR_OPTION_LABEL).label();
 
-        ChangeListener<@Nullable CompassDirection> comboSelectionListener = (_, oldValue, newValue) -> {
-            if (oldValue != newValue) {
-                editToolBarViewModel.setSelectedDirection(newValue);
-            }
-        };
+        ChangeListener<@Nullable CompassDirection> comboSelectionListener =
+                (_, _, newValue) -> editToolBarViewModel.setSelectedDirection(newValue);
         ChangeListener<@Nullable CompassDirection> viewModelSelectionListener = (_, _, newValue) -> {
             if (directionComboBox.getValue() != newValue) {
                 if (newValue == null) {
@@ -229,6 +229,10 @@ public final class ReboundingMainView
         var selectedDirectionProperty = editToolBarViewModel.selectedDirectionProperty();
         directionComboBox.valueProperty().addListener(comboSelectionListener);
         selectedDirectionProperty.addListener(viewModelSelectionListener);
+        registerEditToolBarCleanup(() -> {
+            directionComboBox.valueProperty().removeListener(comboSelectionListener);
+            selectedDirectionProperty.removeListener(viewModelSelectionListener);
+        });
 
         if (selectedToolId != null) {
             var enabledBinding = Bindings.createBooleanBinding(
@@ -242,13 +246,6 @@ public final class ReboundingMainView
                 directionLabel.disableProperty().unbind();
                 directionComboBox.disableProperty().unbind();
                 enabledBinding.dispose();
-                directionComboBox.valueProperty().removeListener(comboSelectionListener);
-                selectedDirectionProperty.removeListener(viewModelSelectionListener);
-            });
-        } else {
-            registerEditToolBarCleanup(() -> {
-                directionComboBox.valueProperty().removeListener(comboSelectionListener);
-                selectedDirectionProperty.removeListener(viewModelSelectionListener);
             });
         }
 

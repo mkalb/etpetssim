@@ -142,7 +142,7 @@ sources. "Types" counts the top-level types in main sources of a group.
 | C8 | `core.view`: main views, edit tool bar, and canvas drawing    |     8 | done        |
 | C9 | `core` root package and `start`                               |     6 | done        |
 | D1 | Wa-Tor (reference)                                            |    21 | done        |
-| D2 | Rebounding                                                    |    18 | open        |
+| D2 | Rebounding                                                    |    18 | done        |
 | D3 | Snake                                                         |    25 | open        |
 | D4 | Sugarscape                                                    |    28 | open        |
 | D5 | ET Pets                                                       |    42 | open        |
@@ -1473,6 +1473,65 @@ Notes:
 
 ### D2. Rebounding
 
+Notes:
+
+- Inventory (2026-11-09, verified against the sources): 18 types in the package root, `model`, `model.entity`,
+  `shared`, `view`, and `viewmodel`. Tests exist for `ReboundingConfig`, `ReboundingUserAction`, `Rebounder`,
+  `TerrainConstant`, and `EntityDescriptors`.
+- `ReboundingConstraints`, `ReboundingEntity`, `TerrainConstant`, `EntityDescriptors`, `ReboundingUserActionContext`,
+  and `ReboundingFactory` follow the rules.
+- Test gaps for the later separate optimization: `ReboundingStepLogic` (bounce directions),
+  `ReboundingTerminationCondition`, `ReboundingStatistics`, and the wall positions of `ReboundingSimulationManager`
+  (`computeWallXPositions(..)`).
+
+#### Two terms for the rebounders
+
+- Origin: D2 (2026-11-09)
+- Types: `ReboundingConfig`, `ReboundingConstraints`, `ReboundingStatistics`, `ReboundingSimulationManager`,
+  `ReboundingStepLogic`, `ReboundingConfigViewModel`, `ReboundingConfigView`, the bundles, and their tests
+- Problem: The entity type is `Rebounder`, but the config, statistics, and step logic call it "moving entity"
+  (`movingEntityPercent`, `movingEntityCells`, `KEY_MOVING_ENTITY_CELLS`, `MOVING_ENTITY_PERCENT_*`, and the keys
+  `rebounding.config.movingentitypercent*` and `rebounding.observation.cells.movingentity`), against the rule of one
+  term per concept (`simulations.md`, "Entity Design").
+- Proposal: Use "rebounder" in code and keys; the displayed texts stay unchanged. An API change.
+- Status: done (2026-11-09).
+
+#### Details of the Rebounding types
+
+- Origin: D2 (2026-11-09)
+- Types: all public types without type Javadoc, `ReboundingStatistics`, `ReboundingTerminationCondition`,
+  `ReboundingUserAction`, `ReboundingStepLogic`, `ReboundingSimulationManager`, `ReboundingMainView`,
+  `ReboundingObservationView`, `ReboundingConfigViewModel`, `ReboundingConfigView`, `ReboundingUserActionTest`
+- Problem: Ten public types have no type Javadoc (D1). `ReboundingStatistics` initializes its counters to `0`, uses
+  `+= 1`, and has public increment and decrement methods with callers only in its package.
+  `ReboundingTerminationCondition` documents its override instead of the type. `ReboundingUserAction` repeats the
+  check of the selected cell four times and checks an empty list before a loop. `ReboundingStepLogic` repeats the
+  bounce and compares with `TerrainConstant` constants. The private methods of `ReboundingSimulationManager` take the
+  config as parameter instead of calling `config()`. `ReboundingMainView` removes the same listeners in both branches,
+  and its combo box listener compares old and new value. `ReboundingObservationView` nests two `if` statements. The
+  config ViewModel and view have the deviations of D1. The test helper `selectedCell(..)` lacks the `create` prefix.
+- Proposal: Adopt the decisions of D1, make the increment and decrement methods package-private (an API change),
+  handle `FILL_WALLS` before one check of the selected cell, extract `bounce(..)`, use `isGround()` and `isWall()`,
+  use `config()`, register the listener cleanup once, and join the conditions.
+- Status: done (2026-11-09).
+
+### Decisions
+
+- API change: "rebounder" replaces "moving entity" in code and keys: `ReboundingConfig.rebounderPercent`,
+  `REBOUNDER_PERCENT_*`, `ReboundingStatistics.rebounderCells()`, `KEY_REBOUNDER_CELLS` (`"rebounderCells"`),
+  `rebounderPercentProperty()`, and the keys `rebounding.config.rebounderpercent*` and
+  `rebounding.observation.cells.rebounder`; the displayed texts and `docs/simulations` keep "Moving Entity".
+- API change: the increment and decrement methods of `ReboundingStatistics` are package-private and use `++` and `--`;
+  the counters lost their explicit initialization, and the class has a type Javadoc and a one-line declaration.
+- All public types have a short type Javadoc; `ReboundingTerminationCondition` states its condition there instead of
+  in the Javadoc of `isFinished(..)`.
+- `ReboundingUserAction` fills the walls before it checks the selected cell once; the inner `switch` statement has no
+  `FILL_WALLS` branch, which IntelliJ reported as unreachable. `ReboundingStepLogic` uses the private `bounce(..)`, `isGround()`, and `isWall()`.
+  `ReboundingSimulationManager` reads the config through `config()`.
+- `ReboundingMainView` registers the listener cleanup once and the binding cleanup only with a tool id; the combo box
+  listener forwards every change. `ReboundingObservationView` joins its conditions.
+- The config ViewModel and view, and the test helper `createSelectedCell(..)`, follow D1. No rule change.
+
 ### D3. Snake
 
 #### Empty check of the move strategies
@@ -1549,7 +1608,8 @@ Decisions of this plan:
 - Every public type of a simulation has a short type Javadoc of one sentence in the forms of Wa-Tor, without a
   detailed description of its content (maintainer; D1, D).
 - `adjust...Cells(..)` and `adjustCellCounts(..)` of the statistics classes stay public, also with callers only in
-  the own `model` package (maintainer; D1, D).
+  the own `model` package (maintainer; D1, D); `increment...` and `decrement...` methods with callers only in that
+  package are package-private (D1, D2, D).
 - The commented-out `AppLogger` traces of `EtpetsAgentLogic` stay, because the further development of ET Pets needs
   them; only Wa-Tor removed its traces (maintainer; D1, D5).
 - Section comments of the config ViewModels follow the four config groups; `// Rules - NeighborhoodMode` becomes part

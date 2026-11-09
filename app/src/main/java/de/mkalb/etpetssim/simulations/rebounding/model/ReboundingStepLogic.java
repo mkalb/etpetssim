@@ -10,8 +10,10 @@ import de.mkalb.etpetssim.engine.neighborhood.CompassDirection;
 import de.mkalb.etpetssim.engine.neighborhood.EdgeBehaviorAction;
 import de.mkalb.etpetssim.simulations.rebounding.model.entity.Rebounder;
 import de.mkalb.etpetssim.simulations.rebounding.model.entity.ReboundingEntity;
-import de.mkalb.etpetssim.simulations.rebounding.model.entity.TerrainConstant;
 
+/**
+ * Agent step logic of Rebounding for the rebounders.
+ */
 public final class ReboundingStepLogic implements AgentStepLogic<ReboundingEntity, ReboundingStatistics> {
 
     private final GridStructure structure;
@@ -27,13 +29,13 @@ public final class ReboundingStepLogic implements AgentStepLogic<ReboundingEntit
                                  WritableGridModel<ReboundingEntity> model,
                                  int stepIndex,
                                  ReboundingStatistics statistics) {
-        if (!(agentCell.entity() instanceof Rebounder movingEntity)) {
+        if (!(agentCell.entity() instanceof Rebounder rebounder)) {
             throw new IllegalArgumentException("agentCell must contain a Rebounder, but was: " + agentCell);
         }
         GridCoordinate currentCoordinate = agentCell.coordinate();
 
         // Check if the entity is still at its original coordinate. It may already have been removed.
-        if (model.getEntity(currentCoordinate) != movingEntity) {
+        if (model.getEntity(currentCoordinate) != rebounder) {
             return;
         }
 
@@ -42,38 +44,39 @@ public final class ReboundingStepLogic implements AgentStepLogic<ReboundingEntit
                 currentCoordinate,
                 config.neighborhoodMode(),
                 structure,
-                movingEntity.direction()
+                rebounder.direction()
         ).orElseThrow(() -> new IllegalStateException("Unable to find neighbor: agentCell=" + agentCell
-                + ", direction=" + movingEntity.direction()));
+                + ", direction=" + rebounder.direction()));
 
-        // Check edge behavior and neighbor cell entity to determine the action for the moving entity
-        if ((neighbor.edgeBehaviorAction() == EdgeBehaviorAction.BLOCKED)) {
+        // Check edge behavior and neighbor cell entity to determine the action for the rebounder
+        GridCoordinate neighborCoordinate = neighbor.mappedNeighborCoordinate();
+        if (neighbor.edgeBehaviorAction() == EdgeBehaviorAction.BLOCKED) {
             // Change direction at blocked grid boundary
-            movingEntity.changeDirection(computeBounceDirection(
-                    movingEntity.direction(),
-                    neighbor.mappedNeighborCoordinate()));
+            bounce(rebounder, neighborCoordinate);
         } else { // VALID
-            var neighborEntity = model.getEntity(neighbor.mappedNeighborCoordinate());
-            if (neighborEntity == TerrainConstant.GROUND) {
+            var neighborEntity = model.getEntity(neighborCoordinate);
+            if (neighborEntity.isGround()) {
                 // Move the entity to the new empty cell
-                model.setEntity(neighbor.mappedNeighborCoordinate(), movingEntity);
+                model.setEntity(neighborCoordinate, rebounder);
                 model.setEntityToDefault(currentCoordinate);
-            } else if (neighborEntity == TerrainConstant.WALL) {
-                // Change direction at WALL and remove WALL (set to GROUND)
-                movingEntity.changeDirection(computeBounceDirection(
-                        movingEntity.direction(),
-                        neighbor.mappedNeighborCoordinate()));
-                model.setEntityToDefault(neighbor.mappedNeighborCoordinate());
+            } else if (neighborEntity.isWall()) {
+                // Change direction at the wall and remove the wall
+                bounce(rebounder, neighborCoordinate);
+                model.setEntityToDefault(neighborCoordinate);
 
                 statistics.decrementWallCells();
             } else if (neighborEntity.isRebounder()) {
                 // Move into the neighbor cell, destroying the other rebounder
-                model.setEntity(neighbor.mappedNeighborCoordinate(), movingEntity);
+                model.setEntity(neighborCoordinate, rebounder);
                 model.setEntityToDefault(currentCoordinate);
 
-                statistics.decrementMovingEntityCells();
+                statistics.decrementRebounderCells();
             }
         }
+    }
+
+    private void bounce(Rebounder rebounder, GridCoordinate blockedCoordinate) {
+        rebounder.changeDirection(computeBounceDirection(rebounder.direction(), blockedCoordinate));
     }
 
     private CompassDirection computeBounceDirection(CompassDirection currentDirection,

@@ -14,10 +14,10 @@ import static de.mkalb.etpetssim.simulations.rebounding.model.ReboundingConstrai
 import static de.mkalb.etpetssim.simulations.rebounding.model.ReboundingConstraints.GRID_EDGE_BEHAVIOR_DEFAULT;
 import static de.mkalb.etpetssim.simulations.rebounding.model.ReboundingConstraints.GRID_HEIGHT_DEFAULT;
 import static de.mkalb.etpetssim.simulations.rebounding.model.ReboundingConstraints.GRID_WIDTH_DEFAULT;
-import static de.mkalb.etpetssim.simulations.rebounding.model.ReboundingConstraints.MOVING_ENTITY_PERCENT_DEFAULT;
-import static de.mkalb.etpetssim.simulations.rebounding.model.ReboundingConstraints.MOVING_ENTITY_PERCENT_MAX;
-import static de.mkalb.etpetssim.simulations.rebounding.model.ReboundingConstraints.MOVING_ENTITY_PERCENT_MIN;
 import static de.mkalb.etpetssim.simulations.rebounding.model.ReboundingConstraints.NEIGHBORHOOD_MODE_DEFAULT;
+import static de.mkalb.etpetssim.simulations.rebounding.model.ReboundingConstraints.REBOUNDER_PERCENT_DEFAULT;
+import static de.mkalb.etpetssim.simulations.rebounding.model.ReboundingConstraints.REBOUNDER_PERCENT_MAX;
+import static de.mkalb.etpetssim.simulations.rebounding.model.ReboundingConstraints.REBOUNDER_PERCENT_MIN;
 import static de.mkalb.etpetssim.simulations.rebounding.model.ReboundingConstraints.VERTICAL_WALLS_DEFAULT;
 import static de.mkalb.etpetssim.simulations.rebounding.model.ReboundingConstraints.VERTICAL_WALLS_MAX;
 import static de.mkalb.etpetssim.simulations.rebounding.model.ReboundingConstraints.VERTICAL_WALLS_MIN;
@@ -52,8 +52,8 @@ final class ReboundingConfigTest {
         assertAll(
                 () -> assertTrue(isValidWith(v -> v.verticalWalls = VERTICAL_WALLS_MIN)),
                 () -> assertTrue(isValidWith(v -> v.verticalWalls = VERTICAL_WALLS_MAX)),
-                () -> assertTrue(isValidWith(v -> v.movingEntityPercent = MOVING_ENTITY_PERCENT_MIN)),
-                () -> assertTrue(isValidWith(v -> v.movingEntityPercent = MOVING_ENTITY_PERCENT_MAX))
+                () -> assertTrue(isValidWith(v -> v.rebounderPercent = REBOUNDER_PERCENT_MIN)),
+                () -> assertTrue(isValidWith(v -> v.rebounderPercent = REBOUNDER_PERCENT_MAX))
         );
     }
 
@@ -81,10 +81,10 @@ final class ReboundingConfigTest {
     }
 
     @Test
-    void testIsValidRejectsMovingEntityPercentOutsideRange() {
+    void testIsValidRejectsRebounderPercentOutsideRange() {
         assertAll(
-                () -> assertFalse(isValidWith(v -> v.movingEntityPercent = Math.nextDown(MOVING_ENTITY_PERCENT_MIN))),
-                () -> assertFalse(isValidWith(v -> v.movingEntityPercent = Math.nextUp(MOVING_ENTITY_PERCENT_MAX)))
+                () -> assertFalse(isValidWith(v -> v.rebounderPercent = Math.nextDown(REBOUNDER_PERCENT_MIN))),
+                () -> assertFalse(isValidWith(v -> v.rebounderPercent = Math.nextUp(REBOUNDER_PERCENT_MAX)))
         );
     }
 
@@ -94,12 +94,12 @@ final class ReboundingConfigTest {
         GridEdgeBehavior gridEdgeBehavior = GRID_EDGE_BEHAVIOR_DEFAULT;
         CellDisplayMode cellDisplayMode = CELL_DISPLAY_MODE_DEFAULT;
         int verticalWalls = VERTICAL_WALLS_DEFAULT;
-        double movingEntityPercent = MOVING_ENTITY_PERCENT_DEFAULT;
+        double rebounderPercent = REBOUNDER_PERCENT_DEFAULT;
         NeighborhoodMode neighborhoodMode = NEIGHBORHOOD_MODE_DEFAULT;
 
         ReboundingConfig toConfig() {
             return new ReboundingConfig(cellShape, gridEdgeBehavior, GRID_WIDTH_DEFAULT, GRID_HEIGHT_DEFAULT,
-                    CELL_EDGE_LENGTH_DEFAULT, cellDisplayMode, 1L, verticalWalls, movingEntityPercent,
+                    CELL_EDGE_LENGTH_DEFAULT, cellDisplayMode, 1L, verticalWalls, rebounderPercent,
                     neighborhoodMode);
         }
 

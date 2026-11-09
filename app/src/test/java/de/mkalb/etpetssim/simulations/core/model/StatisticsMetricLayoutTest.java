@@ -125,7 +125,7 @@ final class StatisticsMetricLayoutTest {
                 ReboundingStatistics.metrics(),
                 new ExpectedMetric(ReboundingStatistics.KEY_WALL_CELLS,
                         StatisticsExtremaMode.MAX, StatisticsChartGroup.NONE),
-                new ExpectedMetric(ReboundingStatistics.KEY_MOVING_ENTITY_CELLS,
+                new ExpectedMetric(ReboundingStatistics.KEY_REBOUNDER_CELLS,
                         StatisticsExtremaMode.MAX, StatisticsChartGroup.NONE)
         );
     }

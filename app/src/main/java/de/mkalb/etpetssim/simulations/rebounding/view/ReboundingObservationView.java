@@ -11,6 +11,9 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.Region;
 import org.jspecify.annotations.Nullable;
 
+/**
+ * Observation view of Rebounding.
+ */
 public final class ReboundingObservationView
         extends AbstractObservationView<
         ReboundingEntity,
@@ -35,10 +38,8 @@ public final class ReboundingObservationView
         super.handleSelectedGridCellChanged(gridCell);
         setUnknownValues(directionLabel);
 
-        if (gridCell != null) {
-            if (gridCell.entity() instanceof Rebounder entity) {
-                directionLabel.setText(entity.direction().arrow());
-            }
+        if ((gridCell != null) && (gridCell.entity() instanceof Rebounder rebounder)) {
+            directionLabel.setText(rebounder.direction().arrow());
         }
     }
 
