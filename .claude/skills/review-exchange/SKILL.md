@@ -5,8 +5,9 @@ description: 'Exchange code reviews between agents through .review/review.md: ap
 
 # Review exchange
 
-Agents exchange reviews through `.review/review.md`. The `.review/` folder is ignored by Git; create the folder and
-file if they are missing. The section "Reviews" in `AGENTS.md` always applies.
+Agents exchange reviews through `.review/review.md`. The skill is part of the maintainer workflow. The `.review/`
+folder is ignored by Git; create the folder and file if they are missing. The sections "Reviews" and "Maintainer
+Workflow" in `AGENTS.md` always apply.
 
 ## Severity
 

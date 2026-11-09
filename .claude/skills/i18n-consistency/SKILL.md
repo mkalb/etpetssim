@@ -138,7 +138,7 @@ different `%` URL-encoding.
 Run this **only** after the user has confirmed it in answer to the question
 above. Run exactly this command; do not change the files in any other way.
 
-```powershell
+```text
 java .claude/skills/i18n-consistency/I18nConsistencyCheck.java fix
 ```
 

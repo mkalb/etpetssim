@@ -1,8 +1,9 @@
 # IntelliJ IDEA Setup
 
-IntelliJ IDEA is the development environment of the project. Some IDE settings are committed to the repository, so
-that every working copy uses the same code style, inspections, spelling dictionary, and run configurations. All other
-IDE settings stay local.
+IntelliJ IDEA is the recommended IDE and the maintainer's development environment. Some IDE settings are committed to
+the repository, so that every working copy uses the same code style, inspections, spelling dictionary, and run
+configurations. All other IDE settings stay local. For VS Code, `.vscode/tasks.json` provides the same commands as the
+run configurations as tasks.
 
 ## Shared Files
 
@@ -24,16 +25,16 @@ lies outside `.idea` and is not ignored.
 | `gradle_run_de`         | `app:run` with German UI and INFO log output on the console                      |
 | `gradle_run_de_lab`     | Like `gradle_run_de`, but starts the [Simulation Lab](simulation-lab.md)         |
 | `gradle_test`           | `app:test`                                                                       |
-| `I18nConsistencyCheck`  | Runs the report of the `i18n-consistency` skill script in a PowerShell terminal  |
-| `JavaCodeInventory`     | Regenerates the CSV files in `docs/generated` in a PowerShell terminal           |
+| `I18nConsistencyCheck`  | Runs the report of the `i18n-consistency` skill script in a terminal             |
+| `JavaCodeInventory`     | Regenerates the CSV files in `docs/generated` in a terminal                      |
 
-The two script configurations call `java` from the `PATH` and run in `pwsh.exe`.
+The two script configurations call `java` from the `PATH` and run in the default shell of the system.
 
 ## Manual Setup
 
 These settings are not committed and must be set once per working copy:
 
-- Project SDK: a Java 27 JDK (Eclipse Temurin 27); language level 27.
+- Project SDK: any Java 27 JDK (the maintainer uses Eclipse Temurin 27); language level 27.
 - Gradle: open the project as a Gradle project and keep building and running with Gradle (the default). The Gradle
   build uses a Java 27 toolchain.
 - Inspections: select the profile "Project Default" (stored in the project) in Settings > Editor > Inspections.

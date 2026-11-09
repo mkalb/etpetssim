@@ -5,8 +5,9 @@ description: 'Create, edit, refine, link, and review GitHub issues of this repos
 
 # Issues and plans
 
-Rules and procedures for GitHub issues and the planning documents in `docs/planning`. The sections "Issues and Plans"
-and "External Contributions" in `AGENTS.md` always apply and are not repeated here.
+Rules and procedures for GitHub issues and the planning documents in `docs/planning`. The skill is part of the
+maintainer workflow. The sections "Issues and Plans", "External Contributions", and "Maintainer Workflow" in
+`AGENTS.md` always apply and are not repeated here.
 
 ## Labels
 

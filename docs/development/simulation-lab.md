@@ -2,7 +2,8 @@
 
 The Simulation Lab (`de.mkalb.etpetssim.simulations.lab`) is a development tool for testing grid rendering, cell
 shapes, neighborhoods, and edge behavior. It runs no simulation steps. It is hidden from the start screen and the
-README and is started only with a command-line alias:
+README and is started only with a command-line alias (PowerShell on Windows; on Linux, use `./gradlew` instead of
+`.\gradlew.bat`):
 
 ```powershell
 .\gradlew.bat :app:run --args="--simulation=lab"

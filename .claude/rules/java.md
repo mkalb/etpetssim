@@ -235,8 +235,7 @@ below.
 - Handle `null` from JDK methods documented to return it (e.g., `Map.get` for a missing key); `@NullMarked` does not
   cover JDK types.
 - When adding or removing `@Nullable` on an existing contract, update all callers, overrides, and implementations.
-- Name added or removed `@Nullable` contracts in your final summary, so that the maintainer can check them in
-  IntelliJ.
+- Name added or removed `@Nullable` contracts in your final summary, so that reviewers can check them in IntelliJ.
 
 ## Javadoc
 

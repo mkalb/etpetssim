@@ -1,6 +1,7 @@
 # Versioning and Releases
 
 The Git tag is the single source of truth for the project version. Never edit the version in the build files.
+Creating a release is part of the maintainer workflow (see "Maintainer Workflow" in `AGENTS.md`).
 
 ## Tags
 
@@ -28,6 +29,8 @@ with `git fetch --tags`), or the latest matching tag is not valid SemVer. Only t
 
 ## Creating a Release
 
+The commands use PowerShell on Windows; on Linux, use `./gradlew` instead of `gradlew.bat`.
+
 1. Merge all changes into `main` and check out `main` with a clean working tree.
 2. Run `gradlew.bat app:test` and make sure it passes.
 3. Create the annotated tag on the current `main` commit: `git tag -a v0.1.0 -m "Release 0.1.0"`.
@@ -35,8 +38,3 @@ with `git fetch --tags`), or the latest matching tag is not valid SemVer. Only t
 5. Publish the tag: `git push origin v0.1.0`.
 
 Never move or delete a pushed tag. If a release is faulty, fix it and create a new tag with a higher version.
-
-## Rules for Claude
-
-- Create or push a tag only on explicit request.
-- Run the checks above first and ask for confirmation before `git push`.

@@ -1,7 +1,9 @@
 # Dependency Updates
 
 How to update Gradle, Java, JavaFX, and the libraries and plugins of the build, and where their versions appear. The
-project uses the latest stable versions whenever possible.
+project uses the latest stable versions whenever possible. Dependency updates are part of the maintainer workflow (see
+"Maintainer Workflow" in `AGENTS.md`). The commands use PowerShell on Windows; on Linux, use `./gradlew` instead of
+`.\gradlew.bat`.
 
 ## General Rules
 
