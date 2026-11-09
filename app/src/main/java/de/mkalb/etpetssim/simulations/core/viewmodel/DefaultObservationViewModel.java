@@ -62,11 +62,7 @@ public final class DefaultObservationViewModel<
         this.statistics.set(statistics);
     }
 
-    /**
-     * Returns the current statistic extrema snapshot.
-     *
-     * @return the latest extrema, or an empty snapshot before any step executes
-     */
+    @Override
     public StatisticsExtrema getStatisticsExtrema() {
         return statisticsExtrema.get();
     }

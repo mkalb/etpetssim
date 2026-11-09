@@ -12,8 +12,6 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.Region;
 import org.jspecify.annotations.Nullable;
 
-import java.util.Optional;
-
 public final class SugarObservationView
         extends AbstractObservationView<
         SugarEntity,
@@ -53,8 +51,6 @@ public final class SugarObservationView
 
     @Override
     public Region buildObservationRegion() {
-        updateObservationLabels();
-
         Region statusSection = createStatusSection();
         Region gridSection = createGridSection();
         Region metricsSection = createGenericMetricSection(SugarStatistics.metrics());
@@ -68,7 +64,6 @@ public final class SugarObservationView
                         currentAmountLabel
                 }
         );
-        handleSelectedGridCellChanged(viewModel.selectedGridCellProperty().get());
 
         return createObservationScrollPane(
                 statusSection,
@@ -77,13 +72,6 @@ public final class SugarObservationView
                 createChartSection(),
                 selectedCellSection
         );
-    }
-
-    @Override
-    protected void updateObservationLabels() {
-        Optional<SugarStatistics> statistics = viewModel.getStatistics();
-        updateStatusSectionLabel(statistics);
-        updateGenericMetricSection(statistics, viewModel.getStatisticsExtrema());
     }
 
 }

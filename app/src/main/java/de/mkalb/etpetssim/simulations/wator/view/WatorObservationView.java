@@ -47,8 +47,6 @@ public final class WatorObservationView
 
     @Override
     public Region buildObservationRegion() {
-        updateObservationLabels();
-
         Region statusSection = createStatusSection();
         Region gridSection = createGridSection();
         Region metricsSection = createGenericMetricSection(WatorStatistics.metrics());
@@ -60,7 +58,6 @@ public final class WatorObservationView
                         ageLabel
                 }
         );
-        handleSelectedGridCellChanged(viewModel.selectedGridCellProperty().get());
 
         return createObservationScrollPane(
                 statusSection,
@@ -69,13 +66,6 @@ public final class WatorObservationView
                 createChartSection(),
                 selectedCellSection
         );
-    }
-
-    @Override
-    protected void updateObservationLabels() {
-        Optional<WatorStatistics> statistics = viewModel.getStatistics();
-        updateStatusSectionLabel(statistics);
-        updateGenericMetricSection(statistics, viewModel.getStatisticsExtrema());
     }
 
 }

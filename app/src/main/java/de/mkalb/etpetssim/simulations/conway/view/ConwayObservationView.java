@@ -8,8 +8,6 @@ import de.mkalb.etpetssim.simulations.core.view.AbstractObservationView;
 import de.mkalb.etpetssim.simulations.core.viewmodel.DefaultObservationViewModel;
 import javafx.scene.layout.Region;
 
-import java.util.Optional;
-
 public final class ConwayObservationView
         extends AbstractObservationView<
         ConwayEntity,
@@ -27,13 +25,10 @@ public final class ConwayObservationView
 
     @Override
     public Region buildObservationRegion() {
-        updateObservationLabels();
-
         Region statusSection = createStatusSection();
         Region gridSection = createGridSection();
         Region metricsSection = createGenericMetricSection(ConwayStatistics.metrics());
         Region selectedCellSection = createSelectedCellSection();
-        handleSelectedGridCellChanged(viewModel.selectedGridCellProperty().get());
 
         return createObservationScrollPane(
                 statusSection,
@@ -42,13 +37,6 @@ public final class ConwayObservationView
                 createChartSection(),
                 selectedCellSection
         );
-    }
-
-    @Override
-    protected void updateObservationLabels() {
-        Optional<ConwayStatistics> statistics = viewModel.getStatistics();
-        updateStatusSectionLabel(statistics);
-        updateGenericMetricSection(statistics, viewModel.getStatisticsExtrema());
     }
 
 }

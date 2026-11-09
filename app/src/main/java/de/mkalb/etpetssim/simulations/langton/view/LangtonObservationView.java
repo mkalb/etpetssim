@@ -8,8 +8,6 @@ import de.mkalb.etpetssim.simulations.langton.model.LangtonStatistics;
 import de.mkalb.etpetssim.simulations.langton.model.entity.LangtonEntity;
 import javafx.scene.layout.Region;
 
-import java.util.Optional;
-
 public final class LangtonObservationView
         extends AbstractObservationView<
         LangtonEntity,
@@ -26,13 +24,10 @@ public final class LangtonObservationView
 
     @Override
     public Region buildObservationRegion() {
-        updateObservationLabels();
-
         Region statusSection = createStatusSection();
         Region gridSection = createGridSection();
         Region metricsSection = createGenericMetricSection(LangtonStatistics.metrics());
         Region selectedCellSection = createSelectedCellSection();
-        handleSelectedGridCellChanged(viewModel.selectedGridCellProperty().get());
 
         return createObservationScrollPane(
                 statusSection,
@@ -41,13 +36,6 @@ public final class LangtonObservationView
                 createChartSection(),
                 selectedCellSection
         );
-    }
-
-    @Override
-    protected void updateObservationLabels() {
-        Optional<LangtonStatistics> statistics = viewModel.getStatistics();
-        updateStatusSectionLabel(statistics);
-        updateGenericMetricSection(statistics, viewModel.getStatisticsExtrema());
     }
 
 }

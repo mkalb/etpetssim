@@ -8,8 +8,6 @@ import de.mkalb.etpetssim.simulations.lab.model.LabStatistics;
 import de.mkalb.etpetssim.simulations.lab.model.entity.LabEntity;
 import javafx.scene.layout.Region;
 
-import java.util.Optional;
-
 public final class LabObservationView
         extends AbstractObservationView<
         LabEntity,
@@ -26,24 +24,15 @@ public final class LabObservationView
 
     @Override
     public Region buildObservationRegion() {
-        updateObservationLabels();
-
         Region statusSection = createStatusSection();
         Region gridSection = createGridSection();
         Region selectedCellSection = createSelectedCellSection();
-        handleSelectedGridCellChanged(viewModel.selectedGridCellProperty().get());
 
         return createObservationScrollPane(
                 statusSection,
                 gridSection,
                 selectedCellSection
         );
-    }
-
-    @Override
-    protected void updateObservationLabels() {
-        Optional<LabStatistics> statistics = viewModel.getStatistics();
-        updateStatusSectionLabel(statistics);
     }
 
     public void initializeForDraw() {

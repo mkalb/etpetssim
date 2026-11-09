@@ -9,8 +9,6 @@ import de.mkalb.etpetssim.simulations.etpets.model.entity.EtpetsEntity;
 import javafx.scene.layout.Region;
 import org.jspecify.annotations.Nullable;
 
-import java.util.Optional;
-
 public final class EtpetsObservationView
         extends AbstractObservationView<
         EtpetsEntity,
@@ -33,13 +31,10 @@ public final class EtpetsObservationView
 
     @Override
     public Region buildObservationRegion() {
-        updateObservationLabels();
-
         Region statusSection = createStatusSection();
         Region gridSection = createGridSection();
         Region metricsSection = createGenericMetricSection(EtpetsStatistics.metrics());
         Region selectedCellSection = createSelectedCellSection();
-        handleSelectedGridCellChanged(viewModel.selectedGridCellProperty().get());
 
         return createObservationScrollPane(
                 statusSection,
@@ -48,13 +43,6 @@ public final class EtpetsObservationView
                 createChartSection(),
                 selectedCellSection
         );
-    }
-
-    @Override
-    protected void updateObservationLabels() {
-        Optional<EtpetsStatistics> statistics = viewModel.getStatistics();
-        updateStatusSectionLabel(statistics);
-        updateGenericMetricSection(statistics, viewModel.getStatisticsExtrema());
     }
 
 }

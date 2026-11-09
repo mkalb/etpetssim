@@ -2,6 +2,7 @@ package de.mkalb.etpetssim.simulations.core.viewmodel;
 
 import de.mkalb.etpetssim.engine.GridCoordinate;
 import de.mkalb.etpetssim.simulations.core.model.SimulationStatistics;
+import de.mkalb.etpetssim.simulations.core.model.StatisticsExtrema;
 import de.mkalb.etpetssim.simulations.core.model.StatisticsSample;
 import de.mkalb.etpetssim.simulations.core.shared.SimulationState;
 import javafx.beans.property.ObjectProperty;
@@ -35,6 +36,13 @@ public interface SimulationObservationViewModel<STA extends SimulationStatistics
      * @param statistics the new statistics snapshot
      */
     void setStatistics(STA statistics);
+
+    /**
+     * Returns the current statistic extrema snapshot.
+     *
+     * @return the latest extrema, or an empty snapshot before any step executes
+     */
+    StatisticsExtrema getStatisticsExtrema();
 
     /**
      * Exposes the last clicked grid coordinate.

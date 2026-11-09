@@ -138,7 +138,7 @@ sources. "Types" counts the top-level types in main sources of a group.
 | C4 | `core.viewmodel`: config, control, and observation            |     7 | done        |
 | C5 | `core.viewmodel`: main ViewModels and user action descriptors |     5 | done        |
 | C6 | `core.view`: config and control views                         |     6 | done        |
-| C7 | `core.view`: observation views and statistics chart           |     3 | open        |
+| C7 | `core.view`: observation views and statistics chart           |     3 | done        |
 | C8 | `core.view`: main views, edit tool bar, and canvas drawing    |     8 | open        |
 | C9 | `core` root package and `start`                               |     6 | open        |
 | D1 | Wa-Tor (reference)                                            |    21 | open        |
@@ -937,6 +937,19 @@ Notes:
 
 `SimulationObservationView`, `AbstractObservationView`, and `StatisticsHistoryChartView`.
 
+Notes:
+
+- Inventory (2026-11-09, verified against the sources): the interface `SimulationObservationView`, the abstract class
+  `AbstractObservationView` with the private nested record `MetricLabels` and nine subclasses (one per simulation and
+  the Lab, all with `DefaultObservationViewModel` as ViewModel), and the package-private final class
+  `StatisticsHistoryChartView` with the private nested record `GroupChart`. Only `StatisticsHistoryChartView` has a
+  test (18 tests). All are JavaFX types; no new tests in this plan.
+- `AbstractDefaultMainView` builds the observation region once with the main view, before a simulation exists, calls
+  `initializeObservationLabels()` when a simulation is created or reset, and `updateObservationLabels()` after a step
+  or a user action.
+- Test gap for the later separate optimization: `AbstractObservationView` (sections, metric formatting, extrema
+  tooltips, and the rejection in `createObservationSection(..)`).
+
 #### Optional parameters of AbstractObservationView
 
 - Origin: #41 (rule "Use `Optional` only as a return type" in `java.md`, "Nullability (JSpecify)")
@@ -946,6 +959,64 @@ Notes:
   `OptionalUsedAsFieldOrParameterType`; every caller passes `viewModel.getStatistics()`.
 - Proposal: Remove the `Optional` parameters, e.g., by reading the statistics from the ViewModel inside the methods
   or by taking a `@Nullable STA`, and remove the suppressions; adapt the callers. An API change.
+- Note (C7, 2026-11-09): `getStatisticsExtrema()` is declared only by `DefaultObservationViewModel`, not by
+  `SimulationObservationViewModel`, so the base class cannot read the extrema itself today; see "Common update of the
+  observation labels".
+- Status: done (2026-11-09); see "Common update of the observation labels".
+
+#### Common update of the observation labels
+
+- Origin: C7 (2026-11-09)
+- Types: `AbstractObservationView`, `SimulationObservationViewModel`, the nine observation views
+- Problem: All nine views implement the abstract `updateObservationLabels()` with the same calls
+  `updateStatusSectionLabel(statistics)` and `updateGenericMetricSection(statistics,
+  viewModel.getStatisticsExtrema())`; only the Lab omits the second, which returns early without a metrics section.
+- Proposal: Declare `getStatisticsExtrema()` in `SimulationObservationViewModel` (implemented by
+  `DefaultObservationViewModel`), implement `updateObservationLabels()` as `final` in `AbstractObservationView`, and
+  make `updateStatusSectionLabel()` and `updateGenericMetricSection()` private without parameters, reading the
+  statistics and extrema from the ViewModel like `updateGridSectionLabel()`. This solves "Optional parameters of
+  AbstractObservationView" and removes its suppression `OptionalUsedAsFieldOrParameterType`; the nine overrides are
+  removed. An API change.
+- Status: done (2026-11-09).
+
+#### Redundant calls in buildObservationRegion
+
+- Origin: C7 (2026-11-09)
+- Types: the nine observation views
+- Problem: All nine `buildObservationRegion()` call `updateObservationLabels()` first, before the sections exist: the
+  metrics section is not created yet, and `createStatusSection()` resets the step label right after. They also call
+  `handleSelectedGridCellChanged(viewModel.selectedGridCellProperty().get())` after `createSelectedCellSection()` or
+  `createExtendedSelectedCellSection(..)`, which already call it with the same cell, because the listener registered
+  in the constructor keeps `selectedGridCell` current.
+- Proposal: Remove both calls in the nine views; the behavior stays the same.
+- Status: done (2026-11-09).
+
+#### Members and duplication of AbstractObservationView
+
+- Origin: C7 (2026-11-09)
+- Types: `AbstractObservationView`
+- Problem: `createObservationSection(..)` is `protected`, but only the class itself calls it.
+  `createSelectedCellSection()` repeats `createExtendedSelectedCellSection(..)` without extra rows.
+  `createGenericMetricSection(..)` creates the min and max header and value labels with copied code, and
+  `updateGenericMetricSection(..)` updates them with copied code; `MetricLabels` holds a label and a tooltip per
+  extremum that are only both `null` or both set, which needs two `requireNonNull(..)` calls. Both section factories
+  build the titled `VBox` with the same lines.
+- Proposal: Make `createObservationSection(..)` private (an API change without callers outside the class); let
+  `createSelectedCellSection()` delegate to `createExtendedSelectedCellSection(..)` with empty arrays; extract private
+  helpers for an extremum label (creation and update) and for the titled section; replace the label and tooltip
+  pairs of `MetricLabels` by a private record `ExtremumLabel(Label label, Tooltip tooltip)` as `@Nullable` components,
+  so that the `requireNonNull(..)` calls disappear. The UI stays the same.
+- Status: done (2026-11-09).
+
+#### Javadoc of AbstractObservationView
+
+- Origin: C7 (2026-11-09)
+- Types: `AbstractObservationView`
+- Problem: The constructor Javadoc starts with "Constructs a new observation view ..." and explains nothing (C4
+  removed such Javadoc). The Javadoc of `handleSelectedGridCellChanged(..)` and `createGenericMetricSection(..)` lacks
+  the empty line before its `<p>` paragraph (C5, C6).
+- Proposal: Remove the constructor Javadoc and add the two empty lines.
+- Status: done (2026-11-09).
 
 #### Test accessor of StatisticsHistoryChartView
 
@@ -954,6 +1025,60 @@ Notes:
 - Problem: The package-private `chartsForTesting()` only reads the charts for the test; `java.md` ("Test Access")
   reserves `*ForTesting` for the test infrastructure of `core`.
 - Proposal: Rename it to the noun-style `charts()` and adapt the test.
+- Status: done (2026-11-09).
+
+#### Group state and ceiling logic of StatisticsHistoryChartView
+
+- Origin: C7 (2026-11-09)
+- Types: `StatisticsHistoryChartView`
+- Problem: The state of a chart group is spread over the list `distinctGroups`, the parallel list `groupCharts`
+  (matched by index), and the maps `keysByGroup`, `windowSizeByGroup`, and `ceilingByGroup`; the local variable `gc`
+  abbreviates its type. Three streams collect with `Collectors.toList()` instead of `toList()` (`java.md`, "Code
+  Style"). In `updateCharts(..)`, the first two branches of the ceiling decision compute the same value, and the three
+  trailing comments restate the branches. The comment on the window size names `StatisticsMetricLayoutTest` instead
+  of the rule of `StatisticsMetric` that metrics of one chart group share their window size.
+- Proposal: Extend `GroupChart` to `(group, keys, windowSize, chart, xAxis, yAxis)` and remove `distinctGroups`,
+  `keysByGroup`, and `windowSizeByGroup`; name the local variable `groupChart`; use `toList()`; join the first two
+  branches into one condition with one comment ("grow at once; shrink only when the latest value falls below the
+  threshold"); refer to the rule of `StatisticsMetric` in the window size comment. The charts stay the same.
+- Status: done (2026-11-09).
+
+#### Comments and assertions in StatisticsHistoryChartViewTest
+
+- Origin: initial script check (C7) and C7 (2026-11-09)
+- Types: `StatisticsHistoryChartViewTest`
+- Problem: Three line comments precede setup code, not an assertion (`junit.md`, "Test Method Style"); their content
+  is repeated by the assertion messages. Seven `assertNotNull(..)` calls check results of
+  `FXTestSupport.supplyAndWaitNonNull(..)`, which never returns `null`. Two assertion messages contain the non-ASCII
+  arrow `U+2192`. Seven tests repeat the cast of an axis to `ValueAxis<Number>`.
+- Proposal: Remove the three comments and the seven `assertNotNull(..)` calls, write `->` instead of the arrow, and
+  read the axis bounds through two private helpers (e.g., `xAxis(view)` and `yAxis(view)`).
+- Status: done (2026-11-09).
+
+### Decisions
+
+- API change: `SimulationObservationViewModel` declares `getStatisticsExtrema()`, which `DefaultObservationViewModel`
+  implements with `@Override` (its Javadoc moved to the interface). `AbstractObservationView.updateObservationLabels()`
+  is no longer abstract but package-private and `final`, because only `AbstractDefaultMainView` in the same package
+  calls it; the private `updateStatusSectionLabel()` and `updateGenericMetricSection()` read the statistics and the
+  extrema from the ViewModel. The suppression `OptionalUsedAsFieldOrParameterType` is removed;
+  `NumericCastThatLosesPrecision` stays on `updateGenericMetricSection()`.
+- The nine observation views lost their `updateObservationLabels()` override, the first call of
+  `updateObservationLabels()`, and the second call of `handleSelectedGridCellChanged(..)` in
+  `buildObservationRegion()`, and the import of `Optional` where it became unused.
+- API change: `createObservationSection(..)` is private. `createSelectedCellSection()` delegates to
+  `createExtendedSelectedCellSection(..)`; the private helpers `createTitledSection(..)`, `addExtremumHeader(..)`,
+  `createValueLabel()`, `createExtremumLabel(..)`, and `updateExtremumLabel(..)` replace the copied code, and
+  `MetricLabels(currentLabel, minimum, maximum)` holds `@Nullable ExtremumLabel(label, tooltip)` components.
+- `AbstractObservationView` has no constructor Javadoc, and its two Javadoc comments with a second paragraph have the
+  empty line before `<p>`.
+- `StatisticsHistoryChartView` builds one `GroupChart(group, keys, windowSize, chart, xAxis, yAxis)` per charted group
+  in one loop over the groups, with the series of a group created in the same loop; `seriesByKey` is a `HashMap`, and
+  `updateCharts(..)` delegates each group to the private `updateGroupChart(..)`, which asserts the series of a key with
+  `requireNonNull(..)` (`Map.get(..)`). The package-private `charts()` replaces `chartsForTesting()`.
+- `StatisticsHistoryChartViewTest` reads the axes through the helpers `xAxis(..)` and `yAxis(..)`, without the three
+  comments, the seven `assertNotNull(..)` calls, and the arrows.
+- No rule change. Test gap: `AbstractObservationView`.
 
 ### C8. `core.view`: main views, edit tool bar, and canvas drawing
 
@@ -1065,6 +1190,13 @@ Families and their known deviations:
 ### D8. Langton
 
 ### D9. Lab
+
+#### Wrapper initializeForDraw of LabObservationView
+
+- Origin: C7 (2026-11-09)
+- Types: `LabObservationView`, `LabMainView`
+- Problem: The public `initializeForDraw()` only calls the public `initializeObservationLabels()` of the interface.
+- Proposal: Let `LabMainView` call `initializeObservationLabels()` and remove the wrapper. An API change.
 
 ## Cross-group decisions
 

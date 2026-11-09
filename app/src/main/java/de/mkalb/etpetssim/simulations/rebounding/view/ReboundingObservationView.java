@@ -11,8 +11,6 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.Region;
 import org.jspecify.annotations.Nullable;
 
-import java.util.Optional;
-
 public final class ReboundingObservationView
         extends AbstractObservationView<
         ReboundingEntity,
@@ -46,8 +44,6 @@ public final class ReboundingObservationView
 
     @Override
     public Region buildObservationRegion() {
-        updateObservationLabels();
-
         Region statusSection = createStatusSection();
         Region gridSection = createGridSection();
         Region metricsSection = createGenericMetricSection(ReboundingStatistics.metrics());
@@ -59,7 +55,6 @@ public final class ReboundingObservationView
                         directionLabel
                 }
         );
-        handleSelectedGridCellChanged(viewModel.selectedGridCellProperty().get());
 
         return createObservationScrollPane(
                 statusSection,
@@ -68,13 +63,6 @@ public final class ReboundingObservationView
                 createChartSection(),
                 selectedCellSection
         );
-    }
-
-    @Override
-    protected void updateObservationLabels() {
-        Optional<ReboundingStatistics> statistics = viewModel.getStatistics();
-        updateStatusSectionLabel(statistics);
-        updateGenericMetricSection(statistics, viewModel.getStatisticsExtrema());
     }
 
 }

@@ -15,13 +15,11 @@ import javafx.scene.control.TitledPane;
 import javafx.scene.layout.VBox;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.EnumMap;
-import java.util.LinkedHashMap;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 /**
  * Renders one {@link LineChart} per distinct non-{@code NONE} {@link StatisticsChartGroup},
@@ -34,11 +32,8 @@ final class StatisticsHistoryChartView {
     private static final double[] NICE_CEILING_FACTORS = {1.0, 2.0, 5.0, 10.0};
     private static final double SHRINK_THRESHOLD_RATIO = 0.2;
 
-    private final List<StatisticsChartGroup> distinctGroups;
     private final List<GroupChart> groupCharts;
     private final Map<String, XYChart.Series<Number, Number>> seriesByKey;
-    private final Map<StatisticsChartGroup, List<String>> keysByGroup;
-    private final Map<StatisticsChartGroup, Integer> windowSizeByGroup;
     private final Map<StatisticsChartGroup, Double> ceilingByGroup;
     private final TitledPane titledPane;
     private final ReadOnlyObjectProperty<List<StatisticsSample>> historyProperty;
@@ -50,44 +45,23 @@ final class StatisticsHistoryChartView {
 
         this.historyProperty = historyProperty;
 
-        distinctGroups = Arrays.stream(StatisticsChartGroup.values())
-                .filter(g -> g != StatisticsChartGroup.NONE)
-                .filter(g -> metrics.stream().anyMatch(m -> m.chartGroup() == g))
-                .collect(Collectors.toList());
-
-        keysByGroup = new LinkedHashMap<>();
-        windowSizeByGroup = new LinkedHashMap<>();
-        for (StatisticsChartGroup group : distinctGroups) {
-            List<String> keys = metrics.stream()
-                    .filter(m -> m.chartGroup() == group)
-                    .map(StatisticsMetric::key)
-                    .collect(Collectors.toList());
-            keysByGroup.put(group, keys);
-            // Guarded by StatisticsMetricLayoutTest: metrics sharing a chartGroup use the same chartWindowSize.
-            int windowSize = metrics.stream()
-                    .filter(m -> m.chartGroup() == group)
-                    .mapToInt(StatisticsMetric::chartWindowSize)
-                    .findFirst()
-                    .orElse(StatisticsMetric.DEFAULT_CHART_WINDOW_SIZE);
-            windowSizeByGroup.put(group, windowSize);
-        }
-
         ceilingByGroup = new EnumMap<>(StatisticsChartGroup.class);
-
-        seriesByKey = new LinkedHashMap<>();
-        for (StatisticsMetric<?> metric : metrics) {
-            if (metric.chartGroup() != StatisticsChartGroup.NONE) {
-                XYChart.Series<Number, Number> series = new XYChart.Series<>();
-                series.setName(AppLocalization.getText(metric.labelKey()));
-                seriesByKey.put(metric.key(), series);
-            }
-        }
-
-        groupCharts = new ArrayList<>(distinctGroups.size());
+        seriesByKey = new HashMap<>();
+        groupCharts = new ArrayList<>();
         VBox chartsBox = new VBox();
         chartsBox.setSpacing(CHART_SPACING);
 
-        for (StatisticsChartGroup group : distinctGroups) {
+        for (StatisticsChartGroup group : StatisticsChartGroup.values()) {
+            if (group == StatisticsChartGroup.NONE) {
+                continue;
+            }
+            List<? extends StatisticsMetric<?>> groupMetrics = metrics.stream()
+                    .filter(m -> m.chartGroup() == group)
+                    .toList();
+            if (groupMetrics.isEmpty()) {
+                continue;
+            }
+
             NumberAxis xAxis = new NumberAxis();
             xAxis.setLabel(AppLocalization.getText(SimulationLocalizationKeys.OBSERVATION_CHART_AXIS_STEP));
             xAxis.setAutoRanging(false);
@@ -106,11 +80,19 @@ final class StatisticsHistoryChartView {
             chart.setManaged(false);
             chart.setVisible(false);
 
-            for (String key : keysByGroup.get(group)) {
-                chart.getData().add(seriesByKey.get(key));
+            for (StatisticsMetric<?> metric : groupMetrics) {
+                XYChart.Series<Number, Number> series = new XYChart.Series<>();
+                series.setName(AppLocalization.getText(metric.labelKey()));
+                seriesByKey.put(metric.key(), series);
+                chart.getData().add(series);
             }
 
-            groupCharts.add(new GroupChart(chart, xAxis, yAxis));
+            List<String> keys = groupMetrics.stream()
+                    .map(StatisticsMetric::key)
+                    .toList();
+            // Metrics of one chart group share their window size (see StatisticsMetric).
+            int windowSize = groupMetrics.getFirst().chartWindowSize();
+            groupCharts.add(new GroupChart(group, keys, windowSize, chart, xAxis, yAxis));
             chartsBox.getChildren().add(chart);
         }
 
@@ -186,81 +168,81 @@ final class StatisticsHistoryChartView {
         return titledPane;
     }
 
-    List<LineChart<Number, Number>> chartsForTesting() {
-        return groupCharts.stream().map(GroupChart::chart).collect(Collectors.toList());
+    List<LineChart<Number, Number>> charts() {
+        return groupCharts.stream().map(GroupChart::chart).toList();
     }
 
     private void updateCharts(List<StatisticsSample> history) {
-        if (history.isEmpty()) {
+        boolean hasHistory = !history.isEmpty();
+        if (!hasHistory) {
             ceilingByGroup.clear();
         }
 
-        boolean anyVisible = false;
-
-        for (int i = 0; i < distinctGroups.size(); i++) {
-            StatisticsChartGroup group = distinctGroups.get(i);
-            GroupChart gc = groupCharts.get(i);
-            List<String> keys = keysByGroup.get(group);
-
-            boolean chartVisible = !history.isEmpty();
-            gc.chart().setManaged(chartVisible);
-            gc.chart().setVisible(chartVisible);
-
-            if (chartVisible) {
-                anyVisible = true;
-
-                int windowSize = windowSizeByGroup.get(group);
-                List<StatisticsSample> windowedHistory = (history.size() <= windowSize)
-                        ? history
-                        : history.subList(history.size() - windowSize, history.size());
-
-                double windowedMax = windowedHistory.stream()
-                        .mapToDouble(s -> maxValueAcrossKeys(s, keys))
-                        .max()
-                        .orElse(0.0);
-                double latestMax = maxValueAcrossKeys(history.getLast(), keys);
-                double currentCeiling = ceilingByGroup.getOrDefault(group, 0.0);
-                double newCeiling;
-                if ((currentCeiling <= 0.0) || (windowedMax > currentCeiling)) {
-                    newCeiling = computeNiceCeiling(windowedMax); // initial ceiling or immediate growth
-                } else if (latestMax < (SHRINK_THRESHOLD_RATIO * currentCeiling)) {
-                    newCeiling = computeNiceCeiling(windowedMax); // gated shrink
-                } else {
-                    newCeiling = currentCeiling; // no change
-                }
-                ceilingByGroup.put(group, newCeiling);
-
-                gc.yAxis().setUpperBound(newCeiling);
-                gc.yAxis().setTickUnit(tickUnit(newCeiling));
-
-                int xMin = windowedHistory.getFirst().stepCount();
-                int xMax = windowedHistory.getLast().stepCount();
-                if (xMin == xMax) {
-                    xMax = xMin + 1;
-                }
-                gc.xAxis().setLowerBound(xMin);
-                gc.xAxis().setUpperBound(xMax);
-                gc.xAxis().setTickUnit(tickUnit(xMax - xMin));
-
-                for (String key : keys) {
-                    XYChart.Series<Number, Number> series = seriesByKey.get(key);
-                    List<XYChart.Data<Number, Number>> data = new ArrayList<>(windowedHistory.size());
-                    for (StatisticsSample sample : windowedHistory) {
-                        Double value = sample.values().get(key);
-                        if ((value != null) && Double.isFinite(value)) {
-                            data.add(new XYChart.Data<>(sample.stepCount(), value));
-                        }
-                    }
-                    series.getData().setAll(data);
-                }
+        for (GroupChart groupChart : groupCharts) {
+            groupChart.chart().setManaged(hasHistory);
+            groupChart.chart().setVisible(hasHistory);
+            if (hasHistory) {
+                updateGroupChart(groupChart, history);
             }
         }
 
-        titledPane.setManaged(anyVisible);
-        titledPane.setVisible(anyVisible);
+        boolean sectionVisible = hasHistory && !groupCharts.isEmpty();
+        titledPane.setManaged(sectionVisible);
+        titledPane.setVisible(sectionVisible);
     }
 
-    private record GroupChart(LineChart<Number, Number> chart, NumberAxis xAxis, NumberAxis yAxis) {
+    private void updateGroupChart(GroupChart groupChart, List<StatisticsSample> history) {
+        int windowSize = groupChart.windowSize();
+        List<StatisticsSample> windowedHistory = (history.size() <= windowSize)
+                ? history
+                : history.subList(history.size() - windowSize, history.size());
+
+        double windowedMax = windowedHistory.stream()
+                .mapToDouble(s -> maxValueAcrossKeys(s, groupChart.keys()))
+                .max()
+                .orElse(0.0);
+        double latestMax = maxValueAcrossKeys(history.getLast(), groupChart.keys());
+        double currentCeiling = ceilingByGroup.getOrDefault(groupChart.group(), 0.0);
+        // Grow at once; shrink only when the latest value falls below the threshold.
+        double newCeiling = ((currentCeiling <= 0.0)
+                || (windowedMax > currentCeiling)
+                || (latestMax < (SHRINK_THRESHOLD_RATIO * currentCeiling)))
+                ? computeNiceCeiling(windowedMax)
+                : currentCeiling;
+        ceilingByGroup.put(groupChart.group(), newCeiling);
+
+        groupChart.yAxis().setUpperBound(newCeiling);
+        groupChart.yAxis().setTickUnit(tickUnit(newCeiling));
+
+        int xMin = windowedHistory.getFirst().stepCount();
+        int xMax = windowedHistory.getLast().stepCount();
+        if (xMin == xMax) {
+            xMax = xMin + 1;
+        }
+        groupChart.xAxis().setLowerBound(xMin);
+        groupChart.xAxis().setUpperBound(xMax);
+        groupChart.xAxis().setTickUnit(tickUnit(xMax - xMin));
+
+        for (String key : groupChart.keys()) {
+            XYChart.Series<Number, Number> series = Objects.requireNonNull(seriesByKey.get(key));
+            List<XYChart.Data<Number, Number>> data = new ArrayList<>(windowedHistory.size());
+            for (StatisticsSample sample : windowedHistory) {
+                Double value = sample.values().get(key);
+                if ((value != null) && Double.isFinite(value)) {
+                    data.add(new XYChart.Data<>(sample.stepCount(), value));
+                }
+            }
+            series.getData().setAll(data);
+        }
+    }
+
+    private record GroupChart(
+            StatisticsChartGroup group,
+            List<String> keys,
+            int windowSize,
+            LineChart<Number, Number> chart,
+            NumberAxis xAxis,
+            NumberAxis yAxis) {
     }
 
 }
