@@ -10,8 +10,10 @@ import de.mkalb.etpetssim.ui.FXStyleClasses;
 import javafx.scene.control.TitledPane;
 import javafx.scene.layout.Region;
 
-public final class WatorConfigView
-        extends AbstractConfigView<WatorConfig, WatorConfigViewModel> {
+/**
+ * Config view of Wa-Tor.
+ */
+public final class WatorConfigView extends AbstractConfigView<WatorConfig, WatorConfigViewModel> {
 
     // Initialization
     private static final String WATOR_CONFIG_FISH_PERCENT = "wator.config.fishpercent";

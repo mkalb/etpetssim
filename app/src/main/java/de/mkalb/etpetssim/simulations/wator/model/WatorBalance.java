@@ -9,8 +9,7 @@ public final class WatorBalance {
 
     // Termination
     /**
-     * Fish population share above which the simulation ends when all sharks are gone.
-     * The simulation terminates when sharks are extinct and fish exceed this fraction of all cells.
+     * Share of all cells above which the fish end the simulation once all sharks are extinct.
      */
     public static final double TERMINATION_FISH_MAX_SHARE = 0.9d;
 

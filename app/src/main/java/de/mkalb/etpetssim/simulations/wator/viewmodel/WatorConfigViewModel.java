@@ -77,8 +77,10 @@ import static de.mkalb.etpetssim.simulations.wator.model.WatorConstraints.SHARK_
 import static de.mkalb.etpetssim.simulations.wator.model.WatorConstraints.SHARK_PERCENT_MAX;
 import static de.mkalb.etpetssim.simulations.wator.model.WatorConstraints.SHARK_PERCENT_MIN;
 
-public final class WatorConfigViewModel
-        extends AbstractConfigViewModel<WatorConfig> {
+/**
+ * Config ViewModel of Wa-Tor.
+ */
+public final class WatorConfigViewModel extends AbstractConfigViewModel<WatorConfig> {
 
     private static final String WATOR_CONFIG_VALIDATION_POPULATION_SHARE = "wator.config.validation.populationshare";
 
@@ -113,13 +115,11 @@ public final class WatorConfigViewModel
             SHARK_PERCENT_MIN,
             SHARK_PERCENT_MAX);
 
-    // Rules - NeighborhoodMode
+    // Rules
     private final InputChoiceProperty<NeighborhoodMode> neighborhoodMode = InputChoiceProperty.ofEnum(
             NEIGHBORHOOD_MODE_DEFAULT,
             NeighborhoodMode.class,
             e -> AppLocalization.getText(e.resourceKey()));
-
-    // Rules
     private final InputIntegerProperty fishMaxAge = InputIntegerProperty.of(
             FISH_MAX_AGE_DEFAULT,
             FISH_MAX_AGE_MIN,

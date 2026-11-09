@@ -2,13 +2,16 @@ package de.mkalb.etpetssim.simulations.wator.model.entity;
 
 import java.util.Locale;
 
+/**
+ * Shark of Wa-Tor, the predator.
+ */
 public final class Shark extends CreatureBase {
 
     private int currentEnergy;
 
-    public Shark(long sequenceId, int stepIndexOfBirth, int initialEnergy) {
+    public Shark(long sequenceId, int stepIndexOfBirth, int birthEnergy) {
         super(WatorEntity.DESCRIPTOR_ID_SHARK, sequenceId, stepIndexOfBirth);
-        currentEnergy = initialEnergy;
+        currentEnergy = birthEnergy;
     }
 
     public int currentEnergy() {
@@ -16,7 +19,7 @@ public final class Shark extends CreatureBase {
     }
 
     public void adjustEnergy(int delta) {
-        currentEnergy = currentEnergy + delta;
+        currentEnergy += delta;
     }
 
     @Override

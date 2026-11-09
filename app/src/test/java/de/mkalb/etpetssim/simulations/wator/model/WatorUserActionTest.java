@@ -37,7 +37,7 @@ final class WatorUserActionTest {
         );
     }
 
-    private static GridCell<WatorEntity> selectedCell(WatorSimulationManager manager, GridCoordinate coordinate) {
+    private static GridCell<WatorEntity> createSelectedCell(WatorSimulationManager manager, GridCoordinate coordinate) {
         return new GridCell<>(coordinate, manager.currentGridModel().getEntity(coordinate));
     }
 
@@ -61,7 +61,7 @@ final class WatorUserActionTest {
         WatorUserAction userAction = new WatorUserAction();
         GridCoordinate coordinate = new GridCoordinate(0, 0);
 
-        userAction.apply(manager, WatorUserActionContext.ADD_FISH, selectedCell(manager, coordinate));
+        userAction.apply(manager, WatorUserActionContext.ADD_FISH, createSelectedCell(manager, coordinate));
 
         assertAll(
                 () -> assertTrue(manager.currentGridModel().getEntity(coordinate).isFish()),
@@ -76,7 +76,7 @@ final class WatorUserActionTest {
         WatorUserAction userAction = new WatorUserAction();
         GridCoordinate coordinate = new GridCoordinate(0, 0);
 
-        userAction.apply(manager, WatorUserActionContext.ADD_SHARK, selectedCell(manager, coordinate));
+        userAction.apply(manager, WatorUserActionContext.ADD_SHARK, createSelectedCell(manager, coordinate));
 
         assertAll(
                 () -> assertTrue(manager.currentGridModel().getEntity(coordinate).isShark()),
@@ -93,7 +93,7 @@ final class WatorUserActionTest {
         manager.currentGridModel().setEntity(coordinate, manager.createFish(0));
         manager.statistics().adjustCellCounts(1, 0);
 
-        userAction.apply(manager, WatorUserActionContext.REMOVE_CREATURE, selectedCell(manager, coordinate));
+        userAction.apply(manager, WatorUserActionContext.REMOVE_CREATURE, createSelectedCell(manager, coordinate));
 
         assertAll(
                 () -> assertTrue(manager.currentGridModel().getEntity(coordinate).isWater()),
@@ -110,7 +110,7 @@ final class WatorUserActionTest {
         manager.currentGridModel().setEntity(coordinate, manager.createShark(0));
         manager.statistics().adjustCellCounts(0, 1);
 
-        userAction.apply(manager, WatorUserActionContext.REMOVE_CREATURE, selectedCell(manager, coordinate));
+        userAction.apply(manager, WatorUserActionContext.REMOVE_CREATURE, createSelectedCell(manager, coordinate));
 
         assertAll(
                 () -> assertTrue(manager.currentGridModel().getEntity(coordinate).isWater()),

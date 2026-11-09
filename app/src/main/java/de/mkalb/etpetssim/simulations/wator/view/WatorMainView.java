@@ -16,7 +16,6 @@ import de.mkalb.etpetssim.simulations.core.viewmodel.SimulationUserActionDescrip
 import de.mkalb.etpetssim.simulations.wator.model.WatorConfig;
 import de.mkalb.etpetssim.simulations.wator.model.WatorSimulationManager;
 import de.mkalb.etpetssim.simulations.wator.model.WatorStatistics;
-import de.mkalb.etpetssim.simulations.wator.model.entity.EntityDescriptors;
 import de.mkalb.etpetssim.simulations.wator.model.entity.Fish;
 import de.mkalb.etpetssim.simulations.wator.model.entity.Shark;
 import de.mkalb.etpetssim.simulations.wator.model.entity.TerrainConstant;
@@ -29,10 +28,12 @@ import javafx.scene.shape.StrokeType;
 import javafx.scene.text.Font;
 import org.jspecify.annotations.Nullable;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Main view of Wa-Tor.
+ */
 public final class WatorMainView
         extends AbstractDefaultMainView<
         WatorEntity,
@@ -55,7 +56,6 @@ public final class WatorMainView
     private static final String WATOR_TOOLBAR_REMOVE_CREATURE = "wator.toolbar.removecreature";
     private static final String WATOR_TOOLBAR_REMOVE_CREATURE_TOOLTIP = "wator.toolbar.removecreature.tooltip";
 
-    private static final Color FALLBACK_COLOR_AGENT = Color.WHITE;
     private static final double FISH_MAX_FACTOR_DELTA = -0.5d;
     private static final double SHARK_MAX_FACTOR_DELTA = 0.7d;
     private static final int FISH_GROUP_COUNT = 10;
@@ -64,9 +64,9 @@ public final class WatorMainView
     private static final Color SELECTED_STROKE_COLOR = Color.rgb(255, 255, 120);
     private static final double SELECTED_STROKE_LINE_WIDTH = 1.5d;
 
-    private final Map<String, @Nullable Map<Integer, Color>> entityColors;
+    private @Nullable Map<Integer, Color> fishColors;
+    private @Nullable Map<Integer, Color> sharkColors;
     private @Nullable CellDrawer<WatorEntity> cellDrawer;
-
     private int maxColorSharkEnergy = 1;
 
     public WatorMainView(DefaultMainViewModel<WatorEntity, GridCell<WatorEntity>, WritableGridModel<WatorEntity>,
@@ -81,9 +81,12 @@ public final class WatorMainView
                 controlView,
                 observationView,
                 entityDescriptorRegistry);
-        entityColors = HashMap.newHashMap(2);
-        entityColors.put(EntityDescriptors.FISH.descriptorId(), null);
-        entityColors.put(EntityDescriptors.SHARK.descriptorId(), null);
+    }
+
+    private static Color resolveVariantColor(@Nullable Map<Integer, Color> variantColors,
+                                             int value,
+                                             Color baseColor) {
+        return (variantColors == null) ? baseColor : variantColors.getOrDefault(value, baseColor);
     }
 
     @Override
@@ -94,14 +97,12 @@ public final class WatorMainView
         painters.base().fillCanvasBackground(backgroundColor);
 
         maxColorSharkEnergy = computeMaxColorSharkEnergy(config);
-        entityColors.put(EntityDescriptors.FISH.descriptorId(),
-                computeBrightnessVariantsMap(entityDescriptorRegistry
-                                .requireByDescriptorId(EntityDescriptors.FISH.descriptorId()),
-                        0, config.fishMaxAge() - 1, FISH_GROUP_COUNT, FISH_MAX_FACTOR_DELTA));
-        entityColors.put(EntityDescriptors.SHARK.descriptorId(),
-                computeBrightnessVariantsMap(entityDescriptorRegistry
-                                .requireByDescriptorId(EntityDescriptors.SHARK.descriptorId()),
-                        1, maxColorSharkEnergy, SHARK_GROUP_COUNT, SHARK_MAX_FACTOR_DELTA));
+        fishColors = computeBrightnessVariantsMap(
+                entityDescriptorRegistry.requireByDescriptorId(WatorEntity.DESCRIPTOR_ID_FISH),
+                0, config.fishMaxAge() - 1, FISH_GROUP_COUNT, FISH_MAX_FACTOR_DELTA);
+        sharkColors = computeBrightnessVariantsMap(
+                entityDescriptorRegistry.requireByDescriptorId(WatorEntity.DESCRIPTOR_ID_SHARK),
+                1, maxColorSharkEnergy, SHARK_GROUP_COUNT, SHARK_MAX_FACTOR_DELTA);
 
         double strokeLineWidth = computeStrokeLineWidth(cellDimension);
 
@@ -216,17 +217,12 @@ public final class WatorMainView
                                          WatorEntity entity,
                                          int stepCount) {
         Color baseColor = entityDescriptor.colorOrFallback();
-        Map<Integer, Color> colorMap = entityColors.get(entityDescriptor.descriptorId());
-        if (colorMap != null) {
-            Integer value = switch (entity) {
-                case Fish fish -> fish.ageAtStepCount(stepCount);
-                case Shark shark -> Math.min(maxColorSharkEnergy, shark.currentEnergy());
-                case TerrainConstant ignored -> -1; // Not expected when colorMap is non-null
-            };
-
-            return colorMap.getOrDefault(value, baseColor);
-        }
-        return (entityDescriptor.color() != null) ? entityDescriptor.color() : FALLBACK_COLOR_AGENT;
+        return switch (entity) {
+            case Fish fish -> resolveVariantColor(fishColors, fish.ageAtStepCount(stepCount), baseColor);
+            case Shark shark -> resolveVariantColor(sharkColors,
+                    Math.min(maxColorSharkEnergy, shark.currentEnergy()), baseColor);
+            case TerrainConstant _ -> baseColor;
+        };
     }
 
 }

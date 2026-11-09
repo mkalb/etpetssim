@@ -13,6 +13,9 @@ import org.jspecify.annotations.Nullable;
 
 import java.util.Optional;
 
+/**
+ * Observation view of Wa-Tor.
+ */
 public final class WatorObservationView
         extends AbstractObservationView<
         WatorEntity,

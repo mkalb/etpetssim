@@ -8,17 +8,17 @@ import de.mkalb.etpetssim.simulations.core.shared.SimulationUserActionContext;
 public enum WatorUserActionContext implements SimulationUserActionContext {
 
     /**
-     * Add a fish to the selected cell.
+     * Adds a fish to the selected cell.
      */
     ADD_FISH,
 
     /**
-     * Add a shark to the selected cell.
+     * Adds a shark to the selected cell.
      */
     ADD_SHARK,
 
     /**
-     * Remove a fish or shark from the selected cell.
+     * Removes a fish or shark from the selected cell.
      */
     REMOVE_CREATURE
 

@@ -9,10 +9,9 @@ import de.mkalb.etpetssim.simulations.core.model.StatisticsMetric;
 import java.util.List;
 
 /**
- * Holds runtime statistics for a running simulation.
+ * Statistics of Wa-Tor with the fish and shark cell counts.
  */
-public final class WatorStatistics
-        extends BaseTimedSimulationStatistics {
+public final class WatorStatistics extends BaseTimedSimulationStatistics {
 
     public static final String KEY_FISH_CELLS = "fishCells";
     public static final String KEY_SHARK_CELLS = "sharkCells";
@@ -35,8 +34,6 @@ public final class WatorStatistics
 
     public WatorStatistics(GridStructure gridStructure) {
         super(gridStructure);
-        fishCells = 0;
-        sharkCells = 0;
     }
 
     public static List<StatisticsMetric<WatorStatistics>> metrics() {

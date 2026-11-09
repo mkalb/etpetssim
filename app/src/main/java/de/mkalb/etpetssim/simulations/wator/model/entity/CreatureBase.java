@@ -2,29 +2,24 @@ package de.mkalb.etpetssim.simulations.wator.model.entity;
 
 import org.jspecify.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
 import java.util.OptionalInt;
 
-public abstract sealed class CreatureBase implements WatorEntity, Comparable<CreatureBase>
+/**
+ * Base class of the Wa-Tor creatures; two creatures are equal if they have the same class and sequence ID.
+ */
+public abstract sealed class CreatureBase implements WatorEntity
         permits Fish, Shark {
 
     private final String descriptorId;
     private final long sequenceId;
     private final int stepIndexOfBirth;
-    private final List<Integer> reproductionStepIndices;
+    private int reproductionCount;
+    private int stepIndexOfLastReproduction;
 
-    protected CreatureBase(
-            String descriptorId,
-            long sequenceId,
-            int stepIndexOfBirth
-    ) {
+    protected CreatureBase(String descriptorId, long sequenceId, int stepIndexOfBirth) {
         this.descriptorId = descriptorId;
         this.sequenceId = sequenceId;
         this.stepIndexOfBirth = stepIndexOfBirth;
-
-        reproductionStepIndices = new ArrayList<>();
     }
 
     @Override
@@ -43,12 +38,7 @@ public abstract sealed class CreatureBase implements WatorEntity, Comparable<Cre
 
     @Override
     public final int hashCode() {
-        return Objects.hashCode(sequenceId);
-    }
-
-    @Override
-    public final int compareTo(CreatureBase other) {
-        return Long.compare(sequenceId(), other.sequenceId());
+        return Long.hashCode(sequenceId);
     }
 
     public final long sequenceId() {
@@ -68,16 +58,26 @@ public abstract sealed class CreatureBase implements WatorEntity, Comparable<Cre
     }
 
     public final int reproductionCount() {
-        return reproductionStepIndices.size();
+        return reproductionCount;
     }
 
+    /**
+     * Returns the step index of the last reproduction.
+     *
+     * @return the step of birth of the last child, or an empty result if the creature has not reproduced yet
+     */
     public final OptionalInt stepIndexOfLastReproduction() {
-        return reproductionStepIndices.isEmpty() ? OptionalInt.empty()
-                : OptionalInt.of(reproductionStepIndices.getLast());
+        return (reproductionCount == 0) ? OptionalInt.empty() : OptionalInt.of(stepIndexOfLastReproduction);
     }
 
+    /**
+     * Records a reproduction at the step of birth of the given child.
+     *
+     * @param child the newly created child
+     */
     public final void reproduce(CreatureBase child) {
-        reproductionStepIndices.add(child.stepIndexOfBirth);
+        reproductionCount++;
+        stepIndexOfLastReproduction = child.stepIndexOfBirth;
     }
 
     @Override

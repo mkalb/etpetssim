@@ -7,6 +7,9 @@ import de.mkalb.etpetssim.simulations.wator.model.entity.WatorEntity;
 import de.mkalb.etpetssim.simulations.wator.shared.WatorUserActionContext;
 import org.jspecify.annotations.Nullable;
 
+/**
+ * User action of Wa-Tor that adds or removes fish and sharks.
+ */
 public final class WatorUserAction
         implements SimulationUserAction<
         WatorEntity,
@@ -21,7 +24,6 @@ public final class WatorUserAction
                       WatorUserActionContext context,
                       @Nullable GridCellView<WatorEntity> selectedCell) {
         if (selectedCell == null) {
-            // This user action works only if a cell is selected, so do nothing if no cell is selected.
             return;
         }
 

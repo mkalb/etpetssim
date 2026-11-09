@@ -4,6 +4,9 @@ import de.mkalb.etpetssim.engine.executor.SimulationTerminationCondition;
 import de.mkalb.etpetssim.engine.model.ReadableGridModel;
 import de.mkalb.etpetssim.simulations.wator.model.entity.WatorEntity;
 
+/**
+ * Termination condition of Wa-Tor.
+ */
 public final class WatorTerminationCondition implements SimulationTerminationCondition<WatorEntity,
         ReadableGridModel<WatorEntity>, WatorStatistics> {
 

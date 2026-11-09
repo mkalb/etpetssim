@@ -141,7 +141,7 @@ sources. "Types" counts the top-level types in main sources of a group.
 | C7 | `core.view`: observation views and statistics chart           |     3 | done        |
 | C8 | `core.view`: main views, edit tool bar, and canvas drawing    |     8 | done        |
 | C9 | `core` root package and `start`                               |     6 | done        |
-| D1 | Wa-Tor (reference)                                            |    21 | open        |
+| D1 | Wa-Tor (reference)                                            |    21 | done        |
 | D2 | Rebounding                                                    |    18 | open        |
 | D3 | Snake                                                         |    25 | open        |
 | D4 | Sugarscape                                                    |    28 | open        |
@@ -1357,13 +1357,119 @@ Families and their known deviations:
 
 ### D1. Wa-Tor (reference)
 
+Notes:
+
+- Inventory (2026-11-09, verified against the sources): 21 types in the package root, `model`, `model.entity`,
+  `shared`, `view`, and `viewmodel`. Tests exist for `WatorConfig`, `WatorUserAction`, `Fish`, `Shark`,
+  `TerrainConstant`, and `EntityDescriptors`.
+- `WatorConfig`, `WatorEntity`, `TerrainConstant`, `EntityDescriptors`, and `WatorFactory` follow the rules.
+- Test gaps for the later separate optimization: `WatorStepLogic`, `WatorTerminationCondition`, `WatorStatistics`,
+  `CreatureBase` (age, reproduction, and equality), `CreatureFactory`, and the initial cell counts of
+  `WatorSimulationManager`.
+
+#### Missing type Javadoc
+
+- Origin: D1 (2026-11-09)
+- Types: 12 public types of Wa-Tor; 94 public top-level types in all simulations (none in `core` and `start`)
+- Problem: `java.md` ("Javadoc", "Coverage") requires Javadoc for public types; the managers, step logic, termination
+  conditions, user actions, creatures, views, and ViewModels of the simulations mostly have none.
+- Proposal: Add a short type Javadoc per family that says what the type does in its simulation; the later groups
+  adopt the forms of Wa-Tor.
+- Status: done (2026-11-09).
+
 #### Redundant counter initializations in the statistics constructors
 
 - Origin: B6 (2026-11-08)
-- Types: `WatorStatistics` and the other statistics classes that extend `BaseTimedSimulationStatistics`
+- Types: `WatorStatistics` and the other statistics classes that extend `BaseTimedSimulationStatistics`;
+  `CreatureFactory`
 - Problem: The constructors set their counters explicitly to `0` (e.g., `fishCells = 0;`), which the review
-  guidelines ("Constructors") list as redundant field initializations.
-- Proposal: Remove the assignments in `WatorStatistics` and adopt the decision in the later groups.
+  guidelines ("Constructors") list as redundant field initializations; the constructor of `CreatureFactory` only
+  sets `sequence = 0`.
+- Proposal: Remove the assignments in `WatorStatistics` and the constructor of `CreatureFactory`, and adopt the
+  decision in the later groups.
+- Status: done (2026-11-09).
+
+#### Visibility of the cell count methods and creature factories
+
+- Origin: D1 (2026-11-09)
+- Types: `WatorStatistics`, `WatorSimulationManager`, `WatorUserAction`
+- Problem: `WatorStatistics.adjustCellCounts(..)` is public, but only `WatorUserAction` in the same package calls it,
+  always with one delta of `1` or `-1`. `WatorSimulationManager.createFish(..)` and `createShark(..)` are public, but
+  only the manager and `WatorUserAction` call them.
+- Proposal: Use the package-private increment and decrement methods in `WatorUserAction` and remove
+  `adjustCellCounts(..)`; make `createFish(..)` and `createShark(..)` package-private. An API change.
+- Status: done (2026-11-09); `adjustCellCounts(..)` stays public and in use, because it was introduced on purpose
+  and the other simulations use it in the same way (maintainer).
+
+#### Reproduction conditions and traces of WatorStepLogic
+
+- Origin: D1 (2026-11-09)
+- Types: `WatorStepLogic`
+- Problem: The reproduction interval check is copied for fish and sharks, badly wrapped, and nested three levels deep
+  for sharks. A commented-out trace is commented out twice and names variables that do not exist.
+- Proposal: Extract a private static `hasReproductionIntervalPassed(..)` and join the conditions with `&&`; the random
+  sequence of a seed stays the same. Correct the trace.
+- Status: done (2026-11-09); the maintainer chose to remove all commented-out traces instead.
+
+#### Natural order and reproduction history of CreatureBase
+
+- Origin: D1 (2026-11-09)
+- Types: `CreatureBase`, `Shark`
+- Problem: `CreatureBase` implements `Comparable`, but nothing calls `compareTo(..)` (the agents are ordered by
+  position). `hashCode()` boxes the sequence ID with `Objects.hashCode(..)`. The list `reproductionStepIndices` keeps
+  every reproduction step, although only the count and the last step are read. The constructor parameter
+  `initialEnergy` of `Shark` is named `birthEnergy` in `CreatureFactory` and `WatorConfig`.
+- Proposal: Remove `Comparable` and `compareTo(..)` (an API change), use `Long.hashCode(..)`, replace the list by the
+  fields `reproductionCount` and `stepIndexOfLastReproduction`, and rename the parameter to `birthEnergy`.
+- Status: done (2026-11-09).
+
+#### Color variants of WatorMainView
+
+- Origin: D1 (2026-11-09)
+- Types: `WatorMainView`
+- Problem: The map `entityColors` is filled with `null` placeholders in the constructor; `FALLBACK_COLOR_AGENT` and
+  the branch for `TerrainConstant` are not reached, because only fish and shark cells are drawn; the descriptor IDs
+  are read from `EntityDescriptors` and from `WatorEntity`.
+- Proposal: Hold the variants in the fields `fishColors` and `sharkColors`, resolve the color with a `switch` over the
+  entity, use the `DESCRIPTOR_ID_*` constants, and remove the fallback constant and the blank line between the
+  instance fields (C8). `SugarMainView` has the same pattern (D4).
+- Status: done (2026-11-09).
+
+#### Details of the Wa-Tor types
+
+- Origin: D1 (2026-11-09)
+- Types: `WatorConfigViewModel`, `WatorConfigView`, `WatorStatistics`, `WatorUserActionContext`, `WatorUserAction`,
+  `WatorBalance`, `WatorConstraints`, `WatorSimulationManager`, `WatorUserActionTest`
+- Problem: `WatorConfigViewModel` has the section comments `// Rules - NeighborhoodMode` and `// Rules`; three class
+  declarations put their supertype on a second line, although it fits on one (C2). The constant summaries of
+  `WatorUserActionContext` are imperative (C1). The comment on the missing selection in `WatorUserAction` restates the
+  code. The Javadoc of `TERMINATION_FISH_MAX_SHARE` says the same in two sentences. `CELL_SHAPE_VALUES` wraps
+  `List.of(CellShape.values())`. The trailing comment `// negative age for birth time` is unclear. The test helper
+  `selectedCell(..)` lacks the `create` prefix (`junit.md`, "Test Data and Helpers").
+- Proposal: One `// Rules` comment, declarations on one line, "Adds ..." summaries, remove the comment, one sentence,
+  one line, a comment above the line that explains the random age, and `createSelectedCell(..)`.
+- Status: done (2026-11-09).
+
+### Decisions
+
+- All public types of Wa-Tor have a short type Javadoc of one sentence that names the role of the type in its
+  simulation, without describing its content in detail (maintainer), e.g., "Simulation manager of Wa-Tor.", "Agent
+  step logic of Wa-Tor for fish and sharks.", "User action of Wa-Tor that adds or removes fish and sharks.", and
+  "Main view of Wa-Tor."; the later groups write theirs in the same forms.
+- `WatorStatistics` lost the counter initializations and declares its supertype on one line; `CreatureFactory` has no
+  explicit constructor.
+- `WatorStatistics.adjustCellCounts(..)` stays public and is used by `WatorUserAction` (maintainer). API change:
+  `WatorSimulationManager.createFish(..)` and `createShark(..)` are package-private.
+- `WatorStepLogic` checks the reproduction interval with the private static `hasReproductionIntervalPassed(..)` and
+  joins the reproduction conditions with `&&`; its commented-out `AppLogger` traces are removed, because Wa-Tor no
+  longer needs them (maintainer).
+- API change: `CreatureBase` no longer implements `Comparable`; it keeps `reproductionCount` and
+  `stepIndexOfLastReproduction` in two `int` fields, uses `Long.hashCode(..)`, and documents
+  `stepIndexOfLastReproduction()` and `reproduce(..)`. `Shark` takes `birthEnergy` and adds the delta with `+=`.
+- `WatorMainView` holds the `@Nullable` color variants in `fishColors` and `sharkColors` and resolves them with the
+  private static `resolveVariantColor(..)`; `FALLBACK_COLOR_AGENT`, the map `entityColors`, and the use of
+  `EntityDescriptors` are removed.
+- The details are implemented as proposed. No rule change.
 
 ### D2. Rebounding
 
@@ -1440,6 +1546,17 @@ Decisions of this plan:
 - The `Abstract*` and `Base*` classes of `simulations.core` are not `sealed`, because their subclasses lie in the
   simulation packages and a `permits` clause would break the package isolation of `simulations.md`; `sealed` is for
   closed families inside one simulation, such as `CreatureBase` and `ResourceBase` (C5, C6 to C8, D).
+- Every public type of a simulation has a short type Javadoc of one sentence in the forms of Wa-Tor, without a
+  detailed description of its content (maintainer; D1, D).
+- `adjust...Cells(..)` and `adjustCellCounts(..)` of the statistics classes stay public, also with callers only in
+  the own `model` package (maintainer; D1, D).
+- The commented-out `AppLogger` traces of `EtpetsAgentLogic` stay, because the further development of ET Pets needs
+  them; only Wa-Tor removed its traces (maintainer; D1, D5).
+- Section comments of the config ViewModels follow the four config groups; `// Rules - NeighborhoodMode` becomes part
+  of `// Rules` (D1, D).
+- The comment "This user action works only if a cell is selected ..." is removed from the user actions (D1, D).
+- Color variants of a main view are held in one `@Nullable` field per entity, without a fallback color for agents
+  (D1, D4).
 
 ## Deferred findings
 

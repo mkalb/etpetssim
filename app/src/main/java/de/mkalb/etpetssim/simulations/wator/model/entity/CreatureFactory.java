@@ -1,12 +1,11 @@
 package de.mkalb.etpetssim.simulations.wator.model.entity;
 
+/**
+ * Factory of the Wa-Tor creatures with ascending sequence IDs.
+ */
 public final class CreatureFactory {
 
     private long sequence;
-
-    public CreatureFactory() {
-        sequence = 0;
-    }
 
     public Fish createFish(int stepIndexOfBirth) {
         Fish fish = new Fish(sequence, stepIndexOfBirth);

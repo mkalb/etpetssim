@@ -2,6 +2,9 @@ package de.mkalb.etpetssim.simulations.wator.model.entity;
 
 import java.util.Locale;
 
+/**
+ * Fish of Wa-Tor, the prey.
+ */
 public final class Fish extends CreatureBase {
 
     public Fish(long sequenceId, int stepIndexOfBirth) {

@@ -22,6 +22,9 @@ import java.util.Random;
 
 import static de.mkalb.etpetssim.engine.support.WorkCheckpoints.isCancellationCheckpoint;
 
+/**
+ * Simulation manager of Wa-Tor.
+ */
 public final class WatorSimulationManager
         extends AbstractTimedSimulationManager<WatorEntity, WritableGridModel<WatorEntity>, WatorConfig,
         WatorStatistics> {
@@ -58,14 +61,6 @@ public final class WatorSimulationManager
         recordInitialStatisticsSample();
     }
 
-    public Fish createFish(int stepIndexOfBirth) {
-        return creatureFactory.createFish(stepIndexOfBirth);
-    }
-
-    public Shark createShark(int stepIndexOfBirth) {
-        return creatureFactory.createShark(stepIndexOfBirth, config().sharkBirthEnergy());
-    }
-
     @Override
     public GridStructure structure() {
         return structure;
@@ -86,6 +81,14 @@ public final class WatorSimulationManager
     @Override
     protected TimedSimulationExecutor<WatorEntity, WritableGridModel<WatorEntity>> executor() {
         return executor;
+    }
+
+    Fish createFish(int stepIndexOfBirth) {
+        return creatureFactory.createFish(stepIndexOfBirth);
+    }
+
+    Shark createShark(int stepIndexOfBirth) {
+        return creatureFactory.createShark(stepIndexOfBirth, config().sharkBirthEnergy());
     }
 
     private void initializeGrid(WritableGridModel<WatorEntity> model,
@@ -120,12 +123,13 @@ public final class WatorSimulationManager
     }
 
     private Fish createInitialFish(Random random) {
-        int stepIndexOfBirth = -1 - random.nextInt(config().fishMaxAge()); // negative age for birth time
+        // The initial creatures are born before the first step, so that they start with a random age.
+        int stepIndexOfBirth = -1 - random.nextInt(config().fishMaxAge());
         return createFish(stepIndexOfBirth);
     }
 
     private Shark createInitialShark(Random random) {
-        int stepIndexOfBirth = -1 - random.nextInt(config().sharkMaxAge()); // negative age for birth time
+        int stepIndexOfBirth = -1 - random.nextInt(config().sharkMaxAge());
         return createShark(stepIndexOfBirth);
     }
 
