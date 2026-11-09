@@ -139,7 +139,7 @@ sources. "Types" counts the top-level types in main sources of a group.
 | C5 | `core.viewmodel`: main ViewModels and user action descriptors |     5 | done        |
 | C6 | `core.view`: config and control views                         |     6 | done        |
 | C7 | `core.view`: observation views and statistics chart           |     3 | done        |
-| C8 | `core.view`: main views, edit tool bar, and canvas drawing    |     8 | open        |
+| C8 | `core.view`: main views, edit tool bar, and canvas drawing    |     8 | done        |
 | C9 | `core` root package and `start`                               |     6 | open        |
 | D1 | Wa-Tor (reference)                                            |    21 | open        |
 | D2 | Rebounding                                                    |    18 | open        |
@@ -1085,6 +1085,17 @@ Notes:
 `SimulationMainView`, `AbstractMainView`, `AbstractDefaultMainView`, `EditToolBarView`, `DrawCallThrottler`,
 `CanvasPainters`, `CellDrawer`, and `CoordinateDrawer`.
 
+Notes:
+
+- Inventory (2026-11-09, verified against the sources): the interfaces `SimulationMainView` and the functional
+  interfaces `CellDrawer` and `CoordinateDrawer`, the abstract classes `AbstractMainView` (subclasses
+  `AbstractDefaultMainView` and `LabMainView`) and `AbstractDefaultMainView` (eight main views), the public record
+  `CanvasPainters`, and the package-private final classes `EditToolBarView` and `DrawCallThrottler`. Only
+  `AbstractMainView` has a test (six tests through `ConwayFactory`). `DrawCallThrottler` is the only type of the group
+  without JavaFX; the others get no new tests in this plan.
+- `SimulationMainView`, `CellDrawer`, and `CoordinateDrawer` follow the rules; all members of the group have callers in
+  main sources. `SKIP_OVERLAY_SYMBOL` of `AbstractDefaultMainView` keeps its emoji literal (domain need).
+
 #### Reflection in AbstractMainViewTest
 
 - Origin: analysis of the tests for reflection (2026-10-30)
@@ -1095,6 +1106,87 @@ Notes:
 - Proposal: Look at every call of the helpers and decide per field whether the test can check the behavior through the
   public or protected API (e.g., the node tree of the view) instead. Otherwise expose the state as a package-private
   accessor (`java.md`, "Test Access"). Remove the helpers.
+- Note (C8, 2026-11-09): The helpers read four fields. `viewModel` and `observationView` are `protected` and thus
+  accessible from the test in the same package after a cast to `AbstractMainView<?, ?, ?, ?, ?>`.
+  `AbstractMainView.notificationListener` and `AbstractObservationView.selectedGridCellListener` are private; as in
+  C5 (`DefaultMainViewModel.hasViewListeners()`), package-private `final` queries `hasNotificationListener()` and
+  `hasSelectedGridCellListener()` can replace them.
+- Status: done (2026-11-09).
+
+#### Visibility of the members of AbstractMainView
+
+- Origin: C8 (2026-11-09)
+- Types: `AbstractMainView`, `AbstractDefaultMainView`; `simulations.md` ("Main View Composition")
+- Problem: Several `protected` members have no caller outside the class: `computeCellFontSize(..)`,
+  `computeCellEmojiFontSize(..)`, `createSimulationRegion()`, `baseCanvas`, and `dynamicCanvas`.
+  `computeVisibleCanvasCenter(..)` and `resolvePreferredFont(..)` are used only by `AbstractDefaultMainView` in the
+  same package. `simulations.md` names `createSimulationRegion()` as the way the canvas region is supplied.
+- Proposal: Make the first five members private and the two others package-private `final`; adapt the sentence in
+  `simulations.md` to "`AbstractMainView` supplies the simulation canvas region." An API change and a rule change.
+- Note (C8, 2026-11-09): After the change, `overlayCanvas` was the only `protected` canvas field, used by
+  `LabMainView` for its mouse handlers and by `AbstractDefaultMainView` only as the argument of
+  `computeVisibleCanvasCenter(..)`. The maintainer chose to make all three canvas fields private, to drop the
+  parameter of `computeVisibleCanvasCenter()`, which uses the overlay canvas (all three canvases have the same size),
+  and to give `LabMainView` the accessor `overlayCanvas()`.
+- Status: done (2026-11-09).
+
+#### Stroke width helpers for all main views
+
+- Origin: C8 (2026-11-09)
+- Types: `AbstractDefaultMainView`, `AbstractMainView`, `LabMainView`
+- Problem: `NO_STROKE_LINE_WIDTH` and `computeStrokeLineWidth(..)` are declared in `AbstractDefaultMainView`, so
+  `LabMainView`, which extends `AbstractMainView`, declares its own private `NO_STROKE_LINE_WIDTH`.
+  `computeStrokeLineWidth(..)` uses no instance state.
+- Proposal: Move both to `AbstractMainView` next to the font helpers, make `computeStrokeLineWidth(..)` `static`, and
+  remove the constant of `LabMainView`. An API change.
+- Status: done (2026-11-09).
+
+#### Clearing of the canvas layers
+
+- Origin: C8 (2026-11-09)
+- Types: `CanvasPainters`, `AbstractMainView`, `AbstractDefaultMainView`
+- Problem: `AbstractMainView.clearPainters()` and `AbstractDefaultMainView.clearCanvasLayers()` repeat the three
+  `clearCanvasBackground()` calls of the layers.
+- Proposal: Add `CanvasPainters.clearCanvasBackgrounds()` and call it from both methods.
+- Status: done (2026-11-09).
+
+#### Details of the main views and DrawCallThrottler
+
+- Origin: C8 (2026-11-09)
+- Types: `AbstractMainView`, `AbstractDefaultMainView`, `CanvasPainters`, `DrawCallThrottler`
+- Problem: Five Javadoc comments lack the empty line before their `<p>` paragraph (the type Javadoc of
+  `AbstractMainView`, `AbstractDefaultMainView`, and `CanvasPainters`, `recreatePaintersAndResizeCanvases(..)`, and
+  `DrawCallThrottler.shouldSkip(..)`). `skipOverlayActive = false` and the three `= 0` of `DrawCallThrottler`
+  initialize fields to their default value (`java.md`, "Code Style"). The comment `// Font` restates the code, and
+  the instance fields of `AbstractDefaultMainView` are separated by blank lines, unlike the other classes.
+- Proposal: Add the empty lines, remove the default initializations, the comment, and the blank lines.
+- Status: done (2026-11-09).
+
+#### Structure of EditToolBarView
+
+- Origin: C8 (2026-11-09)
+- Types: `EditToolBarView`
+- Problem: The four buttons repeat the style class, the tooltip, and the bindings of `visible` and `managed` (also
+  for the option panel). The listener on the selected toggle checks `selectedToolId == null`, although it is only
+  needed when a tool id exists. `clampToUnitRange(..)` only wraps `Math.clamp(..)`. The names of the private
+  methods `clearEditAffordanceToolBar()` (removes the nodes) and `clearEditToolBar()` (removes the listener and runs
+  the cleanup actions) do not show the difference.
+- Proposal: Extend the private `configureEditToolBarButton(..)` by the tooltip key and extract a private
+  `bindVisibility(Node, ObservableBooleanValue)`; register the toggle listener inside the existing
+  `if (selectedToolId != null)` block; inline `clampToUnitRange(..)`; rename the two methods to `clearNodes()` and
+  `releaseResources()`. The UI stays the same.
+- Status: done (2026-11-09).
+
+#### Tests of DrawCallThrottler
+
+- Origin: C8 (2026-11-09)
+- Types: `DrawCallThrottler`
+- Problem: The only non-JavaFX class of the group has no test, although it holds the skip rule of the draw throttling
+  (`junit.md`; plan rule "Unit tests").
+- Proposal: Add `DrawCallThrottlerTest`: constructor rejections, `shouldSkip(..)` (history not full, average below and
+  above the threshold, at most `maxSkips` skips in a row, reset after a draw), and the moving average of
+  `recordDurationMillis(..)` and `getAverageDurationMillis()`.
+- Status: done (2026-11-09).
 
 #### Tooltips of the edit tool bar buttons
 
@@ -1111,6 +1203,37 @@ Notes:
   (buttons without a label get their own tooltip; the edit and select buttons use the fixed keys of
   `SimulationLocalizationKeys`), or create the four buttons through one helper that sets text and tooltip (e.g., in
   `EditToolBarView`, or a new method in `FXComponentFactory`, which would be an API change).
+- Note (C8, 2026-11-09): A private helper in `EditToolBarView` (see "Structure of EditToolBarView") keeps the
+  tooltips local to the tool bar; the rule then only needs the addition that the edit and select buttons use the
+  fixed keys of `SimulationLocalizationKeys`.
+- Status: done (2026-11-09).
+
+### Decisions
+
+- Tests: `AbstractMainViewTest` reads the protected fields `viewModel` and `observationView` directly through the
+  helper `createMainView()` and checks the listeners with the new package-private `final` queries
+  `AbstractMainView.hasNotificationListener()` and `AbstractObservationView.hasSelectedGridCellListener()`, also
+  before the shutdown; the reflection helpers are removed.
+- API change: `computeCellFontSize(..)`, `computeCellEmojiFontSize(..)`, `createSimulationRegion()`, and the three
+  canvas fields of `AbstractMainView` are private; `LabMainView` reaches the overlay canvas through the new
+  `protected final` accessor `overlayCanvas()` and no longer resets the unused `onMouseClicked` handler.
+  `computeVisibleCanvasCenter()` has no parameter and is package-private `final` like `resolvePreferredFont(..)`.
+  Rule change (`simulations.md`, "Main View Composition"):
+  the rule no longer names `createSimulationRegion()`.
+- API change: `NO_STROKE_LINE_WIDTH` and the now `static` `computeStrokeLineWidth(..)` moved from
+  `AbstractDefaultMainView` to `AbstractMainView`; `LabMainView` uses the inherited constant instead of its own.
+- `CanvasPainters.clearCanvasBackgrounds()` clears the three layers for `clearPainters()` and `clearCanvasLayers()`.
+- `EditToolBarView` sets the style class and the tooltip of all four buttons in `configureEditToolBarButton(..)` and
+  binds `visible` and `managed` with `bindVisibility(..)`; the toggle listener is registered only with a tool id,
+  `clampToUnitRange(..)` is inlined, and the private clear methods are named `clearNodes()` and
+  `releaseResources()`. Rule change (`simulations.md`, "UI Construction"): edit toolbar buttons get their own
+  `Tooltip` in `EditToolBarView`, action buttons with the descriptor key, the edit and select buttons with the fixed
+  keys of `SimulationLocalizationKeys`.
+- Five Javadoc comments have the empty line before `<p>`; `AbstractDefaultMainView` and `DrawCallThrottler` lost
+  their default field initializations, `AbstractMainView` the comment `// Font`, and `AbstractDefaultMainView` the
+  blank lines between its instance fields.
+- The new `DrawCallThrottlerTest` covers the constructor rejections, the skip rule of `shouldSkip(..)`, and the moving
+  average. No remaining test gaps for non-JavaFX types; the JavaFX types of the group get no new tests in this plan.
 
 ### C9. `core` root package and `start`
 

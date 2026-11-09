@@ -65,7 +65,6 @@ public final class LabMainView
     private static final int CHECKER_GROUP_SIZE = 2;
     private static final int CHECKER_GROUP_SHIFT = 1;
 
-    private static final double NO_STROKE_LINE_WIDTH = 0.0d;
     private static final double ESTIMATED_CELL_STROKE_WIDTH = 1.0d;
     private static final double NEIGHBOR_COORDINATE_STROKE_WIDTH = 2.0d;
     private static final double EDGE_RESULT_STROKE_WIDTH = 3.0d;
@@ -217,7 +216,7 @@ public final class LabMainView
 
     private void registerOverlayCanvasEvents() {
         // Exited
-        overlayCanvas.setOnMouseExited(_ -> {
+        overlayCanvas().setOnMouseExited(_ -> {
             CanvasPainters currentPainters = painters();
             if (currentPainters != null) {
                 currentPainters.overlay().clearCanvasBackground();
@@ -225,7 +224,7 @@ public final class LabMainView
         });
 
         // Moved
-        overlayCanvas.setOnMouseMoved(event -> {
+        overlayCanvas().setOnMouseMoved(event -> {
             Point2D mousePoint = new Point2D(event.getX(), event.getY());
             drawMouseHover(mousePoint);
         });
@@ -301,9 +300,8 @@ public final class LabMainView
     }
 
     private void disableCanvas() {
-        overlayCanvas.setOnMouseClicked(null);
-        overlayCanvas.setOnMouseExited(null);
-        overlayCanvas.setOnMouseMoved(null);
+        overlayCanvas().setOnMouseExited(null);
+        overlayCanvas().setOnMouseMoved(null);
 
         viewModel.resetClickedCoordinateProperties();
         viewModel.resetSelectedGridCell();

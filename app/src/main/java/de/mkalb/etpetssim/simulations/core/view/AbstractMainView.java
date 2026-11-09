@@ -42,6 +42,7 @@ import java.util.Map;
 
 /**
  * Generic base view that composes config, control and observation regions.
+ *
  * <p>Thin common base of all main views. Regular simulations extend {@link AbstractDefaultMainView}, which adds the
  * timed-step rendering flow; the lab view extends this class directly because it draws on explicit requests instead.
  *
@@ -59,6 +60,8 @@ public abstract class AbstractMainView<
         OV extends SimulationObservationView>
         implements SimulationMainView {
 
+    protected static final double NO_STROKE_LINE_WIDTH = 0.0d;
+
     private static final double INITIAL_CANVAS_WIDTH = 640.0d;
     private static final double INITIAL_CANVAS_HEIGHT = 480.0d;
     private static final double MAX_CANVAS_WIDTH = 6_400.0d;
@@ -75,9 +78,9 @@ public abstract class AbstractMainView<
     protected final CLV controlView;
     protected final OV observationView;
     protected final GridEntityDescriptorRegistry entityDescriptorRegistry;
-    protected final Canvas baseCanvas;
-    protected final Canvas dynamicCanvas;
-    protected final Canvas overlayCanvas;
+    private final Canvas baseCanvas;
+    private final Canvas dynamicCanvas;
+    private final Canvas overlayCanvas;
     private final ScrollPane canvasScrollPane;
     private final BorderPane canvasBorderPane;
     private final Label notificationLabel;
@@ -118,7 +121,14 @@ public abstract class AbstractMainView<
         clearNotification();
     }
 
-    protected static double computeCellFontSize(CellDimension cellDimension, CellShape cellShape) {
+    protected static double computeStrokeLineWidth(CellDimension cellDimension) {
+        if (cellDimension.innerRadius() < 2.0d) {
+            return NO_STROKE_LINE_WIDTH;
+        }
+        return Math.log(cellDimension.innerRadius());
+    }
+
+    private static double computeCellFontSize(CellDimension cellDimension, CellShape cellShape) {
         return Math.round(cellDimension.height() *
                 switch (cellShape) {
                     case TRIANGLE -> 0.135d;
@@ -127,7 +137,7 @@ public abstract class AbstractMainView<
                 });
     }
 
-    protected static double computeCellEmojiFontSize(CellDimension cellDimension, CellShape cellShape) {
+    private static double computeCellEmojiFontSize(CellDimension cellDimension, CellShape cellShape) {
         return Math.round(cellDimension.height() *
                 switch (cellShape) {
                     case TRIANGLE -> 0.6d;
@@ -258,29 +268,8 @@ public abstract class AbstractMainView<
      */
     protected abstract void applyGlobalUserActionAndRedraw(SimulationUserActionDescriptor<CTX> descriptor);
 
-    protected final Region createSimulationRegion() {
-        StackPane stackPane = new StackPane(baseCanvas, dynamicCanvas, overlayCanvas);
-        StackPane.setAlignment(baseCanvas, Pos.TOP_LEFT);
-        StackPane.setAlignment(dynamicCanvas, Pos.TOP_LEFT);
-        StackPane.setAlignment(overlayCanvas, Pos.TOP_LEFT);
-        stackPane.getStyleClass().add(FXStyleClasses.SIMULATION_STACKPANE);
-
-        canvasBorderPane.setCenter(stackPane);
-
-        canvasScrollPane.setContent(canvasBorderPane);
-        canvasScrollPane.setFitToHeight(false);
-        canvasScrollPane.setFitToWidth(false);
-        canvasScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
-        canvasScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
-        canvasScrollPane.setPannable(true);
-
-        VBox vBox = new VBox();
-        vBox.getChildren().add(notificationLabel);
-        vBox.getChildren().add(editToolBar.getNode());
-        vBox.getChildren().add(canvasScrollPane);
-        VBox.setVgrow(canvasScrollPane, Priority.ALWAYS);
-
-        return vBox;
+    protected final Canvas overlayCanvas() {
+        return overlayCanvas;
     }
 
     /**
@@ -300,15 +289,14 @@ public abstract class AbstractMainView<
     protected final void clearPainters() {
         CanvasPainters oldPainters = painters;
         if (oldPainters != null) {
-            oldPainters.base().clearCanvasBackground();
-            oldPainters.dynamic().clearCanvasBackground();
-            oldPainters.overlay().clearCanvasBackground();
+            oldPainters.clearCanvasBackgrounds();
             painters = null;
         }
     }
 
     /**
      * Replaces the base, dynamic, and overlay painters for the given structure and resizes their canvases.
+     *
      * <p>The canvas size is limited; if the grid does not fit, the {@link SimulationNotificationType#CANVAS_SIZE_LIMIT}
      * notification is set. Also recreates {@link #cellFont} and {@link #cellEmojiFont}, which are {@code null} when
      * the cells are too small for readable text.
@@ -343,7 +331,6 @@ public abstract class AbstractMainView<
             viewModel.setNotificationType(SimulationNotificationType.CANVAS_SIZE_LIMIT);
         }
 
-        // Font
         double fontSize = computeCellFontSize(cellDimension, structure.cellShape());
         if (fontSize >= MIN_CELL_FONT_SIZE) {
             cellFont = resolvePreferredFont(fontSize);
@@ -377,15 +364,15 @@ public abstract class AbstractMainView<
                 createBorderRegion(FXStyleClasses.SIMULATION_BOTTOM_BORDERPANE));
     }
 
-    protected final Point2D computeVisibleCanvasCenter(Canvas canvas) {
+    final Point2D computeVisibleCanvasCenter() {
         double viewportWidth = canvasScrollPane.getViewportBounds().getWidth();
         double viewportHeight = canvasScrollPane.getViewportBounds().getHeight();
 
         double hValue = canvasScrollPane.getHvalue();
         double vValue = canvasScrollPane.getVvalue();
 
-        double maxX = canvas.getWidth() - viewportWidth;
-        double maxY = canvas.getHeight() - viewportHeight;
+        double maxX = overlayCanvas.getWidth() - viewportWidth;
+        double maxY = overlayCanvas.getHeight() - viewportHeight;
         double x0 = (maxX > 0) ? (hValue * maxX) : 0;
         double y0 = (maxY > 0) ? (vValue * maxY) : 0;
 
@@ -395,7 +382,7 @@ public abstract class AbstractMainView<
         return new Point2D(x, y);
     }
 
-    protected final Font resolvePreferredFont(double size) {
+    final Font resolvePreferredFont(double size) {
         return fontCache.computeIfAbsent(size, s -> {
             if (Font.getFamilies().contains(MAIN_FONT_FAMILY)) {
                 return Font.font(MAIN_FONT_FAMILY, s);
@@ -403,6 +390,35 @@ public abstract class AbstractMainView<
                 return Font.font(FALLBACK_FONT_FAMILY, s);
             }
         });
+    }
+
+    final boolean hasNotificationListener() {
+        return notificationListener != null;
+    }
+
+    private Region createSimulationRegion() {
+        StackPane stackPane = new StackPane(baseCanvas, dynamicCanvas, overlayCanvas);
+        StackPane.setAlignment(baseCanvas, Pos.TOP_LEFT);
+        StackPane.setAlignment(dynamicCanvas, Pos.TOP_LEFT);
+        StackPane.setAlignment(overlayCanvas, Pos.TOP_LEFT);
+        stackPane.getStyleClass().add(FXStyleClasses.SIMULATION_STACKPANE);
+
+        canvasBorderPane.setCenter(stackPane);
+
+        canvasScrollPane.setContent(canvasBorderPane);
+        canvasScrollPane.setFitToHeight(false);
+        canvasScrollPane.setFitToWidth(false);
+        canvasScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+        canvasScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+        canvasScrollPane.setPannable(true);
+
+        VBox vBox = new VBox();
+        vBox.getChildren().add(notificationLabel);
+        vBox.getChildren().add(editToolBar.getNode());
+        vBox.getChildren().add(canvasScrollPane);
+        VBox.setVgrow(canvasScrollPane, Priority.ALWAYS);
+
+        return vBox;
     }
 
     private void registerOverlayPrimaryClickHandler() {

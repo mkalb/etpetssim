@@ -348,6 +348,10 @@ public abstract class AbstractObservationView<
         updateGenericMetricSection();
     }
 
+    final boolean hasSelectedGridCellListener() {
+        return selectedGridCellListener != null;
+    }
+
     private void updateGridSectionLabel() {
         Optional<STA> statistics = viewModel.getStatistics();
         if (statistics.isPresent()) {

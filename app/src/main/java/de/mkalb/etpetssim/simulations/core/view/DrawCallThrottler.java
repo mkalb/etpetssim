@@ -11,9 +11,9 @@ final class DrawCallThrottler {
     private final int historySize;
     private final int maxSkips;
     private final Queue<Long> durationsMillis;
-    private int skipCounter = 0;
-    private long durationSumMillis = 0;
-    private long averageDurationMillis = 0;
+    private int skipCounter;
+    private long durationSumMillis;
+    private long averageDurationMillis;
 
     DrawCallThrottler(int historySize, int maxSkips) {
         if (historySize <= 0) {
@@ -29,6 +29,7 @@ final class DrawCallThrottler {
 
     /**
      * Returns whether a draw call should be skipped for the current step.
+     *
      * <p>A draw is skipped only when the history window is full, its average duration exceeds the threshold, and fewer
      * than {@code maxSkips} draws were skipped in a row.
      *

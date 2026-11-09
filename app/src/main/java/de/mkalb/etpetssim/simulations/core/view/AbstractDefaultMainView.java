@@ -31,6 +31,7 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * Abstract base of the standard main view family for regular 2D simulations.
+ *
  * <p>Binds {@link DefaultMainViewModel} and provides drawing and throttling support.
  *
  * @param <ENT> entity type stored in grid cells
@@ -61,8 +62,6 @@ public abstract class AbstractDefaultMainView<
                 SimulationControlView,
                 OV> {
 
-    protected static final double NO_STROKE_LINE_WIDTH = 0.0d;
-
     private static final Color SKIP_OVERLAY_TEXT_COLOR = FXPaintFactory.adjustColorAlpha(FXPaintFactory.BORDER_COLOR,
             0.95);
     private static final Color SKIP_OVERLAY_BACKGROUND_COLOR = FXPaintFactory
@@ -82,11 +81,8 @@ public abstract class AbstractDefaultMainView<
 
     private final DrawCallThrottler drawThrottler = new DrawCallThrottler(DRAW_THROTTLER_HISTORY_SIZE,
             DRAW_THROTTLER_MAX_SKIPS);
-
     private int lastDrawnStepCount = Integer.MIN_VALUE;
-
-    private boolean skipOverlayActive = false;
-
+    private boolean skipOverlayActive;
     private @Nullable ChangeListener<@Nullable GC> selectedGridCellListener;
 
     protected AbstractDefaultMainView(DefaultMainViewModel<ENT, GC, GM, CON, STA, SM, CTX> viewModel,
@@ -140,13 +136,6 @@ public abstract class AbstractDefaultMainView<
         if (changed) {
             redrawAfterUserAction();
         }
-    }
-
-    protected final double computeStrokeLineWidth(CellDimension cellDimension) {
-        if (cellDimension.innerRadius() < 2.0d) {
-            return NO_STROKE_LINE_WIDTH;
-        }
-        return Math.log(cellDimension.innerRadius());
     }
 
     /**
@@ -243,9 +232,7 @@ public abstract class AbstractDefaultMainView<
     private void clearCanvasLayers() {
         CanvasPainters currentPainters = painters();
         if (currentPainters != null) {
-            currentPainters.base().clearCanvasBackground();
-            currentPainters.dynamic().clearCanvasBackground();
-            currentPainters.overlay().clearCanvasBackground();
+            currentPainters.clearCanvasBackgrounds();
         }
         skipOverlayActive = false;
     }
@@ -328,7 +315,7 @@ public abstract class AbstractDefaultMainView<
         if (!skipOverlayActive) {
             overlayPainter.clearCanvasBackground();
 
-            Point2D center = computeVisibleCanvasCenter(overlayCanvas);
+            Point2D center = computeVisibleCanvasCenter();
 
             overlayPainter.drawCenteredTextWithBackgroundAt(
                     center,

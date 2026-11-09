@@ -13,17 +13,15 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 
-import java.lang.reflect.Field;
 import java.util.Locale;
-import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Execution(ExecutionMode.SAME_THREAD)
 final class AbstractMainViewTest {
@@ -36,23 +34,8 @@ final class AbstractMainViewTest {
         FXTestSupport.ensureStarted();
     }
 
-    private static Object getNullableField(Object target, String fieldName) {
-        return getNullableField(target, AbstractMainView.class, fieldName);
-    }
-
-    private static Object getNullableField(Object target, Class<?> declaringClass, String fieldName) {
-        try {
-            Field field = declaringClass.getDeclaredField(fieldName);
-            field.setAccessible(true);
-            return field.get(target);
-        } catch (ReflectiveOperationException e) {
-            throw new AssertionError("Failed to read field: " + fieldName, e);
-        }
-    }
-
-    private static Object getNonNullField(Object target, String fieldName) {
-        return Objects.requireNonNull(getNullableField(target, fieldName),
-                "Field '" + fieldName + "' must not be null");
+    private static AbstractMainView<?, ?, ?, ?, ?> createMainView() {
+        return assertInstanceOf(AbstractMainView.class, ConwayFactory.createMainView());
     }
 
     @Test
@@ -86,34 +69,41 @@ final class AbstractMainViewTest {
     @Test
     void testShutdownSimulationUnregistersNotificationListener() {
         FXTestSupport.runAndWait(() -> {
-            SimulationMainView view = ConwayFactory.createMainView();
+            AbstractMainView<?, ?, ?, ?, ?> view = createMainView();
             view.buildMainRegion();
+            boolean registeredBeforeShutdown = view.hasNotificationListener();
 
             view.shutdownSimulation();
 
-            assertNull(getNullableField(view, "notificationListener"));
+            assertAll(
+                    () -> assertTrue(registeredBeforeShutdown),
+                    () -> assertFalse(view.hasNotificationListener())
+            );
         });
     }
 
     @Test
     void testShutdownSimulationUnregistersObservationListener() {
         FXTestSupport.runAndWait(() -> {
-            SimulationMainView view = ConwayFactory.createMainView();
-            AbstractObservationView<?, ?, ?, ?> observationView = assertInstanceOf(AbstractObservationView.class,
-                    getNonNullField(view, "observationView"));
+            AbstractMainView<?, ?, ?, ?, ?> view = createMainView();
+            AbstractObservationView<?, ?, ?, ?> observationView =
+                    assertInstanceOf(AbstractObservationView.class, view.observationView);
+            boolean registeredBeforeShutdown = observationView.hasSelectedGridCellListener();
 
             view.shutdownSimulation();
 
-            assertNull(getNullableField(observationView, AbstractObservationView.class, "selectedGridCellListener"));
+            assertAll(
+                    () -> assertTrue(registeredBeforeShutdown),
+                    () -> assertFalse(observationView.hasSelectedGridCellListener())
+            );
         });
     }
 
     @Test
     void testShutdownSimulationForwardsViewModelTerminationHandle() {
         FXTestSupport.runAndWait(() -> {
-            SimulationMainView view = ConwayFactory.createMainView();
-            SimulationMainViewModel viewModel = assertInstanceOf(SimulationMainViewModel.class,
-                    getNonNullField(view, "viewModel"));
+            AbstractMainView<?, ?, ?, ?, ?> view = createMainView();
+            SimulationMainViewModel viewModel = view.viewModel;
 
             SimulationTerminationHandle terminationHandle = view.shutdownSimulation();
 

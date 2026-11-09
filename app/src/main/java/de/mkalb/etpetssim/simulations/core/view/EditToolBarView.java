@@ -11,6 +11,7 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableBooleanValue;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBase;
@@ -59,10 +60,6 @@ final class EditToolBarView<CTX extends SimulationUserActionContext> {
         clear();
     }
 
-    private static double clampToUnitRange(double value) {
-        return Math.clamp(value, 0.0d, 1.0d);
-    }
-
     Region getNode() {
         return editAffordanceScrollPane;
     }
@@ -72,8 +69,8 @@ final class EditToolBarView<CTX extends SimulationUserActionContext> {
     }
 
     void clear() {
-        clearEditAffordanceToolBar();
-        clearEditToolBar();
+        clearNodes();
+        releaseResources();
     }
 
     void rebuild(
@@ -98,14 +95,10 @@ final class EditToolBarView<CTX extends SimulationUserActionContext> {
             return;
         }
 
-        Button editButton = new Button();
-        configureEditToolBarButton(editButton);
-        editButton.setText(AppLocalization.getText(SimulationLocalizationKeys.SIMULATION_TOOLBAR_EDIT));
-        editButton.setTooltip(
-                new Tooltip(AppLocalization.getText(SimulationLocalizationKeys.SIMULATION_TOOLBAR_EDIT_TOOLTIP)));
+        Button editButton = new Button(AppLocalization.getText(SimulationLocalizationKeys.SIMULATION_TOOLBAR_EDIT));
+        configureEditToolBarButton(editButton, SimulationLocalizationKeys.SIMULATION_TOOLBAR_EDIT_TOOLTIP);
         editButton.setOnAction(_ -> editModeProperty.set(!editModeProperty.get()));
-        editButton.visibleProperty().bind(editModeProperty.not());
-        editButton.managedProperty().bind(editModeProperty.not());
+        bindVisibility(editButton, editModeProperty.not());
 
         editModeButton = editButton;
 
@@ -137,7 +130,7 @@ final class EditToolBarView<CTX extends SimulationUserActionContext> {
                 return;
             }
 
-            double nextHValue = clampToUnitRange(editAffordanceScrollPane.getHvalue() + (delta / maxX));
+            double nextHValue = Math.clamp(editAffordanceScrollPane.getHvalue() + (delta / maxX), 0.0d, 1.0d);
             editAffordanceScrollPane.setHvalue(nextHValue);
             event.consume();
         });
@@ -160,12 +153,9 @@ final class EditToolBarView<CTX extends SimulationUserActionContext> {
         if (selectedToolId != null) {
             selectButton =
                     new ToggleButton(AppLocalization.getText(SimulationLocalizationKeys.SIMULATION_TOOLBAR_SELECT));
-            configureEditToolBarButton(selectButton);
-            selectButton.setTooltip(
-                    new Tooltip(AppLocalization.getText(SimulationLocalizationKeys.SIMULATION_TOOLBAR_SELECT_TOOLTIP)));
+            configureEditToolBarButton(selectButton, SimulationLocalizationKeys.SIMULATION_TOOLBAR_SELECT_TOOLTIP);
             selectButton.setToggleGroup(cellActionToggleGroup);
-            selectButton.visibleProperty().bind(editModeProperty);
-            selectButton.managedProperty().bind(editModeProperty);
+            bindVisibility(selectButton, editModeProperty);
             nodes.add(selectButton);
         }
 
@@ -173,28 +163,23 @@ final class EditToolBarView<CTX extends SimulationUserActionContext> {
             if ((descriptor.scope() == SimulationUserActionScope.CELL_SELECTED)
                     && (selectedToolId != null)) {
                 ToggleButton actionButton = new ToggleButton(AppLocalization.getText(descriptor.labelKey()));
-                configureEditToolBarButton(actionButton);
-                actionButton.setTooltip(new Tooltip(AppLocalization.getText(descriptor.tooltipKey())));
+                configureEditToolBarButton(actionButton, descriptor.tooltipKey());
                 actionButton.setToggleGroup(cellActionToggleGroup);
-                actionButton.visibleProperty().bind(editModeProperty);
-                actionButton.managedProperty().bind(editModeProperty);
+                bindVisibility(actionButton, editModeProperty);
                 nodes.add(actionButton);
                 descriptorByToggle.put(actionButton, descriptor);
             } else if (descriptor.scope() == SimulationUserActionScope.GLOBAL) {
                 Button actionButton = new Button(AppLocalization.getText(descriptor.labelKey()));
-                configureEditToolBarButton(actionButton);
-                actionButton.setTooltip(new Tooltip(AppLocalization.getText(descriptor.tooltipKey())));
+                configureEditToolBarButton(actionButton, descriptor.tooltipKey());
                 actionButton.setOnAction(_ -> globalActionHandler.accept(descriptor));
-                actionButton.visibleProperty().bind(editModeProperty);
-                actionButton.managedProperty().bind(editModeProperty);
+                bindVisibility(actionButton, editModeProperty);
                 nodes.add(actionButton);
             }
         }
 
         Node optionPanelNode = optionPanelFactory.apply(selectedToolId);
         if (optionPanelNode != null) {
-            optionPanelNode.visibleProperty().bind(editModeProperty);
-            optionPanelNode.managedProperty().bind(editModeProperty);
+            bindVisibility(optionPanelNode, editModeProperty);
             nodes.add(optionPanelNode);
         }
 
@@ -219,27 +204,30 @@ final class EditToolBarView<CTX extends SimulationUserActionContext> {
 
             String currentToolId = selectedToolId.get();
             selectedToolIdListener.changed(selectedToolId, currentToolId, currentToolId);
-        }
 
-        cellActionToggleGroup.selectedToggleProperty().addListener((_, _, selectedToggle) -> {
-            if (selectedToolId == null) {
-                return;
-            }
-            var descriptor = descriptorByToggle.get(selectedToggle);
-            selectedToolId.set(
-                    (descriptor != null)
-                            ? descriptor.toolId()
-                            : SimulationUserActionDescriptor.SELECT_TOOL_ID);
-        });
+            cellActionToggleGroup.selectedToggleProperty().addListener((_, _, selectedToggle) -> {
+                var descriptor = descriptorByToggle.get(selectedToggle);
+                selectedToolId.set(
+                        (descriptor != null)
+                                ? descriptor.toolId()
+                                : SimulationUserActionDescriptor.SELECT_TOOL_ID);
+            });
+        }
 
         return nodes;
     }
 
-    private void configureEditToolBarButton(ButtonBase button) {
+    private void configureEditToolBarButton(ButtonBase button, String tooltipKey) {
         button.getStyleClass().add(FXStyleClasses.SIMULATION_EDIT_TOOLBAR_BUTTON);
+        button.setTooltip(new Tooltip(AppLocalization.getText(tooltipKey)));
     }
 
-    private void clearEditToolBar() {
+    private void bindVisibility(Node node, ObservableBooleanValue condition) {
+        node.visibleProperty().bind(condition);
+        node.managedProperty().bind(condition);
+    }
+
+    private void releaseResources() {
         if ((selectedToolIdProperty != null) && (selectedToolIdListener != null)) {
             selectedToolIdProperty.removeListener(selectedToolIdListener);
         }
@@ -256,7 +244,7 @@ final class EditToolBarView<CTX extends SimulationUserActionContext> {
         editToolBarCleanupActions.clear();
     }
 
-    private void clearEditAffordanceToolBar() {
+    private void clearNodes() {
         if (editModeButton != null) {
             editModeButton.setOnAction(null);
         }
