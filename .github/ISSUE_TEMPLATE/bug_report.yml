@@ -1,0 +1,74 @@
+name: Bug report
+description: Report something that does not work as intended.
+labels:
+  - bug
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for reporting a bug. Please search the existing issues first and write in English.
+        Do not report security vulnerabilities in public issues.
+  - type: textarea
+    id: version
+    attributes:
+      label: Version and build information
+      description: >-
+        Copy the lines from the About dialog (tab "Version"), or give the name of the release ZIP
+        (e.g., ExtraterrestrialPetsSimulation-0.1.0.zip).
+      render: text
+    validations:
+      required: true
+  - type: dropdown
+    id: platform
+    attributes:
+      label: Operating system and launch method
+      description: For "Other", name the operating system and launch method in the steps to reproduce.
+      options:
+        - Windows x64 (release ZIP)
+        - Windows x64 (Gradle)
+        - Linux x64 (Gradle)
+        - Other
+    validations:
+      required: true
+  - type: dropdown
+    id: simulation
+    attributes:
+      label: Affected simulation
+      options:
+        - ET Pets
+        - Wa-Tor
+        - Sugarscape
+        - Conway's Game of Life
+        - Langton's Ant
+        - Forest-fire model
+        - Snake
+        - Rebounding Entities
+        - General / not simulation-specific
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: Include the configuration of the simulation if it matters.
+      placeholder: |
+        1. Start the application with ...
+        2. Choose ...
+        3. ...
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Log output or screenshots
+      description: >-
+        Optional. Logs are written only with --log-console or --log-file; the About dialog (tab "Version") shows
+        the path of the log file.

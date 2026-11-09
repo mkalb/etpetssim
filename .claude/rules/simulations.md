@@ -48,8 +48,8 @@ Keep the cross-cutting files in sync, for example:
 | Localization keys                     | All `messages_*.properties` files (see `i18n.md`)                       |
 | Factory wiring                        | `simulations/core/SimulationFactory.java`, `SimulationFactoryTest.java` |
 
-Lists of simulations (e.g., the README table and gallery, and the entity catalog) follow the declaration order of
-`SimulationType`.
+Lists of simulations (e.g., the README table and gallery, the entity catalog, and the simulation dropdowns of the
+issue forms in `.github/ISSUE_TEMPLATE`) follow the declaration order of `SimulationType`.
 
 ## MVVM Dependencies
 

@@ -1,0 +1,25 @@
+name: Question
+description: Ask a question about the project or the application.
+labels:
+  - question
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Please search the existing issues first and write in English.
+  - type: textarea
+    id: question
+    attributes:
+      label: Question
+    validations:
+      required: true
+  - type: textarea
+    id: context
+    attributes:
+      label: Context
+      description: Optional. What are you trying to do?
+  - type: input
+    id: version
+    attributes:
+      label: Version
+      description: Optional. The version from the About dialog (tab "Version") or the name of the release ZIP.

@@ -198,15 +198,8 @@ technical decisions remain project-driven and under maintainer control.
 
 ## Feedback and Issues
 
-Bug reports and improvement suggestions are very welcome.
-Please open a [GitHub Issue](https://github.com/mkalb/etpetssim/issues) if you find a problem or have an idea to improve
-the project.
-
-If possible, include:
-
-- clear steps to reproduce (for bugs),
-- expected vs. actual behavior,
-- screenshots or logs.
+Bug reports, ideas, and questions are welcome as [GitHub Issues](https://github.com/mkalb/etpetssim/issues). Before
+opening an issue or a pull request, please read the [contributing guidelines](CONTRIBUTING.md).
 
 ## Technologies Used
 

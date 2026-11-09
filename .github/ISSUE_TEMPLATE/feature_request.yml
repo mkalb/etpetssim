@@ -1,0 +1,41 @@
+name: Feature request
+description: Suggest an idea or an improvement.
+labels:
+  - enhancement
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for your idea. Please search the existing issues first and write in English.
+  - type: dropdown
+    id: simulation
+    attributes:
+      label: Affected simulation or area
+      options:
+        - ET Pets
+        - Wa-Tor
+        - Sugarscape
+        - Conway's Game of Life
+        - Langton's Ant
+        - Forest-fire model
+        - Snake
+        - Rebounding Entities
+        - General / not simulation-specific
+  - type: textarea
+    id: motivation
+    attributes:
+      label: Problem or motivation
+      description: What is missing or could be better?
+    validations:
+      required: true
+  - type: textarea
+    id: idea
+    attributes:
+      label: Proposed idea
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives
+      description: Optional. Other solutions you have considered.
