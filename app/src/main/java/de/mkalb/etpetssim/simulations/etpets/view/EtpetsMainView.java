@@ -19,17 +19,16 @@ import de.mkalb.etpetssim.simulations.etpets.model.EtpetsSimulationManager;
 import de.mkalb.etpetssim.simulations.etpets.model.EtpetsStatistics;
 import de.mkalb.etpetssim.simulations.etpets.model.entity.AgentEntity;
 import de.mkalb.etpetssim.simulations.etpets.model.entity.EtpetsEntity;
+import de.mkalb.etpetssim.simulations.etpets.model.entity.Insect;
 import de.mkalb.etpetssim.simulations.etpets.model.entity.NoAgent;
 import de.mkalb.etpetssim.simulations.etpets.model.entity.NoResource;
 import de.mkalb.etpetssim.simulations.etpets.model.entity.Pet;
 import de.mkalb.etpetssim.simulations.etpets.model.entity.PetEgg;
-import de.mkalb.etpetssim.simulations.etpets.model.entity.ResourceBase;
+import de.mkalb.etpetssim.simulations.etpets.model.entity.Plant;
 import de.mkalb.etpetssim.simulations.etpets.model.entity.ResourceEntity;
 import de.mkalb.etpetssim.simulations.etpets.model.entity.TerrainConstant;
 import de.mkalb.etpetssim.simulations.etpets.model.entity.TerrainEntity;
 import de.mkalb.etpetssim.simulations.etpets.model.entity.Trail;
-import de.mkalb.etpetssim.simulations.etpets.shared.EtpetsResourceChoice;
-import de.mkalb.etpetssim.simulations.etpets.shared.EtpetsTerrainChoice;
 import de.mkalb.etpetssim.simulations.etpets.shared.EtpetsUserActionContext;
 import de.mkalb.etpetssim.simulations.etpets.viewmodel.EtpetsEditToolBarViewModel;
 import de.mkalb.etpetssim.ui.CellDimension;
@@ -37,25 +36,25 @@ import de.mkalb.etpetssim.ui.FXComponentFactory;
 import de.mkalb.etpetssim.ui.FXGridCanvasPainter;
 import de.mkalb.etpetssim.ui.FXPaintFactory;
 import de.mkalb.etpetssim.ui.FXStyleClasses;
+import de.mkalb.etpetssim.ui.InputChoiceProperty;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.ObjectProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.ListCell;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.StrokeType;
 import org.jspecify.annotations.Nullable;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
 
+/**
+ * Main view of ET Pets.
+ */
 public final class EtpetsMainView extends AbstractDefaultMainView<
         EtpetsEntity,
         EtpetsCell,
@@ -96,8 +95,12 @@ public final class EtpetsMainView extends AbstractDefaultMainView<
     private static final double SELECTED_STROKE_LINE_WIDTH = 1.5d;
     private static final double PET_EGG_STROKE_LINE_WIDTH = 1.0d;
 
-    private final Map<String, @Nullable Map<Integer, Color>> entityColors;
     private final EtpetsEditToolBarViewModel editToolBarViewModel;
+    private @Nullable Map<Integer, Color> trailColors;
+    private @Nullable Map<Integer, Color> plantColors;
+    private @Nullable Map<Integer, Color> insectColors;
+    private @Nullable Map<Integer, Color> petColors;
+    private @Nullable Map<Integer, Color> petEggColors;
     private @Nullable CellDrawer<TerrainEntity> cellTerrainDrawer;
     private @Nullable CellDrawer<ResourceEntity> cellResourceDrawer;
     private @Nullable CellDrawer<AgentEntity> cellAgentDrawer;
@@ -115,12 +118,21 @@ public final class EtpetsMainView extends AbstractDefaultMainView<
                 observationView,
                 entityDescriptorRegistry);
         this.editToolBarViewModel = editToolBarViewModel;
-        entityColors = HashMap.newHashMap(5);
-        entityColors.put(EtpetsEntity.DESCRIPTOR_ID_TRAIL, null);
-        entityColors.put(EtpetsEntity.DESCRIPTOR_ID_PLANT, null);
-        entityColors.put(EtpetsEntity.DESCRIPTOR_ID_INSECT, null);
-        entityColors.put(EtpetsEntity.DESCRIPTOR_ID_PET, null);
-        entityColors.put(EtpetsEntity.DESCRIPTOR_ID_PET_EGG, null);
+    }
+
+    private static int clampToMapRange(double value,
+                                       int min,
+                                       int max) {
+        if (Double.isNaN(value)) {
+            return min;
+        }
+        return Math.clamp(Math.round(value), min, max);
+    }
+
+    private static Color resolveVariantColor(@Nullable Map<Integer, Color> variantColors,
+                                             int value,
+                                             Color baseColor) {
+        return (variantColors == null) ? baseColor : variantColors.getOrDefault(value, baseColor);
     }
 
     @Override
@@ -130,41 +142,36 @@ public final class EtpetsMainView extends AbstractDefaultMainView<
                 .colorOrFallback();
         painters.base().fillCanvasBackground(backgroundColor);
 
-        entityColors.put(EtpetsEntity.DESCRIPTOR_ID_TRAIL,
-                computeBrightnessVariantsMap(
-                        entityDescriptorRegistry.requireByDescriptorId(EtpetsEntity.DESCRIPTOR_ID_TRAIL),
-                        minByDescriptorId(EtpetsEntity.DESCRIPTOR_ID_TRAIL),
-                        maxByDescriptorId(EtpetsEntity.DESCRIPTOR_ID_TRAIL),
-                        TRAIL_GROUP_COUNT,
-                        TRAIL_MAX_FACTOR_DELTA));
-        entityColors.put(EtpetsEntity.DESCRIPTOR_ID_PLANT,
-                computeBrightnessVariantsMap(
-                        entityDescriptorRegistry.requireByDescriptorId(EtpetsEntity.DESCRIPTOR_ID_PLANT),
-                        minByDescriptorId(EtpetsEntity.DESCRIPTOR_ID_PLANT),
-                        maxByDescriptorId(EtpetsEntity.DESCRIPTOR_ID_PLANT),
-                        PLANT_GROUP_COUNT,
-                        PLANT_MAX_FACTOR_DELTA));
-        entityColors.put(EtpetsEntity.DESCRIPTOR_ID_INSECT,
-                computeBrightnessVariantsMap(
-                        entityDescriptorRegistry.requireByDescriptorId(EtpetsEntity.DESCRIPTOR_ID_INSECT),
-                        minByDescriptorId(EtpetsEntity.DESCRIPTOR_ID_INSECT),
-                        maxByDescriptorId(EtpetsEntity.DESCRIPTOR_ID_INSECT),
-                        INSECT_GROUP_COUNT,
-                        INSECT_MAX_FACTOR_DELTA));
-        entityColors.put(EtpetsEntity.DESCRIPTOR_ID_PET,
-                computeBrightnessVariantsMap(
-                        entityDescriptorRegistry.requireByDescriptorId(EtpetsEntity.DESCRIPTOR_ID_PET),
-                        minByDescriptorId(EtpetsEntity.DESCRIPTOR_ID_PET),
-                        maxByDescriptorId(EtpetsEntity.DESCRIPTOR_ID_PET),
-                        PET_GROUP_COUNT,
-                        PET_MAX_FACTOR_DELTA));
-        entityColors.put(EtpetsEntity.DESCRIPTOR_ID_PET_EGG,
-                computeBrightnessVariantsMap(
-                        entityDescriptorRegistry.requireByDescriptorId(EtpetsEntity.DESCRIPTOR_ID_PET_EGG),
-                        minByDescriptorId(EtpetsEntity.DESCRIPTOR_ID_PET_EGG),
-                        maxByDescriptorId(EtpetsEntity.DESCRIPTOR_ID_PET_EGG),
-                        PET_EGG_GROUP_COUNT,
-                        PET_EGG_MAX_FACTOR_DELTA));
+        trailColors = computeBrightnessVariantsMap(
+                entityDescriptorRegistry.requireByDescriptorId(EtpetsEntity.DESCRIPTOR_ID_TRAIL),
+                EtpetsBalance.TRAIL_INTENSITY_MIN,
+                EtpetsBalance.TRAIL_INTENSITY_MAX,
+                TRAIL_GROUP_COUNT,
+                TRAIL_MAX_FACTOR_DELTA);
+        plantColors = computeBrightnessVariantsMap(
+                entityDescriptorRegistry.requireByDescriptorId(EtpetsEntity.DESCRIPTOR_ID_PLANT),
+                EtpetsBalance.PLANT_CURRENT_AMOUNT_MIN,
+                EtpetsBalance.PLANT_CURRENT_AMOUNT_MAX,
+                PLANT_GROUP_COUNT,
+                PLANT_MAX_FACTOR_DELTA);
+        insectColors = computeBrightnessVariantsMap(
+                entityDescriptorRegistry.requireByDescriptorId(EtpetsEntity.DESCRIPTOR_ID_INSECT),
+                EtpetsBalance.INSECT_CURRENT_AMOUNT_MIN,
+                EtpetsBalance.INSECT_CURRENT_AMOUNT_MAX,
+                INSECT_GROUP_COUNT,
+                INSECT_MAX_FACTOR_DELTA);
+        petColors = computeBrightnessVariantsMap(
+                entityDescriptorRegistry.requireByDescriptorId(EtpetsEntity.DESCRIPTOR_ID_PET),
+                EtpetsBalance.PET_CURRENT_ENERGY_MIN,
+                EtpetsBalance.PET_CURRENT_ENERGY_MAX,
+                PET_GROUP_COUNT,
+                PET_MAX_FACTOR_DELTA);
+        petEggColors = computeBrightnessVariantsMap(
+                entityDescriptorRegistry.requireByDescriptorId(EtpetsEntity.DESCRIPTOR_ID_PET_EGG),
+                EtpetsBalance.PET_EGG_INCUBATION_REMAINING_MIN,
+                EtpetsBalance.PET_EGG_INCUBATION_REMAINING_MAX,
+                PET_EGG_GROUP_COUNT,
+                PET_EGG_MAX_FACTOR_DELTA);
 
         double strokeLineWidth = computeStrokeLineWidth(cellDimension);
 
@@ -242,18 +249,18 @@ public final class EtpetsMainView extends AbstractDefaultMainView<
         var agentModel = currentGridModel.agentModel();
 
         var rockDescriptor = entityDescriptorRegistry.requireByDescriptorId(EtpetsEntity.DESCRIPTOR_ID_ROCK);
-        terrainModel.filteredCoordinates(e -> EtpetsEntity.DESCRIPTOR_ID_ROCK.equals(e.descriptorId()))
+        terrainModel.filteredCoordinates(entity -> entity == TerrainConstant.ROCK)
                 .forEach(coordinate ->
                         painters.dynamic().drawCell(coordinate, rockDescriptor.color(), rockDescriptor.borderColor(),
                                 NO_STROKE_LINE_WIDTH));
 
         var waterDescriptor = entityDescriptorRegistry.requireByDescriptorId(EtpetsEntity.DESCRIPTOR_ID_WATER);
-        terrainModel.filteredCoordinates(e -> EtpetsEntity.DESCRIPTOR_ID_WATER.equals(e.descriptorId()))
+        terrainModel.filteredCoordinates(entity -> entity == TerrainConstant.WATER)
                 .forEach(coordinate ->
                         painters.dynamic().drawCell(coordinate, waterDescriptor.color(), waterDescriptor.borderColor(),
                                 NO_STROKE_LINE_WIDTH));
 
-        terrainModel.filteredCells(e -> e instanceof Trail)
+        terrainModel.filteredCells(entity -> entity instanceof Trail)
                 .forEach(cell -> cellTerrainDrawer.draw(
                         entityDescriptorRegistry.requireByDescriptorId(cell.descriptorId()),
                         painters.dynamic(),
@@ -283,14 +290,16 @@ public final class EtpetsMainView extends AbstractDefaultMainView<
                         SimulationUserActionScope.CELL_SELECTED,
                         ETPETS_TOOLBAR_SET_TERRAIN,
                         ETPETS_TOOLBAR_SET_TERRAIN_TOOLTIP,
-                        () -> editToolBarViewModel.resolveSelectedTerrainContext()
+                        () -> Optional.of(editToolBarViewModel.getSelectedTerrainChoice())
+                                .map(EtpetsUserActionContext.SetTerrain::new)
                                 .map(Function.identity())),
                 new SimulationUserActionDescriptor<>(
                         ETPETS_TOOL_ID_SET_RESOURCE,
                         SimulationUserActionScope.CELL_SELECTED,
                         ETPETS_TOOLBAR_SET_RESOURCE,
                         ETPETS_TOOLBAR_SET_RESOURCE_TOOLTIP,
-                        () -> editToolBarViewModel.resolveSelectedResourceContext()
+                        () -> Optional.of(editToolBarViewModel.getSelectedResourceChoice())
+                                .map(EtpetsUserActionContext.SetResource::new)
                                 .map(Function.identity()))
         );
     }
@@ -298,246 +307,102 @@ public final class EtpetsMainView extends AbstractDefaultMainView<
     @Override
     protected Node createEditToolBarOptionPanel(@Nullable ObjectProperty<String> selectedToolId) {
         HBox optionPanel = new HBox(
-                createTerrainOptionBox(selectedToolId),
-                createResourceOptionBox(selectedToolId));
+                createOptionBox(editToolBarViewModel.selectedTerrainChoiceProperty(),
+                        ETPETS_TOOLBAR_SET_TERRAIN_OPTION,
+                        ETPETS_TOOLBAR_SET_TERRAIN_OPTION_TOOLTIP,
+                        ETPETS_TOOL_ID_SET_TERRAIN,
+                        selectedToolId),
+                createOptionBox(editToolBarViewModel.selectedResourceChoiceProperty(),
+                        ETPETS_TOOLBAR_SET_RESOURCE_OPTION,
+                        ETPETS_TOOLBAR_SET_RESOURCE_OPTION_TOOLTIP,
+                        ETPETS_TOOL_ID_SET_RESOURCE,
+                        selectedToolId));
         optionPanel.getStyleClass().add(FXStyleClasses.SIMULATION_EDIT_TOOLBAR_OPTION_PANEL);
         optionPanel.setSpacing(EDIT_OPTION_BOX_SPACING);
         return optionPanel;
     }
 
-    private int minByDescriptorId(String descriptorId) {
-        return switch (descriptorId) {
-            case EtpetsEntity.DESCRIPTOR_ID_TRAIL -> EtpetsBalance.TRAIL_INTENSITY_MIN;
-            case EtpetsEntity.DESCRIPTOR_ID_PLANT -> EtpetsBalance.PLANT_CURRENT_AMOUNT_MIN;
-            case EtpetsEntity.DESCRIPTOR_ID_INSECT -> EtpetsBalance.INSECT_CURRENT_AMOUNT_MIN;
-            case EtpetsEntity.DESCRIPTOR_ID_PET -> EtpetsBalance.PET_CURRENT_ENERGY_MIN;
-            case EtpetsEntity.DESCRIPTOR_ID_PET_EGG -> EtpetsBalance.PET_EGG_INCUBATION_REMAINING_MIN;
-            default -> throw new IllegalArgumentException("No min found for descriptorId: " + descriptorId);
-        };
-    }
-
-    private int maxByDescriptorId(String descriptorId) {
-        return switch (descriptorId) {
-            case EtpetsEntity.DESCRIPTOR_ID_TRAIL -> EtpetsBalance.TRAIL_INTENSITY_MAX;
-            case EtpetsEntity.DESCRIPTOR_ID_PLANT -> EtpetsBalance.PLANT_CURRENT_AMOUNT_MAX;
-            case EtpetsEntity.DESCRIPTOR_ID_INSECT -> EtpetsBalance.INSECT_CURRENT_AMOUNT_MAX;
-            case EtpetsEntity.DESCRIPTOR_ID_PET -> EtpetsBalance.PET_CURRENT_ENERGY_MAX;
-            case EtpetsEntity.DESCRIPTOR_ID_PET_EGG -> EtpetsBalance.PET_EGG_INCUBATION_REMAINING_MAX;
-            default -> throw new IllegalArgumentException("No max found for descriptorId: " + descriptorId);
-        };
-    }
-
-    @SuppressWarnings("OverloadedMethodsWithSameNumberOfParameters")
-    private int clampToMapRange(double value,
-                                int min,
-                                int max) {
-        if (Double.isNaN(value)) {
-            return min;
-        }
-
-        return Math.clamp(Math.round(value), min, max);
-    }
-
-    @SuppressWarnings("OverloadedMethodsWithSameNumberOfParameters")
-    private int clampToMapRange(int value,
-                                int min,
-                                int max) {
-        return Math.clamp(value, min, max);
-    }
-
     private Color resolveTerrainFillColor(GridEntityDescriptor descriptor,
                                           TerrainEntity entity) {
-        String descriptorId = descriptor.descriptorId();
         Color baseColor = descriptor.colorOrFallback();
-        Map<Integer, Color> colorMap = entityColors.get(descriptorId);
-        if (colorMap != null) {
-            Integer value = switch (entity) {
-                case Trail trail -> clampToMapRange(
-                        trail.intensity(),
-                        minByDescriptorId(descriptorId),
-                        maxByDescriptorId(descriptorId));
-                case TerrainConstant ignoredTerrain -> -1;
-            };
-            return colorMap.getOrDefault(value, baseColor);
-        }
-        return baseColor;
+        return switch (entity) {
+            case Trail trail -> resolveVariantColor(trailColors,
+                    clampToMapRange(trail.intensity(),
+                            EtpetsBalance.TRAIL_INTENSITY_MIN,
+                            EtpetsBalance.TRAIL_INTENSITY_MAX),
+                    baseColor);
+            case TerrainConstant _ -> baseColor;
+        };
     }
 
     private Color resolveResourceFillColor(GridEntityDescriptor descriptor,
                                            ResourceEntity entity) {
-        String descriptorId = descriptor.descriptorId();
         Color baseColor = descriptor.colorOrFallback();
-        Map<Integer, Color> colorMap = entityColors.get(descriptorId);
-        if (colorMap != null) {
-            Integer value = switch (entity) {
-                case ResourceBase resource -> clampToMapRange(
-                        resource.currentAmount(),
-                        minByDescriptorId(descriptorId),
-                        maxByDescriptorId(descriptorId));
-                case NoResource ignoredResource -> -1;
-            };
-            return colorMap.getOrDefault(value, baseColor);
-        }
-        return baseColor;
+        return switch (entity) {
+            case Plant plant -> resolveVariantColor(plantColors,
+                    clampToMapRange(plant.currentAmount(),
+                            EtpetsBalance.PLANT_CURRENT_AMOUNT_MIN,
+                            EtpetsBalance.PLANT_CURRENT_AMOUNT_MAX),
+                    baseColor);
+            case Insect insect -> resolveVariantColor(insectColors,
+                    clampToMapRange(insect.currentAmount(),
+                            EtpetsBalance.INSECT_CURRENT_AMOUNT_MIN,
+                            EtpetsBalance.INSECT_CURRENT_AMOUNT_MAX),
+                    baseColor);
+            case NoResource _ -> baseColor;
+        };
     }
 
     private Color resolveAgentFillColor(GridEntityDescriptor descriptor,
                                         AgentEntity entity) {
-        String descriptorId = descriptor.descriptorId();
         Color baseColor = descriptor.colorOrFallback();
-        Map<Integer, Color> colorMap = entityColors.get(descriptorId);
-        if (colorMap != null) {
-            Integer value = switch (entity) {
-                case Pet pet -> clampToMapRange(
-                        pet.currentEnergy(),
-                        minByDescriptorId(descriptorId),
-                        maxByDescriptorId(descriptorId));
-                case PetEgg egg -> clampToMapRange(
-                        egg.incubationRemaining(),
-                        minByDescriptorId(descriptorId),
-                        maxByDescriptorId(descriptorId));
-                case NoAgent ignoredAgent -> -1;
-            };
-            return colorMap.getOrDefault(value, baseColor);
-        }
-        return baseColor;
+        return switch (entity) {
+            case Pet pet -> resolveVariantColor(petColors,
+                    clampToMapRange(pet.currentEnergy(),
+                            EtpetsBalance.PET_CURRENT_ENERGY_MIN,
+                            EtpetsBalance.PET_CURRENT_ENERGY_MAX),
+                    baseColor);
+            case PetEgg egg -> resolveVariantColor(petEggColors,
+                    clampToMapRange(egg.incubationRemaining(),
+                            EtpetsBalance.PET_EGG_INCUBATION_REMAINING_MIN,
+                            EtpetsBalance.PET_EGG_INCUBATION_REMAINING_MAX),
+                    baseColor);
+            case NoAgent _ -> baseColor;
+        };
     }
 
-    private HBox createTerrainOptionBox(@Nullable ObjectProperty<String> selectedToolId) {
-        ObservableList<EtpetsTerrainChoice> availableTerrainChoices = editToolBarViewModel.availableTerrainChoices();
-        ComboBox<EtpetsTerrainChoice> terrainComboBox = new ComboBox<>();
-        terrainComboBox.setItems(availableTerrainChoices);
-        terrainComboBox.setMaxWidth(Double.MAX_VALUE);
-        terrainComboBox.getStyleClass().add(FXStyleClasses.SIMULATION_EDIT_TOOLBAR_COMBOBOX);
-        terrainComboBox.setCellFactory(_ -> createTerrainChoiceCell());
-        terrainComboBox.setButtonCell(createTerrainChoiceCell());
-        EtpetsTerrainChoice selectedTerrainChoice = editToolBarViewModel.getSelectedTerrainChoice();
-        if (selectedTerrainChoice != null) {
-            terrainComboBox.setValue(selectedTerrainChoice);
-        }
+    private <T> HBox createOptionBox(InputChoiceProperty<T> choiceProperty,
+                                     String labelKey,
+                                     String tooltipKey,
+                                     String toolId,
+                                     @Nullable ObjectProperty<String> selectedToolId) {
+        var control = FXComponentFactory.createLabeledChoiceComboBox(
+                choiceProperty,
+                AppLocalization.getText(labelKey),
+                AppLocalization.getText(tooltipKey),
+                FXStyleClasses.SIMULATION_EDIT_TOOLBAR_COMBOBOX,
+                this::registerEditToolBarCleanup);
+        Label label = control.label();
+        label.getStyleClass().add(FXStyleClasses.SIMULATION_EDIT_TOOLBAR_OPTION_LABEL);
+        var comboBox = control.controlRegion();
 
-        Label terrainLabel = FXComponentFactory.createLabeledControl(
-                terrainComboBox,
-                AppLocalization.getText(ETPETS_TOOLBAR_SET_TERRAIN_OPTION),
-                AppLocalization.getText(ETPETS_TOOLBAR_SET_TERRAIN_OPTION_TOOLTIP),
-                FXStyleClasses.SIMULATION_EDIT_TOOLBAR_OPTION_LABEL).label();
-
-        ChangeListener<@Nullable EtpetsTerrainChoice> comboSelectionListener = (_, oldValue, newValue) -> {
-            if (oldValue != newValue) {
-                editToolBarViewModel.setSelectedTerrainChoice(newValue);
-            }
-        };
-        ChangeListener<@Nullable EtpetsTerrainChoice> viewModelSelectionListener = (_, _, newValue) -> {
-            if (terrainComboBox.getValue() != newValue) {
-                if (newValue == null) {
-                    terrainComboBox.getSelectionModel().clearSelection();
-                } else {
-                    terrainComboBox.setValue(newValue);
-                }
-            }
-        };
-        var selectedTerrainChoiceProperty = editToolBarViewModel.selectedTerrainChoiceProperty();
-        terrainComboBox.valueProperty().addListener(comboSelectionListener);
-        selectedTerrainChoiceProperty.addListener(viewModelSelectionListener);
-
-        if (selectedToolId != null) {
-            var enabledBinding = Bindings.createBooleanBinding(
-                    () -> ETPETS_TOOL_ID_SET_TERRAIN.equals(selectedToolId.get()) && !availableTerrainChoices.isEmpty(),
-                    selectedToolId,
-                    availableTerrainChoices);
-            terrainLabel.disableProperty().bind(enabledBinding.not());
-            terrainComboBox.disableProperty().bind(enabledBinding.not());
-            registerEditToolBarCleanup(() -> {
-                terrainLabel.disableProperty().unbind();
-                terrainComboBox.disableProperty().unbind();
-                enabledBinding.dispose();
-                terrainComboBox.valueProperty().removeListener(comboSelectionListener);
-                selectedTerrainChoiceProperty.removeListener(viewModelSelectionListener);
-            });
+        if (selectedToolId == null) {
+            label.setDisable(true);
+            comboBox.setDisable(true);
         } else {
+            var disableWhenToolNotSelected = Bindings.not(selectedToolId.isEqualTo(toolId));
+            label.disableProperty().bind(disableWhenToolNotSelected);
+            comboBox.disableProperty().bind(disableWhenToolNotSelected);
             registerEditToolBarCleanup(() -> {
-                terrainComboBox.valueProperty().removeListener(comboSelectionListener);
-                selectedTerrainChoiceProperty.removeListener(viewModelSelectionListener);
+                label.disableProperty().unbind();
+                comboBox.disableProperty().unbind();
             });
         }
 
-        HBox terrainOptionBox = new HBox(terrainLabel, terrainComboBox);
-        terrainOptionBox.setAlignment(Pos.CENTER_LEFT);
-        terrainOptionBox.setSpacing(EDIT_OPTION_BOX_SPACING);
-        return terrainOptionBox;
-    }
-
-    private HBox createResourceOptionBox(@Nullable ObjectProperty<String> selectedToolId) {
-        ObservableList<EtpetsResourceChoice> availableResourceChoices = editToolBarViewModel.availableResourceChoices();
-        ComboBox<EtpetsResourceChoice> resourceComboBox = new ComboBox<>();
-        resourceComboBox.setItems(availableResourceChoices);
-        resourceComboBox.setMaxWidth(Double.MAX_VALUE);
-        resourceComboBox.getStyleClass().add(FXStyleClasses.SIMULATION_EDIT_TOOLBAR_COMBOBOX);
-        resourceComboBox.setCellFactory(_ -> createResourceChoiceCell());
-        resourceComboBox.setButtonCell(createResourceChoiceCell());
-        EtpetsResourceChoice selectedResourceChoice = editToolBarViewModel.getSelectedResourceChoice();
-        if (selectedResourceChoice != null) {
-            resourceComboBox.setValue(selectedResourceChoice);
-        }
-
-        Label resourceLabel = FXComponentFactory.createLabeledControl(
-                resourceComboBox,
-                AppLocalization.getText(ETPETS_TOOLBAR_SET_RESOURCE_OPTION),
-                AppLocalization.getText(ETPETS_TOOLBAR_SET_RESOURCE_OPTION_TOOLTIP),
-                FXStyleClasses.SIMULATION_EDIT_TOOLBAR_OPTION_LABEL).label();
-
-        ChangeListener<@Nullable EtpetsResourceChoice> comboSelectionListener = (_, oldValue, newValue) -> {
-            if (oldValue != newValue) {
-                editToolBarViewModel.setSelectedResourceChoice(newValue);
-            }
-        };
-        ChangeListener<@Nullable EtpetsResourceChoice> viewModelSelectionListener = (_, _, newValue) -> {
-            if (resourceComboBox.getValue() != newValue) {
-                if (newValue == null) {
-                    resourceComboBox.getSelectionModel().clearSelection();
-                } else {
-                    resourceComboBox.setValue(newValue);
-                }
-            }
-        };
-        var selectedResourceChoiceProperty = editToolBarViewModel.selectedResourceChoiceProperty();
-        resourceComboBox.valueProperty().addListener(comboSelectionListener);
-        selectedResourceChoiceProperty.addListener(viewModelSelectionListener);
-
-        if (selectedToolId != null) {
-            var enabledBinding = Bindings.createBooleanBinding(
-                    () -> ETPETS_TOOL_ID_SET_RESOURCE.equals(selectedToolId.get())
-                            && !availableResourceChoices.isEmpty(),
-                    selectedToolId,
-                    availableResourceChoices);
-            resourceLabel.disableProperty().bind(enabledBinding.not());
-            resourceComboBox.disableProperty().bind(enabledBinding.not());
-            registerEditToolBarCleanup(() -> {
-                resourceLabel.disableProperty().unbind();
-                resourceComboBox.disableProperty().unbind();
-                enabledBinding.dispose();
-                resourceComboBox.valueProperty().removeListener(comboSelectionListener);
-                selectedResourceChoiceProperty.removeListener(viewModelSelectionListener);
-            });
-        } else {
-            registerEditToolBarCleanup(() -> {
-                resourceComboBox.valueProperty().removeListener(comboSelectionListener);
-                selectedResourceChoiceProperty.removeListener(viewModelSelectionListener);
-            });
-        }
-
-        HBox resourceOptionBox = new HBox(resourceLabel, resourceComboBox);
-        resourceOptionBox.setAlignment(Pos.CENTER_LEFT);
-        resourceOptionBox.setSpacing(EDIT_OPTION_BOX_SPACING);
-        return resourceOptionBox;
-    }
-
-    private ListCell<EtpetsTerrainChoice> createTerrainChoiceCell() {
-        return FXComponentFactory.createTextListCell(choice -> AppLocalization.getText(choice.labelKey()));
-    }
-
-    private ListCell<EtpetsResourceChoice> createResourceChoiceCell() {
-        return FXComponentFactory.createTextListCell(choice -> AppLocalization.getText(choice.labelKey()));
+        HBox optionBox = new HBox(label, comboBox);
+        optionBox.setAlignment(Pos.CENTER_LEFT);
+        optionBox.setSpacing(EDIT_OPTION_BOX_SPACING);
+        return optionBox;
     }
 
 }

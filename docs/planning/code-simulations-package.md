@@ -145,7 +145,7 @@ sources. "Types" counts the top-level types in main sources of a group.
 | D2 | Rebounding                                                    |    18 | done        |
 | D3 | Snake                                                         |    25 | done        |
 | D4 | Sugarscape                                                    |    28 | done        |
-| D5 | ET Pets                                                       |    42 | open        |
+| D5 | ET Pets                                                       |    42 | done        |
 | D6 | Conway                                                        |    24 | open        |
 | D7 | Forest                                                        |    13 | open        |
 | D8 | Langton                                                       |    29 | open        |
@@ -1350,7 +1350,7 @@ Families and their known deviations:
   running sequence numbers and have no test of their own.
 - Config ViewModels take only the simulation state property; the edit tool bar ViewModels of Conway, Langton, and
   Rebounding have an implicit constructor, those of ET Pets, Snake, and Sugar an explicit one that selects the first
-  choice (Snake and Sugar initialize it at the field declaration since D3 and D4). Only
+  choice (Snake, Sugar, and ET Pets initialize it at the field declaration since D3 to D5). Only
   `LangtonEditToolBarViewModel` has a test.
 - Main views take `(viewModel, [editToolBarViewModel], entityDescriptorRegistry, configView, controlView,
   observationView)`; Forest and Wa-Tor have no edit tool bar. `LabMainView` extends `AbstractMainView` directly and
@@ -1724,6 +1724,26 @@ Notes:
 
 ### D5. ET Pets
 
+Notes:
+
+- Inventory (2026-11-10, verified against the sources): 42 types in the package root, `model`, `model.entity`,
+  `shared`, `view`, and `viewmodel`. Tests exist for most model types, the entities, the choices, and the score math
+  and balance; `EtpetsScoreTuningRunner` is a manual utility.
+- `EtpetsConfig`, `EtpetsBalance`, `EtpetsGridModel`, `EtpetsCell`, `EtpetsDeterminism`, `EtpetsResourceLogic`,
+  `EtpetsScoreMath`, `TerrainConstant`, `NoAgent`, `NoResource`, `PetActionType`, `EntityDescriptors`, the shared types,
+  and `EtpetsFactory` follow the rules apart from the details below.
+- `Pet.stepIndexOfBirth()`, `Pet.reproductionCooldownRemaining()`, `Pet.lastAction()`, and
+  `PetEgg.stepIndexOfLaying()` have no caller; they stay for the planned labels of the selected cell (TODO in
+  `EtpetsObservationView`, maintainer). The commented-out debug blocks of `EtpetsSimulationManager` with their
+  `@SuppressWarnings("CommentedOutCode")` and the override of `EtpetsObservationView` with its TODO stay, because the
+  further development of ET Pets needs them (maintainer).
+- Observations for #24: `PetTraits.genomeQualityScore()` rates a higher `movementCostModifier` as a better quality,
+  although higher movement costs are worse for a pet; the two TODOs of `findEggPlacementCoordinate(..)` stay; empty
+  cells show `-` as type (D4).
+- Test gaps for the later separate optimization: the initialization of `EtpetsSimulationManager`, `EtpetsStatistics`,
+  `EtpetsTerminationCondition`, `EtpetsStepRunner`, `EtpetsIdSequence`, the life cycle methods of `Pet`, and
+  `EtpetsEditToolBarViewModel`.
+
 #### Shuffle and coordinates of EtpetsSimulationManager
 
 - Origin: `code-other-classes.md`, deferred finding "Shuffle with cancellation checks" (2026-10-30)
@@ -1734,6 +1754,75 @@ Notes:
   sequence of a seed stays the same (same swaps with the same `nextInt(..)` calls), and a manual test with the maximum
   grid of ET Pets was fast (2026-10-30). Check that the remaining checkpoints still follow `simulations.md` ("Model
   Initialization").
+- Status: done (2026-11-10); the loops over all cells and over the rock, water, plant, and insect counts keep their
+  checkpoints, and the cancellation test of `SimulationManagerTest` still cancels during the terrain population.
+
+#### Edit tool bar ViewModel of ET Pets
+
+- Origin: D3 and D4 (cross-group decision on edit tool bar ViewModels)
+- Types: `EtpetsEditToolBarViewModel`, `EtpetsMainView`
+- Problem: The ViewModel has the dynamic pattern of Rebounding for two fixed enums (terrain and resource choices), and
+  `EtpetsMainView` synchronizes two combo boxes with two copied listener blocks.
+- Proposal: Two `InputChoiceProperty` fields and one private generic `createOptionBox(..)` in the view. An API change.
+- Status: done (2026-11-10).
+
+#### Unused entity API and shared limits of ET Pets
+
+- Origin: D4 (2026-11-10) and D5 (2026-11-10)
+- Types: `EtpetsEntity`, `TerrainEntity`, `ResourceEntity`, `AgentEntity`, the entities, `ResourceBase`,
+  `EtpetsConstraints`, their callers and tests
+- Problem: `isTerrain()`, `isResource()`, and `isAgent()` have no caller in main sources, as in Sugarscape.
+  `ResourceBase.minAmount()` is public, but only the class calls it. `EtpetsConstraints` shares `PERCENT_MIN` and
+  `PERCENT_MAX` for four components, unlike `simulations.md` and the other simulations.
+- Proposal: Remove the three queries and their tests, make `minAmount()` protected, and name the limits per component.
+  API changes.
+- Status: done (2026-11-10).
+
+#### Color variants of EtpetsMainView
+
+- Origin: D1 (2026-11-09) and D5 (2026-11-10)
+- Types: `EtpetsMainView`
+- Problem: The map `entityColors` holds five `null` placeholders; the ranges are looked up by descriptor ID in two
+  switches with a default exception, and two overloads of `clampToMapRange(..)` suppress
+  `OverloadedMethodsWithSameNumberOfParameters`. Rock and water are filtered by comparing descriptor ID strings.
+- Proposal: Five `@Nullable` color fields, the `EtpetsBalance` ranges passed directly, one static
+  `clampToMapRange(double, int, int)` without suppression, `resolveVariantColor(..)` as in Wa-Tor, and comparisons with
+  `TerrainConstant`.
+- Status: done (2026-11-10).
+
+#### Details of the ET Pets types
+
+- Origin: D5 (2026-11-10)
+- Types: the public types without type Javadoc, `EtpetsStatistics`, `EtpetsSimulationManager`, `EtpetsAgentLogic`,
+  `EtpetsTerrainLogic`, `Pet`, `Trail`, `PetGenome`, `PetTraits`, `EtpetsConfigView`
+- Problem: Sixteen public types have no type Javadoc and `EtpetsStatistics` a generic one (D1); `EtpetsStatistics`
+  initializes its counters to `0`. `EtpetsSimulationManager` repeats a comment, misses a space, and names a
+  `PetTraits` `trait`. `EtpetsAgentLogic` has the non-ASCII arrow `U+2192` in comments, a variable `r`, and the
+  counter `cumulativeDeadPetCountChange` for the statistic `cumulativePetDeathCount`. `Pet` uses a `LinkedList` and
+  clamps by hand; `Trail` adds without `+=` and has a trailing comment. `PetGenome` and `PetTraits` abbreviate local
+  names (`ta`, `movCost`, `normRepE`), and `fromParents(..)` puts two parameters per line. Three class declarations
+  wrap although they fit on one line.
+- Proposal: Adopt the decisions of D1 to D4 and fix the details.
+- Status: done (2026-11-10).
+
+### Decisions
+
+- All public types have a short type Javadoc in the forms of D1; the config view, `EtpetsStatistics`, and
+  `EtpetsStepRunner` declare their supertype on one line.
+- `EtpetsSimulationManager` shuffles with `Collections.shuffle(..)` and reads the coordinates from
+  `structure.coordinatesList()`; `shuffleCoordinates(..)` and `createCoordinates(..)` are removed.
+- API change: `EtpetsEditToolBarViewModel` holds an `InputChoiceProperty` for the terrain (`GROUND`) and one for the
+  resource (`NONE`); `available...Choices()`, `setSelected...Choice(..)`, and `resolveSelected...Context()` are
+  removed, and the getters are non-null. `EtpetsMainView` builds both option boxes with the private generic
+  `createOptionBox(..)`.
+- API change: `isTerrain()`, `isResource()`, and `isAgent()` are removed with their tests (`ResourceEntityTest` is
+  deleted); `ResourceBase.minAmount()` is protected. `PERCENT_MIN` and `PERCENT_MAX` are replaced by
+  `ROCK_PERCENT_*`, `WATER_PERCENT_*`, `PLANT_PERCENT_*`, and `INSECT_PERCENT_*` with the same values; the config, the
+  ViewModel, `EtpetsConfigTest`, and `SimulationManagerTest` are adapted.
+- `EtpetsMainView` holds `trailColors`, `plantColors`, `insectColors`, `petColors`, and `petEggColors`; the min and
+  max switches and the suppressed overload are removed (maintainer).
+- The four unused accessors, the debug blocks, and the override with its TODO stay (maintainer).
+- The details are implemented as proposed; `Pet` takes `initialEnergy`. No rule change.
 
 ### D6. Conway
 

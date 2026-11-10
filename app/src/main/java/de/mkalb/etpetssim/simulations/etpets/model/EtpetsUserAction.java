@@ -15,6 +15,9 @@ import de.mkalb.etpetssim.simulations.etpets.shared.EtpetsTerrainChoice;
 import de.mkalb.etpetssim.simulations.etpets.shared.EtpetsUserActionContext;
 import org.jspecify.annotations.Nullable;
 
+/**
+ * User action of ET Pets that sets the terrain or the resource of a cell.
+ */
 public final class EtpetsUserAction
         implements SimulationUserAction<
         EtpetsEntity,

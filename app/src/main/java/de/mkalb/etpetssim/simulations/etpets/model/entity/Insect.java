@@ -4,6 +4,9 @@ import de.mkalb.etpetssim.simulations.etpets.model.EtpetsBalance;
 
 import java.util.Locale;
 
+/**
+ * Insect of ET Pets, a resource with a large energy gain that regenerates slowly.
+ */
 public final class Insect extends ResourceBase {
 
     public Insect(double currentAmount, double maxAmount, double regenerationPerStep) {
@@ -26,7 +29,7 @@ public final class Insect extends ResourceBase {
     }
 
     @Override
-    public double minAmount() {
+    protected double minAmount() {
         return EtpetsBalance.INSECT_CURRENT_AMOUNT_MIN;
     }
 

@@ -78,7 +78,7 @@ public final class EtpetsAgentLogic {
                              EtpetsStatistics statistics) {
         int activePetCountChange = 0;
         int eggCountChange = 0;
-        int cumulativeDeadPetCountChange = 0;
+        int cumulativePetDeathCountChange = 0;
         GridStructure structure = gridModel.structure();
         WritableGridModel<AgentEntity> agentModel = gridModel.agentModel();
 
@@ -126,7 +126,7 @@ public final class EtpetsAgentLogic {
                 }
                 if (petDied) {
                     pet.die();
-                    cumulativeDeadPetCountChange++;
+                    cumulativePetDeathCountChange++;
                     activePetCountChange--;
                     continue; // Stays on grid for exactly 1 visual step.
                 }
@@ -143,7 +143,7 @@ public final class EtpetsAgentLogic {
             }
         }
 
-        statistics.adjustCellCounts(activePetCountChange, eggCountChange, cumulativeDeadPetCountChange);
+        statistics.adjustCellCounts(activePetCountChange, eggCountChange, cumulativePetDeathCountChange);
     }
 
     @SuppressWarnings("ObjectEquality")
@@ -215,7 +215,7 @@ public final class EtpetsAgentLogic {
 
         boolean canSelfReproduce = pet.isReproductionEligibleByState(stepIndex);
 
-        // Pass 1: Ring 2 → determine which ring-1 cells gain look-ahead score bonuses.
+        // Pass 1: Ring 2 -> determine which ring-1 cells gain look-ahead score bonuses.
         Set<GridCoordinate> ring1HasResourceBonus = new HashSet<>();
         Set<GridCoordinate> ring1HasPartnerBonus = new HashSet<>();
         SortedMap<GridCoordinate, RadiusRingCell<EtpetsCell>> ring2Cells =
@@ -232,7 +232,7 @@ public final class EtpetsAgentLogic {
 
         List<ActionCandidate> candidates = new ArrayList<>();
 
-        // Pass 2: Ring 1 → score and create MOVE candidates;
+        // Pass 2: Ring 1 -> score and create MOVE candidates;
         //         collect EAT/REPRODUCE data for ring 0.
         SequencedMap<GridCoordinate, ResourceBase> ring0Consumables = new LinkedHashMap<>();
         List<ReproductionOption> ring0ReproductionOptions = new ArrayList<>();
@@ -279,7 +279,7 @@ public final class EtpetsAgentLogic {
             }
         }
 
-        // Pass 3: Ring 0 (current position) → score and create WAIT / EAT / REPRODUCE candidates.
+        // Pass 3: Ring 0 (current position) -> score and create WAIT / EAT / REPRODUCE candidates.
 
         // WAIT (always available as fallback)
         int waitScore = computeWaitScore(pet, stepIndex, random);
@@ -627,9 +627,9 @@ public final class EtpetsAgentLogic {
         Collection<EdgeBehaviorResult> results =
                 CellNeighborhoods.neighborEdgeBehaviorResults(originCoordinate, NeighborhoodMode.EDGES_ONLY, structure);
         List<GridCoordinate> valid = new ArrayList<>(results.size());
-        for (EdgeBehaviorResult r : results) {
-            if (r.action() == EdgeBehaviorAction.VALID) {
-                valid.add(r.mapped());
+        for (EdgeBehaviorResult result : results) {
+            if (result.action() == EdgeBehaviorAction.VALID) {
+                valid.add(result.mapped());
             }
         }
         return valid;
@@ -675,13 +675,14 @@ public final class EtpetsAgentLogic {
         PetTraits traits = egg.petGenome().traits();
         int birthEnergy = Math
                 .toIntExact(Math.round(traits.maxEnergy() * EtpetsBalance.PET_CURRENT_ENERGY_BIRTH_FACTOR));
+        // Hatched pets have no reproduction cooldown.
         return new Pet(
                 idSequence.next(),
                 egg.parentAId(),
                 egg.parentBId(),
                 stepIndex,
                 birthEnergy,
-                EtpetsBalance.PET_REPRODUCTION_COOLDOWN_REMAINING_MIN, // No cooldown at start
+                EtpetsBalance.PET_REPRODUCTION_COOLDOWN_REMAINING_MIN,
                 traits);
     }
 

@@ -9,10 +9,9 @@ import de.mkalb.etpetssim.simulations.core.model.StatisticsMetric;
 import java.util.List;
 
 /**
- * Holds runtime statistics for a running simulation.
+ * Statistics of ET Pets with the active pet and egg cell counts and the cumulative pet deaths.
  */
-public final class EtpetsStatistics
-        extends BaseTimedSimulationStatistics {
+public final class EtpetsStatistics extends BaseTimedSimulationStatistics {
 
     public static final String KEY_ACTIVE_PET_CELLS = "activePetCells";
     public static final String KEY_EGG_CELLS = "eggCells";
@@ -42,9 +41,6 @@ public final class EtpetsStatistics
 
     public EtpetsStatistics(GridStructure gridStructure) {
         super(gridStructure);
-        activePetCells = 0;
-        eggCells = 0;
-        cumulativePetDeathCount = 0;
     }
 
     public static List<StatisticsMetric<EtpetsStatistics>> metrics() {

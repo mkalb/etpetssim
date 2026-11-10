@@ -2,6 +2,9 @@ package de.mkalb.etpetssim.simulations.etpets.model.entity;
 
 import java.util.Locale;
 
+/**
+ * Pet egg of ET Pets that two pets lay and that hatches into a pet after its incubation.
+ */
 public final class PetEgg implements AgentEntity {
 
     private final int id;
@@ -28,11 +31,6 @@ public final class PetEgg implements AgentEntity {
     @Override
     public String descriptorId() {
         return EtpetsEntity.DESCRIPTOR_ID_PET_EGG;
-    }
-
-    @Override
-    public boolean isAgent() {
-        return true;
     }
 
     @Override

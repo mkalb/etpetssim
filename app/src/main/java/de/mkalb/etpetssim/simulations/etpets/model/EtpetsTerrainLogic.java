@@ -19,9 +19,7 @@ public final class EtpetsTerrainLogic {
      * @param gridModel the grid model whose trails decay
      */
     public static void apply(EtpetsGridModel gridModel) {
-        var nonDefaultCells = gridModel.terrainModel()
-                .nonDefaultCells();
-        for (GridCell<TerrainEntity> cell : nonDefaultCells) {
+        for (GridCell<TerrainEntity> cell : gridModel.terrainModel().nonDefaultCells()) {
             if ((cell.entity() instanceof Trail trail)
                     && gridModel.agentModel().getEntity(cell.coordinate()).isEmpty()) {
                 trail.adjustIntensity(-EtpetsBalance.TRAIL_INTENSITY_DECAY_PER_STEP);

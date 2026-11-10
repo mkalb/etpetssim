@@ -61,19 +61,20 @@ public record PetTraits(
      * (all traits at their maximum)
      */
     public double genomeQualityScore() {
-        double normMax = normalize(maxEnergy,
+        double normalizedMaxEnergy = normalize(maxEnergy,
                 EtpetsBalance.PET_TRAITS_MAX_ENERGY_MIN,
                 EtpetsBalance.PET_TRAITS_MAX_ENERGY_MAX);
-        double normCost = normalize(movementCostModifier,
+        double normalizedMovementCostModifier = normalize(movementCostModifier,
                 EtpetsBalance.PET_TRAITS_MOVEMENT_COST_MODIFIER_MIN,
                 EtpetsBalance.PET_TRAITS_MOVEMENT_COST_MODIFIER_MAX);
-        double normRepE = normalize(reproductionMinEnergy,
+        double normalizedReproductionMinEnergy = normalize(reproductionMinEnergy,
                 EtpetsBalance.PET_TRAITS_REPRODUCTION_MIN_ENERGY_MIN,
                 EtpetsBalance.PET_TRAITS_REPRODUCTION_MIN_ENERGY_MAX);
-        double normRepC = normalize(reproductionCooldown,
+        double normalizedReproductionCooldown = normalize(reproductionCooldown,
                 EtpetsBalance.PET_TRAITS_REPRODUCTION_COOLDOWN_MIN,
                 EtpetsBalance.PET_TRAITS_REPRODUCTION_COOLDOWN_MAX);
-        return (normMax + normCost + normRepE + normRepC) / 4.0d;
+        return (normalizedMaxEnergy + normalizedMovementCostModifier + normalizedReproductionMinEnergy
+                + normalizedReproductionCooldown) / 4.0d;
     }
 
 }

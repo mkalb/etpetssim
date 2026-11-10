@@ -4,6 +4,9 @@ import de.mkalb.etpetssim.simulations.etpets.model.EtpetsBalance;
 
 import java.util.Locale;
 
+/**
+ * Trail of ET Pets, a walkable terrain that pets reinforce and that decays without them.
+ */
 public final class Trail implements TerrainEntity {
 
     private int intensity;
@@ -27,8 +30,8 @@ public final class Trail implements TerrainEntity {
     }
 
     public void adjustIntensity(int delta) {
-        intensity = intensity + delta; // Can be lower than MIN, but will be removed in that case
-        intensity = Math.min(intensity, EtpetsBalance.TRAIL_INTENSITY_MAX);
+        // The intensity may fall below the minimum; EtpetsTerrainLogic then removes the trail.
+        intensity = Math.min(intensity + delta, EtpetsBalance.TRAIL_INTENSITY_MAX);
     }
 
     @Override

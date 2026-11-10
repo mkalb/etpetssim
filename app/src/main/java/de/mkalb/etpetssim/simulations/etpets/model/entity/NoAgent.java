@@ -17,11 +17,6 @@ public enum NoAgent implements AgentEntity, ConstantGridEntity {
     }
 
     @Override
-    public boolean isAgent() {
-        return false;
-    }
-
-    @Override
     public boolean isEmpty() {
         return true;
     }

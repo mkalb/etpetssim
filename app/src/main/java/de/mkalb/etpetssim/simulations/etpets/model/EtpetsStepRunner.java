@@ -4,8 +4,10 @@ import de.mkalb.etpetssim.engine.executor.SimulationStepRunner;
 
 import java.util.Random;
 
-public final class EtpetsStepRunner
-        implements SimulationStepRunner<EtpetsStatistics> {
+/**
+ * Step runner of ET Pets that applies the agent, resource, and terrain phases in this order.
+ */
+public final class EtpetsStepRunner implements SimulationStepRunner<EtpetsStatistics> {
 
     private final EtpetsGridModel model;
     private final Random random;

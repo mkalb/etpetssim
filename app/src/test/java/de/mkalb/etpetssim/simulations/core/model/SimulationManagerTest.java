@@ -249,7 +249,7 @@ final class SimulationManagerTest {
     void testConstructorHonorsCancellationForEtpetsDuringTerrainPopulation() {
         assertThrows(SimulationInitializationCanceledException.class,
                 () -> new EtpetsSimulationManager(
-                        createEtpetsConfig(200, 200, EtpetsConstraints.PERCENT_MAX),
+                        createEtpetsConfig(200, 200, EtpetsConstraints.ROCK_PERCENT_MAX),
                         cancellationOnCheck(3)));
     }
 

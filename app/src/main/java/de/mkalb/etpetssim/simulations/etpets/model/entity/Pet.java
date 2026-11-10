@@ -4,10 +4,13 @@ import de.mkalb.etpetssim.engine.GridCoordinate;
 import de.mkalb.etpetssim.simulations.etpets.model.EtpetsBalance;
 import org.jspecify.annotations.Nullable;
 
+import java.util.ArrayDeque;
 import java.util.Deque;
-import java.util.LinkedList;
 import java.util.Locale;
 
+/**
+ * Pet of ET Pets, the agent that waits, moves, eats, and reproduces by the best-scored action.
+ */
 public final class Pet implements AgentEntity {
 
     private final int id;
@@ -25,27 +28,22 @@ public final class Pet implements AgentEntity {
                @Nullable Integer parentAId,
                @Nullable Integer parentBId,
                int stepIndexOfBirth,
-               int currentEnergy,
+               int initialEnergy,
                int reproductionCooldownRemaining,
                PetTraits traits) {
         this.id = id;
         this.parentAId = parentAId;
         this.parentBId = parentBId;
         this.stepIndexOfBirth = stepIndexOfBirth;
-        this.currentEnergy = currentEnergy;
+        currentEnergy = initialEnergy;
         this.reproductionCooldownRemaining = reproductionCooldownRemaining;
         this.traits = traits;
-        movementHistory = new LinkedList<>();
+        movementHistory = new ArrayDeque<>();
     }
 
     @Override
     public String descriptorId() {
         return EtpetsEntity.DESCRIPTOR_ID_PET;
-    }
-
-    @Override
-    public boolean isAgent() {
-        return true;
     }
 
     @Override
@@ -104,10 +102,7 @@ public final class Pet implements AgentEntity {
     }
 
     public void adjustEnergy(int delta) {
-        currentEnergy += delta;
-        if (currentEnergy > traits.maxEnergy()) {
-            currentEnergy = traits.maxEnergy();
-        }
+        currentEnergy = Math.min(currentEnergy + delta, traits.maxEnergy());
     }
 
     public int reproductionCooldownRemaining() {

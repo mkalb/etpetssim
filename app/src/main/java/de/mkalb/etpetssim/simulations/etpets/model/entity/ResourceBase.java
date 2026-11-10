@@ -1,5 +1,8 @@
 package de.mkalb.etpetssim.simulations.etpets.model.entity;
 
+/**
+ * Base class of the ET Pets resources, whose amount pets consume and that regenerates up to its maximum amount.
+ */
 public abstract sealed class ResourceBase implements ResourceEntity
         permits Plant, Insect {
 
@@ -11,11 +14,6 @@ public abstract sealed class ResourceBase implements ResourceEntity
         this.currentAmount = currentAmount;
         this.maxAmount = maxAmount;
         this.regenerationPerStep = regenerationPerStep;
-    }
-
-    @Override
-    public final boolean isResource() {
-        return true;
     }
 
     @Override
@@ -49,7 +47,7 @@ public abstract sealed class ResourceBase implements ResourceEntity
 
     public abstract int energyGainPerAct();
 
-    public abstract double minAmount();
+    protected abstract double minAmount();
 
     protected abstract int consumptionPerAct();
 
