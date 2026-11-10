@@ -13,6 +13,9 @@ import org.jspecify.annotations.Nullable;
 
 import java.util.Optional;
 
+/**
+ * Observation view of Snake.
+ */
 public final class SnakeObservationView
         extends AbstractObservationView<
         SnakeEntity,
@@ -56,17 +59,15 @@ public final class SnakeObservationView
                 snakeMaxSegmentCountLabel,
                 snakePointsLabel);
 
-        if (gridCell != null) {
-            Optional<SnakeStatistics> statistics = viewModel.getStatistics();
-            if (statistics.isPresent() && (gridCell.entity() instanceof SnakeHead snakeHead)) {
-                snakeIdLabel.setText("#" + snakeHead.id());
-                setFormattedIntegerValue(snakeAgeLabel, snakeHead.ageAtStepCount(statistics.get().stepCount()));
-                setFormattedIntegerValue(snakeDeathsLabel, snakeHead.deaths());
-                snakeStrategyLabel.setText(snakeHead.strategy().displayName());
-                setFormattedIntegerValue(snakeSegmentCountLabel, snakeHead.segmentCount());
-                setFormattedIntegerValue(snakeMaxSegmentCountLabel, snakeHead.maxSegmentCount());
-                setFormattedIntegerValue(snakePointsLabel, snakeHead.points());
-            }
+        Optional<SnakeStatistics> statistics = viewModel.getStatistics();
+        if ((gridCell != null) && statistics.isPresent() && (gridCell.entity() instanceof SnakeHead snakeHead)) {
+            snakeIdLabel.setText("#" + snakeHead.id());
+            setFormattedIntegerValue(snakeAgeLabel, snakeHead.ageAtStepCount(statistics.get().stepCount()));
+            setFormattedIntegerValue(snakeDeathsLabel, snakeHead.deaths());
+            snakeStrategyLabel.setText(snakeHead.strategy().displayName());
+            setFormattedIntegerValue(snakeSegmentCountLabel, snakeHead.segmentCount());
+            setFormattedIntegerValue(snakeMaxSegmentCountLabel, snakeHead.maxSegmentCount());
+            setFormattedIntegerValue(snakePointsLabel, snakeHead.points());
         }
     }
 

@@ -36,6 +36,9 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
 
+/**
+ * Main view of Snake.
+ */
 public final class SnakeMainView
         extends AbstractDefaultMainView<
         SnakeEntity,
@@ -76,18 +79,23 @@ public final class SnakeMainView
     private static final double DEAD_FILL_BRIGHTNESS_FACTOR = 0.75d;
     private static final double DEAD_BORDER_BRIGHTNESS_FACTOR = 0.55d;
 
+    // Entity selected colors are derived from the alive colors as a white blend.
+    private static final double ALIVE_SELECTED_WHITE_BLEND_FACTOR = 0.3d;
+
     // Entity stroke widths
     private static final double WALL_STROKE_LINE_WIDTH = 0.5d;
     private static final double FOOD_STROKE_LINE_WIDTH = 2.0d;
     private static final double SNAKE_SEGMENT_STROKE_LINE_WIDTH = 1.0d;
     private static final double SNAKE_HEAD_STROKE_LINE_WIDTH = 2.0d;
-    private static final double ALIVE_SELECTED_WHITE_BLEND_FACTOR = 0.3d;
 
     private static final Color SELECTED_STROKE_COLOR = Color.PINK;
     private static final double SELECTED_STROKE_LINE_WIDTH = 1.5d;
     private static final double EDIT_OPTION_BOX_SPACING = 6.0d;
 
     private final SnakeEditToolBarViewModel editToolBarViewModel;
+    private final SnakeColors aliveColors;
+    private final SnakeColors selectedColors;
+    private final SnakeColors deadColors;
 
     public SnakeMainView(DefaultMainViewModel<SnakeEntity, GridCell<SnakeEntity>, WritableGridModel<SnakeEntity>,
                                  SnakeConfig, SnakeStatistics, SnakeSimulationManager,
@@ -103,18 +111,37 @@ public final class SnakeMainView
                 observationView,
                 entityDescriptorRegistry);
         this.editToolBarViewModel = editToolBarViewModel;
+
+        // Alive colors are defined in EntityDescriptors.
+        var headDescriptor = entityDescriptorRegistry.requireByDescriptorId(SnakeEntity.DESCRIPTOR_ID_SNAKE_HEAD);
+        var segmentDescriptor = entityDescriptorRegistry.requireByDescriptorId(SnakeEntity.DESCRIPTOR_ID_SNAKE_SEGMENT);
+        aliveColors = new SnakeColors(
+                Objects.requireNonNull(headDescriptor.color()),
+                Objects.requireNonNull(headDescriptor.borderColor()),
+                Objects.requireNonNull(segmentDescriptor.color()),
+                Objects.requireNonNull(segmentDescriptor.borderColor()));
+        selectedColors = toSelectedColors(aliveColors);
+        deadColors = toDeadColors(aliveColors);
+    }
+
+    private static SnakeColors toSelectedColors(SnakeColors aliveColors) {
+        return new SnakeColors(
+                toSelectedColor(aliveColors.head()),
+                toSelectedColor(aliveColors.headBorder()),
+                toSelectedColor(aliveColors.segment()),
+                toSelectedColor(aliveColors.segmentBorder()));
     }
 
     private static Color toSelectedColor(Color aliveColor) {
         return aliveColor.interpolate(Color.WHITE, ALIVE_SELECTED_WHITE_BLEND_FACTOR);
     }
 
-    private static Color toDeadFillColor(Color aliveColor, double deadHue) {
-        return toDeadColor(aliveColor, deadHue, DEAD_FILL_BRIGHTNESS_FACTOR);
-    }
-
-    private static Color toDeadBorderColor(Color aliveColor, double deadHue) {
-        return toDeadColor(aliveColor, deadHue, DEAD_BORDER_BRIGHTNESS_FACTOR);
+    private static SnakeColors toDeadColors(SnakeColors aliveColors) {
+        return new SnakeColors(
+                toDeadColor(aliveColors.head(), DEAD_HEAD_HUE, DEAD_FILL_BRIGHTNESS_FACTOR),
+                toDeadColor(aliveColors.headBorder(), DEAD_HEAD_HUE, DEAD_BORDER_BRIGHTNESS_FACTOR),
+                toDeadColor(aliveColors.segment(), DEAD_SEGMENT_HUE, DEAD_FILL_BRIGHTNESS_FACTOR),
+                toDeadColor(aliveColors.segmentBorder(), DEAD_SEGMENT_HUE, DEAD_BORDER_BRIGHTNESS_FACTOR));
     }
 
     private static Color toDeadColor(Color aliveColor, double deadHue, double brightnessFactor) {
@@ -159,26 +186,6 @@ public final class SnakeMainView
         var wallDescriptor = entityDescriptorRegistry.requireByDescriptorId(SnakeEntity.DESCRIPTOR_ID_WALL);
         var growthFoodDescriptor = entityDescriptorRegistry
                 .requireByDescriptorId(SnakeEntity.DESCRIPTOR_ID_GROWTH_FOOD);
-        var snakeSegmentDescriptor = entityDescriptorRegistry
-                .requireByDescriptorId(SnakeEntity.DESCRIPTOR_ID_SNAKE_SEGMENT);
-        var snakeHeadDescriptor = entityDescriptorRegistry.requireByDescriptorId(SnakeEntity.DESCRIPTOR_ID_SNAKE_HEAD);
-
-        // Alive colors are defined in EntityDescriptors.
-        Color segmentAliveColor = Objects.requireNonNull(snakeSegmentDescriptor.color());
-        Color segmentAliveBorderColor = Objects.requireNonNull(snakeSegmentDescriptor.borderColor());
-        Color headAliveColor = Objects.requireNonNull(snakeHeadDescriptor.color());
-        Color headAliveBorderColor = Objects.requireNonNull(snakeHeadDescriptor.borderColor());
-
-        // Alive+selected colors are computed as a white-blend of the alive colors.
-        Color segmentAliveSelectedColor = toSelectedColor(segmentAliveColor);
-        Color segmentAliveSelectedBorderColor = toSelectedColor(segmentAliveBorderColor);
-        Color headAliveSelectedColor = toSelectedColor(headAliveColor);
-        Color headAliveSelectedBorderColor = toSelectedColor(headAliveBorderColor);
-
-        Color segmentDeadColor = toDeadFillColor(segmentAliveColor, DEAD_SEGMENT_HUE);
-        Color segmentDeadBorderColor = toDeadBorderColor(segmentAliveBorderColor, DEAD_SEGMENT_HUE);
-        Color headDeadColor = toDeadFillColor(headAliveColor, DEAD_HEAD_HUE);
-        Color headDeadBorderColor = toDeadBorderColor(headAliveBorderColor, DEAD_HEAD_HUE);
 
         currentGridModel.filteredCoordinates(SnakeEntity::isWall)
                 .forEach(coordinate ->
@@ -188,41 +195,11 @@ public final class SnakeMainView
                 .forEach(coordinate ->
                         painters.dynamic().drawCellInnerCircle(coordinate, growthFoodDescriptor.color(),
                                 growthFoodDescriptor.borderColor(), FOOD_STROKE_LINE_WIDTH, StrokeType.INSIDE));
-        currentGridModel.filteredCells(e -> e instanceof SnakeHead)
-                .forEach(cell -> {
-                    if (cell.entity() instanceof SnakeHead head) {
-                        boolean isDead = head.isDead();
-                        // Check if last selected entity is not null and is the same instance as the current head
-                        boolean isSelected = isSelected(head);
-                        Color snakeHeadColor;
-                        Color snakeHeadColorBorder;
-                        Color snakeSegmentColor;
-                        Color snakeSegmentColorBorder;
-                        if (isDead) {
-                            snakeHeadColor = headDeadColor;
-                            snakeHeadColorBorder = headDeadBorderColor;
-                            snakeSegmentColor = segmentDeadColor;
-                            snakeSegmentColorBorder = segmentDeadBorderColor;
-                        } else if (isSelected) {
-                            snakeHeadColor = headAliveSelectedColor;
-                            snakeHeadColorBorder = headAliveSelectedBorderColor;
-                            snakeSegmentColor = segmentAliveSelectedColor;
-                            snakeSegmentColorBorder = segmentAliveSelectedBorderColor;
-                        } else {
-                            snakeHeadColor = headAliveColor;
-                            snakeHeadColorBorder = headAliveBorderColor;
-                            snakeSegmentColor = segmentAliveColor;
-                            snakeSegmentColorBorder = segmentAliveBorderColor;
-                        }
-                        for (GridCoordinate coordinate : head.currentSegments()) {
-                            painters.dynamic().drawCell(coordinate, snakeSegmentColor, snakeSegmentColorBorder,
-                                    SNAKE_SEGMENT_STROKE_LINE_WIDTH);
-                        }
-                        painters.dynamic().drawCellInnerCircle(cell.coordinate(), snakeHeadColor, snakeHeadColorBorder,
-                                SNAKE_HEAD_STROKE_LINE_WIDTH,
-                                StrokeType.OUTSIDE);
-                    }
-                });
+        for (var cell : currentGridModel.filteredCells(SnakeEntity::isAgent)) {
+            if (cell.entity() instanceof SnakeHead head) {
+                drawSnake(painters.dynamic(), cell.coordinate(), head);
+            }
+        }
     }
 
     @Override
@@ -287,12 +264,11 @@ public final class SnakeMainView
             var disableWhenNoAddSnakeToolSelected = Bindings.not(selectedToolId.isEqualTo(SNAKE_TOOL_ID_ADD_SNAKE));
             strategyLabel.disableProperty().bind(disableWhenNoAddSnakeToolSelected);
             strategyComboBox.disableProperty().bind(disableWhenNoAddSnakeToolSelected);
+            registerEditToolBarCleanup(() -> {
+                strategyLabel.disableProperty().unbind();
+                strategyComboBox.disableProperty().unbind();
+            });
         }
-
-        registerEditToolBarCleanup(() -> {
-            strategyLabel.disableProperty().unbind();
-            strategyComboBox.disableProperty().unbind();
-        });
 
         HBox optionPanel = new HBox(strategyLabel, strategyComboBox);
         optionPanel.getStyleClass().add(FXStyleClasses.SIMULATION_EDIT_TOOLBAR_OPTION_PANEL);
@@ -300,8 +276,31 @@ public final class SnakeMainView
         return optionPanel;
     }
 
+    private void drawSnake(FXGridCanvasPainter painter, GridCoordinate headCoordinate, SnakeHead head) {
+        SnakeColors colors = resolveSnakeColors(head);
+        for (GridCoordinate coordinate : head.currentSegments()) {
+            painter.drawCell(coordinate, colors.segment(), colors.segmentBorder(), SNAKE_SEGMENT_STROKE_LINE_WIDTH);
+        }
+        painter.drawCellInnerCircle(headCoordinate, colors.head(), colors.headBorder(), SNAKE_HEAD_STROKE_LINE_WIDTH,
+                StrokeType.OUTSIDE);
+    }
+
+    private SnakeColors resolveSnakeColors(SnakeHead head) {
+        if (head.isDead()) {
+            return deadColors;
+        }
+        return isSelected(head) ? selectedColors : aliveColors;
+    }
+
     private boolean isSelected(SnakeHead head) {
         return Objects.equals(head, viewModel.lastSelectedEntityProperty().getValue());
+    }
+
+    private record SnakeColors(
+            Color head,
+            Color headBorder,
+            Color segment,
+            Color segmentBorder) {
     }
 
 }

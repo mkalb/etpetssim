@@ -8,10 +8,9 @@ import de.mkalb.etpetssim.simulations.core.model.StatisticsMetric;
 import java.util.List;
 
 /**
- * Holds runtime statistics for a running simulation.
+ * Statistics of Snake with the snake head, wall, and food cell counts and the cumulative snake deaths.
  */
-public final class SnakeStatistics
-        extends BaseTimedSimulationStatistics {
+public final class SnakeStatistics extends BaseTimedSimulationStatistics {
 
     public static final String KEY_SNAKE_HEAD_CELLS = "snakeHeadCells";
     public static final String KEY_LIVING_SNAKE_HEAD_CELLS = "livingSnakeHeadCells";
@@ -52,35 +51,10 @@ public final class SnakeStatistics
 
     public SnakeStatistics(GridStructure gridStructure) {
         super(gridStructure);
-        snakeHeadCells = 0;
-        livingSnakeHeadCells = 0;
-        wallCells = 0;
-        foodCells = 0;
-        cumulativeSnakeDeathCount = 0;
     }
 
     public static List<StatisticsMetric<SnakeStatistics>> metrics() {
         return METRICS;
-    }
-
-    public void decrementSnakeHeadCells() {
-        snakeHeadCells--;
-    }
-
-    public void incrementSnakeHeadCells() {
-        snakeHeadCells++;
-    }
-
-    public void decrementLivingSnakeHeadCells() {
-        livingSnakeHeadCells--;
-    }
-
-    public void incrementLivingSnakeHeadCells() {
-        livingSnakeHeadCells++;
-    }
-
-    public void decrementFoodCells() {
-        foodCells--;
     }
 
     public void adjustWallCells(int wallCellsDelta) {
@@ -99,12 +73,12 @@ public final class SnakeStatistics
         return livingSnakeHeadCells;
     }
 
-    public int foodCells() {
-        return foodCells;
-    }
-
     public int wallCells() {
         return wallCells;
+    }
+
+    public int foodCells() {
+        return foodCells;
     }
 
     public int cumulativeSnakeDeathCount() {
@@ -118,6 +92,26 @@ public final class SnakeStatistics
         livingSnakeHeadCells = snakeHeadCellsInitial;
         wallCells = wallCellsInitial;
         foodCells = foodCellsInitial;
+    }
+
+    void incrementSnakeHeadCells() {
+        snakeHeadCells++;
+    }
+
+    void decrementSnakeHeadCells() {
+        snakeHeadCells--;
+    }
+
+    void incrementLivingSnakeHeadCells() {
+        livingSnakeHeadCells++;
+    }
+
+    void decrementLivingSnakeHeadCells() {
+        livingSnakeHeadCells--;
+    }
+
+    void decrementFoodCells() {
+        foodCells--;
     }
 
     void incrementCumulativeSnakeDeathCount() {

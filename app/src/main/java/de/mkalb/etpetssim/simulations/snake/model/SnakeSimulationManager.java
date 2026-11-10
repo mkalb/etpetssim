@@ -28,6 +28,9 @@ import java.util.TreeSet;
 
 import static de.mkalb.etpetssim.engine.support.WorkCheckpoints.isCancellationCheckpoint;
 
+/**
+ * Simulation manager of Snake.
+ */
 public final class SnakeSimulationManager
         extends AbstractTimedSimulationManager<SnakeEntity, WritableGridModel<SnakeEntity>, SnakeConfig,
         SnakeStatistics> {
@@ -74,7 +77,7 @@ public final class SnakeSimulationManager
         executor = new TimedSimulationExecutor<>(new DefaultSimulationExecutor<>(runner, runner::model,
                 terminationCondition, statistics));
 
-        initializeGrid(config, model, random, cancellation);
+        initializeGrid(model, random, cancellation);
         nextSnakeId = config.snakes();
         cancellation.checkCanceled();
         initializeStatistics(model);
@@ -111,21 +114,19 @@ public final class SnakeSimulationManager
         nextSnakeId++;
     }
 
-    private void initializeGrid(SnakeConfig config,
-                                WritableGridModel<SnakeEntity> model,
+    private void initializeGrid(WritableGridModel<SnakeEntity> model,
                                 Random random,
                                 SimulationInitializationCancellation cancellation) {
-        wallInitializer(config, random, cancellation).initialize(model);
-        snakeInitializer(config, random, cancellation).initialize(model);
-        foodInitializer(config, model, random, cancellation).initialize(model);
+        createWallInitializer(random, cancellation).initialize(model);
+        createSnakeInitializer(random, cancellation).initialize(model);
+        createFoodInitializer(model, random, cancellation).initialize(model);
     }
 
-    private GridInitializer<SnakeEntity> wallInitializer(SnakeConfig config,
-                                                         Random random,
-                                                         SimulationInitializationCancellation cancellation) {
+    private GridInitializer<SnakeEntity> createWallInitializer(Random random,
+                                                               SimulationInitializationCancellation cancellation) {
         int width = structure.size().width();
         int height = structure.size().height();
-        int wallCount = config.verticalWalls();
+        int wallCount = config().verticalWalls();
 
         if ((wallCount > 0)
                 && (width >= ((wallCount * (1 + WALL_WIDTH_MARGIN)) + WALL_WIDTH_MARGIN))
@@ -164,15 +165,15 @@ public final class SnakeSimulationManager
         return GridInitializers.identity();
     }
 
-    private GridInitializer<SnakeEntity> snakeInitializer(SnakeConfig config,
-                                                          Random random,
-                                                          SimulationInitializationCancellation cancellation) {
-        if (config.snakes() > 0) {
+    private GridInitializer<SnakeEntity> createSnakeInitializer(Random random,
+                                                                SimulationInitializationCancellation cancellation) {
+        int snakeCount = config().snakes();
+        if (snakeCount > 0) {
             var strategies = SnakeMoveStrategies.strategies();
-            List<SnakeEntity> snakeHeads = new ArrayList<>(config.snakes());
-            for (int i = 0; i < config.snakes(); i++) {
+            List<SnakeEntity> snakeHeads = new ArrayList<>(snakeCount);
+            for (int i = 0; i < snakeCount; i++) {
                 SnakeMoveStrategy strategy = strategies.get(i % strategies.size());
-                snakeHeads.add(new SnakeHead(i, strategy, config.initialPendingGrowth(), -1));
+                snakeHeads.add(new SnakeHead(i, strategy, config().initialPendingGrowth(), -1));
             }
             return GridInitializers.placeAllAtRandomPositions(
                     snakeHeads,
@@ -183,13 +184,12 @@ public final class SnakeSimulationManager
         return GridInitializers.identity();
     }
 
-    private GridInitializer<SnakeEntity> foodInitializer(SnakeConfig config,
-                                                         WritableGridModel<SnakeEntity> model,
-                                                         Random random,
-                                                         SimulationInitializationCancellation cancellation) {
-        if (config.foodCells() > 0) {
+    private GridInitializer<SnakeEntity> createFoodInitializer(WritableGridModel<SnakeEntity> model,
+                                                               Random random,
+                                                               SimulationInitializationCancellation cancellation) {
+        if (config().foodCells() > 0) {
             int freeGroundCells = Math.toIntExact(model.countEntities(SnakeEntity::isGround));
-            int foodCells = Math.min(config.foodCells(), freeGroundCells);
+            int foodCells = Math.min(config().foodCells(), freeGroundCells);
             return GridInitializers.placeShuffledCount(
                     foodCells,
                     () -> TerrainConstant.GROWTH_FOOD,
@@ -201,7 +201,7 @@ public final class SnakeSimulationManager
     }
 
     private void initializeStatistics(ReadableGridModel<SnakeEntity> model) {
-        int snakeHeadCellsInitial = Math.toIntExact(model.countEntities(e -> e instanceof SnakeHead));
+        int snakeHeadCellsInitial = Math.toIntExact(model.countEntities(SnakeEntity::isAgent));
         int wallCellsInitial = Math.toIntExact(model.countEntities(SnakeEntity::isWall));
         int foodCellsInitial = Math.toIntExact(model.countEntities(SnakeEntity::isFood));
         statistics.initializeStartupCellCounts(snakeHeadCellsInitial, wallCellsInitial, foodCellsInitial);

@@ -67,8 +67,7 @@ public final class SnakeConstraints {
     // Rules
     public static final NeighborhoodMode NEIGHBORHOOD_MODE_DEFAULT = NeighborhoodMode.EDGES_ONLY;
     public static final SnakeDeathMode DEATH_MODE_DEFAULT = SnakeDeathMode.RESPAWN;
-    public static final List<SnakeDeathMode> DEATH_MODE_VALUES = List.of(
-            SnakeDeathMode.values());
+    public static final List<SnakeDeathMode> DEATH_MODE_VALUES = List.of(SnakeDeathMode.values());
     public static final int GROWTH_PER_FOOD_DEFAULT = 1;
     public static final int GROWTH_PER_FOOD_MIN = 0;
     public static final int GROWTH_PER_FOOD_MAX = 100;

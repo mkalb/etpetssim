@@ -143,7 +143,7 @@ sources. "Types" counts the top-level types in main sources of a group.
 | C9 | `core` root package and `start`                               |     6 | done        |
 | D1 | Wa-Tor (reference)                                            |    21 | done        |
 | D2 | Rebounding                                                    |    18 | done        |
-| D3 | Snake                                                         |    25 | open        |
+| D3 | Snake                                                         |    25 | done        |
 | D4 | Sugarscape                                                    |    28 | open        |
 | D5 | ET Pets                                                       |    42 | open        |
 | D6 | Conway                                                        |    24 | open        |
@@ -1350,7 +1350,7 @@ Families and their known deviations:
   running sequence numbers and have no test of their own.
 - Config ViewModels take only the simulation state property; the edit tool bar ViewModels of Conway, Langton, and
   Rebounding have an implicit constructor, those of ET Pets, Snake, and Sugar an explicit one that selects the first
-  choice. Only `LangtonEditToolBarViewModel` has a test.
+  choice (Snake initializes it at the field declaration since D3). Only `LangtonEditToolBarViewModel` has a test.
 - Main views take `(viewModel, [editToolBarViewModel], entityDescriptorRegistry, configView, controlView,
   observationView)`; Forest and Wa-Tor have no edit tool bar. `LabMainView` extends `AbstractMainView` directly and
   has 23 private methods; the Lab has its own control view and ViewModel and its own main ViewModel.
@@ -1534,6 +1534,21 @@ Notes:
 
 ### D3. Snake
 
+Notes:
+
+- Inventory (2026-11-10, verified against the sources): 25 types in the package root, `model`, `model.entity`,
+  `model.strategy`, `shared`, `view`, and `viewmodel`. Tests exist for `SnakeConfig`, `SnakeUserAction`, `SnakeHead`
+  (only `toDisplayString()`), `TerrainConstant`, `EntityDescriptors`, `SnakeDeathMode`, `AnonymousMoveStrategy`,
+  `NamedMoveStrategy`, and `SnakeMoveStrategies`.
+- `SnakeConfig`, `SnakeEntity`, `TerrainConstant`, `EntityDescriptors`, `MoveDecision`, `SnakeMoveStrategy`,
+  `AnonymousMoveStrategy`, `NamedMoveStrategy`, `SnakeDeathMode`, `SnakeUserActionContext`, and `SnakeFactory` follow
+  the rules.
+- Observation for #24: with `RESPAWN`, the simulation ends when all living snakes die in the same step, because
+  `livingSnakeHeadCells()` is `0` before the dead snakes respawn in the next step.
+- Test gaps for the later separate optimization: `SnakeStepLogic`, `SnakeTerminationCondition`, `SnakeStatistics`,
+  the initialization of `SnakeSimulationManager` (wall positions, snakes, food), the state changes of `SnakeHead`
+  (`move(..)`, `die()`, `respawn(..)`, and the age), and `SnakeEditToolBarViewModel`.
+
 #### Empty check of the move strategies
 
 - Origin: B1 (2026-11-08)
@@ -1541,6 +1556,88 @@ Notes:
 - Problem: The constructor throws if `SnakeMoveStrategies.strategies()` is empty, which cannot occur for the constant
   catalog.
 - Proposal: Remove the check as dead code.
+- Status: done (2026-11-10); see "Unused members of SnakeEditToolBarViewModel and SnakeHead".
+
+#### Unused members of SnakeEditToolBarViewModel and SnakeHead
+
+- Origin: D3 (2026-11-10)
+- Types: `SnakeEditToolBarViewModel`, `SnakeHead`
+- Problem: `SnakeEditToolBarViewModel.availableStrategies()` and `setSelectedStrategy(..)` and
+  `SnakeHead.pendingGrowth()` and `stepIndexOfSpawn()` have no caller. `move(..)` resets `pendingGrowth` to `0` with
+  the comment `// Ensure non-negative`, which only matters because `respawn(..)` does not reject a negative
+  `initialPendingGrowth` like the constructor.
+- Proposal: Remove the four methods (an API change). Initialize the selected strategy of
+  `SnakeEditToolBarViewModel` at its field declaration without an explicit constructor. Let `respawn(..)` reject
+  negative values like the constructor and remove the reset in `move(..)`.
+- Status: done (2026-11-10).
+
+#### Snake colors of SnakeMainView
+
+- Origin: D3 (2026-11-10)
+- Types: `SnakeMainView`
+- Problem: `drawSimulation(..)` computes twelve local colors (alive, selected, and dead for the head and the segments,
+  each with fill and border) on every draw and chooses them in a lambda with several statements (`java.md`, "Code
+  Style"); the descriptor colors do not depend on the config.
+- Proposal: A private record `SnakeColors(head, headBorder, segment, segmentBorder)`, the final fields
+  `aliveColors`, `selectedColors`, and `deadColors` computed once in the constructor, and the private methods
+  `drawSnake(..)` and `resolveSnakeColors(..)`.
+- Status: done (2026-11-10).
+
+#### Redundant termination check
+
+- Origin: D3 (2026-11-10)
+- Types: `SnakeTerminationCondition`
+- Problem: `snakeHeadCells() <= 0` is implied by `livingSnakeHeadCells() <= 0`, because every update keeps the living
+  snake heads at most as many as all snake heads.
+- Proposal: Remove the check; the overflow guard of `cumulativeSnakeDeathCount()` stays.
+- Status: done (2026-11-10).
+
+#### Details of the Snake types
+
+- Origin: D3 (2026-11-10)
+- Types: all public types without type Javadoc, `SnakeStatistics`, `SnakeSimulationManager`, `SnakeStepLogic`,
+  `SnakeUserAction`, `SnakeHead`, `MoveContext`, `SnakeMoveStrategies`, `SnakeConstraints`, `SnakeConfigViewModel`,
+  `SnakeConfigView`, `SnakeMainView`, `SnakeObservationView`, `SnakeUserActionTest`
+- Problem: Eleven public types have no type Javadoc or, like `SnakeStatistics`, a generic one (D1).
+  `SnakeStatistics` initializes its counters to `0` and has public increment and decrement methods with callers only
+  in its package. The private methods of `SnakeSimulationManager` take the config as parameter and are named
+  `wallInitializer(..)` instead of `create...`. `SnakeStepLogic` names a variable `newCoordinate` that does not exist
+  and nests the neighbor check in an `if` with the exception in the `else` branch. `SnakeUserAction` finds the head of
+  a segment as an `Optional` coordinate and checks the entity twice. `SnakeHead` initializes fields to their default
+  values and uses `formatted(..)` without a `Locale` in `toString()`. `@param random` of `MoveContext` repeats its
+  record Javadoc; `SnakeMoveStrategies` has the abbreviation `nc` and a restating comment. `DEATH_MODE_VALUES` wraps
+  `List.of(SnakeDeathMode.values())`. `createConfig()` of `SnakeConfigViewModel` has section comments with the seed
+  under `// Structure`. `SnakeMainView` registers the binding cleanup also without a tool id and has a restating
+  comment and a misplaced constant. `SnakeObservationView` nests two `if` statements. The test helper
+  `selectedCell(..)` lacks the `create` prefix.
+- Proposal: Adopt the decisions of D1 and D2, make the increment and decrement methods package-private (an API
+  change), and fix the other details.
+- Status: done (2026-11-10).
+
+### Decisions
+
+- All public types have a short type Javadoc in the forms of D1; `SnakeTerminationCondition` states its condition
+  there. The config ViewModel, the config view, and `SnakeStatistics` declare their supertype on one line.
+- API change: the increment and decrement methods of `SnakeStatistics` are package-private and follow the getters;
+  `adjustWallCells(..)` and `adjustFoodCells(..)` stay public (D1). The counters lost their explicit initialization,
+  and the getters follow the order of the fields.
+- API change: `SnakeEditToolBarViewModel.availableStrategies()` and `setSelectedStrategy(..)` are removed; the class
+  initializes its selection at the field declaration, without an explicit constructor and without the empty check.
+- API change: `SnakeHead.pendingGrowth()` and `stepIndexOfSpawn()` are removed; the constructor and `respawn(..)`
+  check `initialPendingGrowth` with the private static `checkInitialPendingGrowth(..)`, and `move(..)` no longer
+  resets `pendingGrowth`. `SnakeHead` lost its default field initializations, and `toString()` uses
+  `String.format(Locale.ROOT, ..)`. The age methods stay, like those of `CreatureBase` in Wa-Tor.
+- `SnakeSimulationManager` reads the config through `config()` in `createWallInitializer(..)`,
+  `createSnakeInitializer(..)`, and `createFoodInitializer(..)` and counts the snake heads with
+  `SnakeEntity::isAgent`.
+- `SnakeStepLogic` rejects multiple edge behaviors first and names the target coordinate in its comment;
+  `SnakeUserAction` removes a snake by a segment with the private `removeSnakeBySegment(..)`;
+  `SnakeTerminationCondition` checks only the living snake heads and the overflow guard.
+- `SnakeMainView` holds `aliveColors`, `selectedColors`, and `deadColors` as final fields of the private record
+  `SnakeColors`, draws each snake with `drawSnake(..)`, and registers the binding cleanup only with a tool id.
+  `SnakeObservationView` joins its conditions.
+- `MoveContext`, `SnakeMoveStrategies`, `SnakeConstraints`, `SnakeConfigViewModel`, and the test helper
+  `createSelectedCell(..)` follow the details as proposed. No rule change.
 
 ### D4. Sugarscape
 
@@ -1616,7 +1713,9 @@ Decisions of this plan:
   of `// Rules` (D1, D).
 - The comment "This user action works only if a cell is selected ..." is removed from the user actions (D1, D).
 - Color variants of a main view are held in one `@Nullable` field per entity, without a fallback color for agents
-  (D1, D4).
+  (D1, D4); colors that depend only on the entity descriptors are computed once in the constructor (D3).
+- Edit tool bar ViewModels that select the first choice of a constant catalog initialize the selection at the field
+  declaration, without an explicit constructor and without an empty check of the catalog (D3, D4, D5).
 
 ## Deferred findings
 

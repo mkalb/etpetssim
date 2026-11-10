@@ -59,8 +59,10 @@ import static de.mkalb.etpetssim.simulations.snake.model.SnakeConstraints.VERTIC
 import static de.mkalb.etpetssim.simulations.snake.model.SnakeConstraints.VERTICAL_WALLS_MIN;
 import static de.mkalb.etpetssim.simulations.snake.model.SnakeConstraints.VERTICAL_WALLS_STEP;
 
-public final class SnakeConfigViewModel
-        extends AbstractConfigViewModel<SnakeConfig> {
+/**
+ * Config ViewModel of Snake.
+ */
+public final class SnakeConfigViewModel extends AbstractConfigViewModel<SnakeConfig> {
 
     /**
      * Number of fractional digits shown for segment-length multiplier inputs in the snake view.
@@ -137,7 +139,6 @@ public final class SnakeConfigViewModel
     @Override
     public SnakeConfig createConfig() {
         return new SnakeConfig(
-                // Structure
                 cellShapeProperty().property().getValue(),
                 gridEdgeBehaviorProperty().property().getValue(),
                 gridWidthProperty().property().getValue(),
@@ -145,12 +146,10 @@ public final class SnakeConfigViewModel
                 cellEdgeLengthProperty().property().getValue(),
                 cellDisplayModeProperty().property().getValue(),
                 seedProperty().computeSeedAndUpdateLabel(),
-                // Initialization
                 verticalWalls.getValue(),
                 foodCells.getValue(),
                 snakes.getValue(),
                 initialPendingGrowth.getValue(),
-                // Rules
                 NEIGHBORHOOD_MODE_DEFAULT,
                 deathMode.getValue(),
                 growthPerFood.getValue(),
