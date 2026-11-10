@@ -56,6 +56,8 @@ below, and `.claude/rules/simulations.md` applies the same principle to the MVVM
 ## Platform Baseline
 
 - Target Java 27 and JavaFX 27; do not use preview features.
+- Use JavaFX for UI and graphics; do not use AWT, Swing, or other packages of `java.desktop`. `ApplicationModuleTest`
+  checks the modules that `module-info.java` requires.
 - Use the Gradle Wrapper from the repository root (`.\gradlew.bat` in PowerShell, `./gradlew` in POSIX shells). Use
   these command forms without extra options:
     - `app:compileJava` for compile checks; `app:compileTestJava` for test sources.

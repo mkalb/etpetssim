@@ -18,7 +18,6 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.jspecify.annotations.Nullable;
 
-import java.awt.desktop.AppForegroundListener;
 import java.util.Locale;
 import java.util.function.BiConsumer;
 

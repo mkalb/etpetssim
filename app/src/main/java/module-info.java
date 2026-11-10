@@ -9,5 +9,4 @@ open module de.mkalb.etpetssim {
     requires java.logging;
     requires javafx.controls;
     requires static org.jspecify;
-    requires java.desktop;
 }
