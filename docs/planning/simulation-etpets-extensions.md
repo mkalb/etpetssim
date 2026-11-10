@@ -21,8 +21,10 @@ All planned improvements of ET Pets are collected in this plan, not in #70. They
 
 - Rules: `EtpetsConfig` has only `neighborhoodMode` as a rule, and it is fixed. All behavior values (e.g., fertility
   age 400, aging effects from age 4000, score weights) are constants in `EtpetsBalance`.
-- Grid: the cell shape is fixed to hexagons with edge neighbors. The egg placement relies on it: an egg needs a common
-  neighbor of both parents, which exists for hexagons (two cells) but not for triangles or squares with edge neighbors.
+- Grid: the cell shape is fixed to hexagons with edge neighbors; the edge behavior (`BLOCK_XY`) and the cell display
+  mode (`SHAPE`) are fixed as well (`EtpetsConstraints`). The egg placement relies on the hexagons: an egg needs a
+  common neighbor of both parents, which exists for hexagons (two cells) but not for triangles or squares with edge
+  neighbors.
 - Perception: a pet only sees two rings around its cell (`CellNeighborhoods.cellsByRadiusRings(..)` in
   `EtpetsAgentLogic`); ring 2 only adds a look-ahead bonus to the cells of ring 1. There is no path planning and no
   line of sight.
@@ -33,8 +35,10 @@ All planned improvements of ET Pets are collected in this plan, not in #70. They
   An eligible pair with a free egg cell therefore reproduces almost always.
 - Genetics: one mutation rate applies to all traits (chance 8% per trait, change of 5% of the value). The findings
   F1 to F5 below describe the weaknesses.
-- Statistics: three metrics (active pets, eggs, cumulative deaths); the observation view shows no details of the
-  selected pet (TODO in `EtpetsObservationView`).
+- Statistics: three metrics (active pets, eggs, cumulative deaths); `EtpetsStatistics` already assigns the metric of
+  the active pets to the primary chart group (window of 1,000 steps), while #58 (open, `needs-refinement`) covers
+  further statistics history and charts. The observation view shows no details of the selected pet (TODO in
+  `EtpetsObservationView`).
 - Display: pets are circles whose brightness follows their energy; the minimum cell edge length is 5, the maximum grid
   size is 200 x 200.
 - Editing: terrain and resources can be set; pets and eggs cannot be placed or removed.
@@ -68,6 +72,10 @@ in the running simulation.
 - Decision: round the cost at random, so that its expected value equals the modifier: the integer part plus 1 with
   the probability of the fractional part (e.g., 1.3: cost 1, or 2 with a chance of 30%; 0.5: cost 0 or 1 with a
   chance of 50% each). The minimum cost of 1 is dropped; otherwise, values below 1 have no effect.
+- Affected: `EtpetsAgentLogic.applyMoveAction(..)`, which takes the `Random` of the step as a new parameter, and
+  `EtpetsAgentLogicTest`. A fractional part of 0 (e.g., the default modifier 1.0) needs no random draw; keep this
+  early return and explain it in a comment (`.claude/rules/simulations.md`), because it keeps the random sequence of
+  a seed stable.
 
 #### F3 Traits have hardly any diversity
 
@@ -116,12 +124,18 @@ in the running simulation.
 
 #### F8 Logging in the step loop
 
-- Finding: `EtpetsAgentLogic` logs hatching and death at `info` inside the step loop, and it contains commented-out
-  log calls.
+- Finding: `EtpetsAgentLogic` logs hatching and death at `info` inside the step loop, and it contains one
+  commented-out log call in `selectAndApplyAction(..)`. The helper methods `formatActionCandidates(..)` and
+  `formatActionCandidate(..)` serve only that call.
 - Decision: the logging stays during the development. Directly before the 1.0 release, the `info` log calls in the
-  step loop and the commented-out log calls are removed (exception to the rule in `.claude/rules/java.md` that
+  step loop and the commented-out log call are removed (exception to the rule in `.claude/rules/java.md` that
   commented-out `AppLogger` calls may be kept; approved by the maintainer). The commented-out blocks "Only for
   testing / debugging" in `EtpetsSimulationManager` are removed as well.
+- Consequences of the removal: the `log...` methods, the two `format...` methods, the constants `LOG_COMPONENT` and
+  `DISPLAY_STRING_CAPACITY_HINT`, and the imports `AppLogger` and `Locale` become unused and are removed.
+  The `@SuppressWarnings` that only cover the removed code (`"CommentedOutCode"` on `selectAndApplyAction(..)` and on
+  the three methods `initializeTerrain(..)`, `initializeResources(..)`, and `initializePets(..)`, and `"unused"` on
+  `formatActionCandidates(..)`) are removed too; the suppressions policy requires the review of the maintainer.
 
 ### New features
 
@@ -135,10 +149,18 @@ their topics follow after the release.
 - N3 Three configurable rules, moved from `EtpetsBalance` into `EtpetsConfig` (first step of topic 1): the mutation
   chance per trait (today 8%), the fertility age (today 400), and the age from which the aging effects start (today
   4000). No further values before the 1.0 release. Small to medium effort (config, constraints, config view, texts
-  in both languages, tests).
+  in both languages, tests). The values are not yet reachable from the logic: `Pet` reads the two ages directly from
+  `EtpetsBalance` (`hasReachedAgingEffectsAge(..)`, `agingStepsAtStepIndex(..)`, and
+  `isReproductionEligibleByState(..)`), `EtpetsAgentLogic` reads the mutation chance, and `EtpetsStepRunner` has no
+  config yet. The config must be passed through `EtpetsSimulationManager`, `EtpetsStepRunner` (constructor order:
+  grid model, config, further inputs; see `.claude/rules/simulations.md`), and `EtpetsAgentLogic` to these methods.
+  The `Balance` constants become `Constraints` defaults and limits.
 - N4 An edit tool that removes a pet or an egg (part of topic 7). The agent is taken out of the simulation: it
   disappears at once, without the darkened step of a dead pet, and it is not counted as a death; the count of
-  active pets or eggs is adjusted. Removing the last agent ends the simulation like an extinction. Medium effort.
+  active pets or eggs is adjusted. A dead pet stays on the grid for one step and is already excluded from the active
+  pets (`EtpetsAgentLogic`); removing it must not decrease the count a second time. Removing the last agent ends the
+  simulation like an extinction (`EtpetsTerminationCondition` checks the counts of active pets and eggs). Medium
+  effort.
 
 Open points:
 
