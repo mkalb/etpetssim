@@ -2,6 +2,9 @@ package de.mkalb.etpetssim.simulations.sugar.model.entity;
 
 import java.util.Locale;
 
+/**
+ * Sugar of Sugarscape, a resource whose amount agents harvest and that regenerates up to its maximum amount.
+ */
 public final class Sugar implements ResourceEntity {
 
     private final int maxAmount;
@@ -17,21 +20,12 @@ public final class Sugar implements ResourceEntity {
         return SugarEntity.DESCRIPTOR_ID_SUGAR;
     }
 
-    public int maxAmount() {
-        return maxAmount;
-    }
-
     public int currentAmount() {
         return currentAmount;
     }
 
     public void adjustAmount(int delta) {
         currentAmount = Math.clamp(currentAmount + delta, 0, maxAmount);
-    }
-
-    @Override
-    public boolean isResource() {
-        return true;
     }
 
     @Override

@@ -144,7 +144,7 @@ sources. "Types" counts the top-level types in main sources of a group.
 | D1 | Wa-Tor (reference)                                            |    21 | done        |
 | D2 | Rebounding                                                    |    18 | done        |
 | D3 | Snake                                                         |    25 | done        |
-| D4 | Sugarscape                                                    |    28 | open        |
+| D4 | Sugarscape                                                    |    28 | done        |
 | D5 | ET Pets                                                       |    42 | open        |
 | D6 | Conway                                                        |    24 | open        |
 | D7 | Forest                                                        |    13 | open        |
@@ -1350,7 +1350,8 @@ Families and their known deviations:
   running sequence numbers and have no test of their own.
 - Config ViewModels take only the simulation state property; the edit tool bar ViewModels of Conway, Langton, and
   Rebounding have an implicit constructor, those of ET Pets, Snake, and Sugar an explicit one that selects the first
-  choice (Snake initializes it at the field declaration since D3). Only `LangtonEditToolBarViewModel` has a test.
+  choice (Snake and Sugar initialize it at the field declaration since D3 and D4). Only
+  `LangtonEditToolBarViewModel` has a test.
 - Main views take `(viewModel, [editToolBarViewModel], entityDescriptorRegistry, configView, controlView,
   observationView)`; Forest and Wa-Tor have no edit tool bar. `LabMainView` extends `AbstractMainView` directly and
   has 23 private methods; the Lab has its own control view and ViewModel and its own main ViewModel.
@@ -1641,6 +1642,86 @@ Notes:
 
 ### D4. Sugarscape
 
+Notes:
+
+- Inventory (2026-11-10, verified against the sources): 28 types in the package root, `model`, `model.entity`,
+  `shared`, `view`, and `viewmodel`. Tests exist for `SugarConfig`, `SugarCell`, `SugarGridModel`, `SugarUserAction`,
+  `SugarAgentLogic`, `SugarResourceLogic`, `Agent`, `Sugar`, `SugarEntity`, `EntityDescriptors`, and
+  `SugarAddSugarLevel`, with the package-local `SugarLogicTestSupport`.
+- `SugarConfig`, `SugarConstraints`, `SugarBalance`, `SugarGridModel`, `SugarAgentLogic`, `SugarResourceLogic`,
+  `NoAgent`, `NoResource`, `EntityDescriptors`, and `SugarFactory` follow the rules apart from the details below.
+- Observation for D5 or #24: the observation view shows `-` as the type of an empty cell, because `NoResource` and
+  `NoAgent` have the descriptor IDs `no_resource` and `no_agent` without an entity descriptor; the background uses the
+  descriptor `terrain`, which no entity has. ET Pets uses the same IDs.
+- Test gaps for the later separate optimization: the initialization of `SugarSimulationManager` (peaks, radius map,
+  and agents), `SugarStatistics`, `SugarTerminationCondition`, `SugarStepRunner`, and `SugarEditToolBarViewModel`.
+
+#### Edit tool bar ViewModel of Sugarscape
+
+- Origin: D4 (2026-11-10)
+- Types: `SugarEditToolBarViewModel`, `SugarMainView`
+- Problem: The ViewModel copies the dynamic pattern of `ReboundingEditToolBarViewModel` (an `ObservableList`, a
+  `@Nullable` selection, a setter that checks the membership, and `resolveSelectedAddSugarContext()`), although the
+  levels are the constants of an enum; `SugarMainView` synchronizes its combo box with two listeners and its own list
+  cells.
+- Proposal: Use an `InputChoiceProperty` initialized at the field declaration and
+  `FXComponentFactory.createLabeledChoiceComboBox(..)` like Snake. An API change.
+- Status: done (2026-11-10).
+
+#### Unused entity API of Sugarscape
+
+- Origin: D4 (2026-11-10)
+- Types: `SugarEntity`, `AgentEntity`, `ResourceEntity`, `Agent`, `Sugar`, `NoAgent`, `NoResource`,
+  `AgentEntityTest`, `ResourceEntityTest`
+- Problem: `isResource()` and `isAgent()` with their defaults and overrides have no caller in main sources, only the
+  two tests; the sealed layer types already state the layer. `Sugar.maxAmount()` has no caller.
+- Proposal: Remove the methods and the two tests. An API change.
+- Status: done (2026-11-10).
+
+#### Color variants of SugarMainView
+
+- Origin: D1 (2026-11-09)
+- Types: `SugarMainView`
+- Problem: The map `entityColors` is filled with `null` placeholders, the fallback colors are not reached, and the
+  fill color methods switch over the entity with the dummy value `-1` for the empty entities, which are not drawn.
+- Proposal: Adopt D1: the `@Nullable` fields `sugarColors` and `agentColors`, the private static
+  `resolveVariantColor(..)`, and the base color for `NoResource` and `NoAgent`; remove the fallback constants.
+- Status: done (2026-11-10).
+
+#### Details of the Sugarscape types
+
+- Origin: D4 (2026-11-10)
+- Types: all public types without type Javadoc, `SugarStatistics`, `SugarSimulationManager`, `SugarStepRunner`,
+  `SugarTerminationCondition`, `Agent`, `SugarObservationView`, and the types whose Javadoc says "Sugar simulation"
+- Problem: Eleven public types have no type Javadoc or a generic one (D1); several Javadoc comments call the
+  simulation "Sugar" instead of "Sugarscape". `SugarStatistics` initializes its counters to `0`.
+  `SugarSimulationManager` mixes the parameter `config` with `config()`, limits the maximum sugar amount with
+  `Math.max(..)` although `isValid()` ensures it, and has instance helpers without instance state and the parameter
+  `percent` for a fraction. `SugarTerminationCondition` lacks the empty line before `<p>`. `Agent` names its
+  constructor parameter `currentEnergy` and adds without `+=`. `SugarObservationView` names a `Sugar` `resource`.
+  Six class declarations wrap although they fit on fewer lines.
+- Proposal: Adopt the decisions of D1 to D3 and fix the details.
+- Status: done (2026-11-10).
+
+### Decisions
+
+- All public types have a short type Javadoc in the forms of D1; `SugarTerminationCondition` states its condition
+  there and keeps its paragraph about the safety net. The Javadoc calls the simulation "Sugarscape".
+- API change: `SugarEditToolBarViewModel` holds an `InputChoiceProperty<SugarAddSugarLevel>` with the first level and
+  localized labels, initialized at the field declaration; `availableAddSugarLevels()`, `setSelectedAddSugarLevel(..)`,
+  and `resolveSelectedAddSugarContext()` are removed, and `getSelectedAddSugarLevel()` is non-null. `SugarMainView`
+  builds the combo box with `FXComponentFactory.createLabeledChoiceComboBox(..)` and binds its disable state like
+  Snake.
+- API change: `isResource()`, `isAgent()`, and `Sugar.maxAmount()` are removed; `AgentEntity` and `ResourceEntity`
+  have no members, and `AgentEntityTest` and `ResourceEntityTest` are deleted.
+- `SugarMainView` holds `sugarColors` and `agentColors` and resolves the fill colors with `resolveVariantColor(..)`
+  like Wa-Tor; `entityColors` and the fallback colors are removed.
+- `SugarStatistics` lost its counter initializations; `adjustResourceCells(..)` stays public and
+  `adjustAgentCells(..)` package-private. `SugarSimulationManager` reads the config through `config()`, uses
+  `config().maxSugarAmount()` directly, and has the private static `computeClampedIndex(..)` (parameter `fraction`)
+  and `computeSugarAmount(..)` after its constructors. `Agent` takes `initialEnergy` and adds with `+=`.
+- The details are implemented as proposed. No rule change.
+
 ### D5. ET Pets
 
 #### Shuffle and coordinates of EtpetsSimulationManager
@@ -1715,7 +1796,9 @@ Decisions of this plan:
 - Color variants of a main view are held in one `@Nullable` field per entity, without a fallback color for agents
   (D1, D4); colors that depend only on the entity descriptors are computed once in the constructor (D3).
 - Edit tool bar ViewModels that select the first choice of a constant catalog initialize the selection at the field
-  declaration, without an explicit constructor and without an empty check of the catalog (D3, D4, D5).
+  declaration, without an explicit constructor and without an empty check of the catalog; a fixed catalog uses an
+  `InputChoiceProperty` with `FXComponentFactory.createLabeledChoiceComboBox(..)` instead of an observable list and a
+  `@Nullable` selection (D3, D4, D5).
 
 ## Deferred findings
 

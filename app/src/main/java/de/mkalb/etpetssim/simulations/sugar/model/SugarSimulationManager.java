@@ -29,9 +29,11 @@ import java.util.Set;
 
 import static de.mkalb.etpetssim.engine.support.WorkCheckpoints.isCancellationCheckpoint;
 
+/**
+ * Simulation manager of Sugarscape.
+ */
 public final class SugarSimulationManager
-        extends AbstractTimedSimulationManager<SugarEntity, SugarGridModel, SugarConfig,
-        SugarStatistics> {
+        extends AbstractTimedSimulationManager<SugarEntity, SugarGridModel, SugarConfig, SugarStatistics> {
 
     private final GridStructure structure;
     private final SugarStatistics statistics;
@@ -57,10 +59,39 @@ public final class SugarSimulationManager
         executor = new TimedSimulationExecutor<>(new DefaultSimulationExecutor<>(runner, runner::model,
                 terminationCondition, statistics));
 
-        initializeGrid(config, model, random, cancellation);
+        initializeGrid(model, random, cancellation);
         cancellation.checkCanceled();
         initializeStatistics(model);
         recordInitialStatisticsSample();
+    }
+
+    /**
+     * Maps a fraction ({@code 0.0} to {@code 1.0}) to an integer index in the range {@code [0, size - 1]}.
+     * Rounds down when the fraction is below {@code 0.5}, otherwise up, and clamps the result.
+     *
+     * @param size     the dimension size (number of cells)
+     * @param fraction the fraction between {@code 0.0} and {@code 1.0}
+     * @return the clamped index in {@code [0, size - 1]}
+     */
+    @SuppressWarnings("NumericCastThatLosesPrecision")
+    private static int computeClampedIndex(int size, double fraction) {
+        int count = (int) ((fraction < 0.5d) ? Math.floor(size * fraction) : Math.ceil(size * fraction));
+        return Math.clamp(count, 0, size - 1);
+    }
+
+    @SuppressWarnings("NumericCastThatLosesPrecision")
+    private static int computeSugarAmount(int minSugarAmount,
+                                          int sugarRange,
+                                          int radiusLimit,
+                                          int radiusLevel,
+                                          Random random) {
+        // linear interpolation: near peaks -> max, at edge -> min
+        if (radiusLimit <= 0) {
+            return minSugarAmount;
+        }
+        return (int) Math.floor(minSugarAmount
+                + (((double) sugarRange * (radiusLimit - radiusLevel)) / radiusLimit)
+                + random.nextDouble(SugarBalance.SUGAR_NOISE_MIN, SugarBalance.SUGAR_NOISE_MAX));
     }
 
     @Override
@@ -85,26 +116,11 @@ public final class SugarSimulationManager
         return executor;
     }
 
-    private void initializeGrid(SugarConfig config,
-                                SugarGridModel model,
+    private void initializeGrid(SugarGridModel model,
                                 Random random,
                                 SimulationInitializationCancellation cancellation) {
-        initializeGridSugar(config, model, random, cancellation);
-        initializeGridAgent(config, model, random, cancellation);
-    }
-
-    /**
-     * Maps a fraction (0.0 .. 1.0) to an integer index in the range [0, size - 1].
-     * Rounds with floor when fraction < 0.5, otherwise ceil, and clamps the result.
-     *
-     * @param size    the dimension size (number of cells)
-     * @param percent fraction between 0.0 and 1.0
-     * @return clamped index in [0, size - 1]
-     */
-    @SuppressWarnings("NumericCastThatLosesPrecision")
-    private int computeClampedIndex(int size, double percent) {
-        int count = (int) ((percent < 0.5d) ? Math.floor(size * percent) : Math.ceil(size * percent));
-        return Math.clamp(count, 0, size - 1);
+        initializeGridSugar(model, random, cancellation);
+        initializeGridAgent(model, random, cancellation);
     }
 
     private List<GridCoordinate> computeSugarPeakCoordinates() {
@@ -139,13 +155,12 @@ public final class SugarSimulationManager
         return peakCoordinates;
     }
 
-    private void initializeGridSugar(SugarConfig config,
-                                     SugarGridModel model,
+    private void initializeGridSugar(SugarGridModel model,
                                      Random random,
                                      SimulationInitializationCancellation cancellation) {
         List<GridCoordinate> peakCoordinates = computeSugarPeakCoordinates();
 
-        Map<GridCoordinate, Integer> sugarMap = computeSugarRadiusMap(config, peakCoordinates, random, cancellation);
+        Map<GridCoordinate, Integer> sugarMap = computeSugarRadiusMap(peakCoordinates, random, cancellation);
         int index = 0;
         for (var entry : sugarMap.entrySet()) {
             if (isCancellationCheckpoint(index)) {
@@ -156,14 +171,13 @@ public final class SugarSimulationManager
         }
     }
 
-    private Map<GridCoordinate, Integer> computeSugarRadiusMap(SugarConfig config,
-                                                               List<GridCoordinate> peakCoordinates,
+    private Map<GridCoordinate, Integer> computeSugarRadiusMap(List<GridCoordinate> peakCoordinates,
                                                                Random random,
                                                                SimulationInitializationCancellation cancellation) {
         Map<GridCoordinate, Integer> sugarMap = new HashMap<>();
         int minSugarAmount = config().minSugarAmount();
-        int radiusLimit = config.sugarRadiusLimit();
-        int maxSugarAmount = Math.max(minSugarAmount, config.maxSugarAmount());
+        int radiusLimit = config().sugarRadiusLimit();
+        int maxSugarAmount = config().maxSugarAmount();
         int sugarRange = maxSugarAmount - minSugarAmount;
 
         Set<GridCoordinate> visited = new HashSet<>();
@@ -187,7 +201,7 @@ public final class SugarSimulationManager
                 }
                 index++;
                 GridCoordinate current = queue.remove();
-                for (var result : CellNeighborhoods.neighborEdgeBehaviorResults(current, config.neighborhoodMode(),
+                for (var result : CellNeighborhoods.neighborEdgeBehaviorResults(current, config().neighborhoodMode(),
                         structure)) {
                     if (result.action().isWithinGrid()) {
                         GridCoordinate mapped = result.mapped();
@@ -209,30 +223,15 @@ public final class SugarSimulationManager
         return sugarMap;
     }
 
-    @SuppressWarnings("NumericCastThatLosesPrecision")
-    private int computeSugarAmount(int minSugarAmount,
-                                   int sugarRange,
-                                   int radiusLimit,
-                                   int radiusLevel,
-                                   Random random) {
-        // linear interpolation: near peaks -> max, at edge -> min
-        if (radiusLimit <= 0) {
-            return minSugarAmount;
-        }
-        return (int) Math.floor(minSugarAmount
-                + (((double) sugarRange * (radiusLimit - radiusLevel)) / radiusLimit)
-                + random.nextDouble(SugarBalance.SUGAR_NOISE_MIN, SugarBalance.SUGAR_NOISE_MAX));
-    }
-
-    private void initializeGridAgent(SugarConfig config,
-                                     SugarGridModel model,
+    private void initializeGridAgent(SugarGridModel model,
                                      Random random,
                                      SimulationInitializationCancellation cancellation) {
         int stepIndexOfSpawn = -1;
+        int agentInitialEnergy = config().agentInitialEnergy();
         GridInitializer<AgentEntity> agentGridInitializer =
                 GridInitializers.fillRandomPercent(
-                        config.agentPercent(),
-                        () -> new Agent(config.agentInitialEnergy(), stepIndexOfSpawn),
+                        config().agentPercent(),
+                        () -> new Agent(agentInitialEnergy, stepIndexOfSpawn),
                         NoAgent.NO_AGENT,
                         random,
                         cancellation::checkCanceled);

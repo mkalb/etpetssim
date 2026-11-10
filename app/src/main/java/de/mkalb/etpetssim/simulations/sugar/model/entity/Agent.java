@@ -2,13 +2,16 @@ package de.mkalb.etpetssim.simulations.sugar.model.entity;
 
 import java.util.Locale;
 
+/**
+ * Agent of Sugarscape that moves to sugar, harvests it, and consumes energy by its metabolism.
+ */
 public final class Agent implements AgentEntity {
 
     private final int stepIndexOfSpawn;
     private int currentEnergy;
 
-    public Agent(int currentEnergy, int stepIndexOfSpawn) {
-        this.currentEnergy = currentEnergy;
+    public Agent(int initialEnergy, int stepIndexOfSpawn) {
+        currentEnergy = initialEnergy;
         this.stepIndexOfSpawn = stepIndexOfSpawn;
     }
 
@@ -22,7 +25,7 @@ public final class Agent implements AgentEntity {
     }
 
     public void adjustEnergy(int delta) {
-        currentEnergy = currentEnergy + delta;
+        currentEnergy += delta;
     }
 
     public int stepIndexOfSpawn() {
@@ -35,11 +38,6 @@ public final class Agent implements AgentEntity {
 
     public int ageAtStepCount(int stepCount) {
         return ageAtStepIndex(stepCount - 1);
-    }
-
-    @Override
-    public boolean isAgent() {
-        return true;
     }
 
     @Override

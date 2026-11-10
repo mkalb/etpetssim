@@ -11,7 +11,7 @@ import de.mkalb.etpetssim.simulations.sugar.model.entity.SugarEntity;
 import java.util.Locale;
 
 /**
- * Snapshot of all Sugar layers for a single grid coordinate.
+ * Snapshot of all Sugarscape layers for a single grid coordinate.
  *
  * <p>The record stores both layer entities (resource, agent) and exposes an effective top-most entity via
  * {@link #entity()}.
@@ -29,9 +29,9 @@ public record SugarCell(GridCoordinate coordinate,
         implements GridCellView<SugarEntity> {
 
     /**
-     * Creates a layered Sugar cell snapshot from the given grid model.
+     * Creates a layered Sugarscape cell snapshot from the given grid model.
      *
-     * @param model      the Sugar grid model providing all layers
+     * @param model      the Sugarscape grid model providing all layers
      * @param coordinate the coordinate to read
      * @return the composed cell snapshot for the coordinate
      */
@@ -62,7 +62,7 @@ public record SugarCell(GridCoordinate coordinate,
      * <p>Format: {@code <coordinate-display> <resource-display> <agent-display>}, for example
      * {@code (1, 2) [SUGAR A=3/4] [NO_AGENT]}.
      *
-     * @return a layer-complete display string for this Sugar cell
+     * @return a layer-complete display string for this Sugarscape cell
      */
     @Override
     public String toDisplayString() {
