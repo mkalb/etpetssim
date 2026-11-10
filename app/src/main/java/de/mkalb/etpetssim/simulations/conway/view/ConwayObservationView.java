@@ -8,6 +8,9 @@ import de.mkalb.etpetssim.simulations.core.view.AbstractObservationView;
 import de.mkalb.etpetssim.simulations.core.viewmodel.DefaultObservationViewModel;
 import javafx.scene.layout.Region;
 
+/**
+ * Observation view of Conway's Game of Life.
+ */
 public final class ConwayObservationView
         extends AbstractObservationView<
         ConwayEntity,

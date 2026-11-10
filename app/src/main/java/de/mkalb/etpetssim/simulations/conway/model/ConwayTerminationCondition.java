@@ -4,6 +4,9 @@ import de.mkalb.etpetssim.engine.executor.SimulationTerminationCondition;
 import de.mkalb.etpetssim.engine.model.ReadableGridModel;
 import de.mkalb.etpetssim.simulations.conway.model.entity.ConwayEntity;
 
+/**
+ * Termination condition of Conway's Game of Life that ends the simulation when no cell is alive or no cell changed.
+ */
 public final class ConwayTerminationCondition
         implements SimulationTerminationCondition<ConwayEntity, ReadableGridModel<ConwayEntity>, ConwayStatistics> {
 

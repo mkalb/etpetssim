@@ -13,6 +13,9 @@ import org.jspecify.annotations.Nullable;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Edit tool bar ViewModel of Conway's Game of Life with the pattern choices available for the current configuration.
+ */
 public final class ConwayEditToolBarViewModel {
 
     private final ObservableList<ConwayPatternChoice> availablePatternChoices = FXCollections.observableArrayList();

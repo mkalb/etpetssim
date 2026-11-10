@@ -41,6 +41,9 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
 
+/**
+ * Main view of Conway's Game of Life.
+ */
 public final class ConwayMainView
         extends AbstractDefaultMainView<
         ConwayEntity,
@@ -209,11 +212,8 @@ public final class ConwayMainView
                 AppLocalization.getText(CONWAY_TOOLBAR_PATTERN_TOOLTIP),
                 FXStyleClasses.SIMULATION_EDIT_TOOLBAR_OPTION_LABEL).label();
 
-        ChangeListener<@Nullable ConwayPatternChoice> comboSelectionListener = (_, oldValue, newValue) -> {
-            if (!Objects.equals(oldValue, newValue)) {
-                editToolBarViewModel.setSelectedPatternChoice(newValue);
-            }
-        };
+        ChangeListener<@Nullable ConwayPatternChoice> comboSelectionListener =
+                (_, _, newValue) -> editToolBarViewModel.setSelectedPatternChoice(newValue);
         ChangeListener<@Nullable ConwayPatternChoice> viewModelSelectionListener = (_, _, newValue) -> {
             if (!Objects.equals(patternComboBox.getValue(), newValue)) {
                 if (newValue == null) {
@@ -226,6 +226,10 @@ public final class ConwayMainView
         var selectedPatternChoiceProperty = editToolBarViewModel.selectedPatternChoiceProperty();
         patternComboBox.valueProperty().addListener(comboSelectionListener);
         selectedPatternChoiceProperty.addListener(viewModelSelectionListener);
+        registerEditToolBarCleanup(() -> {
+            patternComboBox.valueProperty().removeListener(comboSelectionListener);
+            selectedPatternChoiceProperty.removeListener(viewModelSelectionListener);
+        });
 
         if (selectedToolId != null) {
             var enabledBinding = Bindings.createBooleanBinding(
@@ -239,13 +243,6 @@ public final class ConwayMainView
                 patternLabel.disableProperty().unbind();
                 patternComboBox.disableProperty().unbind();
                 enabledBinding.dispose();
-                patternComboBox.valueProperty().removeListener(comboSelectionListener);
-                selectedPatternChoiceProperty.removeListener(viewModelSelectionListener);
-            });
-        } else {
-            registerEditToolBarCleanup(() -> {
-                patternComboBox.valueProperty().removeListener(comboSelectionListener);
-                selectedPatternChoiceProperty.removeListener(viewModelSelectionListener);
             });
         }
 

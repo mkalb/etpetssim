@@ -28,7 +28,7 @@ final class ConwayUserActionTest {
         );
     }
 
-    private static GridCell<ConwayEntity> selectedCell(ConwaySimulationManager manager, int x, int y) {
+    private static GridCell<ConwayEntity> createSelectedCell(ConwaySimulationManager manager, int x, int y) {
         GridCoordinate coordinate = new GridCoordinate(x, y);
         return new GridCell<>(coordinate, manager.currentGridModel().getEntity(coordinate));
     }
@@ -52,8 +52,8 @@ final class ConwayUserActionTest {
         ConwaySimulationManager manager = new ConwaySimulationManager(createConfig(0.0d));
         ConwayUserAction userAction = new ConwayUserAction();
 
-        userAction.apply(manager, ConwayUserActionContext.FixedAction.TOGGLE_CELL, selectedCell(manager, 0, 0));
-        userAction.apply(manager, ConwayUserActionContext.FixedAction.TOGGLE_CELL, selectedCell(manager, 1, 0));
+        userAction.apply(manager, ConwayUserActionContext.FixedAction.TOGGLE_CELL, createSelectedCell(manager, 0, 0));
+        userAction.apply(manager, ConwayUserActionContext.FixedAction.TOGGLE_CELL, createSelectedCell(manager, 1, 0));
 
         assertAll(
                 () -> assertEquals(2, manager.statistics().aliveCells()),
@@ -86,7 +86,7 @@ final class ConwayUserActionTest {
         userAction.apply(
                 manager,
                 new ConwayUserActionContext.PlacePattern(patternChoice),
-                selectedCell(manager, anchorCoordinate.x(), anchorCoordinate.y()));
+                createSelectedCell(manager, anchorCoordinate.x(), anchorCoordinate.y()));
 
         assertAll(
                 () -> assertEquals(expectedAliveCells, manager.statistics().aliveCells()),

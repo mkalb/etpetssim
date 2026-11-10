@@ -63,7 +63,7 @@ Work on exactly one script fix, block, or group at a time, in the order of the s
   (maintainer, 2026-11-08). Each later simulation is compared with Wa-Tor family by family and adopts its decisions
   without asking again, unless it deviates.
 - **Final check:** run the script check again, fix the remaining occurrences after the maintainer has decided, and
-  handle the deferred findings.
+  handle the deferred findings, the "Observation for #24" notes of the groups, and the missing rules.
 
 ### Steps per group
 
@@ -146,7 +146,7 @@ sources. "Types" counts the top-level types in main sources of a group.
 | D3 | Snake                                                         |    25 | done        |
 | D4 | Sugarscape                                                    |    28 | done        |
 | D5 | ET Pets                                                       |    42 | done        |
-| D6 | Conway                                                        |    24 | open        |
+| D6 | Conway                                                        |    24 | done        |
 | D7 | Forest                                                        |    13 | open        |
 | D8 | Langton                                                       |    29 | open        |
 | D9 | Lab                                                           |    15 | open        |
@@ -1825,6 +1825,53 @@ Notes:
 - The details are implemented as proposed; `Pet` takes `initialEnergy`. No rule change.
 
 ### D6. Conway
+
+Notes:
+
+- Inventory (2026-11-10, verified against the sources): 24 types in the package root, `model`, `model.entity`,
+  `shared`, `view`, and `viewmodel`. Tests exist for `ConwayConfig`, `ConwayPatterns`, `ConwayUserAction`,
+  `ConwayEntity`, `ConwayPatternChoice`, `ConwayTransitionRules`, the rule presets (`ConwayRulePresetTest`), and
+  `ConwayStyleClasses`.
+- `ConwayConfig`, `ConwayPatternChoice`, the rule presets, `ConwayUserActionContext`, `ConwayStyleClasses`, and
+  `ConwayFactory` follow the rules. `ConwayEditToolBarViewModel` keeps the dynamic pattern of Rebounding, because the
+  available patterns depend on the cell shape and the transition rules; `ConwayRuleProperty.labelProperty()` stays,
+  because `FXComponentFactory.createLabeledStringTextBox(..)` needs it.
+- Test gaps for the later separate optimization: `ConwayStepLogic`, `ConwayTerminationCondition`, `ConwayStatistics`,
+  `ConwaySimulationManager`, and `ConwayEditToolBarViewModel`.
+
+#### Details of the Conway types
+
+- Origin: D6 (2026-11-10)
+- Types: the public types without type Javadoc, `ConwayStatistics`, `ConwaySimulationManager`, `ConwayUserAction`,
+  `ConwayConstraints`, `ConwayPatterns`, `ConwayEntity`, `ConwayTransitionRules`, `ConwayRuleProperty`,
+  `ConwayConfigViewModel`, `ConwayConfigView`, `ConwayMainView`, `ConwayUserActionTest`
+- Problem: Nine public types have no type Javadoc and `ConwayStatistics` a generic one (D1). `ConwayStatistics`
+  initializes two counters to `0` and adjusts through a temporary variable; `ConwaySimulationManager` passes the
+  config to `initializeGrid(..)`. `ConwayUserAction` adds with `+= 1` and checks an alive delta that implies a changed
+  cell. `CELL_SHAPE_VALUES` wraps `List.of(CellShape.values())`. `ConwayPatterns`, `ConwayEntity`, and
+  `ConwayTransitionRules.toDisplayString()` have `@see` tags for elements their text already names; `ConwayEntity`
+  imports a type only for its `@see`. `ConwayRuleProperty` lacks the empty lines before `<p>`, has the non-ASCII dash
+  `U+2014` in a comment, an unused catch variable, the constants `PRESET_*_INITIAL`, fields with the accessor suffix,
+  and a blank line between its instance fields. `ConwayConfigViewModel` and `ConwayConfigView` have two `// Rules`
+  sections, one of them before `// Initialization`, and `// Rules - Presets`. `ConwayConfigView` uses a fully
+  qualified `CheckBox`, the term "born" next to "birth", and a trailing comment. `ConwayMainView` registers the
+  listener cleanup in both branches and compares old and new value in the combo box listener. Three class
+  declarations wrap although they fit on one line, and the test helper `selectedCell(..)` lacks the `create` prefix.
+- Proposal: Adopt the decisions of D1 to D5 and fix the details.
+- Status: done (2026-11-10).
+
+### Decisions
+
+- All public types have a short type Javadoc in the forms of D1; `ConwayTerminationCondition` states its condition
+  there. `ConwayStatistics`, `ConwayConfigViewModel`, and `ConwayConfigView` declare their supertype on one line.
+- `ConwayStatistics` sets only `deadCells` in its constructor and adjusts with `+=`; `ConwaySimulationManager` reads
+  the config through `config()`; `ConwayUserAction` updates the statistics only if a cell changed.
+- `ConwayRuleProperty` names its constants `PRESET_*_DEFAULT` (C4) and its fields `ruleString`, `label`,
+  `presetTriangle`, `presetSquare`, and `presetHexagon` (C5); the public accessors stay unchanged.
+- `ConwayMainView` registers the listener cleanup once and the binding cleanup only with a tool id, and its combo box
+  listener forwards every change (D2).
+- The section comments follow the four config groups; the redundant `@see` tags and the import used only by one of
+  them are removed. No API change and no rule change.
 
 ### D7. Forest
 

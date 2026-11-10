@@ -148,7 +148,6 @@ public record ConwayTransitionRules(
      * <p>The returned string can be parsed back by {@link #parse(String)}.
      *
      * @return a concise S/B notation rule string for these Conway rules
-     * @see #parse(String)
      */
     public String toDisplayString() {
         String survive = surviveCounts.stream()

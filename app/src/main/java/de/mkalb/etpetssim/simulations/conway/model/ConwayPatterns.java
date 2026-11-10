@@ -21,9 +21,6 @@ import java.util.Map;
  * the categories Still Life, Oscillator, Methuselah, Replicator, and Spaceship; the catalog order follows these
  * categories. A pattern is available only for square cells and the rules it is intended for: the HighLife rules
  * ({@code 23/36}) for the replicator, Conway's Life rules for all other patterns.
- *
- * @see GridPattern
- * @see ConwayEntity
  */
 @SuppressWarnings("SpellCheckingInspection")
 public final class ConwayPatterns {

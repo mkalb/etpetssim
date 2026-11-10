@@ -1,7 +1,6 @@
 package de.mkalb.etpetssim.simulations.conway.model.entity;
 
 import de.mkalb.etpetssim.engine.model.entity.ConstantGridEntityDescriptorProvider;
-import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorRegistry;
 import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorSpec;
 import javafx.scene.paint.Color;
 import org.jspecify.annotations.Nullable;
@@ -11,8 +10,6 @@ import org.jspecify.annotations.Nullable;
  *
  * <p>Each enum constant represents one grid cell state and carries descriptor metadata
  * used for descriptor registry registration and rendering.
- *
- * @see GridEntityDescriptorRegistry
  */
 public enum ConwayEntity implements ConstantGridEntityDescriptorProvider {
     DEAD(

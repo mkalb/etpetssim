@@ -13,45 +13,46 @@ import java.util.function.Consumer;
 
 /**
  * Encapsulates the preset selection and free-text S/B input for Conway transition rules.
+ *
  * <p>Three {@link InputChoiceProperty} instances hold shape-specific preset selections
  * (one per {@link de.mkalb.etpetssim.engine.CellShape}). Selecting a preset sets the
  * {@link #stringProperty()} to the corresponding S/B rule string, which in turn
  * triggers the registered {@link #setRulesChangedListener(Consumer) rulesChangedListener} callback
  * so the ViewModel can update the checkbox grid.
+ *
  * <p>Manual S/B text entered in the text field also triggers the callback; parsing errors
  * are silently ignored and the checkbox grid remains unchanged.
  * The combo boxes are never updated by manual checkbox or text-field changes.
  */
 public final class ConwayRuleProperty {
 
-    private static final ConwayRulePresetTriangle PRESET_TRIANGLE_INITIAL = ConwayRulePresetTriangle.EMPTY;
-    private static final ConwayRulePresetSquare PRESET_SQUARE_INITIAL = ConwayRulePresetSquare.EMPTY;
-    private static final ConwayRulePresetHexagon PRESET_HEXAGON_INITIAL = ConwayRulePresetHexagon.EMPTY;
+    private static final ConwayRulePresetTriangle PRESET_TRIANGLE_DEFAULT = ConwayRulePresetTriangle.EMPTY;
+    private static final ConwayRulePresetSquare PRESET_SQUARE_DEFAULT = ConwayRulePresetSquare.EMPTY;
+    private static final ConwayRulePresetHexagon PRESET_HEXAGON_DEFAULT = ConwayRulePresetHexagon.EMPTY;
 
-    private final StringProperty stringProperty;
-    private final StringProperty labelProperty;
-    private final InputChoiceProperty<ConwayRulePresetTriangle> presetTriangleProperty;
-    private final InputChoiceProperty<ConwayRulePresetSquare> presetSquareProperty;
-    private final InputChoiceProperty<ConwayRulePresetHexagon> presetHexagonProperty;
-
+    private final StringProperty ruleString;
+    private final StringProperty label;
+    private final InputChoiceProperty<ConwayRulePresetTriangle> presetTriangle;
+    private final InputChoiceProperty<ConwayRulePresetSquare> presetSquare;
+    private final InputChoiceProperty<ConwayRulePresetHexagon> presetHexagon;
     private @Nullable Consumer<ConwayTransitionRules> rulesChangedListener;
 
     public ConwayRuleProperty() {
-        stringProperty = new SimpleStringProperty("");
-        labelProperty = new SimpleStringProperty("");
+        ruleString = new SimpleStringProperty("");
+        label = new SimpleStringProperty("");
 
-        presetTriangleProperty = InputChoiceProperty.ofEnum(PRESET_TRIANGLE_INITIAL, ConwayRulePresetTriangle.class,
+        presetTriangle = InputChoiceProperty.ofEnum(PRESET_TRIANGLE_DEFAULT, ConwayRulePresetTriangle.class,
                 ConwayRulePresetTriangle::displayName);
-        presetSquareProperty = InputChoiceProperty.ofEnum(PRESET_SQUARE_INITIAL, ConwayRulePresetSquare.class,
+        presetSquare = InputChoiceProperty.ofEnum(PRESET_SQUARE_DEFAULT, ConwayRulePresetSquare.class,
                 ConwayRulePresetSquare::displayName);
-        presetHexagonProperty = InputChoiceProperty.ofEnum(PRESET_HEXAGON_INITIAL, ConwayRulePresetHexagon.class,
+        presetHexagon = InputChoiceProperty.ofEnum(PRESET_HEXAGON_DEFAULT, ConwayRulePresetHexagon.class,
                 ConwayRulePresetHexagon::displayName);
 
-        presetTriangleProperty.property().addListener((_, _, newVal) -> stringProperty.set(newVal.ruleString()));
-        presetSquareProperty.property().addListener((_, _, newVal) -> stringProperty.set(newVal.ruleString()));
-        presetHexagonProperty.property().addListener((_, _, newVal) -> stringProperty.set(newVal.ruleString()));
+        presetTriangle.property().addListener((_, _, newVal) -> ruleString.set(newVal.ruleString()));
+        presetSquare.property().addListener((_, _, newVal) -> ruleString.set(newVal.ruleString()));
+        presetHexagon.property().addListener((_, _, newVal) -> ruleString.set(newVal.ruleString()));
 
-        stringProperty.addListener((_, _, newVal) -> {
+        ruleString.addListener((_, _, newVal) -> {
             if ((newVal == null) || newVal.isBlank()) {
                 return;
             }
@@ -60,8 +61,8 @@ public final class ConwayRuleProperty {
                 if (rulesChangedListener != null) {
                     rulesChangedListener.accept(rules);
                 }
-            } catch (IllegalArgumentException e) {
-                // Silently ignore invalid S/B input — checkbox grid remains unchanged
+            } catch (IllegalArgumentException _) {
+                // Silently ignore invalid S/B input; the checkbox grid remains unchanged.
             }
         });
     }
@@ -82,7 +83,7 @@ public final class ConwayRuleProperty {
      * @return the string property
      */
     public StringProperty stringProperty() {
-        return stringProperty;
+        return ruleString;
     }
 
     /**
@@ -91,19 +92,19 @@ public final class ConwayRuleProperty {
      * @return the label property
      */
     public StringProperty labelProperty() {
-        return labelProperty;
+        return label;
     }
 
     public InputChoiceProperty<ConwayRulePresetTriangle> presetTriangleProperty() {
-        return presetTriangleProperty;
+        return presetTriangle;
     }
 
     public InputChoiceProperty<ConwayRulePresetSquare> presetSquareProperty() {
-        return presetSquareProperty;
+        return presetSquare;
     }
 
     public InputChoiceProperty<ConwayRulePresetHexagon> presetHexagonProperty() {
-        return presetHexagonProperty;
+        return presetHexagon;
     }
 
 }

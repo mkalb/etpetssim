@@ -12,6 +12,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * Synchronous step logic of Conway's Game of Life that applies the survive and birth rules to all cells.
+ */
 public final class ConwayStepLogic implements SynchronousStepLogic<ConwayEntity, ConwayStatistics> {
 
     private final GridStructure structure;
