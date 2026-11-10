@@ -15,15 +15,21 @@ import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsConstraints.GRID
 import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsConstraints.GRID_HEIGHT_DEFAULT;
 import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsConstraints.GRID_WIDTH_DEFAULT;
 import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsConstraints.INSECT_PERCENT_DEFAULT;
+import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsConstraints.INSECT_PERCENT_MAX;
+import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsConstraints.INSECT_PERCENT_MIN;
 import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsConstraints.NEIGHBORHOOD_MODE_DEFAULT;
-import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsConstraints.PERCENT_MAX;
-import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsConstraints.PERCENT_MIN;
 import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsConstraints.PET_COUNT_DEFAULT;
 import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsConstraints.PET_COUNT_MAX;
 import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsConstraints.PET_COUNT_MIN;
 import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsConstraints.PLANT_PERCENT_DEFAULT;
+import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsConstraints.PLANT_PERCENT_MAX;
+import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsConstraints.PLANT_PERCENT_MIN;
 import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsConstraints.ROCK_PERCENT_DEFAULT;
+import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsConstraints.ROCK_PERCENT_MAX;
+import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsConstraints.ROCK_PERCENT_MIN;
 import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsConstraints.WATER_PERCENT_DEFAULT;
+import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsConstraints.WATER_PERCENT_MAX;
+import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsConstraints.WATER_PERCENT_MIN;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -37,10 +43,10 @@ final class EtpetsConfigTest {
     }
 
     private static void clearPercents(ConfigValues values) {
-        values.rockPercent = PERCENT_MIN;
-        values.waterPercent = PERCENT_MIN;
-        values.plantPercent = PERCENT_MIN;
-        values.insectPercent = PERCENT_MIN;
+        values.rockPercent = ROCK_PERCENT_MIN;
+        values.waterPercent = WATER_PERCENT_MIN;
+        values.plantPercent = PLANT_PERCENT_MIN;
+        values.insectPercent = INSECT_PERCENT_MIN;
     }
 
     @Test
@@ -51,25 +57,25 @@ final class EtpetsConfigTest {
     @Test
     void testIsValidAcceptsBoundaryValues() {
         assertAll(
-                () -> assertTrue(isValidWith(v -> v.rockPercent = PERCENT_MIN)),
+                () -> assertTrue(isValidWith(v -> v.rockPercent = ROCK_PERCENT_MIN)),
                 () -> assertTrue(isValidWith(v -> {
                     clearPercents(v);
-                    v.rockPercent = PERCENT_MAX;
+                    v.rockPercent = ROCK_PERCENT_MAX;
                 })),
-                () -> assertTrue(isValidWith(v -> v.waterPercent = PERCENT_MIN)),
+                () -> assertTrue(isValidWith(v -> v.waterPercent = WATER_PERCENT_MIN)),
                 () -> assertTrue(isValidWith(v -> {
                     clearPercents(v);
-                    v.waterPercent = PERCENT_MAX;
+                    v.waterPercent = WATER_PERCENT_MAX;
                 })),
-                () -> assertTrue(isValidWith(v -> v.plantPercent = PERCENT_MIN)),
+                () -> assertTrue(isValidWith(v -> v.plantPercent = PLANT_PERCENT_MIN)),
                 () -> assertTrue(isValidWith(v -> {
                     clearPercents(v);
-                    v.plantPercent = PERCENT_MAX;
+                    v.plantPercent = PLANT_PERCENT_MAX;
                 })),
-                () -> assertTrue(isValidWith(v -> v.insectPercent = PERCENT_MIN)),
+                () -> assertTrue(isValidWith(v -> v.insectPercent = INSECT_PERCENT_MIN)),
                 () -> assertTrue(isValidWith(v -> {
                     clearPercents(v);
-                    v.insectPercent = PERCENT_MAX;
+                    v.insectPercent = INSECT_PERCENT_MAX;
                 })),
                 () -> assertTrue(isValidWith(v -> v.petCount = PET_COUNT_MIN)),
                 () -> assertTrue(isValidWith(v -> v.petCount = PET_COUNT_MAX))
@@ -99,10 +105,10 @@ final class EtpetsConfigTest {
     @Test
     void testIsValidRejectsRockPercentOutsideRange() {
         assertAll(
-                () -> assertFalse(isValidWith(v -> v.rockPercent = Math.nextDown(PERCENT_MIN))),
+                () -> assertFalse(isValidWith(v -> v.rockPercent = Math.nextDown(ROCK_PERCENT_MIN))),
                 () -> assertFalse(isValidWith(v -> {
                     clearPercents(v);
-                    v.rockPercent = Math.nextUp(PERCENT_MAX);
+                    v.rockPercent = Math.nextUp(ROCK_PERCENT_MAX);
                 }))
         );
     }
@@ -110,10 +116,10 @@ final class EtpetsConfigTest {
     @Test
     void testIsValidRejectsWaterPercentOutsideRange() {
         assertAll(
-                () -> assertFalse(isValidWith(v -> v.waterPercent = Math.nextDown(PERCENT_MIN))),
+                () -> assertFalse(isValidWith(v -> v.waterPercent = Math.nextDown(WATER_PERCENT_MIN))),
                 () -> assertFalse(isValidWith(v -> {
                     clearPercents(v);
-                    v.waterPercent = Math.nextUp(PERCENT_MAX);
+                    v.waterPercent = Math.nextUp(WATER_PERCENT_MAX);
                 }))
         );
     }
@@ -121,10 +127,10 @@ final class EtpetsConfigTest {
     @Test
     void testIsValidRejectsPlantPercentOutsideRange() {
         assertAll(
-                () -> assertFalse(isValidWith(v -> v.plantPercent = Math.nextDown(PERCENT_MIN))),
+                () -> assertFalse(isValidWith(v -> v.plantPercent = Math.nextDown(PLANT_PERCENT_MIN))),
                 () -> assertFalse(isValidWith(v -> {
                     clearPercents(v);
-                    v.plantPercent = Math.nextUp(PERCENT_MAX);
+                    v.plantPercent = Math.nextUp(PLANT_PERCENT_MAX);
                 }))
         );
     }
@@ -132,10 +138,10 @@ final class EtpetsConfigTest {
     @Test
     void testIsValidRejectsInsectPercentOutsideRange() {
         assertAll(
-                () -> assertFalse(isValidWith(v -> v.insectPercent = Math.nextDown(PERCENT_MIN))),
+                () -> assertFalse(isValidWith(v -> v.insectPercent = Math.nextDown(INSECT_PERCENT_MIN))),
                 () -> assertFalse(isValidWith(v -> {
                     clearPercents(v);
-                    v.insectPercent = Math.nextUp(PERCENT_MAX);
+                    v.insectPercent = Math.nextUp(INSECT_PERCENT_MAX);
                 }))
         );
     }

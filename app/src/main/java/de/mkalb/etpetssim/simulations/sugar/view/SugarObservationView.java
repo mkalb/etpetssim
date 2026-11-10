@@ -12,6 +12,9 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.Region;
 import org.jspecify.annotations.Nullable;
 
+/**
+ * Observation view of Sugarscape.
+ */
 public final class SugarObservationView
         extends AbstractObservationView<
         SugarEntity,
@@ -43,8 +46,8 @@ public final class SugarObservationView
             if (gridCell.agentEntity() instanceof Agent agent) {
                 setFormattedIntegerValue(currentEnergyLabel, agent.currentEnergy());
             }
-            if (gridCell.resourceEntity() instanceof Sugar resource) {
-                setFormattedIntegerValue(currentAmountLabel, resource.currentAmount());
+            if (gridCell.resourceEntity() instanceof Sugar sugar) {
+                setFormattedIntegerValue(currentAmountLabel, sugar.currentAmount());
             }
         }
     }

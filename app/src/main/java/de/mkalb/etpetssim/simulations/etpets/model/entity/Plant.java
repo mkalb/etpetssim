@@ -4,6 +4,9 @@ import de.mkalb.etpetssim.simulations.etpets.model.EtpetsBalance;
 
 import java.util.Locale;
 
+/**
+ * Plant of ET Pets, a resource with a small energy gain that regenerates quickly.
+ */
 public final class Plant extends ResourceBase {
 
     public Plant(double currentAmount, double maxAmount, double regenerationPerStep) {
@@ -26,7 +29,7 @@ public final class Plant extends ResourceBase {
     }
 
     @Override
-    public double minAmount() {
+    protected double minAmount() {
         return EtpetsBalance.PLANT_CURRENT_AMOUNT_MIN;
     }
 

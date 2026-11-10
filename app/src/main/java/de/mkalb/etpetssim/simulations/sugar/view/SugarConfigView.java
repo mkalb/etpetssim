@@ -9,8 +9,10 @@ import de.mkalb.etpetssim.ui.FXComponentFactory;
 import de.mkalb.etpetssim.ui.FXStyleClasses;
 import javafx.scene.layout.Region;
 
-public final class SugarConfigView
-        extends AbstractConfigView<SugarConfig, SugarConfigViewModel> {
+/**
+ * Config view of Sugarscape.
+ */
+public final class SugarConfigView extends AbstractConfigView<SugarConfig, SugarConfigViewModel> {
 
     // Initialization
     private static final String SUGAR_CONFIG_AGENT_PERCENT = "sugar.config.agentpercent";

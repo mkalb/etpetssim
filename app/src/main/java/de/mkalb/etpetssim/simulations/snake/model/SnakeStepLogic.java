@@ -20,6 +20,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 
+/**
+ * Agent step logic of Snake for the snake heads.
+ */
 public final class SnakeStepLogic implements AgentStepLogic<SnakeEntity, SnakeStatistics> {
 
     private final GridStructure structure;
@@ -94,7 +97,7 @@ public final class SnakeStepLogic implements AgentStepLogic<SnakeEntity, SnakeSt
         int addedPoints = moveDecision.isFoodTarget() ?
                 (config.basePointsPerFood() + (int) (snakeHead.segmentCount() * config.segmentLengthMultiplier()))
                 : 0;
-        // Move the snake head to newCoordinate
+        // Move the snake head to the target coordinate
         Optional<GridCoordinate> tailToClear = snakeHead.move(headCoordinate, moveDecision.direction(),
                 additionalGrowth, addedPoints);
         model.setEntity(moveDecision.targetCoordinate(), snakeHead);
@@ -127,19 +130,18 @@ public final class SnakeStepLogic implements AgentStepLogic<SnakeEntity, SnakeSt
         var cellNeighborsWithEdgeBehavior = CellNeighborhoods.cellNeighborsWithEdgeBehavior(headCoordinate,
                 config.neighborhoodMode(), structure);
         for (var cellNeighborWithEdgeBehaviorList : cellNeighborsWithEdgeBehavior.values()) {
-            if (cellNeighborWithEdgeBehaviorList.size() == 1) {
-                var cellNeighborWithEdgeBehavior = cellNeighborWithEdgeBehaviorList.getFirst();
-                if (cellNeighborWithEdgeBehavior.edgeBehaviorAction().isWithinGrid()) {
-                    var neighborEntity = model.getEntity(cellNeighborWithEdgeBehavior.mappedNeighborCoordinate());
-                    if (neighborEntity.isGround()) {
-                        groundNeighbors.add(cellNeighborWithEdgeBehavior);
-                    } else if (neighborEntity.isFood()) {
-                        foodNeighbors.add(cellNeighborWithEdgeBehavior);
-                    }
-                }
-            } else {
+            if (cellNeighborWithEdgeBehaviorList.size() != 1) {
                 throw new IllegalStateException("Unable to collect neighbors: multiple edge behaviors per coordinate, "
                         + "neighbors=" + cellNeighborsWithEdgeBehavior);
+            }
+            var cellNeighborWithEdgeBehavior = cellNeighborWithEdgeBehaviorList.getFirst();
+            if (cellNeighborWithEdgeBehavior.edgeBehaviorAction().isWithinGrid()) {
+                var neighborEntity = model.getEntity(cellNeighborWithEdgeBehavior.mappedNeighborCoordinate());
+                if (neighborEntity.isGround()) {
+                    groundNeighbors.add(cellNeighborWithEdgeBehavior);
+                } else if (neighborEntity.isFood()) {
+                    foodNeighbors.add(cellNeighborWithEdgeBehavior);
+                }
             }
         }
         return new MoveContext(

@@ -9,6 +9,9 @@ import de.mkalb.etpetssim.simulations.etpets.model.entity.EtpetsEntity;
 import javafx.scene.layout.Region;
 import org.jspecify.annotations.Nullable;
 
+/**
+ * Observation view of ET Pets.
+ */
 public final class EtpetsObservationView
         extends AbstractObservationView<
         EtpetsEntity,

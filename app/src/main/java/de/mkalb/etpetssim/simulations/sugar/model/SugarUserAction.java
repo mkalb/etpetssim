@@ -11,6 +11,9 @@ import de.mkalb.etpetssim.simulations.sugar.shared.SugarAddSugarLevel;
 import de.mkalb.etpetssim.simulations.sugar.shared.SugarUserActionContext;
 import org.jspecify.annotations.Nullable;
 
+/**
+ * User action of Sugarscape that adds or removes sugar.
+ */
 public final class SugarUserAction
         implements SimulationUserAction<
         SugarEntity,

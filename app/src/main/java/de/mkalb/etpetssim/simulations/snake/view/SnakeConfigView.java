@@ -10,8 +10,10 @@ import de.mkalb.etpetssim.ui.FXComponentFactory;
 import de.mkalb.etpetssim.ui.FXStyleClasses;
 import javafx.scene.layout.Region;
 
-public final class SnakeConfigView
-        extends AbstractConfigView<SnakeConfig, SnakeConfigViewModel> {
+/**
+ * Config view of Snake.
+ */
+public final class SnakeConfigView extends AbstractConfigView<SnakeConfig, SnakeConfigViewModel> {
 
     // Initialization
     private static final String SNAKE_CONFIG_VERTICAL_WALLS = "snake.config.verticalwalls";

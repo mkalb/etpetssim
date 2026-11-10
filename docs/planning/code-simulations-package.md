@@ -63,7 +63,7 @@ Work on exactly one script fix, block, or group at a time, in the order of the s
   (maintainer, 2026-11-08). Each later simulation is compared with Wa-Tor family by family and adopts its decisions
   without asking again, unless it deviates.
 - **Final check:** run the script check again, fix the remaining occurrences after the maintainer has decided, and
-  handle the deferred findings.
+  handle the deferred findings, the "Observation for #24" notes of the groups, and the missing rules.
 
 ### Steps per group
 
@@ -143,10 +143,10 @@ sources. "Types" counts the top-level types in main sources of a group.
 | C9 | `core` root package and `start`                               |     6 | done        |
 | D1 | Wa-Tor (reference)                                            |    21 | done        |
 | D2 | Rebounding                                                    |    18 | done        |
-| D3 | Snake                                                         |    25 | open        |
-| D4 | Sugarscape                                                    |    28 | open        |
-| D5 | ET Pets                                                       |    42 | open        |
-| D6 | Conway                                                        |    24 | open        |
+| D3 | Snake                                                         |    25 | done        |
+| D4 | Sugarscape                                                    |    28 | done        |
+| D5 | ET Pets                                                       |    42 | done        |
+| D6 | Conway                                                        |    24 | done        |
 | D7 | Forest                                                        |    13 | open        |
 | D8 | Langton                                                       |    29 | open        |
 | D9 | Lab                                                           |    15 | open        |
@@ -1350,7 +1350,8 @@ Families and their known deviations:
   running sequence numbers and have no test of their own.
 - Config ViewModels take only the simulation state property; the edit tool bar ViewModels of Conway, Langton, and
   Rebounding have an implicit constructor, those of ET Pets, Snake, and Sugar an explicit one that selects the first
-  choice. Only `LangtonEditToolBarViewModel` has a test.
+  choice (Snake, Sugar, and ET Pets initialize it at the field declaration since D3 to D5). Only
+  `LangtonEditToolBarViewModel` has a test.
 - Main views take `(viewModel, [editToolBarViewModel], entityDescriptorRegistry, configView, controlView,
   observationView)`; Forest and Wa-Tor have no edit tool bar. `LabMainView` extends `AbstractMainView` directly and
   has 23 private methods; the Lab has its own control view and ViewModel and its own main ViewModel.
@@ -1534,6 +1535,21 @@ Notes:
 
 ### D3. Snake
 
+Notes:
+
+- Inventory (2026-11-10, verified against the sources): 25 types in the package root, `model`, `model.entity`,
+  `model.strategy`, `shared`, `view`, and `viewmodel`. Tests exist for `SnakeConfig`, `SnakeUserAction`, `SnakeHead`
+  (only `toDisplayString()`), `TerrainConstant`, `EntityDescriptors`, `SnakeDeathMode`, `AnonymousMoveStrategy`,
+  `NamedMoveStrategy`, and `SnakeMoveStrategies`.
+- `SnakeConfig`, `SnakeEntity`, `TerrainConstant`, `EntityDescriptors`, `MoveDecision`, `SnakeMoveStrategy`,
+  `AnonymousMoveStrategy`, `NamedMoveStrategy`, `SnakeDeathMode`, `SnakeUserActionContext`, and `SnakeFactory` follow
+  the rules.
+- Observation for #24: with `RESPAWN`, the simulation ends when all living snakes die in the same step, because
+  `livingSnakeHeadCells()` is `0` before the dead snakes respawn in the next step.
+- Test gaps for the later separate optimization: `SnakeStepLogic`, `SnakeTerminationCondition`, `SnakeStatistics`,
+  the initialization of `SnakeSimulationManager` (wall positions, snakes, food), the state changes of `SnakeHead`
+  (`move(..)`, `die()`, `respawn(..)`, and the age), and `SnakeEditToolBarViewModel`.
+
 #### Empty check of the move strategies
 
 - Origin: B1 (2026-11-08)
@@ -1541,10 +1557,192 @@ Notes:
 - Problem: The constructor throws if `SnakeMoveStrategies.strategies()` is empty, which cannot occur for the constant
   catalog.
 - Proposal: Remove the check as dead code.
+- Status: done (2026-11-10); see "Unused members of SnakeEditToolBarViewModel and SnakeHead".
+
+#### Unused members of SnakeEditToolBarViewModel and SnakeHead
+
+- Origin: D3 (2026-11-10)
+- Types: `SnakeEditToolBarViewModel`, `SnakeHead`
+- Problem: `SnakeEditToolBarViewModel.availableStrategies()` and `setSelectedStrategy(..)` and
+  `SnakeHead.pendingGrowth()` and `stepIndexOfSpawn()` have no caller. `move(..)` resets `pendingGrowth` to `0` with
+  the comment `// Ensure non-negative`, which only matters because `respawn(..)` does not reject a negative
+  `initialPendingGrowth` like the constructor.
+- Proposal: Remove the four methods (an API change). Initialize the selected strategy of
+  `SnakeEditToolBarViewModel` at its field declaration without an explicit constructor. Let `respawn(..)` reject
+  negative values like the constructor and remove the reset in `move(..)`.
+- Status: done (2026-11-10).
+
+#### Snake colors of SnakeMainView
+
+- Origin: D3 (2026-11-10)
+- Types: `SnakeMainView`
+- Problem: `drawSimulation(..)` computes twelve local colors (alive, selected, and dead for the head and the segments,
+  each with fill and border) on every draw and chooses them in a lambda with several statements (`java.md`, "Code
+  Style"); the descriptor colors do not depend on the config.
+- Proposal: A private record `SnakeColors(head, headBorder, segment, segmentBorder)`, the final fields
+  `aliveColors`, `selectedColors`, and `deadColors` computed once in the constructor, and the private methods
+  `drawSnake(..)` and `resolveSnakeColors(..)`.
+- Status: done (2026-11-10).
+
+#### Redundant termination check
+
+- Origin: D3 (2026-11-10)
+- Types: `SnakeTerminationCondition`
+- Problem: `snakeHeadCells() <= 0` is implied by `livingSnakeHeadCells() <= 0`, because every update keeps the living
+  snake heads at most as many as all snake heads.
+- Proposal: Remove the check; the overflow guard of `cumulativeSnakeDeathCount()` stays.
+- Status: done (2026-11-10).
+
+#### Details of the Snake types
+
+- Origin: D3 (2026-11-10)
+- Types: all public types without type Javadoc, `SnakeStatistics`, `SnakeSimulationManager`, `SnakeStepLogic`,
+  `SnakeUserAction`, `SnakeHead`, `MoveContext`, `SnakeMoveStrategies`, `SnakeConstraints`, `SnakeConfigViewModel`,
+  `SnakeConfigView`, `SnakeMainView`, `SnakeObservationView`, `SnakeUserActionTest`
+- Problem: Eleven public types have no type Javadoc or, like `SnakeStatistics`, a generic one (D1).
+  `SnakeStatistics` initializes its counters to `0` and has public increment and decrement methods with callers only
+  in its package. The private methods of `SnakeSimulationManager` take the config as parameter and are named
+  `wallInitializer(..)` instead of `create...`. `SnakeStepLogic` names a variable `newCoordinate` that does not exist
+  and nests the neighbor check in an `if` with the exception in the `else` branch. `SnakeUserAction` finds the head of
+  a segment as an `Optional` coordinate and checks the entity twice. `SnakeHead` initializes fields to their default
+  values and uses `formatted(..)` without a `Locale` in `toString()`. `@param random` of `MoveContext` repeats its
+  record Javadoc; `SnakeMoveStrategies` has the abbreviation `nc` and a restating comment. `DEATH_MODE_VALUES` wraps
+  `List.of(SnakeDeathMode.values())`. `createConfig()` of `SnakeConfigViewModel` has section comments with the seed
+  under `// Structure`. `SnakeMainView` registers the binding cleanup also without a tool id and has a restating
+  comment and a misplaced constant. `SnakeObservationView` nests two `if` statements. The test helper
+  `selectedCell(..)` lacks the `create` prefix.
+- Proposal: Adopt the decisions of D1 and D2, make the increment and decrement methods package-private (an API
+  change), and fix the other details.
+- Status: done (2026-11-10).
+
+### Decisions
+
+- All public types have a short type Javadoc in the forms of D1; `SnakeTerminationCondition` states its condition
+  there. The config ViewModel, the config view, and `SnakeStatistics` declare their supertype on one line.
+- API change: the increment and decrement methods of `SnakeStatistics` are package-private and follow the getters;
+  `adjustWallCells(..)` and `adjustFoodCells(..)` stay public (D1). The counters lost their explicit initialization,
+  and the getters follow the order of the fields.
+- API change: `SnakeEditToolBarViewModel.availableStrategies()` and `setSelectedStrategy(..)` are removed; the class
+  initializes its selection at the field declaration, without an explicit constructor and without the empty check.
+- API change: `SnakeHead.pendingGrowth()` and `stepIndexOfSpawn()` are removed; the constructor and `respawn(..)`
+  check `initialPendingGrowth` with the private static `checkInitialPendingGrowth(..)`, and `move(..)` no longer
+  resets `pendingGrowth`. `SnakeHead` lost its default field initializations, and `toString()` uses
+  `String.format(Locale.ROOT, ..)`. The age methods stay, like those of `CreatureBase` in Wa-Tor.
+- `SnakeSimulationManager` reads the config through `config()` in `createWallInitializer(..)`,
+  `createSnakeInitializer(..)`, and `createFoodInitializer(..)` and counts the snake heads with
+  `SnakeEntity::isAgent`.
+- `SnakeStepLogic` rejects multiple edge behaviors first and names the target coordinate in its comment;
+  `SnakeUserAction` removes a snake by a segment with the private `removeSnakeBySegment(..)`;
+  `SnakeTerminationCondition` checks only the living snake heads and the overflow guard.
+- `SnakeMainView` holds `aliveColors`, `selectedColors`, and `deadColors` as final fields of the private record
+  `SnakeColors`, draws each snake with `drawSnake(..)`, and registers the binding cleanup only with a tool id.
+  `SnakeObservationView` joins its conditions.
+- `MoveContext`, `SnakeMoveStrategies`, `SnakeConstraints`, `SnakeConfigViewModel`, and the test helper
+  `createSelectedCell(..)` follow the details as proposed. No rule change.
 
 ### D4. Sugarscape
 
+Notes:
+
+- Inventory (2026-11-10, verified against the sources): 28 types in the package root, `model`, `model.entity`,
+  `shared`, `view`, and `viewmodel`. Tests exist for `SugarConfig`, `SugarCell`, `SugarGridModel`, `SugarUserAction`,
+  `SugarAgentLogic`, `SugarResourceLogic`, `Agent`, `Sugar`, `SugarEntity`, `EntityDescriptors`, and
+  `SugarAddSugarLevel`, with the package-local `SugarLogicTestSupport`.
+- `SugarConfig`, `SugarConstraints`, `SugarBalance`, `SugarGridModel`, `SugarAgentLogic`, `SugarResourceLogic`,
+  `NoAgent`, `NoResource`, `EntityDescriptors`, and `SugarFactory` follow the rules apart from the details below.
+- Observation for D5 or #24: the observation view shows `-` as the type of an empty cell, because `NoResource` and
+  `NoAgent` have the descriptor IDs `no_resource` and `no_agent` without an entity descriptor; the background uses the
+  descriptor `terrain`, which no entity has. ET Pets uses the same IDs.
+- Test gaps for the later separate optimization: the initialization of `SugarSimulationManager` (peaks, radius map,
+  and agents), `SugarStatistics`, `SugarTerminationCondition`, `SugarStepRunner`, and `SugarEditToolBarViewModel`.
+
+#### Edit tool bar ViewModel of Sugarscape
+
+- Origin: D4 (2026-11-10)
+- Types: `SugarEditToolBarViewModel`, `SugarMainView`
+- Problem: The ViewModel copies the dynamic pattern of `ReboundingEditToolBarViewModel` (an `ObservableList`, a
+  `@Nullable` selection, a setter that checks the membership, and `resolveSelectedAddSugarContext()`), although the
+  levels are the constants of an enum; `SugarMainView` synchronizes its combo box with two listeners and its own list
+  cells.
+- Proposal: Use an `InputChoiceProperty` initialized at the field declaration and
+  `FXComponentFactory.createLabeledChoiceComboBox(..)` like Snake. An API change.
+- Status: done (2026-11-10).
+
+#### Unused entity API of Sugarscape
+
+- Origin: D4 (2026-11-10)
+- Types: `SugarEntity`, `AgentEntity`, `ResourceEntity`, `Agent`, `Sugar`, `NoAgent`, `NoResource`,
+  `AgentEntityTest`, `ResourceEntityTest`
+- Problem: `isResource()` and `isAgent()` with their defaults and overrides have no caller in main sources, only the
+  two tests; the sealed layer types already state the layer. `Sugar.maxAmount()` has no caller.
+- Proposal: Remove the methods and the two tests. An API change.
+- Status: done (2026-11-10).
+
+#### Color variants of SugarMainView
+
+- Origin: D1 (2026-11-09)
+- Types: `SugarMainView`
+- Problem: The map `entityColors` is filled with `null` placeholders, the fallback colors are not reached, and the
+  fill color methods switch over the entity with the dummy value `-1` for the empty entities, which are not drawn.
+- Proposal: Adopt D1: the `@Nullable` fields `sugarColors` and `agentColors`, the private static
+  `resolveVariantColor(..)`, and the base color for `NoResource` and `NoAgent`; remove the fallback constants.
+- Status: done (2026-11-10).
+
+#### Details of the Sugarscape types
+
+- Origin: D4 (2026-11-10)
+- Types: all public types without type Javadoc, `SugarStatistics`, `SugarSimulationManager`, `SugarStepRunner`,
+  `SugarTerminationCondition`, `Agent`, `SugarObservationView`, and the types whose Javadoc says "Sugar simulation"
+- Problem: Eleven public types have no type Javadoc or a generic one (D1); several Javadoc comments call the
+  simulation "Sugar" instead of "Sugarscape". `SugarStatistics` initializes its counters to `0`.
+  `SugarSimulationManager` mixes the parameter `config` with `config()`, limits the maximum sugar amount with
+  `Math.max(..)` although `isValid()` ensures it, and has instance helpers without instance state and the parameter
+  `percent` for a fraction. `SugarTerminationCondition` lacks the empty line before `<p>`. `Agent` names its
+  constructor parameter `currentEnergy` and adds without `+=`. `SugarObservationView` names a `Sugar` `resource`.
+  Six class declarations wrap although they fit on fewer lines.
+- Proposal: Adopt the decisions of D1 to D3 and fix the details.
+- Status: done (2026-11-10).
+
+### Decisions
+
+- All public types have a short type Javadoc in the forms of D1; `SugarTerminationCondition` states its condition
+  there and keeps its paragraph about the safety net. The Javadoc calls the simulation "Sugarscape".
+- API change: `SugarEditToolBarViewModel` holds an `InputChoiceProperty<SugarAddSugarLevel>` with the first level and
+  localized labels, initialized at the field declaration; `availableAddSugarLevels()`, `setSelectedAddSugarLevel(..)`,
+  and `resolveSelectedAddSugarContext()` are removed, and `getSelectedAddSugarLevel()` is non-null. `SugarMainView`
+  builds the combo box with `FXComponentFactory.createLabeledChoiceComboBox(..)` and binds its disable state like
+  Snake.
+- API change: `isResource()`, `isAgent()`, and `Sugar.maxAmount()` are removed; `AgentEntity` and `ResourceEntity`
+  have no members, and `AgentEntityTest` and `ResourceEntityTest` are deleted.
+- `SugarMainView` holds `sugarColors` and `agentColors` and resolves the fill colors with `resolveVariantColor(..)`
+  like Wa-Tor; `entityColors` and the fallback colors are removed.
+- `SugarStatistics` lost its counter initializations; `adjustResourceCells(..)` stays public and
+  `adjustAgentCells(..)` package-private. `SugarSimulationManager` reads the config through `config()`, uses
+  `config().maxSugarAmount()` directly, and has the private static `computeClampedIndex(..)` (parameter `fraction`)
+  and `computeSugarAmount(..)` after its constructors. `Agent` takes `initialEnergy` and adds with `+=`.
+- The details are implemented as proposed. No rule change.
+
 ### D5. ET Pets
+
+Notes:
+
+- Inventory (2026-11-10, verified against the sources): 42 types in the package root, `model`, `model.entity`,
+  `shared`, `view`, and `viewmodel`. Tests exist for most model types, the entities, the choices, and the score math
+  and balance; `EtpetsScoreTuningRunner` is a manual utility.
+- `EtpetsConfig`, `EtpetsBalance`, `EtpetsGridModel`, `EtpetsCell`, `EtpetsDeterminism`, `EtpetsResourceLogic`,
+  `EtpetsScoreMath`, `TerrainConstant`, `NoAgent`, `NoResource`, `PetActionType`, `EntityDescriptors`, the shared types,
+  and `EtpetsFactory` follow the rules apart from the details below.
+- `Pet.stepIndexOfBirth()`, `Pet.reproductionCooldownRemaining()`, `Pet.lastAction()`, and
+  `PetEgg.stepIndexOfLaying()` have no caller; they stay for the planned labels of the selected cell (TODO in
+  `EtpetsObservationView`, maintainer). The commented-out debug blocks of `EtpetsSimulationManager` with their
+  `@SuppressWarnings("CommentedOutCode")` and the override of `EtpetsObservationView` with its TODO stay, because the
+  further development of ET Pets needs them (maintainer).
+- Observations for #24: `PetTraits.genomeQualityScore()` rates a higher `movementCostModifier` as a better quality,
+  although higher movement costs are worse for a pet; the two TODOs of `findEggPlacementCoordinate(..)` stay; empty
+  cells show `-` as type (D4).
+- Test gaps for the later separate optimization: the initialization of `EtpetsSimulationManager`, `EtpetsStatistics`,
+  `EtpetsTerminationCondition`, `EtpetsStepRunner`, `EtpetsIdSequence`, the life cycle methods of `Pet`, and
+  `EtpetsEditToolBarViewModel`.
 
 #### Shuffle and coordinates of EtpetsSimulationManager
 
@@ -1556,8 +1754,124 @@ Notes:
   sequence of a seed stays the same (same swaps with the same `nextInt(..)` calls), and a manual test with the maximum
   grid of ET Pets was fast (2026-10-30). Check that the remaining checkpoints still follow `simulations.md` ("Model
   Initialization").
+- Status: done (2026-11-10); the loops over all cells and over the rock, water, plant, and insect counts keep their
+  checkpoints, and the cancellation test of `SimulationManagerTest` still cancels during the terrain population.
+
+#### Edit tool bar ViewModel of ET Pets
+
+- Origin: D3 and D4 (cross-group decision on edit tool bar ViewModels)
+- Types: `EtpetsEditToolBarViewModel`, `EtpetsMainView`
+- Problem: The ViewModel has the dynamic pattern of Rebounding for two fixed enums (terrain and resource choices), and
+  `EtpetsMainView` synchronizes two combo boxes with two copied listener blocks.
+- Proposal: Two `InputChoiceProperty` fields and one private generic `createOptionBox(..)` in the view. An API change.
+- Status: done (2026-11-10).
+
+#### Unused entity API and shared limits of ET Pets
+
+- Origin: D4 (2026-11-10) and D5 (2026-11-10)
+- Types: `EtpetsEntity`, `TerrainEntity`, `ResourceEntity`, `AgentEntity`, the entities, `ResourceBase`,
+  `EtpetsConstraints`, their callers and tests
+- Problem: `isTerrain()`, `isResource()`, and `isAgent()` have no caller in main sources, as in Sugarscape.
+  `ResourceBase.minAmount()` is public, but only the class calls it. `EtpetsConstraints` shares `PERCENT_MIN` and
+  `PERCENT_MAX` for four components, unlike `simulations.md` and the other simulations.
+- Proposal: Remove the three queries and their tests, make `minAmount()` protected, and name the limits per component.
+  API changes.
+- Status: done (2026-11-10).
+
+#### Color variants of EtpetsMainView
+
+- Origin: D1 (2026-11-09) and D5 (2026-11-10)
+- Types: `EtpetsMainView`
+- Problem: The map `entityColors` holds five `null` placeholders; the ranges are looked up by descriptor ID in two
+  switches with a default exception, and two overloads of `clampToMapRange(..)` suppress
+  `OverloadedMethodsWithSameNumberOfParameters`. Rock and water are filtered by comparing descriptor ID strings.
+- Proposal: Five `@Nullable` color fields, the `EtpetsBalance` ranges passed directly, one static
+  `clampToMapRange(double, int, int)` without suppression, `resolveVariantColor(..)` as in Wa-Tor, and comparisons with
+  `TerrainConstant`.
+- Status: done (2026-11-10).
+
+#### Details of the ET Pets types
+
+- Origin: D5 (2026-11-10)
+- Types: the public types without type Javadoc, `EtpetsStatistics`, `EtpetsSimulationManager`, `EtpetsAgentLogic`,
+  `EtpetsTerrainLogic`, `Pet`, `Trail`, `PetGenome`, `PetTraits`, `EtpetsConfigView`
+- Problem: Sixteen public types have no type Javadoc and `EtpetsStatistics` a generic one (D1); `EtpetsStatistics`
+  initializes its counters to `0`. `EtpetsSimulationManager` repeats a comment, misses a space, and names a
+  `PetTraits` `trait`. `EtpetsAgentLogic` has the non-ASCII arrow `U+2192` in comments, a variable `r`, and the
+  counter `cumulativeDeadPetCountChange` for the statistic `cumulativePetDeathCount`. `Pet` uses a `LinkedList` and
+  clamps by hand; `Trail` adds without `+=` and has a trailing comment. `PetGenome` and `PetTraits` abbreviate local
+  names (`ta`, `movCost`, `normRepE`), and `fromParents(..)` puts two parameters per line. Three class declarations
+  wrap although they fit on one line.
+- Proposal: Adopt the decisions of D1 to D4 and fix the details.
+- Status: done (2026-11-10).
+
+### Decisions
+
+- All public types have a short type Javadoc in the forms of D1; the config view, `EtpetsStatistics`, and
+  `EtpetsStepRunner` declare their supertype on one line.
+- `EtpetsSimulationManager` shuffles with `Collections.shuffle(..)` and reads the coordinates from
+  `structure.coordinatesList()`; `shuffleCoordinates(..)` and `createCoordinates(..)` are removed.
+- API change: `EtpetsEditToolBarViewModel` holds an `InputChoiceProperty` for the terrain (`GROUND`) and one for the
+  resource (`NONE`); `available...Choices()`, `setSelected...Choice(..)`, and `resolveSelected...Context()` are
+  removed, and the getters are non-null. `EtpetsMainView` builds both option boxes with the private generic
+  `createOptionBox(..)`.
+- API change: `isTerrain()`, `isResource()`, and `isAgent()` are removed with their tests (`ResourceEntityTest` is
+  deleted); `ResourceBase.minAmount()` is protected. `PERCENT_MIN` and `PERCENT_MAX` are replaced by
+  `ROCK_PERCENT_*`, `WATER_PERCENT_*`, `PLANT_PERCENT_*`, and `INSECT_PERCENT_*` with the same values; the config, the
+  ViewModel, `EtpetsConfigTest`, and `SimulationManagerTest` are adapted.
+- `EtpetsMainView` holds `trailColors`, `plantColors`, `insectColors`, `petColors`, and `petEggColors`; the min and
+  max switches and the suppressed overload are removed (maintainer).
+- The four unused accessors, the debug blocks, and the override with its TODO stay (maintainer).
+- The details are implemented as proposed; `Pet` takes `initialEnergy`. No rule change.
 
 ### D6. Conway
+
+Notes:
+
+- Inventory (2026-11-10, verified against the sources): 24 types in the package root, `model`, `model.entity`,
+  `shared`, `view`, and `viewmodel`. Tests exist for `ConwayConfig`, `ConwayPatterns`, `ConwayUserAction`,
+  `ConwayEntity`, `ConwayPatternChoice`, `ConwayTransitionRules`, the rule presets (`ConwayRulePresetTest`), and
+  `ConwayStyleClasses`.
+- `ConwayConfig`, `ConwayPatternChoice`, the rule presets, `ConwayUserActionContext`, `ConwayStyleClasses`, and
+  `ConwayFactory` follow the rules. `ConwayEditToolBarViewModel` keeps the dynamic pattern of Rebounding, because the
+  available patterns depend on the cell shape and the transition rules; `ConwayRuleProperty.labelProperty()` stays,
+  because `FXComponentFactory.createLabeledStringTextBox(..)` needs it.
+- Test gaps for the later separate optimization: `ConwayStepLogic`, `ConwayTerminationCondition`, `ConwayStatistics`,
+  `ConwaySimulationManager`, and `ConwayEditToolBarViewModel`.
+
+#### Details of the Conway types
+
+- Origin: D6 (2026-11-10)
+- Types: the public types without type Javadoc, `ConwayStatistics`, `ConwaySimulationManager`, `ConwayUserAction`,
+  `ConwayConstraints`, `ConwayPatterns`, `ConwayEntity`, `ConwayTransitionRules`, `ConwayRuleProperty`,
+  `ConwayConfigViewModel`, `ConwayConfigView`, `ConwayMainView`, `ConwayUserActionTest`
+- Problem: Nine public types have no type Javadoc and `ConwayStatistics` a generic one (D1). `ConwayStatistics`
+  initializes two counters to `0` and adjusts through a temporary variable; `ConwaySimulationManager` passes the
+  config to `initializeGrid(..)`. `ConwayUserAction` adds with `+= 1` and checks an alive delta that implies a changed
+  cell. `CELL_SHAPE_VALUES` wraps `List.of(CellShape.values())`. `ConwayPatterns`, `ConwayEntity`, and
+  `ConwayTransitionRules.toDisplayString()` have `@see` tags for elements their text already names; `ConwayEntity`
+  imports a type only for its `@see`. `ConwayRuleProperty` lacks the empty lines before `<p>`, has the non-ASCII dash
+  `U+2014` in a comment, an unused catch variable, the constants `PRESET_*_INITIAL`, fields with the accessor suffix,
+  and a blank line between its instance fields. `ConwayConfigViewModel` and `ConwayConfigView` have two `// Rules`
+  sections, one of them before `// Initialization`, and `// Rules - Presets`. `ConwayConfigView` uses a fully
+  qualified `CheckBox`, the term "born" next to "birth", and a trailing comment. `ConwayMainView` registers the
+  listener cleanup in both branches and compares old and new value in the combo box listener. Three class
+  declarations wrap although they fit on one line, and the test helper `selectedCell(..)` lacks the `create` prefix.
+- Proposal: Adopt the decisions of D1 to D5 and fix the details.
+- Status: done (2026-11-10).
+
+### Decisions
+
+- All public types have a short type Javadoc in the forms of D1; `ConwayTerminationCondition` states its condition
+  there. `ConwayStatistics`, `ConwayConfigViewModel`, and `ConwayConfigView` declare their supertype on one line.
+- `ConwayStatistics` sets only `deadCells` in its constructor and adjusts with `+=`; `ConwaySimulationManager` reads
+  the config through `config()`; `ConwayUserAction` updates the statistics only if a cell changed.
+- `ConwayRuleProperty` names its constants `PRESET_*_DEFAULT` (C4) and its fields `ruleString`, `label`,
+  `presetTriangle`, `presetSquare`, and `presetHexagon` (C5); the public accessors stay unchanged.
+- `ConwayMainView` registers the listener cleanup once and the binding cleanup only with a tool id, and its combo box
+  listener forwards every change (D2).
+- The section comments follow the four config groups; the redundant `@see` tags and the import used only by one of
+  them are removed. No API change and no rule change.
 
 ### D7. Forest
 
@@ -1616,7 +1930,11 @@ Decisions of this plan:
   of `// Rules` (D1, D).
 - The comment "This user action works only if a cell is selected ..." is removed from the user actions (D1, D).
 - Color variants of a main view are held in one `@Nullable` field per entity, without a fallback color for agents
-  (D1, D4).
+  (D1, D4); colors that depend only on the entity descriptors are computed once in the constructor (D3).
+- Edit tool bar ViewModels that select the first choice of a constant catalog initialize the selection at the field
+  declaration, without an explicit constructor and without an empty check of the catalog; a fixed catalog uses an
+  `InputChoiceProperty` with `FXComponentFactory.createLabeledChoiceComboBox(..)` instead of an observable list and a
+  `@Nullable` selection (D3, D4, D5).
 
 ## Deferred findings
 

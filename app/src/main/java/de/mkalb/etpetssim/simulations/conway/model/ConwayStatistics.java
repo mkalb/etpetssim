@@ -9,10 +9,9 @@ import de.mkalb.etpetssim.simulations.core.model.StatisticsMetric;
 import java.util.List;
 
 /**
- * Holds runtime statistics for a running simulation.
+ * Statistics of Conway's Game of Life with the alive, dead, and changed cell counts.
  */
-public final class ConwayStatistics
-        extends BaseTimedSimulationStatistics {
+public final class ConwayStatistics extends BaseTimedSimulationStatistics {
 
     public static final String KEY_ALIVE_CELLS = "aliveCells";
     public static final String KEY_DEAD_CELLS = "deadCells";
@@ -41,9 +40,7 @@ public final class ConwayStatistics
 
     public ConwayStatistics(GridStructure gridStructure) {
         super(gridStructure);
-        aliveCells = 0;
         deadCells = totalCells();
-        changedCells = 0;
     }
 
     public static List<StatisticsMetric<ConwayStatistics>> metrics() {
@@ -52,9 +49,8 @@ public final class ConwayStatistics
 
     public void adjustCellCounts(int aliveCellsDelta,
                                  int changedCellsDelta) {
-        int newAliveCells = aliveCells + aliveCellsDelta;
-        aliveCells = newAliveCells;
-        deadCells = totalCells() - newAliveCells;
+        aliveCells += aliveCellsDelta;
+        deadCells = totalCells() - aliveCells;
         changedCells += changedCellsDelta;
     }
 

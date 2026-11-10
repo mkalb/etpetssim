@@ -14,6 +14,9 @@ import de.mkalb.etpetssim.simulations.core.model.SimulationInitializationCancell
 
 import java.util.Random;
 
+/**
+ * Simulation manager of Conway's Game of Life.
+ */
 public final class ConwaySimulationManager
         extends AbstractTimedSimulationManager<ConwayEntity, WritableGridModel<ConwayEntity>, ConwayConfig,
         ConwayStatistics> {
@@ -40,7 +43,7 @@ public final class ConwaySimulationManager
         executor = new TimedSimulationExecutor<>(new DefaultSimulationExecutor<>(runner, runner::currentGridModel,
                 terminationCondition, statistics));
 
-        initializeGrid(config, model, random, cancellation);
+        initializeGrid(model, random, cancellation);
         cancellation.checkCanceled();
         initializeStatistics(model);
         recordInitialStatisticsSample();
@@ -68,12 +71,11 @@ public final class ConwaySimulationManager
         return executor;
     }
 
-    private void initializeGrid(ConwayConfig config,
-                                WritableGridModel<ConwayEntity> model,
+    private void initializeGrid(WritableGridModel<ConwayEntity> model,
                                 Random random,
                                 SimulationInitializationCancellation cancellation) {
         var gridInitializer = GridInitializers.fillRandomPercent(
-                config.alivePercent(),
+                config().alivePercent(),
                 () -> ConwayEntity.ALIVE,
                 ConwayEntity.DEAD,
                 random,

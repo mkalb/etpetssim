@@ -3,6 +3,9 @@ package de.mkalb.etpetssim.simulations.etpets.model;
 import de.mkalb.etpetssim.engine.executor.SimulationTerminationCondition;
 import de.mkalb.etpetssim.simulations.etpets.model.entity.EtpetsEntity;
 
+/**
+ * Termination condition of ET Pets that ends the simulation when neither an active pet nor an egg is left.
+ */
 public final class EtpetsTerminationCondition
         implements SimulationTerminationCondition<EtpetsEntity, EtpetsGridModel, EtpetsStatistics> {
 

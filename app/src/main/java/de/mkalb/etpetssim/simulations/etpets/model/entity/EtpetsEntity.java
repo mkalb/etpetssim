@@ -24,12 +24,6 @@ public sealed interface EtpetsEntity extends GridEntity
     String DESCRIPTOR_ID_PET = "pet";
     String DESCRIPTOR_ID_PET_EGG = "pet_egg";
 
-    boolean isTerrain();
-
-    boolean isResource();
-
-    boolean isAgent();
-
     /**
      * Indicates whether this entity is considered empty for simulation logic.
      *

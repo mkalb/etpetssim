@@ -11,6 +11,9 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 
+/**
+ * Snake head of Snake, the agent that moves by its strategy and drags its segments behind it.
+ */
 public final class SnakeHead implements SnakeEntity {
 
     private final int id;
@@ -29,19 +32,18 @@ public final class SnakeHead implements SnakeEntity {
                      SnakeMoveStrategy strategy,
                      int initialPendingGrowth,
                      int stepIndexOfSpawn) {
-        if (initialPendingGrowth < 0) {
-            throw new IllegalArgumentException("initialPendingGrowth must be >= 0, but was: " + initialPendingGrowth);
-        }
+        checkInitialPendingGrowth(initialPendingGrowth);
         this.id = id;
         this.strategy = strategy;
         snakeSegments = new ArrayDeque<>();
         pendingGrowth = initialPendingGrowth;
-        deaths = 0;
         this.stepIndexOfSpawn = stepIndexOfSpawn;
-        dead = false;
-        points = 0;
-        maxSegmentCount = 0;
-        direction = null;
+    }
+
+    private static void checkInitialPendingGrowth(int initialPendingGrowth) {
+        if (initialPendingGrowth < 0) {
+            throw new IllegalArgumentException("initialPendingGrowth must be >= 0, but was: " + initialPendingGrowth);
+        }
     }
 
     @Override
@@ -77,10 +79,6 @@ public final class SnakeHead implements SnakeEntity {
         return strategy;
     }
 
-    public int pendingGrowth() {
-        return pendingGrowth;
-    }
-
     public int deaths() {
         return deaths;
     }
@@ -91,10 +89,6 @@ public final class SnakeHead implements SnakeEntity {
 
     public int maxSegmentCount() {
         return maxSegmentCount;
-    }
-
-    public int stepIndexOfSpawn() {
-        return stepIndexOfSpawn;
     }
 
     public int ageAtStepIndex(int stepIndex) {
@@ -134,7 +128,6 @@ public final class SnakeHead implements SnakeEntity {
             maxSegmentCount = Math.max(maxSegmentCount, segmentCount());
             return Optional.empty();
         } else {
-            pendingGrowth = 0; // Ensure non-negative
             maxSegmentCount = Math.max(maxSegmentCount, segmentCount() - 1);
             return Optional.of(snakeSegments.removeLast());
         }
@@ -146,6 +139,7 @@ public final class SnakeHead implements SnakeEntity {
     }
 
     public void respawn(int initialPendingGrowth, int stepIndexOfRespawn) {
+        checkInitialPendingGrowth(initialPendingGrowth);
         dead = false;
         snakeSegments.clear();
         pendingGrowth = initialPendingGrowth;
@@ -171,10 +165,10 @@ public final class SnakeHead implements SnakeEntity {
         String segmentsStr = switch (size) {
             case 0 -> "#0 ()";
             case 1 -> "#1 " + snakeSegments.getFirst().toDisplayString();
-            case 2 -> "#2 %s %s".formatted(
+            case 2 -> String.format(Locale.ROOT, "#2 %s %s",
                     snakeSegments.getFirst().toDisplayString(),
                     snakeSegments.getLast().toDisplayString());
-            default -> "#%d %s...%s".formatted(size,
+            default -> String.format(Locale.ROOT, "#%d %s...%s", size,
                     snakeSegments.getFirst().toDisplayString(),
                     snakeSegments.getLast().toDisplayString());
         };

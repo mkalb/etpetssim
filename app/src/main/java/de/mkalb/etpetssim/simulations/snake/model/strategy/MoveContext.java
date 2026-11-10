@@ -26,9 +26,7 @@ import java.util.Random;
  * @param structure             the active grid structure
  * @param neighborDirectionRing the ordered direction ring used for local strategy decisions
  * @param config                the active snake configuration
- * @param random                the random source for non-deterministic choices; intentionally shared rather than
- *                              defensively copied, because {@link Random} is not cloneable and strategies must
- *                              advance the same sequence as the caller
+ * @param random                the random source for non-deterministic choices
  */
 public record MoveContext(
         SnakeHead snakeHead,

@@ -1,7 +1,7 @@
 package de.mkalb.etpetssim.simulations.sugar.shared;
 
 /**
- * Discrete amount levels used by the Sugar edit action.
+ * Discrete amount levels used by the add sugar action of Sugarscape.
  *
  * <p>Each level adds a fixed fraction of the configured maximum sugar amount.
  */

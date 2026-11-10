@@ -15,6 +15,7 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.geometry.HPos;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.GridPane;
@@ -22,23 +23,23 @@ import javafx.scene.layout.Region;
 
 import java.util.List;
 
-public final class ConwayConfigView
-        extends AbstractConfigView<ConwayConfig, ConwayConfigViewModel> {
+/**
+ * Config view of Conway's Game of Life.
+ */
+public final class ConwayConfigView extends AbstractConfigView<ConwayConfig, ConwayConfigViewModel> {
 
     // Initialization
     private static final String CONWAY_CONFIG_ALIVE_PERCENT = "conway.config.alivepercent";
     private static final String CONWAY_CONFIG_ALIVE_PERCENT_HINT = "conway.config.alivepercent.hint";
     private static final String CONWAY_CONFIG_ALIVE_PERCENT_TOOLTIP = "conway.config.alivepercent.tooltip";
 
-    // Rules - Presets
+    // Rules
     private static final String CONWAY_CONFIG_PRESET_HEXAGON = "conway.config.preset.hexagon";
     private static final String CONWAY_CONFIG_PRESET_HEXAGON_TOOLTIP = "conway.config.preset.hexagon.tooltip";
     private static final String CONWAY_CONFIG_PRESET_SQUARE = "conway.config.preset.square";
     private static final String CONWAY_CONFIG_PRESET_SQUARE_TOOLTIP = "conway.config.preset.square.tooltip";
     private static final String CONWAY_CONFIG_PRESET_TRIANGLE = "conway.config.preset.triangle";
     private static final String CONWAY_CONFIG_PRESET_TRIANGLE_TOOLTIP = "conway.config.preset.triangle.tooltip";
-
-    // Rules
     private static final String CONWAY_CONFIG_RULES = "conway.config.rules";
     private static final String CONWAY_CONFIG_RULES_INPUT = "conway.config.rules.input";
     private static final String CONWAY_CONFIG_RULES_INPUT_CLEAR_TOOLTIP = "conway.config.rules.input.clear.tooltip";
@@ -200,7 +201,7 @@ public final class ConwayConfigView
         // Add Survive checkboxes (row 1)
         for (int i = ConwayTransitionRules.MIN_NEIGHBOR_COUNT; i <= ConwayTransitionRules.MAX_NEIGHBOR_COUNT; i++) {
             int index = i - ConwayTransitionRules.MIN_NEIGHBOR_COUNT;
-            var surviveCheckBox = new javafx.scene.control.CheckBox();
+            var surviveCheckBox = new CheckBox();
             surviveCheckBox.selectedProperty().bindBidirectional(surviveProperties.get(index));
             surviveCheckBox.disableProperty().bind(
                     viewModel.maxNeighborCountProperty().lessThan(i)
@@ -211,22 +212,23 @@ public final class ConwayConfigView
             GridPane.setHalignment(surviveCheckBox, HPos.CENTER);
         }
 
-        // Add Born checkboxes (row 2)
+        // Add Birth checkboxes (row 2)
         for (int i = ConwayTransitionRules.MIN_NEIGHBOR_COUNT; i <= ConwayTransitionRules.MAX_NEIGHBOR_COUNT; i++) {
             int index = i - ConwayTransitionRules.MIN_NEIGHBOR_COUNT;
-            var bornCheckBox = new javafx.scene.control.CheckBox();
-            bornCheckBox.selectedProperty().bindBidirectional(birthProperties.get(index));
-            if (index == 0) { // It is not possible to be born without a neighbor.
-                bornCheckBox.setDisable(true);
+            var birthCheckBox = new CheckBox();
+            birthCheckBox.selectedProperty().bindBidirectional(birthProperties.get(index));
+            // It is not possible to be born without a neighbor.
+            if (index == 0) {
+                birthCheckBox.setDisable(true);
             } else {
-                bornCheckBox.disableProperty().bind(
+                birthCheckBox.disableProperty().bind(
                         viewModel.maxNeighborCountProperty().lessThan(i)
                 );
             }
-            bornCheckBox.setTooltip(tooltip);
-            bornCheckBox.getStyleClass().add(FXStyleClasses.CONFIG_CHECKBOX);
-            gridPane.add(bornCheckBox, 1 + index, 2);
-            GridPane.setHalignment(bornCheckBox, HPos.CENTER);
+            birthCheckBox.setTooltip(tooltip);
+            birthCheckBox.getStyleClass().add(FXStyleClasses.CONFIG_CHECKBOX);
+            gridPane.add(birthCheckBox, 1 + index, 2);
+            GridPane.setHalignment(birthCheckBox, HPos.CENTER);
         }
 
         return new FXComponentFactory.LabeledControl<>(label, gridPane);

@@ -44,8 +44,10 @@ import static de.mkalb.etpetssim.simulations.conway.model.ConwayConstraints.NEIG
 import static de.mkalb.etpetssim.simulations.conway.model.ConwayConstraints.SEED_DEFAULT;
 import static de.mkalb.etpetssim.simulations.conway.model.ConwayConstraints.TRANSITION_RULES_DEFAULT;
 
-public final class ConwayConfigViewModel
-        extends AbstractConfigViewModel<ConwayConfig> {
+/**
+ * Config ViewModel of Conway's Game of Life.
+ */
+public final class ConwayConfigViewModel extends AbstractConfigViewModel<ConwayConfig> {
 
     private static final CommonConfigSettings COMMON_SETTINGS = new CommonConfigSettings(
             CELL_SHAPE_DEFAULT,
@@ -68,9 +70,6 @@ public final class ConwayConfigViewModel
             SEED_DEFAULT
     );
 
-    // Rules
-    private final ConwayRuleProperty ruleProperty = new ConwayRuleProperty();
-
     // Initialization
     private final InputDoubleProperty alivePercent = InputDoubleProperty.of(
             ALIVE_PERCENT_DEFAULT,
@@ -78,6 +77,7 @@ public final class ConwayConfigViewModel
             ALIVE_PERCENT_MAX);
 
     // Rules
+    private final ConwayRuleProperty ruleProperty = new ConwayRuleProperty();
     private final List<BooleanProperty> surviveProperties = new ArrayList<>();
     private final List<BooleanProperty> birthProperties = new ArrayList<>();
     private final ObjectProperty<ConwayTransitionRules> transitionRules =

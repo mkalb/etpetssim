@@ -27,18 +27,27 @@ import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsConstraints.GRID
 import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsConstraints.GRID_WIDTH_MIN;
 import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsConstraints.GRID_WIDTH_STEP;
 import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsConstraints.INSECT_PERCENT_DEFAULT;
+import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsConstraints.INSECT_PERCENT_MAX;
+import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsConstraints.INSECT_PERCENT_MIN;
 import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsConstraints.NEIGHBORHOOD_MODE_DEFAULT;
-import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsConstraints.PERCENT_MAX;
-import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsConstraints.PERCENT_MIN;
 import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsConstraints.PET_COUNT_DEFAULT;
 import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsConstraints.PET_COUNT_MAX;
 import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsConstraints.PET_COUNT_MIN;
 import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsConstraints.PET_COUNT_STEP;
 import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsConstraints.PLANT_PERCENT_DEFAULT;
+import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsConstraints.PLANT_PERCENT_MAX;
+import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsConstraints.PLANT_PERCENT_MIN;
 import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsConstraints.ROCK_PERCENT_DEFAULT;
+import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsConstraints.ROCK_PERCENT_MAX;
+import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsConstraints.ROCK_PERCENT_MIN;
 import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsConstraints.SEED_DEFAULT;
 import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsConstraints.WATER_PERCENT_DEFAULT;
+import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsConstraints.WATER_PERCENT_MAX;
+import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsConstraints.WATER_PERCENT_MIN;
 
+/**
+ * Config ViewModel of ET Pets.
+ */
 public final class EtpetsConfigViewModel extends AbstractConfigViewModel<EtpetsConfig> {
 
     private static final String ETPETS_CONFIG_VALIDATION_COMBINED_PERCENTS =
@@ -68,20 +77,20 @@ public final class EtpetsConfigViewModel extends AbstractConfigViewModel<EtpetsC
     // Initialization
     private final InputDoubleProperty rockPercent = InputDoubleProperty.of(
             ROCK_PERCENT_DEFAULT,
-            PERCENT_MIN,
-            PERCENT_MAX);
+            ROCK_PERCENT_MIN,
+            ROCK_PERCENT_MAX);
     private final InputDoubleProperty waterPercent = InputDoubleProperty.of(
             WATER_PERCENT_DEFAULT,
-            PERCENT_MIN,
-            PERCENT_MAX);
+            WATER_PERCENT_MIN,
+            WATER_PERCENT_MAX);
     private final InputDoubleProperty plantPercent = InputDoubleProperty.of(
             PLANT_PERCENT_DEFAULT,
-            PERCENT_MIN,
-            PERCENT_MAX);
+            PLANT_PERCENT_MIN,
+            PLANT_PERCENT_MAX);
     private final InputDoubleProperty insectPercent = InputDoubleProperty.of(
             INSECT_PERCENT_DEFAULT,
-            PERCENT_MIN,
-            PERCENT_MAX);
+            INSECT_PERCENT_MIN,
+            INSECT_PERCENT_MAX);
     private final InputIntegerProperty petCount = InputIntegerProperty.of(
             PET_COUNT_DEFAULT,
             PET_COUNT_MIN,

@@ -23,7 +23,6 @@ import de.mkalb.etpetssim.simulations.sugar.model.entity.NoResource;
 import de.mkalb.etpetssim.simulations.sugar.model.entity.ResourceEntity;
 import de.mkalb.etpetssim.simulations.sugar.model.entity.Sugar;
 import de.mkalb.etpetssim.simulations.sugar.model.entity.SugarEntity;
-import de.mkalb.etpetssim.simulations.sugar.shared.SugarAddSugarLevel;
 import de.mkalb.etpetssim.simulations.sugar.shared.SugarUserActionContext;
 import de.mkalb.etpetssim.simulations.sugar.viewmodel.SugarEditToolBarViewModel;
 import de.mkalb.etpetssim.ui.CellDimension;
@@ -32,22 +31,21 @@ import de.mkalb.etpetssim.ui.FXGridCanvasPainter;
 import de.mkalb.etpetssim.ui.FXStyleClasses;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.ObjectProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.collections.ObservableList;
 import javafx.scene.Node;
-import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.ListCell;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.StrokeType;
 import org.jspecify.annotations.Nullable;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
 
+/**
+ * Main view of Sugarscape.
+ */
 public final class SugarMainView
         extends AbstractDefaultMainView<
         SugarEntity,
@@ -60,8 +58,6 @@ public final class SugarMainView
         SugarConfigView,
         SugarObservationView> {
 
-    private static final Color FALLBACK_COLOR_SUGAR = Color.WHITE;
-    private static final Color FALLBACK_COLOR_AGENT = Color.BLUE;
     private static final double SUGAR_MAX_FACTOR_DELTA = 0.3d;
     private static final double AGENT_MAX_FACTOR_DELTA = 0.6d;
     private static final int AGENT_GROUP_COUNT = 7;
@@ -78,8 +74,9 @@ public final class SugarMainView
     private static final String SUGAR_TOOL_ID_ADD_SUGAR = "sugar.addSugar";
     private static final String SUGAR_TOOL_ID_REMOVE_SUGAR = "sugar.removeSugar";
 
-    private final Map<String, @Nullable Map<Integer, Color>> entityColors;
     private final SugarEditToolBarViewModel editToolBarViewModel;
+    private @Nullable Map<Integer, Color> sugarColors;
+    private @Nullable Map<Integer, Color> agentColors;
     private @Nullable CellDrawer<ResourceEntity> cellResourceDrawer;
     private @Nullable CellDrawer<AgentEntity> cellAgentDrawer;
     private int maxColorAgentEnergy = 1;
@@ -97,9 +94,12 @@ public final class SugarMainView
                 observationView,
                 entityDescriptorRegistry);
         this.editToolBarViewModel = editToolBarViewModel;
-        entityColors = HashMap.newHashMap(2);
-        entityColors.put(SugarEntity.DESCRIPTOR_ID_SUGAR, null);
-        entityColors.put(SugarEntity.DESCRIPTOR_ID_AGENT, null);
+    }
+
+    private static Color resolveVariantColor(@Nullable Map<Integer, Color> variantColors,
+                                             int value,
+                                             Color baseColor) {
+        return (variantColors == null) ? baseColor : variantColors.getOrDefault(value, baseColor);
     }
 
     @Override
@@ -110,14 +110,12 @@ public final class SugarMainView
         painters.base().fillCanvasBackground(backgroundColor);
 
         maxColorAgentEnergy = computeMaxColorAgentEnergy(config);
-        entityColors.put(SugarEntity.DESCRIPTOR_ID_SUGAR,
-                computeBrightnessVariantsMap(entityDescriptorRegistry
-                                .requireByDescriptorId(SugarEntity.DESCRIPTOR_ID_SUGAR),
-                        1, config.maxSugarAmount(), config.maxSugarAmount(), SUGAR_MAX_FACTOR_DELTA));
-        entityColors.put(SugarEntity.DESCRIPTOR_ID_AGENT,
-                computeBrightnessVariantsMap(entityDescriptorRegistry
-                                .requireByDescriptorId(SugarEntity.DESCRIPTOR_ID_AGENT),
-                        1, maxColorAgentEnergy, AGENT_GROUP_COUNT, AGENT_MAX_FACTOR_DELTA));
+        sugarColors = computeBrightnessVariantsMap(
+                entityDescriptorRegistry.requireByDescriptorId(SugarEntity.DESCRIPTOR_ID_SUGAR),
+                1, config.maxSugarAmount(), config.maxSugarAmount(), SUGAR_MAX_FACTOR_DELTA);
+        agentColors = computeBrightnessVariantsMap(
+                entityDescriptorRegistry.requireByDescriptorId(SugarEntity.DESCRIPTOR_ID_AGENT),
+                1, maxColorAgentEnergy, AGENT_GROUP_COUNT, AGENT_MAX_FACTOR_DELTA);
 
         double strokeLineWidth = computeStrokeLineWidth(cellDimension);
 
@@ -204,68 +202,34 @@ public final class SugarMainView
                         SimulationUserActionScope.CELL_SELECTED,
                         SUGAR_TOOLBAR_ADD_SUGAR,
                         SUGAR_TOOLBAR_ADD_SUGAR_TOOLTIP,
-                        () -> editToolBarViewModel.resolveSelectedAddSugarContext()
+                        () -> Optional.of(editToolBarViewModel.getSelectedAddSugarLevel())
+                                .map(SugarUserActionContext.AddSugar::new)
                                 .map(Function.identity()))
         );
     }
 
     @Override
     protected Node createEditToolBarOptionPanel(@Nullable ObjectProperty<String> selectedToolId) {
-        ObservableList<SugarAddSugarLevel> availableAddSugarLevels = editToolBarViewModel.availableAddSugarLevels();
-        ComboBox<SugarAddSugarLevel> levelComboBox = new ComboBox<>();
-        levelComboBox.setItems(availableAddSugarLevels);
-        levelComboBox.setMaxWidth(Double.MAX_VALUE);
-        levelComboBox.getStyleClass().add(FXStyleClasses.SIMULATION_EDIT_TOOLBAR_COMBOBOX);
-        levelComboBox.setCellFactory(_ -> createAddSugarLevelCell());
-        levelComboBox.setButtonCell(createAddSugarLevelCell());
-
-        SugarAddSugarLevel selectedLevel = editToolBarViewModel.getSelectedAddSugarLevel();
-        if (selectedLevel != null) {
-            levelComboBox.setValue(selectedLevel);
-        }
-
-        Label levelLabel = FXComponentFactory.createLabeledControl(
-                levelComboBox,
+        var levelControl = FXComponentFactory.createLabeledChoiceComboBox(
+                editToolBarViewModel.selectedAddSugarLevelProperty(),
                 AppLocalization.getText(SUGAR_TOOLBAR_ADD_SUGAR_LEVEL),
                 AppLocalization.getText(SUGAR_TOOLBAR_ADD_SUGAR_LEVEL_TOOLTIP),
-                FXStyleClasses.SIMULATION_EDIT_TOOLBAR_OPTION_LABEL).label();
+                FXStyleClasses.SIMULATION_EDIT_TOOLBAR_COMBOBOX,
+                this::registerEditToolBarCleanup);
+        Label levelLabel = levelControl.label();
+        levelLabel.getStyleClass().add(FXStyleClasses.SIMULATION_EDIT_TOOLBAR_OPTION_LABEL);
+        var levelComboBox = levelControl.controlRegion();
 
-        ChangeListener<@Nullable SugarAddSugarLevel> comboSelectionListener = (_, oldValue, newValue) -> {
-            if (oldValue != newValue) {
-                editToolBarViewModel.setSelectedAddSugarLevel(newValue);
-            }
-        };
-        ChangeListener<@Nullable SugarAddSugarLevel> viewModelSelectionListener = (_, _, newValue) -> {
-            if (levelComboBox.getValue() != newValue) {
-                if (newValue == null) {
-                    levelComboBox.getSelectionModel().clearSelection();
-                } else {
-                    levelComboBox.setValue(newValue);
-                }
-            }
-        };
-        var selectedLevelProperty = editToolBarViewModel.selectedAddSugarLevelProperty();
-        levelComboBox.valueProperty().addListener(comboSelectionListener);
-        selectedLevelProperty.addListener(viewModelSelectionListener);
-
-        if (selectedToolId != null) {
-            var enabledBinding = Bindings.createBooleanBinding(
-                    () -> SUGAR_TOOL_ID_ADD_SUGAR.equals(selectedToolId.get()) && !availableAddSugarLevels.isEmpty(),
-                    selectedToolId,
-                    availableAddSugarLevels);
-            levelLabel.disableProperty().bind(enabledBinding.not());
-            levelComboBox.disableProperty().bind(enabledBinding.not());
+        if (selectedToolId == null) {
+            levelLabel.setDisable(true);
+            levelComboBox.setDisable(true);
+        } else {
+            var disableWhenNoAddSugarToolSelected = Bindings.not(selectedToolId.isEqualTo(SUGAR_TOOL_ID_ADD_SUGAR));
+            levelLabel.disableProperty().bind(disableWhenNoAddSugarToolSelected);
+            levelComboBox.disableProperty().bind(disableWhenNoAddSugarToolSelected);
             registerEditToolBarCleanup(() -> {
                 levelLabel.disableProperty().unbind();
                 levelComboBox.disableProperty().unbind();
-                enabledBinding.dispose();
-                levelComboBox.valueProperty().removeListener(comboSelectionListener);
-                selectedLevelProperty.removeListener(viewModelSelectionListener);
-            });
-        } else {
-            registerEditToolBarCleanup(() -> {
-                levelComboBox.valueProperty().removeListener(comboSelectionListener);
-                selectedLevelProperty.removeListener(viewModelSelectionListener);
             });
         }
 
@@ -282,35 +246,20 @@ public final class SugarMainView
     private Color resolveResourceFillColor(GridEntityDescriptor entityDescriptor,
                                            ResourceEntity entity) {
         Color baseColor = entityDescriptor.colorOrFallback();
-        Map<Integer, Color> colorMap = entityColors.get(entityDescriptor.descriptorId());
-        if (colorMap != null) {
-            Integer value = switch (entity) {
-                case Sugar sugar -> sugar.currentAmount();
-                case NoResource _ -> -1;
-            };
-
-            return colorMap.getOrDefault(value, baseColor);
-        }
-        return (entityDescriptor.color() != null) ? entityDescriptor.color() : FALLBACK_COLOR_SUGAR;
+        return switch (entity) {
+            case Sugar sugar -> resolveVariantColor(sugarColors, sugar.currentAmount(), baseColor);
+            case NoResource _ -> baseColor;
+        };
     }
 
     private Color resolveAgentFillColor(GridEntityDescriptor entityDescriptor,
                                         AgentEntity entity) {
         Color baseColor = entityDescriptor.colorOrFallback();
-        Map<Integer, Color> colorMap = entityColors.get(entityDescriptor.descriptorId());
-        if (colorMap != null) {
-            Integer value = switch (entity) {
-                case Agent agent -> Math.min(maxColorAgentEnergy, agent.currentEnergy());
-                case NoAgent _ -> -1;
-            };
-
-            return colorMap.getOrDefault(value, baseColor);
-        }
-        return (entityDescriptor.color() != null) ? entityDescriptor.color() : FALLBACK_COLOR_AGENT;
-    }
-
-    private ListCell<SugarAddSugarLevel> createAddSugarLevelCell() {
-        return FXComponentFactory.createTextListCell(level -> AppLocalization.getText(level.labelKey()));
+        return switch (entity) {
+            case Agent agent -> resolveVariantColor(agentColors,
+                    Math.min(maxColorAgentEnergy, agent.currentEnergy()), baseColor);
+            case NoAgent _ -> baseColor;
+        };
     }
 
 }

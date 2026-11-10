@@ -148,7 +148,6 @@ public final class SnakeMoveStrategies {
                 } else if (distance == 1) {
                     score += weights.smallTurn();
                 }
-                // distance >= 2 -> no momentum bonus
             }
 
             if ((weights.adjacentSegment() != 0) && !segments.isEmpty()
@@ -171,7 +170,8 @@ public final class SnakeMoveStrategies {
                                          GridStructure structure) {
         return CellNeighborhoods.cellNeighborsIgnoringEdgeBehavior(coordinate, neighborhoodMode, structure.cellShape())
                 .map(CellNeighbor::neighborCoordinate)
-                .map(nc -> CellNeighborhoods.applyEdgeBehaviorToCoordinate(nc, structure).mapped())
+                .map(neighborCoordinate ->
+                        CellNeighborhoods.applyEdgeBehaviorToCoordinate(neighborCoordinate, structure).mapped())
                 .anyMatch(coordinates::contains);
     }
 

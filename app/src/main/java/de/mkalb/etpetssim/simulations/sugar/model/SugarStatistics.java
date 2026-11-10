@@ -8,10 +8,9 @@ import de.mkalb.etpetssim.simulations.core.model.StatisticsMetric;
 import java.util.List;
 
 /**
- * Holds runtime statistics for a running simulation.
+ * Statistics of Sugarscape with the resource and agent cell counts.
  */
-public final class SugarStatistics
-        extends BaseTimedSimulationStatistics {
+public final class SugarStatistics extends BaseTimedSimulationStatistics {
 
     public static final String KEY_RESOURCE_CELLS = "resourceCells";
     public static final String KEY_AGENT_CELLS = "agentCells";
@@ -33,8 +32,6 @@ public final class SugarStatistics
 
     public SugarStatistics(GridStructure gridStructure) {
         super(gridStructure);
-        resourceCells = 0;
-        agentCells = 0;
     }
 
     public static List<StatisticsMetric<SugarStatistics>> metrics() {

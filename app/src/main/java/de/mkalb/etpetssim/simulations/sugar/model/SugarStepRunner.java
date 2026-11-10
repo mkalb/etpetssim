@@ -4,8 +4,10 @@ import de.mkalb.etpetssim.engine.executor.SimulationStepRunner;
 
 import java.util.Random;
 
-public final class SugarStepRunner
-        implements SimulationStepRunner<SugarStatistics> {
+/**
+ * Step runner of Sugarscape that applies the agent phase and then the resource phase.
+ */
+public final class SugarStepRunner implements SimulationStepRunner<SugarStatistics> {
 
     private final SugarGridModel model;
     private final SugarConfig config;

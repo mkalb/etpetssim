@@ -14,21 +14,6 @@ public sealed interface TerrainEntity extends EtpetsEntity
     boolean isWalkable();
 
     @Override
-    default boolean isTerrain() {
-        return true;
-    }
-
-    @Override
-    default boolean isResource() {
-        return false;
-    }
-
-    @Override
-    default boolean isAgent() {
-        return false;
-    }
-
-    @Override
     default boolean isEmpty() {
         return false;
     }

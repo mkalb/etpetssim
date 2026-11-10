@@ -40,11 +40,17 @@ public final class EtpetsConstraints {
     // Initialization
     public static final String SEED_DEFAULT = "";
     public static final double ROCK_PERCENT_DEFAULT = 0.01d;
+    public static final double ROCK_PERCENT_MIN = 0.0d;
+    public static final double ROCK_PERCENT_MAX = 0.5d;
     public static final double WATER_PERCENT_DEFAULT = 0.02d;
+    public static final double WATER_PERCENT_MIN = 0.0d;
+    public static final double WATER_PERCENT_MAX = 0.5d;
     public static final double PLANT_PERCENT_DEFAULT = 0.05d;
+    public static final double PLANT_PERCENT_MIN = 0.0d;
+    public static final double PLANT_PERCENT_MAX = 0.5d;
     public static final double INSECT_PERCENT_DEFAULT = 0.01d;
-    public static final double PERCENT_MIN = 0.0d;
-    public static final double PERCENT_MAX = 0.5d;
+    public static final double INSECT_PERCENT_MIN = 0.0d;
+    public static final double INSECT_PERCENT_MAX = 0.5d;
     public static final double COMBINED_PERCENT_MAX = 0.5d;
     public static final int PET_COUNT_DEFAULT = 10;
     public static final int PET_COUNT_MIN = 0;

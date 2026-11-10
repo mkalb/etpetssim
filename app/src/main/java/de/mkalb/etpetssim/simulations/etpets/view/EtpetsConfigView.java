@@ -9,8 +9,10 @@ import de.mkalb.etpetssim.ui.FXComponentFactory;
 import de.mkalb.etpetssim.ui.FXStyleClasses;
 import javafx.scene.layout.Region;
 
-public final class EtpetsConfigView
-        extends AbstractConfigView<EtpetsConfig, EtpetsConfigViewModel> {
+/**
+ * Config view of ET Pets.
+ */
+public final class EtpetsConfigView extends AbstractConfigView<EtpetsConfig, EtpetsConfigViewModel> {
 
     // Initialization
     private static final String ETPETS_CONFIG_ROCK_PERCENT = "etpets.config.rockpercent";

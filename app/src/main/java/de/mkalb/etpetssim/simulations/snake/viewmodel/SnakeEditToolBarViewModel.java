@@ -4,26 +4,15 @@ import de.mkalb.etpetssim.simulations.snake.model.strategy.SnakeMoveStrategies;
 import de.mkalb.etpetssim.simulations.snake.model.strategy.SnakeMoveStrategy;
 import de.mkalb.etpetssim.ui.InputChoiceProperty;
 
-import java.util.List;
-
+/**
+ * Edit tool bar ViewModel of Snake with the move strategy of new snakes.
+ */
 public final class SnakeEditToolBarViewModel {
 
-    private final InputChoiceProperty<SnakeMoveStrategy> selectedStrategy;
-
-    public SnakeEditToolBarViewModel() {
-        List<SnakeMoveStrategy> availableStrategies = SnakeMoveStrategies.strategies();
-        if (availableStrategies.isEmpty()) {
-            throw new IllegalStateException("availableStrategies must not be empty, but was: " + availableStrategies);
-        }
-        selectedStrategy = InputChoiceProperty.ofList(
-                availableStrategies.getFirst(),
-                availableStrategies,
-                SnakeMoveStrategy::displayName);
-    }
-
-    public List<SnakeMoveStrategy> availableStrategies() {
-        return selectedStrategy.validValues();
-    }
+    private final InputChoiceProperty<SnakeMoveStrategy> selectedStrategy = InputChoiceProperty.ofList(
+            SnakeMoveStrategies.strategies().getFirst(),
+            SnakeMoveStrategies.strategies(),
+            SnakeMoveStrategy::displayName);
 
     public InputChoiceProperty<SnakeMoveStrategy> selectedStrategyProperty() {
         return selectedStrategy;
@@ -31,10 +20,6 @@ public final class SnakeEditToolBarViewModel {
 
     public SnakeMoveStrategy getSelectedStrategy() {
         return selectedStrategy.getValue();
-    }
-
-    public void setSelectedStrategy(SnakeMoveStrategy strategy) {
-        selectedStrategy.setValue(strategy);
     }
 
 }

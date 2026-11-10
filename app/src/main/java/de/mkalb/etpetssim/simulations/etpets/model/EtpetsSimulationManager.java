@@ -1,7 +1,6 @@
 package de.mkalb.etpetssim.simulations.etpets.model;
 
 import de.mkalb.etpetssim.engine.GridCoordinate;
-import de.mkalb.etpetssim.engine.GridSize;
 import de.mkalb.etpetssim.engine.GridStructure;
 import de.mkalb.etpetssim.engine.executor.DefaultSimulationExecutor;
 import de.mkalb.etpetssim.engine.executor.TimedSimulationExecutor;
@@ -25,6 +24,9 @@ import java.util.Random;
 
 import static de.mkalb.etpetssim.engine.support.WorkCheckpoints.isCancellationCheckpoint;
 
+/**
+ * Simulation manager of ET Pets.
+ */
 public final class EtpetsSimulationManager
         extends AbstractTimedSimulationManager<EtpetsEntity, EtpetsGridModel, EtpetsConfig, EtpetsStatistics> {
 
@@ -65,19 +67,8 @@ public final class EtpetsSimulationManager
         recordInitialStatisticsSample();
     }
 
-    private static int computePercentCount(int totalCells, double percentDecimal) {
-        return Math.clamp(Math.round((totalCells * percentDecimal)), 0, totalCells);
-    }
-
-    private static void shuffleCoordinates(List<GridCoordinate> coordinates, Random random,
-                                           SimulationInitializationCancellation cancellation) {
-        for (int index = 0; index < (coordinates.size() - 1); index++) {
-            if (isCancellationCheckpoint(index)) {
-                cancellation.checkCanceled();
-            }
-            int coordinateIndex = coordinates.size() - index - 1;
-            Collections.swap(coordinates, coordinateIndex, random.nextInt(coordinateIndex + 1));
-        }
+    private static int computePercentCount(int totalCells, double percent) {
+        return Math.clamp(Math.round(totalCells * percent), 0, totalCells);
     }
 
     @Override
@@ -123,8 +114,8 @@ public final class EtpetsSimulationManager
         // model.terrainModel().setEntity(new GridCoordinate(9, 1), new Trail(9_000));
         // model.terrainModel().setEntity(new GridCoordinate(10, 1), new Trail(EtpetsBalance.TRAIL_INTENSITY_MAX));
 
-        List<GridCoordinate> coordinates = createCoordinates(cancellation);
-        shuffleCoordinates(coordinates, random, cancellation);
+        List<GridCoordinate> coordinates = structure.coordinatesList();
+        Collections.shuffle(coordinates, random);
 
         int offset = 0;
         for (int i = 0; (i < rockCount) && ((offset + i) < coordinates.size()); i++) {
@@ -233,21 +224,22 @@ public final class EtpetsSimulationManager
             int currentEnergy = maxEnergy
                     - random.nextInt(EtpetsBalance.PET_INITIAL_CURRENT_ENERGY_REDUCTION_DELTA + 1);
 
-            PetTraits trait = new PetTraits(
+            PetTraits traits = new PetTraits(
                     maxEnergy,
                     EtpetsBalance.PET_TRAITS_MOVEMENT_COST_MODIFIER_DEFAULT,
                     EtpetsBalance.PET_TRAITS_REPRODUCTION_MIN_ENERGY_DEFAULT,
                     EtpetsBalance.PET_TRAITS_REPRODUCTION_COOLDOWN_DEFAULT
             );
 
+            // Initial pets have no parents and no reproduction cooldown.
             model.agentModel().setEntity(available.get(i), new Pet(
                     idSequence.next(),
-                    null, // Initial pets have no parents
-                    null,// Initial pets have no parents
+                    null,
+                    null,
                     stepIndexOfBirth,
                     currentEnergy,
-                    EtpetsBalance.PET_REPRODUCTION_COOLDOWN_REMAINING_MIN, // No cooldown at start
-                    trait
+                    EtpetsBalance.PET_REPRODUCTION_COOLDOWN_REMAINING_MIN,
+                    traits
             ));
         }
     }
@@ -255,41 +247,21 @@ public final class EtpetsSimulationManager
     private List<GridCoordinate> traversableCoordinates(EtpetsGridModel model,
                                                         Random random,
                                                         SimulationInitializationCancellation cancellation) {
+        List<GridCoordinate> coordinates = structure.coordinatesList();
         List<GridCoordinate> available = new ArrayList<>();
-        GridSize size = structure.size();
-        int index = 0;
-        for (int y = 0; y < size.height(); y++) {
-            for (int x = 0; x < size.width(); x++) {
-                if (isCancellationCheckpoint(index)) {
-                    cancellation.checkCanceled();
-                }
-                index++;
-                GridCoordinate coordinate = new GridCoordinate(x, y);
-                if (model.terrainModel().isDefaultEntity(coordinate)
-                        && model.resourceModel().isDefaultEntity(coordinate)
-                        && model.agentModel().isDefaultEntity(coordinate)) {
-                    available.add(coordinate);
-                }
+        for (int index = 0; index < coordinates.size(); index++) {
+            if (isCancellationCheckpoint(index)) {
+                cancellation.checkCanceled();
+            }
+            GridCoordinate coordinate = coordinates.get(index);
+            if (model.terrainModel().isDefaultEntity(coordinate)
+                    && model.resourceModel().isDefaultEntity(coordinate)
+                    && model.agentModel().isDefaultEntity(coordinate)) {
+                available.add(coordinate);
             }
         }
-        shuffleCoordinates(available, random, cancellation);
+        Collections.shuffle(available, random);
         return available;
-    }
-
-    private List<GridCoordinate> createCoordinates(SimulationInitializationCancellation cancellation) {
-        List<GridCoordinate> coordinates = new ArrayList<>(structure.cellCount());
-        GridSize size = structure.size();
-        int index = 0;
-        for (int y = 0; y < size.height(); y++) {
-            for (int x = 0; x < size.width(); x++) {
-                if (isCancellationCheckpoint(index)) {
-                    cancellation.checkCanceled();
-                }
-                index++;
-                coordinates.add(new GridCoordinate(x, y));
-            }
-        }
-        return coordinates;
     }
 
     private void initializeStatistics(EtpetsGridModel model) {

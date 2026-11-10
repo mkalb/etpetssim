@@ -1,49 +1,25 @@
 package de.mkalb.etpetssim.simulations.sugar.viewmodel;
 
+import de.mkalb.etpetssim.core.AppLocalization;
 import de.mkalb.etpetssim.simulations.sugar.shared.SugarAddSugarLevel;
-import de.mkalb.etpetssim.simulations.sugar.shared.SugarUserActionContext;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleObjectProperty;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import org.jspecify.annotations.Nullable;
+import de.mkalb.etpetssim.ui.InputChoiceProperty;
 
-import java.util.Optional;
-
+/**
+ * Edit tool bar ViewModel of Sugarscape with the level of added sugar.
+ */
 public final class SugarEditToolBarViewModel {
 
-    private final ObservableList<SugarAddSugarLevel> availableAddSugarLevels =
-            FXCollections.observableArrayList(SugarAddSugarLevel.values());
-    private final ObjectProperty<@Nullable SugarAddSugarLevel> selectedAddSugarLevel = new SimpleObjectProperty<>();
+    private final InputChoiceProperty<SugarAddSugarLevel> selectedAddSugarLevel = InputChoiceProperty.ofEnum(
+            SugarAddSugarLevel.LOW,
+            SugarAddSugarLevel.class,
+            level -> AppLocalization.getText(level.labelKey()));
 
-    public SugarEditToolBarViewModel() {
-        selectedAddSugarLevel.set(availableAddSugarLevels.isEmpty() ? null : availableAddSugarLevels.getFirst());
-    }
-
-    public ObservableList<SugarAddSugarLevel> availableAddSugarLevels() {
-        return availableAddSugarLevels;
-    }
-
-    public ObjectProperty<@Nullable SugarAddSugarLevel> selectedAddSugarLevelProperty() {
+    public InputChoiceProperty<SugarAddSugarLevel> selectedAddSugarLevelProperty() {
         return selectedAddSugarLevel;
     }
 
-    public @Nullable SugarAddSugarLevel getSelectedAddSugarLevel() {
-        return selectedAddSugarLevel.get();
-    }
-
-    public void setSelectedAddSugarLevel(@Nullable SugarAddSugarLevel level) {
-        if ((level == null) || availableAddSugarLevels.contains(level)) {
-            selectedAddSugarLevel.set(level);
-        }
-    }
-
-    public Optional<SugarUserActionContext.AddSugar> resolveSelectedAddSugarContext() {
-        SugarAddSugarLevel level = selectedAddSugarLevel.get();
-        if ((level == null) || !availableAddSugarLevels.contains(level)) {
-            return Optional.empty();
-        }
-        return Optional.of(new SugarUserActionContext.AddSugar(level));
+    public SugarAddSugarLevel getSelectedAddSugarLevel() {
+        return selectedAddSugarLevel.getValue();
     }
 
 }

@@ -1,9 +1,7 @@
 package de.mkalb.etpetssim.simulations.snake.model;
 
 import de.mkalb.etpetssim.engine.GridCoordinate;
-import de.mkalb.etpetssim.engine.model.GridCell;
 import de.mkalb.etpetssim.engine.model.GridCellView;
-import de.mkalb.etpetssim.engine.model.ReadableGridModel;
 import de.mkalb.etpetssim.engine.model.WritableGridModel;
 import de.mkalb.etpetssim.simulations.core.model.SimulationUserAction;
 import de.mkalb.etpetssim.simulations.snake.model.entity.SnakeEntity;
@@ -12,8 +10,9 @@ import de.mkalb.etpetssim.simulations.snake.model.entity.TerrainConstant;
 import de.mkalb.etpetssim.simulations.snake.shared.SnakeUserActionContext;
 import org.jspecify.annotations.Nullable;
 
-import java.util.Optional;
-
+/**
+ * User action of Snake that adds or removes walls, food, and snakes.
+ */
 public final class SnakeUserAction
         implements SimulationUserAction<
         SnakeEntity,
@@ -88,26 +87,21 @@ public final class SnakeUserAction
                 if (entity instanceof SnakeHead head) {
                     removeSnake(model, statistics, coordinate, head);
                 } else if (entity == TerrainConstant.SNAKE_SEGMENT) {
-                    findSnakeHeadCoordinateBySegment(model, coordinate)
-                            .ifPresent(headCoordinate -> {
-                                SnakeEntity headEntity = model.getEntity(headCoordinate);
-                                if (headEntity instanceof SnakeHead head) {
-                                    removeSnake(model, statistics, headCoordinate, head);
-                                }
-                            });
+                    removeSnakeBySegment(model, statistics, coordinate);
                 }
             }
         }
     }
 
-    private Optional<GridCoordinate> findSnakeHeadCoordinateBySegment(ReadableGridModel<SnakeEntity> model,
-                                                                      GridCoordinate segmentCoordinate) {
-        return model.filteredCells(e -> e instanceof SnakeHead)
-                .stream()
-                .filter(cell -> (cell.entity() instanceof SnakeHead head)
-                        && head.currentSegments().contains(segmentCoordinate))
-                .map(GridCell::coordinate)
-                .findFirst();
+    private void removeSnakeBySegment(WritableGridModel<SnakeEntity> model,
+                                      SnakeStatistics statistics,
+                                      GridCoordinate segmentCoordinate) {
+        for (var cell : model.filteredCells(SnakeEntity::isAgent)) {
+            if ((cell.entity() instanceof SnakeHead head) && head.currentSegments().contains(segmentCoordinate)) {
+                removeSnake(model, statistics, cell.coordinate(), head);
+                return;
+            }
+        }
     }
 
     private void removeSnake(WritableGridModel<SnakeEntity> model,

@@ -63,8 +63,10 @@ import static de.mkalb.etpetssim.simulations.sugar.model.SugarConstraints.SUGAR_
 import static de.mkalb.etpetssim.simulations.sugar.model.SugarConstraints.SUGAR_REGENERATION_RATE_MIN;
 import static de.mkalb.etpetssim.simulations.sugar.model.SugarConstraints.SUGAR_REGENERATION_RATE_STEP;
 
-public final class SugarConfigViewModel
-        extends AbstractConfigViewModel<SugarConfig> {
+/**
+ * Config ViewModel of Sugarscape.
+ */
+public final class SugarConfigViewModel extends AbstractConfigViewModel<SugarConfig> {
 
     private static final CommonConfigSettings COMMON_SETTINGS = new CommonConfigSettings(
             CELL_SHAPE_DEFAULT,

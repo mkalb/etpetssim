@@ -10,11 +10,17 @@ import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsConstraints.CELL
 import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsConstraints.CELL_SHAPE_VALUES;
 import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsConstraints.COMBINED_PERCENT_MAX;
 import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsConstraints.GRID_EDGE_BEHAVIOR_VALUES;
+import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsConstraints.INSECT_PERCENT_MAX;
+import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsConstraints.INSECT_PERCENT_MIN;
 import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsConstraints.NEIGHBORHOOD_MODE_DEFAULT;
-import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsConstraints.PERCENT_MAX;
-import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsConstraints.PERCENT_MIN;
 import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsConstraints.PET_COUNT_MAX;
 import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsConstraints.PET_COUNT_MIN;
+import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsConstraints.PLANT_PERCENT_MAX;
+import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsConstraints.PLANT_PERCENT_MIN;
+import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsConstraints.ROCK_PERCENT_MAX;
+import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsConstraints.ROCK_PERCENT_MIN;
+import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsConstraints.WATER_PERCENT_MAX;
+import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsConstraints.WATER_PERCENT_MIN;
 
 /**
  * Immutable configuration of the ET Pets simulation.
@@ -71,10 +77,10 @@ public record EtpetsConfig(
     }
 
     private boolean hasValidRanges() {
-        return isInRangeDouble(rockPercent, PERCENT_MIN, PERCENT_MAX)
-                && isInRangeDouble(waterPercent, PERCENT_MIN, PERCENT_MAX)
-                && isInRangeDouble(plantPercent, PERCENT_MIN, PERCENT_MAX)
-                && isInRangeDouble(insectPercent, PERCENT_MIN, PERCENT_MAX)
+        return isInRangeDouble(rockPercent, ROCK_PERCENT_MIN, ROCK_PERCENT_MAX)
+                && isInRangeDouble(waterPercent, WATER_PERCENT_MIN, WATER_PERCENT_MAX)
+                && isInRangeDouble(plantPercent, PLANT_PERCENT_MIN, PLANT_PERCENT_MAX)
+                && isInRangeDouble(insectPercent, INSECT_PERCENT_MIN, INSECT_PERCENT_MAX)
                 && isInRangeInt(petCount, PET_COUNT_MIN, PET_COUNT_MAX);
     }
 

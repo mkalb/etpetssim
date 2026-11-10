@@ -18,8 +18,7 @@ public final class ConwayConstraints {
 
     // Structure
     public static final CellShape CELL_SHAPE_DEFAULT = CellShape.SQUARE;
-    public static final List<CellShape> CELL_SHAPE_VALUES = List.of(
-            CellShape.values());
+    public static final List<CellShape> CELL_SHAPE_VALUES = List.of(CellShape.values());
     public static final GridEdgeBehavior GRID_EDGE_BEHAVIOR_DEFAULT = GridEdgeBehavior.WRAP_XY;
     public static final List<GridEdgeBehavior> GRID_EDGE_BEHAVIOR_VALUES = List.of(
             GridEdgeBehavior.BLOCK_XY,

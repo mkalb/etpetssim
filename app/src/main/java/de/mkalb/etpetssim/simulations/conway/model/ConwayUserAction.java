@@ -9,6 +9,9 @@ import de.mkalb.etpetssim.simulations.conway.shared.ConwayUserActionContext;
 import de.mkalb.etpetssim.simulations.core.model.SimulationUserAction;
 import org.jspecify.annotations.Nullable;
 
+/**
+ * User action of Conway's Game of Life that clears the grid, toggles a cell, or places a pattern.
+ */
 public final class ConwayUserAction
         implements SimulationUserAction<
         ConwayEntity,
@@ -88,7 +91,7 @@ public final class ConwayUserAction
             ConwayEntity newEntity = entry.getValue();
             if (oldEntity != newEntity) {
                 aliveDelta += newEntity.isAlive() ? 1 : -1;
-                changedCellsDelta += 1;
+                changedCellsDelta++;
             }
         }
 
@@ -96,7 +99,7 @@ public final class ConwayUserAction
             model.setEntity(anchorCoordinate.offset(entry.getKey()), entry.getValue());
         }
 
-        if ((aliveDelta != 0) || (changedCellsDelta != 0)) {
+        if (changedCellsDelta > 0) {
             statistics.adjustCellCounts(aliveDelta, changedCellsDelta);
         }
     }

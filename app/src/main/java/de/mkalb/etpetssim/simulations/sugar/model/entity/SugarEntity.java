@@ -3,7 +3,7 @@ package de.mkalb.etpetssim.simulations.sugar.model.entity;
 import de.mkalb.etpetssim.engine.model.entity.GridEntity;
 
 /**
- * Common contract for entities in the Sugar simulation.
+ * Common contract for entities in the Sugarscape simulation.
  */
 public sealed interface SugarEntity extends GridEntity
         permits ResourceEntity, AgentEntity {
@@ -13,10 +13,6 @@ public sealed interface SugarEntity extends GridEntity
     String DESCRIPTOR_ID_NO_RESOURCE = "no_resource";
     String DESCRIPTOR_ID_SUGAR = "sugar";
     String DESCRIPTOR_ID_TERRAIN = "terrain";
-
-    boolean isResource();
-
-    boolean isAgent();
 
     /**
      * Indicates whether this entity is considered empty.
