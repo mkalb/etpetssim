@@ -149,7 +149,7 @@ sources. "Types" counts the top-level types in main sources of a group.
 | D6 | Conway                                                        |    24 | done        |
 | D7 | Forest                                                        |    13 | done        |
 | D8 | Langton                                                       |    29 | done        |
-| D9 | Lab                                                           |    15 | open        |
+| D9 | Lab                                                           |    15 | done        |
 |    | **Total**                                                     |   278 |             |
 
 Cross-cutting facts:
@@ -2063,12 +2063,119 @@ Notes:
 
 ### D9. Lab
 
+Notes:
+
+- Inventory (2026-11-12, verified against the sources): 15 types in the package root, `model`, `model.entity`,
+  `shared`, `view`, and `viewmodel`. Tests exist for `LabConfig`, `LabEntity`, `LabColorMode`, and
+  `LabNeighborhoodHighlights`.
+- `LabConfig`, `LabConstraints` (apart from three lines), `LabColorMode`, and `LabFactory` follow the rules. The own
+  families of the Lab (control view and ViewModel, main ViewModel, and the non-timed manager) stay;
+  `LabMainViewModel` asserts the simulation manager with `requireNonNull(..)` like `DefaultMainViewModel`.
+- `LabSimulationManager` is covered through `SimulationManagerTest`. Test gap for the later separate optimization:
+  `stepCount()` of the record `LabStatistics` (see "Decisions").
+
 #### Wrapper initializeForDraw of LabObservationView
 
 - Origin: C7 (2026-11-09)
 - Types: `LabObservationView`, `LabMainView`
 - Problem: The public `initializeForDraw()` only calls the public `initializeObservationLabels()` of the interface.
 - Proposal: Let `LabMainView` call `initializeObservationLabels()` and remove the wrapper. An API change.
+- Status: done (2026-11-12).
+
+#### Unused entity API of LabEntity
+
+- Origin: D9 (2026-11-12)
+- Types: `LabEntity`
+- Problem: `isNormal()` and `isHighlighted()` have no caller. The type Javadoc has a `@see` for
+  `GridEntityDescriptorRegistry` and imports the type only for it (D6, D8).
+- Proposal: Remove both methods (an API change), the `@see`, and the import.
+- Status: done (2026-11-12).
+
+#### Request listeners of LabMainViewModel
+
+- Origin: D9 (2026-11-12)
+- Types: `LabMainViewModel`
+- Problem: The four `ChangeListener` fields repeat the same lambda (run the handler on `true`, then reset the flag
+  with the comment `// reset`) and are named inconsistently (`configChangedRequestedListener`,
+  `drawRequestedChangeListener`). Four further comments restate the code. `updateSelectedGridCell(..)` takes a
+  `@Nullable` coordinate, but its only caller passes a non-null one.
+- Proposal: A private static `createRequestListener(BooleanProperty, Runnable)`, the fields
+  `configChangedRequestListener`, `drawRequestListener`, `drawModelRequestListener`, and `drawTestRequestListener`,
+  no restating comments, and a non-null parameter of `updateSelectedGridCell(..)`.
+- Status: done (2026-11-12).
+
+#### Config listeners of LabConfigViewModel
+
+- Origin: D9 (2026-11-12)
+- Types: `LabConfigViewModel`
+- Problem: `initializeConfigListeners()` repeats the same listener lambda nine times and mixes the accessors
+  `colorModeProperty()` and `neighborhoodModeProperty()` with the other properties of the base class. The section
+  comment is `// Rules - NeighborhoodMode` (D1).
+- Proposal: One local `ChangeListener<Object>` for all nine properties, the fields `colorMode` and
+  `neighborhoodMode`, and `// Rules`.
+- Status: done (2026-11-12).
+
+#### Checker colors and drawing of LabMainView
+
+- Origin: D9 (2026-11-12)
+- Types: `LabMainView`
+- Problem: `computeCheckerColor(..)` and `computeCheckerGrayscaleColor(..)` repeat the computation of the checker
+  group and use no instance state. `disableCanvas()` repeats the two calls of `resetSelection()`. The mouse handlers
+  and `drawNeighborsWithEdgeBehavior(..)` use lambdas with several statements (`java.md`, "Code Style"), with the
+  comments `// Exited` and `// Moved`. `drawTest()` names its colors `t1` and `t2` and has five section comments that
+  restate the method names. `TRANSLUCENT_WHITE` is wrapped with a trailing comment.
+- Proposal: A private static `computeCheckerGroup(..)` and both color methods `static`; `resetSelection()` in
+  `disableCanvas()`; the private methods `clearOverlayCanvas()` and `drawNeighborWithEdgeBehavior(..)` for the
+  lambdas; the colors `red` and `yellow` and no section comments in `drawTest()`; `TRANSLUCENT_WHITE` on one line.
+- Status: done (2026-11-12).
+
+#### Step count of LabStatistics
+
+- Origin: D9 (2026-11-12)
+- Types: `LabStatistics`
+- Problem: The final field `stepCount` is always set to `0` in the constructor; the type Javadoc is generic (D1).
+- Proposal: Remove the field and return `0` from `stepCount()` like `LabSimulationManager`; a type Javadoc that says
+  so.
+- Status: done (2026-11-12).
+
+#### Details of the Lab types
+
+- Origin: D9 (2026-11-12)
+- Types: the public types without type Javadoc, `LabConfig`, `LabEntity`, `LabColorMode`,
+  `LabNeighborhoodHighlights`, `LabConstraints`, `LabSimulationManager`, `LabControlView`,
+  `LabNeighborhoodHighlightsTest`
+- Problem: Seven public types have no type Javadoc (D1); the existing Javadoc calls the Lab "simulation lab" and
+  "Simulation Lab simulation", although the title is "Simulation Lab" and `simulations.md` says that the Lab is not a
+  simulation. `@param validNeighborCoordinates` of `LabNeighborhoodHighlights` says "direct neighbor coordinates",
+  but the ViewModel computes them within a radius of two. Three `*_VALUES` constants wrap `List.of(..values())`, four
+  class declarations wrap although they fit on one line, `LabSimulationManager` has a blank line between its instance
+  fields (C8), and the empty overrides of `LabSimulationManager` and `LabControlView` have the comment `// Do nothing`.
+  The test helpers `ringCell(..)` and `neighbor(..)` lack the `create` prefix.
+- Proposal: Adopt the decisions of D1 to D8 and fix the details.
+- Status: done (2026-11-12).
+
+### Decisions
+
+- All public types have a short type Javadoc in the forms of D1 and call the Lab "Simulation Lab", like its title,
+  without "simulation" after it. `LabConfigView`, `LabControlView`, `LabConfigViewModel`, and `LabControlViewModel`
+  declare their supertype on one line.
+- API change: `LabObservationView.initializeForDraw()` is removed; `LabMainView` calls `initializeObservationLabels()`.
+- API change: `LabEntity.isNormal()` and `isHighlighted()` are removed with the `@see` and its import (maintainer).
+- `LabMainViewModel` creates its four request listeners with the private static `createRequestListener(..)` and names
+  them `*RequestListener`; `handleDrawModelRequested()` and `handleDrawTestRequested()` stay, because the view replaces
+  the listener fields after the construction. `updateSelectedGridCell(..)` takes a non-null coordinate (a removed
+  `@Nullable` contract).
+  `LabConfigViewModel` registers one listener for all config properties.
+- `LabMainView` computes the checker group with the private static `computeCheckerGroup(..)`, clears the overlay with
+  `clearOverlayCanvas()`, draws a neighbor with `drawNeighborWithEdgeBehavior(..)`, and resets the selection in
+  `disableCanvas()` with `resetSelection()`; `drawTest()` names its colors `red` and `yellow` and lost its section
+  comments (maintainer).
+- API change: `LabStatistics` is a record `LabStatistics(GridStructure gridStructure)` that returns `0` from
+  `stepCount()`, as IntelliJ suggests (`ClassCanBeRecord`), instead of a suppression (maintainer, found in the
+  review); its own `toString()` is removed. Test gap for the later separate optimization: `stepCount()` of
+  `LabStatistics` (`junit.md`, "Common Contract Patterns").
+- The other details and the test helpers `createRingCell(..)` and `createNeighbor(..)` follow D1 to D8. No rule
+  change.
 
 ## Cross-group decisions
 

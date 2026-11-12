@@ -15,11 +15,11 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 /**
- * Computed neighborhood data for a selected cell in the simulation lab,
+ * Computed neighborhood data for a selected cell in the Simulation Lab,
  * used to drive the visual highlight overlay on the canvas.
  *
  * @param ringCellsByRadius              cells grouped by radius ring, used for ring highlight rendering
- * @param validNeighborCoordinates       direct neighbor coordinates that lie within the grid
+ * @param validNeighborCoordinates       neighbor coordinates within the highlight radius that lie within the grid
  * @param validNeighborsWithEdgeBehavior neighbors with edge-behavior details, keyed by coordinate
  * @param neighborEdgeBehaviorResults    edge-behavior results for all neighbors of the selected cell
  */

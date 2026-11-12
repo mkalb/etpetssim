@@ -14,13 +14,15 @@ import de.mkalb.etpetssim.simulations.lab.model.entity.LabEntity;
 import java.util.List;
 import java.util.Random;
 
+/**
+ * Simulation manager of the Simulation Lab; it places highlighted cells and executes no steps.
+ */
 public final class LabSimulationManager
         implements SimulationManager<LabEntity, WritableGridModel<LabEntity>, LabConfig, LabStatistics> {
 
     private static final int INITIAL_HIGHLIGHTED_COUNT = 3;
 
     private final LabConfig config;
-
     private final GridStructure structure;
     private final LabStatistics statistics;
     private final WritableGridModel<LabEntity> model;
@@ -65,12 +67,10 @@ public final class LabSimulationManager
 
     @Override
     public void executeStep() {
-        // Do nothing
     }
 
     @Override
     public StepExecutionResult executeSteps(int count, boolean checkTermination, Runnable onStep) {
-        // Do nothing
         return new StepExecutionResult(stepCount(), 0, true, false);
     }
 

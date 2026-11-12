@@ -1,7 +1,7 @@
 package de.mkalb.etpetssim.simulations.lab.shared;
 
 /**
- * Color rendering modes for the simulation lab canvas.
+ * Color rendering modes of the Simulation Lab canvas.
  */
 public enum LabColorMode {
 

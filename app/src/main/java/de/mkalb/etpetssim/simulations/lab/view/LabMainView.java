@@ -34,6 +34,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.SortedMap;
 
+/**
+ * Main view of the Simulation Lab.
+ */
 public final class LabMainView
         extends AbstractMainView<
         LabMainViewModel,
@@ -49,8 +52,7 @@ public final class LabMainView
     private static final Color STROKE_COLOR = Color.BLACK;
     private static final Color CANVAS_COLOR = Color.BLACK;
     private static final Color GRID_BACKGROUND_COLOR = Color.DIMGRAY;
-    private static final Color TRANSLUCENT_WHITE = FXPaintFactory.adjustColorAlpha(Color.WHITE,
-            0.2); // for lightening effect
+    private static final Color TRANSLUCENT_WHITE = FXPaintFactory.adjustColorAlpha(Color.WHITE, 0.2);
     private static final double MOUSE_CLICK_LINE_WIDTH = 4.0d;
     private static final double MOUSE_HOVER_LINE_WIDTH = 2.0d;
     private static final double SHAPE_LINE_WIDTH = 0.5d;
@@ -102,6 +104,34 @@ public final class LabMainView
                 controlView,
                 observationView,
                 entityDescriptorRegistry);
+    }
+
+    private static Color computeCheckerColor(GridCoordinate coordinate) {
+        int checkerGroup = computeCheckerGroup(coordinate);
+        return switch (checkerGroup) {
+            case 0 -> Color.LIGHTSKYBLUE;       // Column 0, Row 0
+            case 1 -> Color.LIGHTSTEELBLUE;     // Column 0, Row 1
+            case 2 -> Color.PALEGREEN;          // Column 1, Row 0
+            case 3 -> Color.MEDIUMAQUAMARINE;   // Column 1, Row 1
+            default -> throw new IllegalStateException("checkerGroup must be in [0, 3], but was: " + checkerGroup);
+        };
+    }
+
+    private static Color computeCheckerGrayscaleColor(GridCoordinate coordinate) {
+        int checkerGroup = computeCheckerGroup(coordinate);
+        return switch (checkerGroup) {
+            case 0 -> Color.WHITE;              // Column 0, Row 0
+            case 1 -> Color.LIGHTGRAY;          // Column 0, Row 1
+            case 2 -> Color.DARKGRAY;           // Column 1, Row 0
+            case 3 -> Color.GRAY;               // Column 1, Row 1
+            default -> throw new IllegalStateException("checkerGroup must be in [0, 3], but was: " + checkerGroup);
+        };
+    }
+
+    private static int computeCheckerGroup(GridCoordinate coordinate) {
+        int columnGroup = coordinate.x() % CHECKER_GROUP_SIZE;
+        int rowGroup = coordinate.y() % CHECKER_GROUP_SIZE;
+        return (columnGroup << CHECKER_GROUP_SHIFT) | rowGroup;
     }
 
     @Override
@@ -174,10 +204,15 @@ public final class LabMainView
     private void drawNeighborsWithEdgeBehavior(Map<GridCoordinate,
                                                        List<CellNeighborWithEdgeBehavior>> neighborsWithEdgeBehavior,
                                                FXGridCanvasPainter painter) {
-        neighborsWithEdgeBehavior.forEach((neighborCoordinate, neighborCells) -> {
-            painter.drawCell(neighborCoordinate, Color.YELLOW, null, NO_STROKE_LINE_WIDTH);
-            drawNeighborDirections(neighborCoordinate, neighborCells, painter);
-        });
+        neighborsWithEdgeBehavior.forEach((neighborCoordinate, neighborCells) ->
+                drawNeighborWithEdgeBehavior(neighborCoordinate, neighborCells, painter));
+    }
+
+    private void drawNeighborWithEdgeBehavior(GridCoordinate neighborCoordinate,
+                                              Collection<CellNeighborWithEdgeBehavior> neighborCells,
+                                              FXGridCanvasPainter painter) {
+        painter.drawCell(neighborCoordinate, Color.YELLOW, null, NO_STROKE_LINE_WIDTH);
+        drawNeighborDirections(neighborCoordinate, neighborCells, painter);
     }
 
     private void drawNeighborDirections(GridCoordinate coordinate,
@@ -215,19 +250,15 @@ public final class LabMainView
     }
 
     private void registerOverlayCanvasEvents() {
-        // Exited
-        overlayCanvas().setOnMouseExited(_ -> {
-            CanvasPainters currentPainters = painters();
-            if (currentPainters != null) {
-                currentPainters.overlay().clearCanvasBackground();
-            }
-        });
+        overlayCanvas().setOnMouseExited(_ -> clearOverlayCanvas());
+        overlayCanvas().setOnMouseMoved(event -> drawMouseHover(new Point2D(event.getX(), event.getY())));
+    }
 
-        // Moved
-        overlayCanvas().setOnMouseMoved(event -> {
-            Point2D mousePoint = new Point2D(event.getX(), event.getY());
-            drawMouseHover(mousePoint);
-        });
+    private void clearOverlayCanvas() {
+        CanvasPainters currentPainters = painters();
+        if (currentPainters != null) {
+            currentPainters.overlay().clearCanvasBackground();
+        }
     }
 
     private void drawMouseHover(Point2D mousePoint) {
@@ -303,8 +334,7 @@ public final class LabMainView
         overlayCanvas().setOnMouseExited(null);
         overlayCanvas().setOnMouseMoved(null);
 
-        viewModel.resetClickedCoordinateProperties();
-        viewModel.resetSelectedGridCell();
+        resetSelection();
 
         clearPainters();
     }
@@ -351,7 +381,7 @@ public final class LabMainView
                         drawBaseCanvasCoordinate(basePainter, coordinate, colorModeGrayscale, renderingModeCircle,
                                 strokeColor, textColor));
 
-        observationView.initializeForDraw();
+        observationView.initializeObservationLabels();
     }
 
     private void drawBaseCanvasBackground(FXGridCanvasPainter basePainter, boolean colorModeGrayscale) {
@@ -404,54 +434,50 @@ public final class LabMainView
         }
         FXGridCanvasPainter basePainter = currentPainters.base();
 
-        Color t1 = FXPaintFactory.adjustColorAlpha(Color.RED, TEST_FILL_ALPHA);
-        Color t2 = FXPaintFactory.adjustColorAlpha(Color.YELLOW, TEST_FILL_ALPHA);
+        Color red = FXPaintFactory.adjustColorAlpha(Color.RED, TEST_FILL_ALPHA);
+        Color yellow = FXPaintFactory.adjustColorAlpha(Color.YELLOW, TEST_FILL_ALPHA);
 
-        // Draw bounding box
-        basePainter.drawCellBoundingBox(new GridCoordinate(TEST_BOUNDING_BOX_COLUMN_1, TEST_ROW_1), t1, t2,
+        basePainter.drawCellBoundingBox(new GridCoordinate(TEST_BOUNDING_BOX_COLUMN_1, TEST_ROW_1), red, yellow,
                 TEST_LINE_WIDTH, StrokeType.INSIDE);
-        basePainter.drawCellBoundingBox(new GridCoordinate(TEST_BOUNDING_BOX_COLUMN_1, TEST_ROW_2), t2, t1,
+        basePainter.drawCellBoundingBox(new GridCoordinate(TEST_BOUNDING_BOX_COLUMN_1, TEST_ROW_2), yellow, red,
                 TEST_LINE_WIDTH, StrokeType.INSIDE);
-        basePainter.drawCellBoundingBox(new GridCoordinate(TEST_BOUNDING_BOX_COLUMN_1, TEST_ROW_3), t1, t2,
+        basePainter.drawCellBoundingBox(new GridCoordinate(TEST_BOUNDING_BOX_COLUMN_1, TEST_ROW_3), red, yellow,
                 TEST_LINE_WIDTH, StrokeType.OUTSIDE);
-        basePainter.drawCellBoundingBox(new GridCoordinate(TEST_BOUNDING_BOX_COLUMN_1, TEST_ROW_4), t2, t1,
-                TEST_LINE_WIDTH, StrokeType.OUTSIDE);
-
-        basePainter.drawCellBoundingBox(new GridCoordinate(TEST_BOUNDING_BOX_COLUMN_2, TEST_ROW_1), null, t2,
-                TEST_LINE_WIDTH, StrokeType.INSIDE);
-        basePainter.drawCellBoundingBox(new GridCoordinate(TEST_BOUNDING_BOX_COLUMN_2, TEST_ROW_2), null, t1,
-                TEST_LINE_WIDTH, StrokeType.INSIDE);
-        basePainter.drawCellBoundingBox(new GridCoordinate(TEST_BOUNDING_BOX_COLUMN_2, TEST_ROW_3), null, t2,
-                TEST_LINE_WIDTH, StrokeType.OUTSIDE);
-        basePainter.drawCellBoundingBox(new GridCoordinate(TEST_BOUNDING_BOX_COLUMN_2, TEST_ROW_4), null, t1,
+        basePainter.drawCellBoundingBox(new GridCoordinate(TEST_BOUNDING_BOX_COLUMN_1, TEST_ROW_4), yellow, red,
                 TEST_LINE_WIDTH, StrokeType.OUTSIDE);
 
-        // draw inner circle
-        basePainter.drawCellInnerCircle(new GridCoordinate(TEST_INNER_CIRCLE_COLUMN_1, TEST_ROW_1), t1, t2,
+        basePainter.drawCellBoundingBox(new GridCoordinate(TEST_BOUNDING_BOX_COLUMN_2, TEST_ROW_1), null, yellow,
                 TEST_LINE_WIDTH, StrokeType.INSIDE);
-        basePainter.drawCellInnerCircle(new GridCoordinate(TEST_INNER_CIRCLE_COLUMN_1, TEST_ROW_2), t2, t1,
+        basePainter.drawCellBoundingBox(new GridCoordinate(TEST_BOUNDING_BOX_COLUMN_2, TEST_ROW_2), null, red,
                 TEST_LINE_WIDTH, StrokeType.INSIDE);
-        basePainter.drawCellInnerCircle(new GridCoordinate(TEST_INNER_CIRCLE_COLUMN_1, TEST_ROW_3), t1, t2,
+        basePainter.drawCellBoundingBox(new GridCoordinate(TEST_BOUNDING_BOX_COLUMN_2, TEST_ROW_3), null, yellow,
                 TEST_LINE_WIDTH, StrokeType.OUTSIDE);
-        basePainter.drawCellInnerCircle(new GridCoordinate(TEST_INNER_CIRCLE_COLUMN_1, TEST_ROW_4), t2, t1,
-                TEST_LINE_WIDTH, StrokeType.OUTSIDE);
-
-        basePainter.drawCellInnerCircle(new GridCoordinate(TEST_INNER_CIRCLE_COLUMN_2, TEST_ROW_1), null, t2,
-                TEST_LINE_WIDTH, StrokeType.INSIDE);
-        basePainter.drawCellInnerCircle(new GridCoordinate(TEST_INNER_CIRCLE_COLUMN_2, TEST_ROW_2), null, t1,
-                TEST_LINE_WIDTH, StrokeType.INSIDE);
-        basePainter.drawCellInnerCircle(new GridCoordinate(TEST_INNER_CIRCLE_COLUMN_2, TEST_ROW_3), null, t2,
-                TEST_LINE_WIDTH, StrokeType.OUTSIDE);
-        basePainter.drawCellInnerCircle(new GridCoordinate(TEST_INNER_CIRCLE_COLUMN_2, TEST_ROW_4), null, t1,
+        basePainter.drawCellBoundingBox(new GridCoordinate(TEST_BOUNDING_BOX_COLUMN_2, TEST_ROW_4), null, red,
                 TEST_LINE_WIDTH, StrokeType.OUTSIDE);
 
-        // draw pixel
+        basePainter.drawCellInnerCircle(new GridCoordinate(TEST_INNER_CIRCLE_COLUMN_1, TEST_ROW_1), red, yellow,
+                TEST_LINE_WIDTH, StrokeType.INSIDE);
+        basePainter.drawCellInnerCircle(new GridCoordinate(TEST_INNER_CIRCLE_COLUMN_1, TEST_ROW_2), yellow, red,
+                TEST_LINE_WIDTH, StrokeType.INSIDE);
+        basePainter.drawCellInnerCircle(new GridCoordinate(TEST_INNER_CIRCLE_COLUMN_1, TEST_ROW_3), red, yellow,
+                TEST_LINE_WIDTH, StrokeType.OUTSIDE);
+        basePainter.drawCellInnerCircle(new GridCoordinate(TEST_INNER_CIRCLE_COLUMN_1, TEST_ROW_4), yellow, red,
+                TEST_LINE_WIDTH, StrokeType.OUTSIDE);
+
+        basePainter.drawCellInnerCircle(new GridCoordinate(TEST_INNER_CIRCLE_COLUMN_2, TEST_ROW_1), null, yellow,
+                TEST_LINE_WIDTH, StrokeType.INSIDE);
+        basePainter.drawCellInnerCircle(new GridCoordinate(TEST_INNER_CIRCLE_COLUMN_2, TEST_ROW_2), null, red,
+                TEST_LINE_WIDTH, StrokeType.INSIDE);
+        basePainter.drawCellInnerCircle(new GridCoordinate(TEST_INNER_CIRCLE_COLUMN_2, TEST_ROW_3), null, yellow,
+                TEST_LINE_WIDTH, StrokeType.OUTSIDE);
+        basePainter.drawCellInnerCircle(new GridCoordinate(TEST_INNER_CIRCLE_COLUMN_2, TEST_ROW_4), null, red,
+                TEST_LINE_WIDTH, StrokeType.OUTSIDE);
+
         for (int x = TEST_PIXEL_START_X; x < TEST_PIXEL_END_X; x++) {
             basePainter.drawPixelDirect(x * TEST_PIXEL_X_SCALE, TEST_PIXEL_DIRECT_Y, Color.MAGENTA);
             basePainter.drawPixelRect(x * TEST_PIXEL_X_SCALE, TEST_PIXEL_RECT_Y, Color.RED);
         }
 
-        // draw shapes
         basePainter.drawTriangle(new GridCoordinate(TEST_TRIANGLE_X, TEST_TRIANGLE_Y),
                 GridGeometry.computeEdgeLengthToMatchWidth(basePainter.cellDimension().edgeLength(),
                         basePainter.gridStructure().cellShape(), CellShape.TRIANGLE),
@@ -461,41 +487,10 @@ public final class LabMainView
                         basePainter.gridStructure().cellShape(), CellShape.HEXAGON),
                 Color.WHITE, Color.BLACK, TEST_LINE_WIDTH);
 
-        // draw frame segment
         basePainter.drawCellFrameSegment(new GridCoordinate(TEST_FRAME_SEGMENT_1_X, TEST_FRAME_SEGMENT_1_Y),
                 Color.DARKGREEN, TEST_LINE_WIDTH, CellShapeSide.LEFT);
         basePainter.drawCellFrameSegment(new GridCoordinate(TEST_FRAME_SEGMENT_2_X, TEST_FRAME_SEGMENT_2_Y),
                 Color.DARKBLUE, TEST_LINE_WIDTH, CellShapeSide.LEFT);
-    }
-
-    private Color computeCheckerColor(GridCoordinate coordinate) {
-        int columnGroup = coordinate.x() % CHECKER_GROUP_SIZE;
-        int rowGroup = coordinate.y() % CHECKER_GROUP_SIZE;
-
-        int checkerGroup = (columnGroup << CHECKER_GROUP_SHIFT) | rowGroup;
-
-        return switch (checkerGroup) {
-            case 0 -> Color.LIGHTSKYBLUE;       // Column 0, Row 0
-            case 1 -> Color.LIGHTSTEELBLUE;     // Column 0, Row 1
-            case 2 -> Color.PALEGREEN;          // Column 1, Row 0
-            case 3 -> Color.MEDIUMAQUAMARINE;   // Column 1, Row 1
-            default -> throw new IllegalStateException("checkerGroup must be in [0, 3], but was: " + checkerGroup);
-        };
-    }
-
-    private Color computeCheckerGrayscaleColor(GridCoordinate coordinate) {
-        int columnGroup = coordinate.x() % CHECKER_GROUP_SIZE;
-        int rowGroup = coordinate.y() % CHECKER_GROUP_SIZE;
-
-        int checkerGroup = (columnGroup << CHECKER_GROUP_SHIFT) | rowGroup;
-
-        return switch (checkerGroup) {
-            case 0 -> Color.WHITE;              // Column 0, Row 0
-            case 1 -> Color.LIGHTGRAY;          // Column 0, Row 1
-            case 2 -> Color.DARKGRAY;           // Column 1, Row 0
-            case 3 -> Color.GRAY;               // Column 1, Row 1
-            default -> throw new IllegalStateException("checkerGroup must be in [0, 3], but was: " + checkerGroup);
-        };
     }
 
 }

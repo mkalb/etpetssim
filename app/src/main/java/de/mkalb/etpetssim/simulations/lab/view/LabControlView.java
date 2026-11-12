@@ -11,8 +11,10 @@ import javafx.scene.layout.Pane;
 
 import java.util.Optional;
 
-public final class LabControlView
-        extends AbstractControlView<LabControlViewModel> {
+/**
+ * Control view of the Simulation Lab with the draw buttons.
+ */
+public final class LabControlView extends AbstractControlView<LabControlViewModel> {
 
     private static final String LAB_CONTROL_DRAW = "lab.control.draw";
     private static final String LAB_CONTROL_DRAW_MODEL = "lab.control.drawmodel";
@@ -52,7 +54,6 @@ public final class LabControlView
 
     @Override
     public void setStepCount(int stepCount) {
-        // Do nothing
     }
 
 }

@@ -6,8 +6,10 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 
-public final class LabControlViewModel
-        implements SimulationControlViewModel {
+/**
+ * Control ViewModel of the Simulation Lab with the draw requests.
+ */
+public final class LabControlViewModel implements SimulationControlViewModel {
 
     private final ReadOnlyObjectProperty<SimulationState> simulationState;
     private final BooleanProperty drawRequested = new SimpleBooleanProperty(false);

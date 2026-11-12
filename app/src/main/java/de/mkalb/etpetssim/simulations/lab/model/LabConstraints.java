@@ -16,11 +16,9 @@ public final class LabConstraints {
 
     // Structure
     public static final CellShape CELL_SHAPE_DEFAULT = CellShape.HEXAGON;
-    public static final List<CellShape> CELL_SHAPE_VALUES = List.of(
-            CellShape.values());
+    public static final List<CellShape> CELL_SHAPE_VALUES = List.of(CellShape.values());
     public static final GridEdgeBehavior GRID_EDGE_BEHAVIOR_DEFAULT = GridEdgeBehavior.WRAP_XY;
-    public static final List<GridEdgeBehavior> GRID_EDGE_BEHAVIOR_VALUES = List.of(
-            GridEdgeBehavior.values());
+    public static final List<GridEdgeBehavior> GRID_EDGE_BEHAVIOR_VALUES = List.of(GridEdgeBehavior.values());
     public static final int GRID_WIDTH_DEFAULT = 16;
     public static final int GRID_WIDTH_MIN = GridSize.MIN_SIZE;
     public static final int GRID_WIDTH_MAX = 100;
@@ -41,8 +39,7 @@ public final class LabConstraints {
             CellDisplayMode.CIRCLE,
             CellDisplayMode.CIRCLE_BORDERED);
     public static final LabColorMode COLOR_MODE_DEFAULT = LabColorMode.COLOR;
-    public static final List<LabColorMode> COLOR_MODE_VALUES = List.of(
-            LabColorMode.values());
+    public static final List<LabColorMode> COLOR_MODE_VALUES = List.of(LabColorMode.values());
 
     // Initialization
     public static final String SEED_DEFAULT = "";

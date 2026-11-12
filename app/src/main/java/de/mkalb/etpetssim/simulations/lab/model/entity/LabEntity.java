@@ -1,18 +1,15 @@
 package de.mkalb.etpetssim.simulations.lab.model.entity;
 
 import de.mkalb.etpetssim.engine.model.entity.ConstantGridEntityDescriptorProvider;
-import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorRegistry;
 import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorSpec;
 import javafx.scene.paint.Color;
 import org.jspecify.annotations.Nullable;
 
 /**
- * Cell states for the simulation lab.
+ * Cell states of the Simulation Lab.
  *
  * <p>Each enum constant represents one grid cell state and carries descriptor metadata
  * used for descriptor registry registration and rendering.
- *
- * @see GridEntityDescriptorRegistry
  */
 public enum LabEntity implements ConstantGridEntityDescriptorProvider {
     NORMAL(
@@ -57,14 +54,6 @@ public enum LabEntity implements ConstantGridEntityDescriptorProvider {
     @Override
     public GridEntityDescriptorSpec descriptorSpec() {
         return spec;
-    }
-
-    public boolean isNormal() {
-        return this == NORMAL;
-    }
-
-    public boolean isHighlighted() {
-        return this == HIGHLIGHTED;
     }
 
 }

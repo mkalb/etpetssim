@@ -13,7 +13,7 @@ import static de.mkalb.etpetssim.simulations.lab.model.LabConstraints.COLOR_MODE
 import static de.mkalb.etpetssim.simulations.lab.model.LabConstraints.GRID_EDGE_BEHAVIOR_VALUES;
 
 /**
- * Immutable configuration of the Simulation Lab simulation.
+ * Immutable configuration of the Simulation Lab.
  *
  * <p>The components are grouped into structure, layout, initialization, and rules. Instances are created
  * from unvalidated input; check them with {@link #isValid()} before passing them to the model.

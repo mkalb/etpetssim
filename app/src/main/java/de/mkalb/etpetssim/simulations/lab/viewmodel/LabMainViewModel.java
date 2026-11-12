@@ -19,6 +19,7 @@ import de.mkalb.etpetssim.simulations.lab.model.LabConfig;
 import de.mkalb.etpetssim.simulations.lab.model.LabSimulationManager;
 import de.mkalb.etpetssim.simulations.lab.model.LabStatistics;
 import de.mkalb.etpetssim.simulations.lab.model.entity.LabEntity;
+import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.value.ChangeListener;
 import org.jspecify.annotations.Nullable;
@@ -30,6 +31,9 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.SortedMap;
 
+/**
+ * Main ViewModel of the Simulation Lab.
+ */
 public final class LabMainViewModel
         extends AbstractMainViewModel<LabEntity, WritableGridModel<LabEntity>, LabConfig, LabStatistics> {
 
@@ -42,10 +46,10 @@ public final class LabMainViewModel
     private final LabControlViewModel labControlViewModel;
     private final DefaultObservationViewModel<LabEntity, GridCell<LabEntity>, LabStatistics> labObservationViewModel;
 
-    private final ChangeListener<Boolean> configChangedRequestedListener;
-    private final ChangeListener<Boolean> drawRequestedChangeListener;
-    private final ChangeListener<Boolean> drawModelRequestedChangeListener;
-    private final ChangeListener<Boolean> drawTestRequestedChangeListener;
+    private final ChangeListener<Boolean> configChangedRequestListener;
+    private final ChangeListener<Boolean> drawRequestListener;
+    private final ChangeListener<Boolean> drawModelRequestListener;
+    private final ChangeListener<Boolean> drawTestRequestListener;
 
     private @Nullable LabSimulationManager simulationManager;
 
@@ -60,42 +64,34 @@ public final class LabMainViewModel
                             DefaultObservationViewModel<LabEntity, GridCell<LabEntity>,
                                     LabStatistics> observationViewModel) {
         super(simulationState, configViewModel, observationViewModel);
-        // Keep references to the view models to add/remove listeners and access properties.
         labObservationViewModel = observationViewModel;
         labConfigViewModel = configViewModel;
         labControlViewModel = controlViewModel;
 
-        configChangedRequestedListener = (_, _, newVal) -> {
-            if (newVal) {
-                handleConfigChanged();
-                labConfigViewModel.configChangedRequestedProperty().set(false); // reset
-            }
-        };
-        labConfigViewModel.configChangedRequestedProperty().addListener(configChangedRequestedListener);
+        configChangedRequestListener = createRequestListener(labConfigViewModel.configChangedRequestedProperty(),
+                this::handleConfigChanged);
+        labConfigViewModel.configChangedRequestedProperty().addListener(configChangedRequestListener);
 
-        drawRequestedChangeListener = (_, _, newVal) -> {
-            if (newVal) {
-                handleDrawRequested();
-                labControlViewModel.drawRequestedProperty().set(false); // reset
-            }
-        };
-        labControlViewModel.drawRequestedProperty().addListener(drawRequestedChangeListener);
+        drawRequestListener = createRequestListener(labControlViewModel.drawRequestedProperty(),
+                this::handleDrawRequested);
+        labControlViewModel.drawRequestedProperty().addListener(drawRequestListener);
 
-        drawModelRequestedChangeListener = (_, _, newVal) -> {
-            if (newVal) {
-                handleDrawModelRequested();
-                labControlViewModel.drawModelRequestedProperty().set(false); // reset
-            }
-        };
-        labControlViewModel.drawModelRequestedProperty().addListener(drawModelRequestedChangeListener);
+        drawModelRequestListener = createRequestListener(labControlViewModel.drawModelRequestedProperty(),
+                this::handleDrawModelRequested);
+        labControlViewModel.drawModelRequestedProperty().addListener(drawModelRequestListener);
 
-        drawTestRequestedChangeListener = (_, _, newVal) -> {
-            if (newVal) {
-                handleDrawTestRequested();
-                labControlViewModel.drawTestRequestedProperty().set(false); // reset
+        drawTestRequestListener = createRequestListener(labControlViewModel.drawTestRequestedProperty(),
+                this::handleDrawTestRequested);
+        labControlViewModel.drawTestRequestedProperty().addListener(drawTestRequestListener);
+    }
+
+    private static ChangeListener<Boolean> createRequestListener(BooleanProperty request, Runnable handler) {
+        return (_, _, requested) -> {
+            if (requested) {
+                handler.run();
+                request.set(false);
             }
         };
-        labControlViewModel.drawTestRequestedProperty().addListener(drawTestRequestedChangeListener);
     }
 
     @Override
@@ -103,10 +99,10 @@ public final class LabMainViewModel
         AppLogger.infof("%s: Shutting down simulation", LOG_COMPONENT);
         setSimulationState(SimulationState.SHUTTING_DOWN);
 
-        labConfigViewModel.configChangedRequestedProperty().removeListener(configChangedRequestedListener);
-        labControlViewModel.drawRequestedProperty().removeListener(drawRequestedChangeListener);
-        labControlViewModel.drawModelRequestedProperty().removeListener(drawModelRequestedChangeListener);
-        labControlViewModel.drawTestRequestedProperty().removeListener(drawTestRequestedChangeListener);
+        labConfigViewModel.configChangedRequestedProperty().removeListener(configChangedRequestListener);
+        labControlViewModel.drawRequestedProperty().removeListener(drawRequestListener);
+        labControlViewModel.drawModelRequestedProperty().removeListener(drawModelRequestListener);
+        labControlViewModel.drawTestRequestedProperty().removeListener(drawTestRequestListener);
 
         unbindObservationBindings();
 
@@ -206,8 +202,8 @@ public final class LabMainViewModel
                 neighborEdgeBehaviorResults));
     }
 
-    public void updateSelectedGridCell(@Nullable GridCoordinate coordinate) {
-        if ((simulationManager == null) || (coordinate == null)) {
+    public void updateSelectedGridCell(GridCoordinate coordinate) {
+        if (simulationManager == null) {
             labObservationViewModel.selectedGridCellProperty().set(null);
             return;
         }
@@ -227,7 +223,6 @@ public final class LabMainViewModel
     }
 
     private void handleDrawRequested() {
-        // Reset notification type.
         setNotificationType(SimulationNotificationType.NONE);
 
         setSimulationState(SimulationState.RUNNING_TIMED);
@@ -259,9 +254,7 @@ public final class LabMainViewModel
     }
 
     private void reset() {
-        // Reset the simulation manager if it exists
         simulationManager = null;
-        // Clear last clicked coordinate
         resetClickedCoordinateProperties();
         resetSelectedGridCell();
     }

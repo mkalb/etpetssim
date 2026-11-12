@@ -10,8 +10,10 @@ import de.mkalb.etpetssim.ui.FXComponentFactory;
 import de.mkalb.etpetssim.ui.FXStyleClasses;
 import javafx.scene.layout.Region;
 
-public final class LabConfigView
-        extends AbstractConfigView<LabConfig, LabConfigViewModel> {
+/**
+ * Config view of the Simulation Lab.
+ */
+public final class LabConfigView extends AbstractConfigView<LabConfig, LabConfigViewModel> {
 
     // Layout
     private static final String LAB_CONFIG_COLOR_TOOLTIP = "lab.config.color.tooltip";

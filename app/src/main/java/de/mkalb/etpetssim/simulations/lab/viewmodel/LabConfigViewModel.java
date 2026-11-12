@@ -14,6 +14,7 @@ import javafx.beans.binding.Bindings;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.value.ChangeListener;
 
 import static de.mkalb.etpetssim.simulations.lab.model.LabConstraints.CELL_DISPLAY_MODE_DEFAULT;
 import static de.mkalb.etpetssim.simulations.lab.model.LabConstraints.CELL_DISPLAY_MODE_VALUES;
@@ -37,8 +38,10 @@ import static de.mkalb.etpetssim.simulations.lab.model.LabConstraints.GRID_WIDTH
 import static de.mkalb.etpetssim.simulations.lab.model.LabConstraints.NEIGHBORHOOD_MODE_DEFAULT;
 import static de.mkalb.etpetssim.simulations.lab.model.LabConstraints.SEED_DEFAULT;
 
-public final class LabConfigViewModel
-        extends AbstractConfigViewModel<LabConfig> {
+/**
+ * Config ViewModel of the Simulation Lab.
+ */
+public final class LabConfigViewModel extends AbstractConfigViewModel<LabConfig> {
 
     private static final String LAB_CONFIG_VALIDATION_GRID_STRUCTURE = "lab.config.validation.gridstructure";
 
@@ -68,7 +71,7 @@ public final class LabConfigViewModel
             COLOR_MODE_VALUES,
             e -> AppLocalization.getText(e.resourceKey()));
 
-    // Rules - NeighborhoodMode
+    // Rules
     private final InputChoiceProperty<NeighborhoodMode> neighborhoodMode = InputChoiceProperty.ofEnum(
             NEIGHBORHOOD_MODE_DEFAULT,
             NeighborhoodMode.class,
@@ -123,15 +126,16 @@ public final class LabConfigViewModel
     }
 
     private void initializeConfigListeners() {
-        cellShapeProperty().property().addListener((_, _, _) -> configChangedRequested.set(true));
-        gridEdgeBehaviorProperty().property().addListener((_, _, _) -> configChangedRequested.set(true));
-        gridWidthProperty().property().addListener((_, _, _) -> configChangedRequested.set(true));
-        gridHeightProperty().property().addListener((_, _, _) -> configChangedRequested.set(true));
-        cellEdgeLengthProperty().property().addListener((_, _, _) -> configChangedRequested.set(true));
-        cellDisplayModeProperty().property().addListener((_, _, _) -> configChangedRequested.set(true));
-        colorModeProperty().property().addListener((_, _, _) -> configChangedRequested.set(true));
-        seedProperty().stringProperty().addListener((_, _, _) -> configChangedRequested.set(true));
-        neighborhoodModeProperty().property().addListener((_, _, _) -> configChangedRequested.set(true));
+        ChangeListener<Object> configChangedListener = (_, _, _) -> configChangedRequested.set(true);
+        cellShapeProperty().property().addListener(configChangedListener);
+        gridEdgeBehaviorProperty().property().addListener(configChangedListener);
+        gridWidthProperty().property().addListener(configChangedListener);
+        gridHeightProperty().property().addListener(configChangedListener);
+        cellEdgeLengthProperty().property().addListener(configChangedListener);
+        cellDisplayModeProperty().property().addListener(configChangedListener);
+        colorMode.property().addListener(configChangedListener);
+        seedProperty().stringProperty().addListener(configChangedListener);
+        neighborhoodMode.property().addListener(configChangedListener);
     }
 
 }
