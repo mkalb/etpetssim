@@ -1,8 +1,8 @@
 # Simulations Package Review
 
-**Status:** in progress
+**Status:** done
 
-**Related issues:** #23
+**Related issues:** #23, #134 (test gaps)
 
 Temporary working document for the review of all Java types of the package `simulations` and its sub-packages in
 main and test sources: classes, records, interfaces, and enums, also those that the sibling plans already aligned,
@@ -2176,6 +2176,57 @@ Notes:
   `LabStatistics` (`junit.md`, "Common Contract Patterns").
 - The other details and the test helpers `createRingCell(..)` and `createNeighbor(..)` follow D1 to D8. No rule
   change.
+
+## Final check (2026-11-12)
+
+A new line-based script in the scratchpad repeated the checks of the initial script check over all Java files of
+`simulations` in main and test sources and added checks for the later decisions (public types without type Javadoc,
+wrapped declarations and `List.of(..values())` constants that fit on one line, `// Rules - ...` section comments,
+`Collectors.toList()`, the comment on the missing selection of the user actions, the simulation titles in Javadoc,
+non-ASCII characters, `@see` tags, and fields initialized to their default value):
+
+- No findings in the mechanical checks: no line over 120 characters, no deviating file ending, no `<p>` alone, no
+  `</p>`, no exception message with a final period, no `setAccessible(..)`, no trailing whitespace, tab, wildcard
+  import, `@throws NullPointerException`, `{@return`, `String.format(..)` without a `Locale`, `System.out` or
+  `System.err` in main sources, `toUpperCase(..)` or `toLowerCase(..)` without `Locale.ROOT`, `@DisplayName`,
+  `@Nested`, `@Nullable` in tests, or underscore in test names. Every public top-level type in main sources has a
+  type Javadoc, and all files use CRLF.
+- Checked by hand without change: the 15 `requireNonNull(..)` calls in main sources assert `@Nullable` values (the
+  simulation manager fields, the termination handle, `Map.get(..)`, and descriptor colors); the five `@see` tags name
+  counterparts that their text does not name; the non-ASCII characters are the hourglass `U+23F3` of
+  `AbstractDefaultMainView` (C8) and the dagger `U+2020` that `Pet` and `SnakeHead` show for dead entities in
+  `toDisplayString()` and their tests check; the 24 hits of default initializations are local variables; Javadoc in
+  tests exists only in the manual utilities `ExtremaGoldenValueAnalyzer` and `EtpetsScoreTuningRunner`; the only
+  reported line comment in a test is the two-line comment of `StatisticsMetricLayoutTest` above a `forEach(..)` whose
+  lambda asserts (C3).
+- Deferred findings: none.
+- Observations for #24 (maintainer): the termination with `RESPAWN` (D3) is an analysis item of #76, the seed of
+  Langton's Ant (D8) of #73, and the type of an empty cell (D4, D5) of #75 and F10 of
+  `simulation-etpets-extensions.md`. The genome quality score and the TODOs of `findEggPlacementCoordinate(..)` (D5)
+  are already F1 and F5 of that plan.
+- Test gaps (maintainer): the test gaps of C4, C7, and D1 to D9 are tracked in #134, a sub-issue of #23 with the label
+  `release-1.0`.
+- Rule changes (maintainer): the recurring cross-group decisions are rules now:
+    - `simulations.md`, "Consistency and Registration": the type Javadoc of simulation types in the forms of Wa-Tor
+      and the simulation titles in Javadoc.
+    - `simulations.md`, "Reusable Infrastructure": the `Abstract*` and `Base*` classes of `simulations.core` are not
+      `sealed`.
+    - `simulations.md`, "Properties and Bindings": fixed catalogs of edit toolbar ViewModels as `InputChoiceProperty`.
+    - `simulations.md`, "Configuration and Input": the four section comments in config ViewModels and config views.
+    - `java.md`, "Code Style": `extends` and `implements` on the declaration line when it fits; records with wrapped
+      components put `implements` on its own line. The only declaration that deviated, `engine.model.GridCell`
+      outside `simulations`, is joined into one line (maintainer).
+    - `java.md`, "Logging with AppLogger": the log message format of B2 (prefix with the class name or
+      `LOG_COMPONENT`, no final period, values after a colon, `Ignoring ...`, `Failed to ...`, and
+      `... not found: ...` for failed lookups). A survey of all 108 active `AppLogger` calls in main sources found no
+      contradiction; the `Input*Property` classes of `ui` log "Invalid value set: ..." because they set the value
+      anyway.
+    - `simulations.md`, "Reusable Infrastructure": the engine helpers `isWithinGrid()`, `directionRing(..)`,
+      `coordinatesList()`, and `Collections.shuffle(..)` (B4, D5, and `code-other-classes.md`), with the ring
+      constants of Langton's Ant as allowed exception. A scan found no contradiction: `ReboundingStepLogic` compares
+      with `BLOCKED`, and `EtpetsAgentLogic` and `SugarAgentLogic` use `VALID` alone (B4).
+- The other cross-group decisions stay without a rule: they apply to single families (`adjust...` methods of the
+  statistics, color variant fields of the main views) or are covered by existing rules.
 
 ## Cross-group decisions
 

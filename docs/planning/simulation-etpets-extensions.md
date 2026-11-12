@@ -166,6 +166,10 @@ Open points:
 
 - N2: which value determines the color (the ID, one trait such as `maxEnergy`, or a mix of the traits)? Left open
   by the maintainer (2026-11-10).
+- F10 Type of an empty cell (found in #23, 2026-11-12): the observation view shows `-` as the type of an empty cell,
+  because `NoResource` and `NoAgent` have the descriptor IDs `no_resource` and `no_agent` without an entity
+  descriptor. Sugarscape has the same IDs (#75); decide whether it is fixed before the 1.0 release, and fix it the
+  same way in both simulations.
 
 ### Verification
 
