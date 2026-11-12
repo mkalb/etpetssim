@@ -44,12 +44,12 @@ Keep the cross-cutting files in sync, for example:
 | Change                                | Update                                                                  |
 |---------------------------------------|-------------------------------------------------------------------------|
 | Enum metadata (title, CSS, CLI alias) | `SimulationType.java`, `SimulationTypeTest.java`, localization          |
-| Entity/display changes                | `docs/simulations/Simulation_Entity_Catalog.md`                         |
+| Entity/display changes                | `docs/simulations/<package>.md`, section "Entities"                     |
 | Localization keys                     | All `messages_*.properties` files (see `i18n.md`)                       |
 | Factory wiring                        | `simulations/core/SimulationFactory.java`, `SimulationFactoryTest.java` |
 
-Lists of simulations (e.g., the README table and gallery, the entity catalog, and the simulation dropdowns of the
-issue forms in `.github/ISSUE_TEMPLATE`) follow the declaration order of `SimulationType`.
+Lists of simulations (e.g., the README table and gallery and the simulation dropdowns of the issue forms in
+`.github/ISSUE_TEMPLATE`) follow the declaration order of `SimulationType`.
 
 ## MVVM Dependencies
 
@@ -95,7 +95,7 @@ issue forms in `.github/ISSUE_TEMPLATE`) follow the declaration order of `Simula
 
 ### Naming
 
-- Entity names are local to a simulation; see `docs/simulations/Simulation_Entity_Catalog.md`.
+- Entity names are local to a simulation.
 - Use one simulation-specific root entity contract (e.g., `WatorEntity`, `SugarEntity`).
 - For single-entity-enum simulations, use that enum as the primary entity type (e.g., `ConwayEntity`).
 - Prefer role-focused names instead of repeating the simulation prefix.

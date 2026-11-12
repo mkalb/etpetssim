@@ -50,17 +50,18 @@ placement), but phrase it for a user, not a developer.>
 ## Entities
 
 <One entry per entity the user can see, described in plain language: what it
-represents and how it behaves. Do not reproduce colors/emoji tables from the
-entity catalog; keep this conceptual.>
+represents, how it behaves, and how it looks on the grid.>
 
-- **<Entity name>:** <what it is and how it behaves>
-- **<Entity name>:** <what it is and how it behaves>
+- **<Entity name>:** <what it is and how it behaves; how it looks>
+- **<Entity name>:** <what it is and how it behaves; how it looks>
 
 <!--
-  If the simulation renders dynamic visual cues that the entity catalog does
-  not cover (e.g. brightness scaled by a value, an extra border to mark a
-  state change such as newly spawned agents), mention them here in one short
-  sentence per cue.
+  Describe the appearance from the entity descriptors in model/entity and the
+  drawing code of the MainView: a color name (e.g. "dark blue"), the emoji if
+  any, the shape (e.g. inner circle or full cell), and dynamic visual cues
+  (e.g. "brighter with more energy", a border marking a state such as newly
+  spawned agents), one short sentence per cue. Do not use hex color codes,
+  descriptor IDs, localization keys, or Java type names.
 -->
 
 ## Interactive editing

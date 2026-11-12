@@ -51,9 +51,6 @@ neighbors, either by shared edges or by both edges and vertices.
 | [Snake](https://en.wikipedia.org/wiki/Snake_(video_game_genre))                | Toy Model          | Snakes move, grow, and avoid collisions while consuming food                                         | [snake.md](docs/simulations/snake.md)           |
 | Rebounding Entities                                                            | Toy Model          | Entities move directionally, bounce off boundaries, and destroy obstacles and other agents           | [rebounding.md](docs/simulations/rebounding.md) |
 
-For a detailed inventory of simulation entity types, see
-the [Simulation Entity Catalog](docs/simulations/Simulation_Entity_Catalog.md).
-
 ### Simulation Gallery
 
 #### ET Pets
