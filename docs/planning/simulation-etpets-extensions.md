@@ -62,7 +62,8 @@ in the running simulation.
   `reproductionMinEnergy` from the score (a threshold, not a quality), and keep `maxEnergy` with the same weight as
   the other terms.
 - Affected: `PetTraits` (Javadoc), `PetTraitsTest`.
-- Origin: deferred finding of the record plan (`docs/planning/code-record-types.md`, category 7).
+- Origin: deferred finding of the record plan of #23 (`code-record-types.md`, category 7; deleted, see the Git
+  history).
 
 #### F2 `movementCostModifier` has almost no effect on the movement cost
 
