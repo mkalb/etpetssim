@@ -28,7 +28,8 @@ final class ForestUserActionTest {
         );
     }
 
-    private static GridCell<ForestEntity> selectedCell(ForestSimulationManager manager, GridCoordinate coordinate) {
+    private static GridCell<ForestEntity> createSelectedCell(ForestSimulationManager manager,
+                                                             GridCoordinate coordinate) {
         return new GridCell<>(coordinate, manager.currentGridModel().getEntity(coordinate));
     }
 
@@ -52,7 +53,7 @@ final class ForestUserActionTest {
         ForestUserAction userAction = new ForestUserAction();
         GridCoordinate coordinate = new GridCoordinate(0, 0);
 
-        userAction.apply(manager, NoUserActionContext.NO_CONTEXT, selectedCell(manager, coordinate));
+        userAction.apply(manager, NoUserActionContext.NO_CONTEXT, createSelectedCell(manager, coordinate));
 
         assertAll(
                 () -> assertSame(ForestEntity.TREE, manager.currentGridModel().getEntity(coordinate)),
@@ -70,7 +71,7 @@ final class ForestUserActionTest {
         manager.currentGridModel().setEntity(coordinate, ForestEntity.TREE);
         manager.statistics().setCellCounts(1, 0);
 
-        userAction.apply(manager, NoUserActionContext.NO_CONTEXT, selectedCell(manager, coordinate));
+        userAction.apply(manager, NoUserActionContext.NO_CONTEXT, createSelectedCell(manager, coordinate));
 
         assertAll(
                 () -> assertSame(ForestEntity.BURNING, manager.currentGridModel().getEntity(coordinate)),
@@ -88,7 +89,7 @@ final class ForestUserActionTest {
         manager.currentGridModel().setEntity(coordinate, ForestEntity.BURNING);
         manager.statistics().setCellCounts(0, 1);
 
-        userAction.apply(manager, NoUserActionContext.NO_CONTEXT, selectedCell(manager, coordinate));
+        userAction.apply(manager, NoUserActionContext.NO_CONTEXT, createSelectedCell(manager, coordinate));
 
         assertAll(
                 () -> assertSame(ForestEntity.EMPTY, manager.currentGridModel().getEntity(coordinate)),

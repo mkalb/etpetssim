@@ -9,10 +9,9 @@ import de.mkalb.etpetssim.simulations.core.model.StatisticsMetric;
 import java.util.List;
 
 /**
- * Holds runtime statistics for a running simulation.
+ * Statistics of the Forest-fire model with the empty, tree, and burning cell counts.
  */
-public final class ForestStatistics
-        extends BaseTimedSimulationStatistics {
+public final class ForestStatistics extends BaseTimedSimulationStatistics {
 
     public static final String KEY_EMPTY_CELLS = "emptyCells";
     public static final String KEY_TREE_CELLS = "treeCells";
@@ -41,8 +40,6 @@ public final class ForestStatistics
     public ForestStatistics(GridStructure gridStructure) {
         super(gridStructure);
         emptyCells = totalCells();
-        treeCells = 0;
-        burningCells = 0;
     }
 
     public static List<StatisticsMetric<ForestStatistics>> metrics() {

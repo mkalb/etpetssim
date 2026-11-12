@@ -1,18 +1,15 @@
 package de.mkalb.etpetssim.simulations.forest.model.entity;
 
 import de.mkalb.etpetssim.engine.model.entity.ConstantGridEntityDescriptorProvider;
-import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorRegistry;
 import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorSpec;
 import javafx.scene.paint.Color;
 import org.jspecify.annotations.Nullable;
 
 /**
- * Cell states for the forest-fire simulation.
+ * Cell states for the Forest-fire model.
  *
  * <p>Each enum constant represents one grid cell state and carries descriptor metadata
  * used for descriptor registry registration and rendering.
- *
- * @see GridEntityDescriptorRegistry
  */
 public enum ForestEntity implements ConstantGridEntityDescriptorProvider {
     EMPTY(

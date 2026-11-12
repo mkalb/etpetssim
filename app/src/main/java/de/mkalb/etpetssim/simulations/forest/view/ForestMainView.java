@@ -27,6 +27,9 @@ import org.jspecify.annotations.Nullable;
 import java.util.List;
 import java.util.function.Consumer;
 
+/**
+ * Main view of the Forest-fire model.
+ */
 public final class ForestMainView
         extends AbstractDefaultMainView<
         ForestEntity,
@@ -146,7 +149,6 @@ public final class ForestMainView
 
         painters.dynamic().clearCanvasBackground();
 
-        // small helper lambda to avoid code duplication when drawing different entity types
         Consumer<GridCell<ForestEntity>> drawCell = cell -> drawer.draw(
                 entityDescriptorRegistry.requireByDescriptorId(cell.descriptorId()),
                 painters.dynamic(), cell, stepCount);

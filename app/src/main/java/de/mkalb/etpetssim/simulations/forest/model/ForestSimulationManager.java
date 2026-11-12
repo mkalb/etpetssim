@@ -14,6 +14,9 @@ import de.mkalb.etpetssim.simulations.forest.model.entity.ForestEntity;
 
 import java.util.Random;
 
+/**
+ * Simulation manager of the Forest-fire model.
+ */
 public final class ForestSimulationManager
         extends AbstractTimedSimulationManager<ForestEntity, WritableGridModel<ForestEntity>, ForestConfig,
         ForestStatistics> {
@@ -40,7 +43,7 @@ public final class ForestSimulationManager
         executor = new TimedSimulationExecutor<>(new DefaultSimulationExecutor<>(runner, runner::currentGridModel,
                 terminationCondition, statistics));
 
-        initializeGrid(config, model, random, cancellation);
+        initializeGrid(model, random, cancellation);
         cancellation.checkCanceled();
         initializeStatistics(model);
         recordInitialStatisticsSample();
@@ -68,12 +71,11 @@ public final class ForestSimulationManager
         return executor;
     }
 
-    private void initializeGrid(ForestConfig config,
-                                WritableGridModel<ForestEntity> model,
+    private void initializeGrid(WritableGridModel<ForestEntity> model,
                                 Random random,
                                 SimulationInitializationCancellation cancellation) {
         var gridInitializer = GridInitializers.fillRandomPercent(
-                config.treeDensity(),
+                config().treeDensity(),
                 () -> ForestEntity.TREE,
                 ForestEntity.EMPTY,
                 random,

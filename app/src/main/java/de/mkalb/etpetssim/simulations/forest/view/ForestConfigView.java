@@ -9,8 +9,10 @@ import de.mkalb.etpetssim.ui.FXComponentFactory;
 import de.mkalb.etpetssim.ui.FXStyleClasses;
 import javafx.scene.layout.Region;
 
-public final class ForestConfigView
-        extends AbstractConfigView<ForestConfig, ForestConfigViewModel> {
+/**
+ * Config view of the Forest-fire model.
+ */
+public final class ForestConfigView extends AbstractConfigView<ForestConfig, ForestConfigViewModel> {
 
     // Initialization
     private static final String FOREST_CONFIG_TREE_DENSITY = "forest.config.treedensity";

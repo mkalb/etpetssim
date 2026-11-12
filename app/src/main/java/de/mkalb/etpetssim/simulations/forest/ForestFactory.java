@@ -21,7 +21,7 @@ import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 
 /**
- * Factory for the forest-fire model main view.
+ * Factory for the Forest-fire model main view.
  */
 public final class ForestFactory {
 

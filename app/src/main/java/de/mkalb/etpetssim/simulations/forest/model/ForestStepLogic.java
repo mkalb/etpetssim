@@ -11,6 +11,9 @@ import de.mkalb.etpetssim.simulations.forest.model.entity.ForestEntity;
 
 import java.util.Random;
 
+/**
+ * Synchronous step logic of the Forest-fire model that grows, ignites, and burns down trees.
+ */
 public final class ForestStepLogic implements SynchronousStepLogic<ForestEntity, ForestStatistics> {
 
     private final GridStructure structure;
@@ -30,8 +33,8 @@ public final class ForestStepLogic implements SynchronousStepLogic<ForestEntity,
                                        ForestStatistics statistics) {
         currentGridModel.allCells()
                 .stream()
-                .map(c -> computeNextCell(c, currentGridModel))
-                .filter(c -> !c.entity().isEmpty())
+                .map(cell -> computeNextCell(cell, currentGridModel))
+                .filter(cell -> !cell.entity().isEmpty())
                 .forEach(nextGridModel::setEntity);
         int treeCells = Math.toIntExact(nextGridModel.countEntities(ForestEntity::isTree));
         int burningCells = Math.toIntExact(nextGridModel.countEntities(ForestEntity::isBurning));
@@ -64,7 +67,7 @@ public final class ForestStepLogic implements SynchronousStepLogic<ForestEntity,
                         structure.cellShape())
                 .map(neighbor -> CellNeighborhoods.applyEdgeBehaviorToCoordinate(neighbor.neighborCoordinate(),
                         structure))
-                .filter(r -> r.action().isWithinGrid())
+                .filter(result -> result.action().isWithinGrid())
                 .map(EdgeBehaviorResult::mapped)
                 .map(model::getEntity)
                 .anyMatch(ForestEntity::isBurning);

@@ -8,6 +8,9 @@ import de.mkalb.etpetssim.simulations.forest.model.ForestStatistics;
 import de.mkalb.etpetssim.simulations.forest.model.entity.ForestEntity;
 import javafx.scene.layout.Region;
 
+/**
+ * Observation view of the Forest-fire model.
+ */
 public final class ForestObservationView
         extends AbstractObservationView<
         ForestEntity,

@@ -38,8 +38,10 @@ import static de.mkalb.etpetssim.simulations.forest.model.ForestConstraints.TREE
 import static de.mkalb.etpetssim.simulations.forest.model.ForestConstraints.TREE_GROWTH_PROBABILITY_MAX;
 import static de.mkalb.etpetssim.simulations.forest.model.ForestConstraints.TREE_GROWTH_PROBABILITY_MIN;
 
-public final class ForestConfigViewModel
-        extends AbstractConfigViewModel<ForestConfig> {
+/**
+ * Config ViewModel of the Forest-fire model.
+ */
+public final class ForestConfigViewModel extends AbstractConfigViewModel<ForestConfig> {
 
     /**
      * Number of fractional digits shown for tree growth probability inputs in the forest view.
@@ -78,13 +80,11 @@ public final class ForestConfigViewModel
             TREE_DENSITY_MIN,
             TREE_DENSITY_MAX);
 
-    // Rules - NeighborhoodMode
+    // Rules
     private final InputChoiceProperty<NeighborhoodMode> neighborhoodMode = InputChoiceProperty.ofEnum(
             NEIGHBORHOOD_MODE_DEFAULT,
             NeighborhoodMode.class,
             e -> AppLocalization.getText(e.resourceKey()));
-
-    // Rules
     private final InputDoubleProperty treeGrowthProbability = InputDoubleProperty.of(
             TREE_GROWTH_PROBABILITY_DEFAULT,
             TREE_GROWTH_PROBABILITY_MIN,

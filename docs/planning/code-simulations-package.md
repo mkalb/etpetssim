@@ -147,7 +147,7 @@ sources. "Types" counts the top-level types in main sources of a group.
 | D4 | Sugarscape                                                    |    28 | done        |
 | D5 | ET Pets                                                       |    42 | done        |
 | D6 | Conway                                                        |    24 | done        |
-| D7 | Forest                                                        |    13 | open        |
+| D7 | Forest                                                        |    13 | done        |
 | D8 | Langton                                                       |    29 | open        |
 | D9 | Lab                                                           |    15 | open        |
 |    | **Total**                                                     |   278 |             |
@@ -1875,6 +1875,70 @@ Notes:
 
 ### D7. Forest
 
+Notes:
+
+- Inventory (2026-11-12, verified against the sources): 13 types in the package root, `model`, `model.entity`,
+  `view`, and `viewmodel`; Forest has no `shared` package, no edit tool bar, and uses `NoUserActionContext`. Tests
+  exist for `ForestConfig`, `ForestUserAction`, and `ForestEntity`.
+- `ForestConfig`, `ForestFactory`, and `ForestObservationView` follow the rules apart from the type Javadoc below.
+  `ForestStatistics` keeps `initializeStartupCellCounts(..)` and `setCellCounts(..)` like `ConwayStatistics`.
+- Test gaps for the later separate optimization: `ForestStepLogic`, `ForestTerminationCondition`, `ForestStatistics`,
+  and the initial tree density of `ForestSimulationManager`.
+
+#### Neighbor lookup of ForestStepLogic
+
+- Origin: D7 (2026-11-12)
+- Types: `ForestStepLogic`
+- Problem: `hasBurningNeighbor(..)` combines `cellNeighborsIgnoringEdgeBehavior(..)`,
+  `applyEdgeBehaviorToCoordinate(..)`, and `isWithinGrid()` itself, while `ConwayStepLogic` uses
+  `CellNeighborhoods.neighborEdgeBehaviorResults(..)`; the lambdas name their parameters `c` and `r`.
+- Proposal: Rename the lambda parameters to `cell` and `result`. Optionally use `neighborEdgeBehaviorResults(..)`
+  like Conway: the result and the random sequence of a seed stay the same, because it only drops duplicate mapped
+  coordinates, but it builds a collection for every tree cell in every step.
+- Status: done (2026-11-12); only the lambda parameters are renamed.
+
+#### Statistics update of ForestUserAction
+
+- Origin: D7 (2026-11-12)
+- Types: `ForestUserAction`
+- Problem: The action switches three times over the old entity: once for the new entity and once each for the tree
+  and burning deltas.
+- Proposal: Keep the switch for the new entity and update the statistics in one switch over the old entity with one
+  `setCellCounts(..)` call per branch.
+- Status: done (2026-11-12).
+
+#### Details of the Forest types
+
+- Origin: D7 (2026-11-12)
+- Types: the public types without type Javadoc, `ForestStatistics`, `ForestSimulationManager`, `ForestConstraints`,
+  `ForestUserAction`, `ForestEntity`, `ForestConfigViewModel`, `ForestConfigView`, `ForestMainView`,
+  `ForestConfigTest`, `ForestUserActionTest`
+- Problem: Eight public types have no type Javadoc and `ForestStatistics` a generic one (D1); the existing Javadoc
+  calls the simulation "Forest-fire model", "forest-fire model", and "forest-fire simulation". `ForestStatistics`
+  initializes two counters to `0`. `ForestSimulationManager` passes the config to `initializeGrid(..)`.
+  `CELL_SHAPE_VALUES` wraps `List.of(CellShape.values())`. `ForestUserAction` has the comment on the missing
+  selection. `ForestEntity` has a `@see` for a type its text already names and imports it only for the `@see`.
+  `ForestConfigViewModel` has the section comments `// Rules - NeighborhoodMode` and `// Rules`. `ForestMainView`
+  has the restating comment "small helper lambda ...". Three class declarations wrap although they fit on one line.
+  `ForestConfigTest` breaks `Math.nextDown(..)` before `.nextDown`, and the test helper `selectedCell(..)` lacks the
+  `create` prefix.
+- Proposal: Adopt the decisions of D1 to D6, call the simulation "the forest-fire model" in all Javadoc, and fix the
+  other details.
+- Status: done (2026-11-12); the Javadoc uses "Forest-fire model", the title of the simulation (maintainer).
+
+### Decisions
+
+- All public types have a short type Javadoc in the forms of D1 and call the simulation "Forest-fire model", like
+  its title (maintainer); `ForestTerminationCondition` states its condition there. `ForestStatistics`,
+  `ForestConfigViewModel`, and `ForestConfigView` declare their supertype on one line.
+- `ForestStepLogic` keeps its own neighbor lookup instead of `neighborEdgeBehaviorResults(..)` and names its lambda
+  parameters `cell` and `result` (maintainer).
+- `ForestUserAction` updates the statistics in one switch over the old entity, without the comment on the missing
+  selection.
+- `ForestStatistics` sets only `emptyCells` in its constructor; `ForestSimulationManager` reads the config through
+  `config()`.
+- The other details and the test helper `createSelectedCell(..)` follow D1 to D6. No API change and no rule change.
+
 ### D8. Langton
 
 ### D9. Lab
@@ -1921,6 +1985,8 @@ Decisions of this plan:
   closed families inside one simulation, such as `CreatureBase` and `ResourceBase` (C5, C6 to C8, D).
 - Every public type of a simulation has a short type Javadoc of one sentence in the forms of Wa-Tor, without a
   detailed description of its content (maintainer; D1, D).
+- Javadoc names a simulation by its title (`simulation.<name>.title`), e.g., "Sugarscape" and "Forest-fire model"
+  (maintainer; D4, D7, D).
 - `adjust...Cells(..)` and `adjustCellCounts(..)` of the statistics classes stay public, also with callers only in
   the own `model` package (maintainer; D1, D); `increment...` and `decrement...` methods with callers only in that
   package are package-private (D1, D2, D).
