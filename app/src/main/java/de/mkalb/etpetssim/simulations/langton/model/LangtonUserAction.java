@@ -6,12 +6,14 @@ import de.mkalb.etpetssim.engine.neighborhood.CompassDirection;
 import de.mkalb.etpetssim.simulations.core.model.SimulationUserAction;
 import de.mkalb.etpetssim.simulations.langton.model.entity.Ant;
 import de.mkalb.etpetssim.simulations.langton.model.entity.LangtonEntity;
-import de.mkalb.etpetssim.simulations.langton.model.entity.NoAgent;
 import de.mkalb.etpetssim.simulations.langton.model.entity.TerrainConstant;
 import de.mkalb.etpetssim.simulations.langton.shared.LangtonDirectionOptions;
 import de.mkalb.etpetssim.simulations.langton.shared.LangtonUserActionContext;
 import org.jspecify.annotations.Nullable;
 
+/**
+ * User action of Langton's Ant that adds or removes ants.
+ */
 public final class LangtonUserAction
         implements SimulationUserAction<
         LangtonEntity,
@@ -26,7 +28,6 @@ public final class LangtonUserAction
                       LangtonUserActionContext context,
                       @Nullable GridCellView<LangtonEntity> selectedCell) {
         if (selectedCell == null) {
-            // This user action works only if a cell is selected, so do nothing if no cell is selected.
             return;
         }
 
@@ -35,15 +36,15 @@ public final class LangtonUserAction
         var coordinate = selectedCell.coordinate();
         var antEntity = model.antModel().getEntity(coordinate);
         switch (context) {
-            case LangtonUserActionContext.FixedAction fixedAction -> {
-                if ((fixedAction == LangtonUserActionContext.FixedAction.REMOVE_ANT) && antEntity.isAgent()) {
+            case LangtonUserActionContext.FixedAction.REMOVE_ANT -> {
+                if (antEntity.isAgent()) {
                     model.antModel().setEntityToDefault(coordinate);
                     statistics.adjustCellCounts(-1, 0);
                 }
             }
             case LangtonUserActionContext.AddAnt addAnt -> {
                 var terrainEntity = model.terrainModel().getEntity(coordinate);
-                if ((terrainEntity != TerrainConstant.UNVISITED) || !(antEntity instanceof NoAgent)) {
+                if (!terrainEntity.isUnvisited() || antEntity.isAgent()) {
                     return;
                 }
                 var direction = addAnt.direction();

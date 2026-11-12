@@ -14,6 +14,9 @@ import org.jspecify.annotations.Nullable;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Edit tool bar ViewModel of Langton's Ant with the initial directions available for the current cell shape.
+ */
 public final class LangtonEditToolBarViewModel {
 
     private final ObservableList<CompassDirection> availableDirections = FXCollections.observableArrayList();

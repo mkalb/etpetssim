@@ -8,10 +8,9 @@ import de.mkalb.etpetssim.simulations.core.model.StatisticsMetric;
 import java.util.List;
 
 /**
- * Holds runtime statistics for a running simulation.
+ * Statistics of Langton's Ant with the ant and visited cell counts.
  */
-public final class LangtonStatistics
-        extends BaseTimedSimulationStatistics {
+public final class LangtonStatistics extends BaseTimedSimulationStatistics {
 
     public static final String KEY_ANT_CELLS = "antCells";
     public static final String KEY_VISITED_CELLS = "visitedCells";
@@ -33,8 +32,6 @@ public final class LangtonStatistics
 
     public LangtonStatistics(GridStructure gridStructure) {
         super(gridStructure);
-        antCells = 0;
-        visitedCells = 0;
     }
 
     public static List<StatisticsMetric<LangtonStatistics>> metrics() {

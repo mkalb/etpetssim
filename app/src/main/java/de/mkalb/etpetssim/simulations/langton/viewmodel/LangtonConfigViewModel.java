@@ -28,8 +28,10 @@ import static de.mkalb.etpetssim.simulations.langton.model.LangtonConstraints.GR
 import static de.mkalb.etpetssim.simulations.langton.model.LangtonConstraints.NEIGHBORHOOD_MODE_DEFAULT;
 import static de.mkalb.etpetssim.simulations.langton.model.LangtonConstraints.SEED_DEFAULT;
 
-public final class LangtonConfigViewModel
-        extends AbstractConfigViewModel<LangtonConfig> {
+/**
+ * Config ViewModel of Langton's Ant.
+ */
+public final class LangtonConfigViewModel extends AbstractConfigViewModel<LangtonConfig> {
 
     private static final String LANGTON_CONFIG_VALIDATION_MOVEMENT_RULES = "langton.config.validation.movementrules";
 
@@ -61,18 +63,7 @@ public final class LangtonConfigViewModel
         super(simulationState, COMMON_SETTINGS);
         registerConfigValidationRule(
                 Bindings.createBooleanBinding(
-                        () -> {
-                            try {
-                                String ruleString = rule.stringProperty().get();
-                                if (ruleString == null) {
-                                    return true;
-                                }
-                                LangtonMovementRules rules = LangtonMovementRules.parse(ruleString);
-                                return !rules.isValidForCellShape(cellShapeProperty().getValue());
-                            } catch (Exception e) {
-                                return true;
-                            }
-                        },
+                        this::isRuleStringInvalid,
                         rule.stringProperty(),
                         cellShapeProperty().property()
                 ),
@@ -97,6 +88,18 @@ public final class LangtonConfigViewModel
 
     public LangtonRuleProperty ruleProperty() {
         return rule;
+    }
+
+    private boolean isRuleStringInvalid() {
+        String ruleString = rule.stringProperty().get();
+        if (ruleString == null) {
+            return true;
+        }
+        try {
+            return !LangtonMovementRules.parse(ruleString).isValidForCellShape(cellShapeProperty().getValue());
+        } catch (IllegalArgumentException _) {
+            return true;
+        }
     }
 
 }

@@ -38,7 +38,7 @@ final class LangtonUserActionTest {
         );
     }
 
-    private static LangtonCell selectedCell(LangtonSimulationManager manager, GridCoordinate coordinate) {
+    private static LangtonCell createSelectedCell(LangtonSimulationManager manager, GridCoordinate coordinate) {
         return LangtonCell.from(manager.currentGridModel(), coordinate);
     }
 
@@ -59,7 +59,7 @@ final class LangtonUserActionTest {
         userAction.apply(
                 manager,
                 new LangtonUserActionContext.AddAnt(CompassDirection.W),
-                selectedCell(manager, coordinate));
+                createSelectedCell(manager, coordinate));
 
         assertAll(
                 () -> assertInstanceOf(Ant.class, manager.currentGridModel().antModel().getEntity(coordinate)),
@@ -79,7 +79,7 @@ final class LangtonUserActionTest {
         userAction.apply(
                 manager,
                 new LangtonUserActionContext.AddAnt(CompassDirection.N),
-                selectedCell(manager, coordinate));
+                createSelectedCell(manager, coordinate));
 
         assertAll(
                 () -> assertTrue(coordinate.isTriangleCellPointingDown()),
@@ -100,7 +100,7 @@ final class LangtonUserActionTest {
         userAction.apply(
                 manager,
                 new LangtonUserActionContext.AddAnt(CompassDirection.S),
-                selectedCell(manager, coordinate));
+                createSelectedCell(manager, coordinate));
 
         assertAll(
                 () -> assertTrue(coordinate.isTriangleCellPointingDown()),
@@ -119,7 +119,7 @@ final class LangtonUserActionTest {
         userAction.apply(
                 manager,
                 new LangtonUserActionContext.AddAnt(CompassDirection.S),
-                selectedCell(manager, coordinate));
+                createSelectedCell(manager, coordinate));
 
         assertAll(
                 () -> assertFalse(coordinate.isTriangleCellPointingDown()),
@@ -145,7 +145,7 @@ final class LangtonUserActionTest {
         userAction.apply(
                 manager,
                 LangtonUserActionContext.FixedAction.REMOVE_ANT,
-                selectedCell(manager, coordinate));
+                createSelectedCell(manager, coordinate));
 
         assertAll(
                 () -> assertInstanceOf(NoAgent.class, manager.currentGridModel().antModel().getEntity(coordinate)),
@@ -170,7 +170,7 @@ final class LangtonUserActionTest {
         userAction.apply(
                 manager,
                 LangtonUserActionContext.FixedAction.REMOVE_ANT,
-                selectedCell(manager, coordinate));
+                createSelectedCell(manager, coordinate));
 
         assertAll(
                 () -> assertInstanceOf(NoAgent.class, manager.currentGridModel().antModel().getEntity(coordinate)),

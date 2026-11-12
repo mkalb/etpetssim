@@ -14,6 +14,9 @@ import de.mkalb.etpetssim.simulations.langton.model.entity.LangtonEntity;
 import de.mkalb.etpetssim.simulations.langton.model.entity.NoAgent;
 import de.mkalb.etpetssim.simulations.langton.model.entity.TerrainConstant;
 
+/**
+ * Simulation manager of Langton's Ant.
+ */
 public final class LangtonSimulationManager
         extends AbstractTimedSimulationManager<LangtonEntity, LangtonGridModel, LangtonConfig,
         LangtonStatistics> {
@@ -47,6 +50,11 @@ public final class LangtonSimulationManager
         recordInitialStatisticsSample();
     }
 
+    private static int halveToEven(int n) {
+        // Divides n by 2 and clears the lowest bit to guarantee an even result.
+        return (n / 2) & ~1;
+    }
+
     @Override
     public GridStructure structure() {
         return structure;
@@ -67,11 +75,6 @@ public final class LangtonSimulationManager
     @Override
     protected TimedSimulationExecutor<LangtonEntity, LangtonGridModel> executor() {
         return executor;
-    }
-
-    int halveToEven(int n) {
-        // Divides n by 2 and clears the lowest bit to guarantee an even result.
-        return (n / 2) & ~1;
     }
 
     private void initializeGrid(LangtonGridModel model) {

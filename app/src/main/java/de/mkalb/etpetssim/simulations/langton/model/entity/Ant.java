@@ -4,6 +4,9 @@ import de.mkalb.etpetssim.engine.neighborhood.CompassDirection;
 
 import java.util.Locale;
 
+/**
+ * Ant of Langton's Ant with its current direction.
+ */
 public final class Ant implements AntEntity {
 
     private CompassDirection direction;

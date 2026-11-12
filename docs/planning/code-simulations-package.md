@@ -148,7 +148,7 @@ sources. "Types" counts the top-level types in main sources of a group.
 | D5 | ET Pets                                                       |    42 | done        |
 | D6 | Conway                                                        |    24 | done        |
 | D7 | Forest                                                        |    13 | done        |
-| D8 | Langton                                                       |    29 | open        |
+| D8 | Langton                                                       |    29 | done        |
 | D9 | Lab                                                           |    15 | open        |
 |    | **Total**                                                     |   278 |             |
 
@@ -1941,6 +1941,126 @@ Notes:
 
 ### D8. Langton
 
+Notes:
+
+- Inventory (2026-11-12, verified against the sources): 29 types in the package root, `model`, `model.entity`,
+  `shared`, `view`, and `viewmodel`. Tests exist for `LangtonCell`, `LangtonConfig`, `LangtonGridModel`,
+  `LangtonUserAction`, `Ant` (only `toDisplayString()`), `EntityDescriptors`, `LangtonEntity`, `TerrainConstant`,
+  `LangtonDirectionOptions`, `LangtonMovementRules`, the rule presets (`LangtonRulePresetTest`), and
+  `LangtonEditToolBarViewModel`.
+- `LangtonConfig`, `LangtonConstraints` (apart from one line), `LangtonCell`, `LangtonGridModel`, `NoAgent`,
+  `EntityDescriptors`, `LangtonDirectionOptions`, `LangtonUserActionContext`, the rule presets, and `LangtonFactory`
+  follow the rules. `LangtonEditToolBarViewModel` keeps the dynamic pattern of Rebounding, because the available
+  directions depend on the cell shape (like Conway in D6).
+- Observation for #24: Langton uses no random numbers, but its config and config ViewModel compute a seed; the config
+  view shows no seed control.
+- Test gaps for the later separate optimization: `LangtonStepRunner` (moves, terrain changes, and turns),
+  `LangtonTerminationCondition`, `LangtonStatistics`, the start position of `LangtonSimulationManager`,
+  `LangtonRuleProperty`, and the movement rule validation of `LangtonConfigViewModel`.
+
+#### Direction computation of LangtonStepRunner
+
+- Origin: D8 (2026-11-12)
+- Types: `LangtonStepRunner`
+- Problem: `computeNewAntDirection(..)` maps every combination of cell shape, turn, and direction in a nested
+  `switch` of about 110 lines with `default -> null` branches and a final `null` check. All turns are rotations on
+  the direction rings `SQUARE_EDGES_DIRECTION_RING` and `HEXAGON_DIRECTION_RING`; triangles use the hexagon ring.
+- Proposal: Compute the new direction as `ring.get(Math.floorMod(index + steps, ring.size()))` with the steps `-1`,
+  `1`, `-2`, `2`, `0`, and `ring.size() / 2` per turn; throw only if the direction is not on the ring. The turns
+  that triangles do not support are already rejected by `LangtonConfig.isValid()`. Verify the equality of all
+  combinations with a temporary comparison test that is not committed.
+- Status: done (2026-11-12); the temporary test compared all 288 combinations of cell shape, turn, and compass
+  direction: 260 are equal, and the 28 differences are the triangle turns that `isValid()` rejects and `NONE` on
+  hexagons for directions off the ring, which an ant never has.
+
+#### Helpers and edge check of LangtonStepRunner
+
+- Origin: D8 (2026-11-12) and B4
+- Types: `LangtonStepRunner`, `LangtonSimulationManager`
+- Problem: The six helpers of `LangtonStepRunner` and `LangtonSimulationManager.halveToEven(..)` are package-private
+  for tests that do not exist (`java.md`, "Test Access"). `isEdgeAbsorbedOrBlocked(..)` compares with `ABSORBED` and
+  `BLOCKED`, which is `!isWithinGrid()` (B4). `resolveTerrainAndCountVisit(..)` reads the terrain model from the field,
+  while the other helpers take it as parameter.
+- Proposal: Make the helpers private (`halveToEven(..)` private static), replace `isEdgeAbsorbedOrBlocked(..)` with
+  `!isWithinGrid()`, and pass the terrain model to `resolveTerrainAndCountVisit(..)` like to the other helpers.
+- Status: done (2026-11-12).
+
+#### Rule parser of LangtonMovementRules
+
+- Origin: D8 (2026-11-12)
+- Types: `LangtonMovementRules`
+- Problem: `parse(..)` copies the branch for `L` into the branch for `R`, each with two identical bounds checks of
+  the next character; the current character is named `c`.
+- Proposal: One branch `case 'L', 'R'` that reads the next character once, chooses the one- or two-step turn of the
+  side, and skips the digit `1` or `2`; name the character `symbol`. The parse results stay the same.
+- Status: done (2026-11-12).
+
+#### Alignment of LangtonRuleProperty with ConwayRuleProperty
+
+- Origin: D6 and D8 (2026-11-12)
+- Types: `LangtonRuleProperty`
+- Problem: Unlike `ConwayRuleProperty` after D6, the class has no type Javadoc, names its constants
+  `PRESET_*_INITIAL` and its fields with the accessor suffix (`stringProperty`, `presetTriangleProperty`), and copies
+  the preset listener three times.
+- Proposal: `PRESET_*_DEFAULT`, the fields `ruleString`, `label`, `presetTriangle`, `presetSquare`, and
+  `presetHexagon`, a type Javadoc, and one private method for the three listeners; the public accessors stay
+  unchanged.
+- Status: done (2026-11-12).
+
+#### Edit tool bar and drawing of LangtonMainView
+
+- Origin: D2, D6, and D8 (2026-11-12)
+- Types: `LangtonMainView`
+- Problem: The combo box listener compares old and new value, and the listener cleanup is registered in both
+  branches (D2, D6). `cellAntDrawer` is a lambda with several statements, and `drawSimulation(..)` draws terrain and
+  ant in a `forEach` lambda with two statements and the restating comments `// draw terrain` and `// draw ant`
+  (`java.md`, "Code Style").
+- Proposal: Forward every change of the combo box, register the listener cleanup once and the binding cleanup only
+  with a tool id, move the ant drawing into a private `drawAnt(..)`, use a loop instead of the `forEach` lambda, and
+  remove the comments.
+- Status: done (2026-11-12).
+
+#### Details of the Langton types
+
+- Origin: D8 (2026-11-12)
+- Types: the public types without type Javadoc, `LangtonStatistics`, `LangtonConstraints`, `LangtonTerminationCondition`,
+  `LangtonUserAction`, `LangtonEntity`, `AntEntity`, `TerrainConstant`, `LangtonConfigViewModel`, `LangtonConfigView`,
+  `LangtonUserActionTest`
+- Problem: Eleven public types have no type Javadoc and `LangtonStatistics` a generic one (D1); `LangtonEntity` and
+  `AntEntity` say "Langton simulation" instead of the title "Langton's Ant". `LangtonStatistics` initializes its
+  counters to `0`. `CELL_SHAPE_VALUES` wraps `List.of(CellShape.values())`. `LangtonUserAction` has the comment on the
+  missing selection, checks `instanceof NoAgent` instead of `isAgent()`, compares with `UNVISITED` instead of
+  `isUnvisited()` (which has no caller in main sources, also not in `LangtonStepRunner`), and checks the only fixed
+  action with `==`. `TerrainConstant` has three `@see` tags for types its declaration or text already names, an import
+  only for one of them, the non-ASCII dash `U+2013`, and a broken `HashMap.newHashMap(..)` line.
+  `LangtonEntity.allEntityDescriptorProviders()` collects with `Collectors.toUnmodifiableList()` instead of `toList()`.
+  The validation rule of `LangtonConfigViewModel` is a lambda with several statements that catches `Exception`.
+  Four class declarations wrap although they fit on one line, `LangtonTerminationCondition` puts `implements` on a
+  line of its own, and the test helper `selectedCell(..)` lacks the `create` prefix.
+- Proposal: Adopt the decisions of D1 to D7 and fix the details: `isAgent()` and `isUnvisited()`, a `case` label for
+  `REMOVE_ANT`, no `@see` tags and dash, `toList()`, and a private validation method that catches only
+  `IllegalArgumentException`.
+- Status: done (2026-11-12); `toList()` needs the type witness `Stream.<GridEntityDescriptorProvider>concat(..)`.
+
+### Decisions
+
+- All public types have a short type Javadoc in the forms of D1 and call the simulation "Langton's Ant", like its
+  title; `LangtonTerminationCondition` states its condition there. `LangtonStatistics`, `LangtonStepRunner`,
+  `LangtonConfigViewModel`, and `LangtonConfigView` declare their supertype on one line.
+- `LangtonStepRunner` selects `SQUARE_EDGES_DIRECTION_RING` or `HEXAGON_DIRECTION_RING` once in its constructor
+  (triangles use the hexagon ring), computes the new direction by rotating on it, and throws only for a direction off
+  the ring; it checks the edge behavior with `isWithinGrid()`, and its helpers are private. `halveToEven(..)` of the manager is private
+  static.
+- `LangtonMovementRules.parse(..)` handles `L` and `R` in one branch.
+- `LangtonRuleProperty` names its constants `PRESET_*_DEFAULT` and its fields without the accessor suffix, like
+  `ConwayRuleProperty`, and applies a preset with the private `applyPreset(..)`; the public accessors stay unchanged.
+- `LangtonMainView` registers the listener cleanup once and the binding cleanup only with a tool id, forwards every
+  change of the combo box, and draws an ant with the private `drawAnt(..)`.
+- `LangtonUserAction` checks the ant layer with `isAgent()`, the terrain with `isUnvisited()`, and removes an ant in
+  the `case` of `REMOVE_ANT`; `LangtonConfigViewModel` validates the rule string with the private
+  `isRuleStringInvalid()`, which catches only `IllegalArgumentException`.
+- The other details and the test helper `createSelectedCell(..)` follow D1 to D7. No API change and no rule change.
+
 ### D9. Lab
 
 #### Wrapper initializeForDraw of LabObservationView
@@ -1986,7 +2106,7 @@ Decisions of this plan:
 - Every public type of a simulation has a short type Javadoc of one sentence in the forms of Wa-Tor, without a
   detailed description of its content (maintainer; D1, D).
 - Javadoc names a simulation by its title (`simulation.<name>.title`), e.g., "Sugarscape" and "Forest-fire model"
-  (maintainer; D4, D7, D).
+  (maintainer; D4, D7, D8, D).
 - `adjust...Cells(..)` and `adjustCellCounts(..)` of the statistics classes stay public, also with callers only in
   the own `model` package (maintainer; D1, D); `increment...` and `decrement...` methods with callers only in that
   package are package-private (D1, D2, D).

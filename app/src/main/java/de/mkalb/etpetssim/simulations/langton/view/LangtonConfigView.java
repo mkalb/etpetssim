@@ -10,8 +10,10 @@ import de.mkalb.etpetssim.ui.FXComponentFactory;
 import de.mkalb.etpetssim.ui.FXStyleClasses;
 import javafx.scene.layout.Region;
 
-public final class LangtonConfigView
-        extends AbstractConfigView<LangtonConfig, LangtonConfigViewModel> {
+/**
+ * Config view of Langton's Ant.
+ */
+public final class LangtonConfigView extends AbstractConfigView<LangtonConfig, LangtonConfigViewModel> {
 
     // Rules
     private static final String LANGTON_CONFIG_PRESET_TRIANGLE = "langton.config.preset.triangle";

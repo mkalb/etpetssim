@@ -1,33 +1,39 @@
 package de.mkalb.etpetssim.simulations.langton.model;
 
+import de.mkalb.etpetssim.engine.CellShape;
 import de.mkalb.etpetssim.engine.GridCoordinate;
 import de.mkalb.etpetssim.engine.GridStructure;
 import de.mkalb.etpetssim.engine.executor.SimulationStepRunner;
 import de.mkalb.etpetssim.engine.model.GridCell;
 import de.mkalb.etpetssim.engine.model.WritableGridModel;
-import de.mkalb.etpetssim.engine.neighborhood.CellNeighborWithEdgeBehavior;
 import de.mkalb.etpetssim.engine.neighborhood.CellNeighborhoods;
 import de.mkalb.etpetssim.engine.neighborhood.CompassDirection;
-import de.mkalb.etpetssim.engine.neighborhood.EdgeBehaviorAction;
 import de.mkalb.etpetssim.engine.support.AgentOrderingStrategies;
 import de.mkalb.etpetssim.simulations.langton.model.entity.Ant;
 import de.mkalb.etpetssim.simulations.langton.model.entity.AntEntity;
 import de.mkalb.etpetssim.simulations.langton.model.entity.LangtonEntity;
 import de.mkalb.etpetssim.simulations.langton.model.entity.TerrainConstant;
-import de.mkalb.etpetssim.simulations.langton.shared.LangtonMovementRules;
 
-public final class LangtonStepRunner
-        implements SimulationStepRunner<LangtonStatistics> {
+import java.util.List;
+
+/**
+ * Step runner of Langton's Ant that moves the ants and changes the color of the cells they enter.
+ */
+public final class LangtonStepRunner implements SimulationStepRunner<LangtonStatistics> {
 
     private final LangtonGridModel model;
     private final LangtonConfig config;
     private final GridStructure structure;
+    private final List<CompassDirection> directionRing;
 
-    public LangtonStepRunner(LangtonGridModel model,
-                             LangtonConfig config) {
+    public LangtonStepRunner(LangtonGridModel model, LangtonConfig config) {
         this.model = model;
         this.config = config;
         structure = model.structure();
+        // Triangle cells turn on the hexagon ring; LangtonConfig.isValid() rejects the turns they do not support.
+        directionRing = (structure.cellShape() == CellShape.SQUARE)
+                ? CellNeighborhoods.SQUARE_EDGES_DIRECTION_RING
+                : CellNeighborhoods.HEXAGON_DIRECTION_RING;
     }
 
     public LangtonGridModel model() {
@@ -51,7 +57,7 @@ public final class LangtonStepRunner
                     structure,
                     ant.direction());
 
-            if (neighborOpt.isEmpty() || isEdgeAbsorbedOrBlocked(neighborOpt.get())) {
+            if (neighborOpt.isEmpty() || !neighborOpt.get().edgeBehaviorAction().isWithinGrid()) {
                 removeAnt(agentCell, antModel, statistics);
                 continue;
             }
@@ -62,168 +68,62 @@ public final class LangtonStepRunner
                 removeAnt(agentCell, antModel, statistics);
                 continue;
             }
-            var terrainEntity = resolveTerrainAndCountVisit(newCoordinate, statistics);
+            var terrainEntity = resolveTerrainAndCountVisit(newCoordinate, terrainModel, statistics);
             moveAnt(agentCell, newCoordinate, antModel, ant, terrainEntity);
             switchTerrain(newCoordinate, terrainEntity, terrainModel);
         }
     }
 
-    boolean isEdgeAbsorbedOrBlocked(CellNeighborWithEdgeBehavior neighbor) {
-        return (neighbor.edgeBehaviorAction() == EdgeBehaviorAction.ABSORBED)
-                || (neighbor.edgeBehaviorAction() == EdgeBehaviorAction.BLOCKED);
-    }
-
-    void removeAnt(GridCell<AntEntity> agentCell, WritableGridModel<AntEntity> antModel, LangtonStatistics statistics) {
+    private void removeAnt(GridCell<AntEntity> agentCell,
+                           WritableGridModel<AntEntity> antModel,
+                           LangtonStatistics statistics) {
         antModel.setEntityToDefault(agentCell.coordinate());
         statistics.adjustCellCounts(-1, 0);
     }
 
-    void moveAnt(GridCell<AntEntity> agentCell,
-                 GridCoordinate newCoordinate,
-                 WritableGridModel<AntEntity> antModel,
-                 Ant ant,
-                 TerrainConstant terrainEntity) {
+    private void moveAnt(GridCell<AntEntity> agentCell,
+                         GridCoordinate newCoordinate,
+                         WritableGridModel<AntEntity> antModel,
+                         Ant ant,
+                         TerrainConstant terrainEntity) {
         antModel.setEntityToDefault(agentCell.coordinate());
         antModel.setEntity(newCoordinate, agentCell.entity());
         ant.changeDirection(computeNewAntDirection(ant.direction(), terrainEntity.ruleIndex()));
     }
 
-    void switchTerrain(GridCoordinate coordinate,
-                       TerrainConstant terrainEntity,
-                       WritableGridModel<TerrainConstant> terrainModel) {
+    private void switchTerrain(GridCoordinate coordinate,
+                               TerrainConstant terrainEntity,
+                               WritableGridModel<TerrainConstant> terrainModel) {
         int newRuleIndex = (terrainEntity.ruleIndex() + 1) % config.movementRules().ruleCount();
         terrainModel.setEntity(coordinate, TerrainConstant.requireByRuleIndex(newRuleIndex));
     }
 
-    TerrainConstant resolveTerrainAndCountVisit(GridCoordinate newCoordinate, LangtonStatistics statistics) {
-        var terrainModel = model.terrainModel();
+    private TerrainConstant resolveTerrainAndCountVisit(GridCoordinate newCoordinate,
+                                                        WritableGridModel<TerrainConstant> terrainModel,
+                                                        LangtonStatistics statistics) {
         TerrainConstant terrainEntity = terrainModel.getEntity(newCoordinate);
-        if (terrainEntity == TerrainConstant.UNVISITED) {
+        if (terrainEntity.isUnvisited()) {
             terrainEntity = TerrainConstant.COLOR_0;
             statistics.adjustCellCounts(0, 1);
         }
         return terrainEntity;
     }
 
-    CompassDirection computeNewAntDirection(CompassDirection currentDirection, int ruleIndex) {
-        LangtonMovementRules.AntTurn turn = config.movementRules().turnForState(ruleIndex);
-
-        CompassDirection newDirection = switch (structure.cellShape()) {
-            case SQUARE -> switch (turn) {
-                case LEFT -> switch (currentDirection) {
-                    case CompassDirection.N -> CompassDirection.W;
-                    case CompassDirection.E -> CompassDirection.N;
-                    case CompassDirection.S -> CompassDirection.E;
-                    case CompassDirection.W -> CompassDirection.S;
-                    default -> null;
-                };
-                case RIGHT -> switch (currentDirection) {
-                    case CompassDirection.N -> CompassDirection.E;
-                    case CompassDirection.E -> CompassDirection.S;
-                    case CompassDirection.S -> CompassDirection.W;
-                    case CompassDirection.W -> CompassDirection.N;
-                    default -> null;
-                };
-                case LEFT2, RIGHT2, U_TURN -> switch (currentDirection) {
-                    case CompassDirection.N -> CompassDirection.S;
-                    case CompassDirection.E -> CompassDirection.W;
-                    case CompassDirection.S -> CompassDirection.N;
-                    case CompassDirection.W -> CompassDirection.E;
-                    default -> null;
-                };
-                case NONE -> switch (currentDirection) {
-                    case CompassDirection.N -> CompassDirection.N;
-                    case CompassDirection.E -> CompassDirection.E;
-                    case CompassDirection.S -> CompassDirection.S;
-                    case CompassDirection.W -> CompassDirection.W;
-                    default -> null;
-                };
-            };
-            case HEXAGON -> switch (turn) {
-                case LEFT -> switch (currentDirection) {
-                    case CompassDirection.N -> CompassDirection.NW;
-                    case CompassDirection.NE -> CompassDirection.N;
-                    case CompassDirection.SE -> CompassDirection.NE;
-                    case CompassDirection.S -> CompassDirection.SE;
-                    case CompassDirection.SW -> CompassDirection.S;
-                    case CompassDirection.NW -> CompassDirection.SW;
-                    default -> null;
-                };
-                case RIGHT -> switch (currentDirection) {
-                    case CompassDirection.N -> CompassDirection.NE;
-                    case CompassDirection.NE -> CompassDirection.SE;
-                    case CompassDirection.SE -> CompassDirection.S;
-                    case CompassDirection.S -> CompassDirection.SW;
-                    case CompassDirection.SW -> CompassDirection.NW;
-                    case CompassDirection.NW -> CompassDirection.N;
-                    default -> null;
-                };
-                case LEFT2 -> switch (currentDirection) {
-                    case CompassDirection.N -> CompassDirection.SW;
-                    case CompassDirection.NE -> CompassDirection.NW;
-                    case CompassDirection.SE -> CompassDirection.N;
-                    case CompassDirection.S -> CompassDirection.NE;
-                    case CompassDirection.SW -> CompassDirection.SE;
-                    case CompassDirection.NW -> CompassDirection.S;
-                    default -> null;
-                };
-                case RIGHT2 -> switch (currentDirection) {
-                    case CompassDirection.N -> CompassDirection.SE;
-                    case CompassDirection.NE -> CompassDirection.S;
-                    case CompassDirection.SE -> CompassDirection.SW;
-                    case CompassDirection.S -> CompassDirection.NW;
-                    case CompassDirection.SW -> CompassDirection.N;
-                    case CompassDirection.NW -> CompassDirection.NE;
-                    default -> null;
-                };
-                case NONE -> currentDirection;
-                case U_TURN -> switch (currentDirection) {
-                    case CompassDirection.N -> CompassDirection.S;
-                    case CompassDirection.NE -> CompassDirection.SW;
-                    case CompassDirection.SE -> CompassDirection.NW;
-                    case CompassDirection.S -> CompassDirection.N;
-                    case CompassDirection.SW -> CompassDirection.NE;
-                    case CompassDirection.NW -> CompassDirection.SE;
-                    default -> null;
-                };
-            };
-            case TRIANGLE -> switch (turn) {
-                case LEFT -> switch (currentDirection) {
-                    case CompassDirection.N -> CompassDirection.NW;
-                    case CompassDirection.NE -> CompassDirection.N;
-                    case CompassDirection.SE -> CompassDirection.NE;
-                    case CompassDirection.S -> CompassDirection.SE;
-                    case CompassDirection.SW -> CompassDirection.S;
-                    case CompassDirection.NW -> CompassDirection.SW;
-                    default -> null;
-                };
-                case RIGHT -> switch (currentDirection) {
-                    case CompassDirection.N -> CompassDirection.NE;
-                    case CompassDirection.NE -> CompassDirection.SE;
-                    case CompassDirection.SE -> CompassDirection.S;
-                    case CompassDirection.S -> CompassDirection.SW;
-                    case CompassDirection.SW -> CompassDirection.NW;
-                    case CompassDirection.NW -> CompassDirection.N;
-                    default -> null;
-                };
-                case U_TURN -> switch (currentDirection) {
-                    case CompassDirection.N -> CompassDirection.S;
-                    case CompassDirection.NE -> CompassDirection.SW;
-                    case CompassDirection.SE -> CompassDirection.NW;
-                    case CompassDirection.S -> CompassDirection.N;
-                    case CompassDirection.SW -> CompassDirection.NE;
-                    case CompassDirection.NW -> CompassDirection.SE;
-                    default -> null;
-                };
-                case LEFT2, RIGHT2, NONE -> null;
-            };
-        };
-
-        if (newDirection == null) {
+    private CompassDirection computeNewAntDirection(CompassDirection currentDirection, int ruleIndex) {
+        int index = directionRing.indexOf(currentDirection);
+        if (index < 0) {
             throw new IllegalStateException("Unable to compute ant direction: currentDirection=" + currentDirection
-                    + ", turn=" + turn + ", cellShape=" + structure.cellShape());
+                    + ", cellShape=" + structure.cellShape());
         }
-        return newDirection;
+        int steps = switch (config.movementRules().turnForState(ruleIndex)) {
+            case LEFT -> -1;
+            case RIGHT -> 1;
+            case LEFT2 -> -2;
+            case RIGHT2 -> 2;
+            case NONE -> 0;
+            case U_TURN -> directionRing.size() / 2;
+        };
+        return directionRing.get(Math.floorMod(index + steps, directionRing.size()));
     }
 
 }

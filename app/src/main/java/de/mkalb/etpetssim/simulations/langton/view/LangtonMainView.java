@@ -4,6 +4,7 @@ import de.mkalb.etpetssim.core.AppLocalization;
 import de.mkalb.etpetssim.core.AppLogger;
 import de.mkalb.etpetssim.engine.GridCoordinate;
 import de.mkalb.etpetssim.engine.model.GridCell;
+import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptor;
 import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorRegistry;
 import de.mkalb.etpetssim.engine.neighborhood.CompassDirection;
 import de.mkalb.etpetssim.simulations.core.shared.CellDisplayMode;
@@ -46,6 +47,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 
+/**
+ * Main view of Langton's Ant.
+ */
 public final class LangtonMainView
         extends AbstractDefaultMainView<
         LangtonEntity,
@@ -119,22 +123,7 @@ public final class LangtonMainView
                     throw new IllegalArgumentException("cellDisplayMode must be SHAPE or SHAPE_BORDERED, but was: "
                             + config.cellDisplayMode());
         };
-        cellAntDrawer = (descriptor, painter, cell, _) -> {
-            if ((cellEmojiFont != null)
-                    && (cellDimension.innerRadius() > 5.0d)
-                    && (descriptor.borderColor() != null)
-                    && (cell.entity() instanceof Ant ant)) {
-                painter.drawCellInnerCircle(cell.coordinate(), descriptor.color(), descriptor.borderColor(), 1.0d,
-                        StrokeType.INSIDE);
-                painter.drawCenteredTextInCell(cell.coordinate(), ant.direction().arrow(), descriptor.borderColor(),
-                        cellEmojiFont);
-            } else if (cellDimension.innerRadius() > 2.0d) {
-                painter.drawCellInnerCircle(cell.coordinate(), descriptor.color(), null, NO_STROKE_LINE_WIDTH,
-                        StrokeType.INSIDE);
-            } else {
-                painter.drawCell(cell.coordinate(), descriptor.color(), null, NO_STROKE_LINE_WIDTH);
-            }
-        };
+        cellAntDrawer = (descriptor, painter, cell, _) -> drawAnt(descriptor, painter, cell, cellDimension);
     }
 
     @Override
@@ -167,29 +156,24 @@ public final class LangtonMainView
         var antModel = currentGridModel.antModel();
 
         if ((lastDrawnStepCount + 1) < stepCount) {
-            // draw terrain
             terrainModel.nonDefaultCells()
                     .forEach(terrainCell -> cellTerrainDrawer.draw(
                             entityDescriptorRegistry.requireByDescriptorId(terrainCell.descriptorId()),
                             painters.base(), terrainCell, stepCount));
-            // draw ant
             antModel.nonDefaultCells()
                     .forEach(antCell -> cellAntDrawer.draw(
                             entityDescriptorRegistry.requireByDescriptorId(antCell.descriptorId()),
                             painters.dynamic(), antCell, stepCount));
         } else {
-            antModel.nonDefaultCells()
-                    .forEach(antCell -> {
-                        GridCell<TerrainConstant> terrainCell = terrainModel.getGridCell(antCell.coordinate());
-                        // draw terrain
-                        cellTerrainDrawer.draw(
-                                entityDescriptorRegistry.requireByDescriptorId(terrainCell.descriptorId()),
-                                painters.base(), terrainCell, stepCount);
-                        // draw ant
-                        cellAntDrawer.draw(
-                                entityDescriptorRegistry.requireByDescriptorId(antCell.descriptorId()),
-                                painters.dynamic(), antCell, stepCount);
-                    });
+            for (GridCell<AntEntity> antCell : antModel.nonDefaultCells()) {
+                GridCell<TerrainConstant> terrainCell = terrainModel.getGridCell(antCell.coordinate());
+                cellTerrainDrawer.draw(
+                        entityDescriptorRegistry.requireByDescriptorId(terrainCell.descriptorId()),
+                        painters.base(), terrainCell, stepCount);
+                cellAntDrawer.draw(
+                        entityDescriptorRegistry.requireByDescriptorId(antCell.descriptorId()),
+                        painters.dynamic(), antCell, stepCount);
+            }
         }
     }
 
@@ -230,11 +214,8 @@ public final class LangtonMainView
                 AppLocalization.getText(LANGTON_TOOLBAR_ADD_ANT_DIRECTION_TOOLTIP),
                 FXStyleClasses.SIMULATION_EDIT_TOOLBAR_OPTION_LABEL).label();
 
-        ChangeListener<@Nullable CompassDirection> comboSelectionListener = (_, oldValue, newValue) -> {
-            if (oldValue != newValue) {
-                editToolBarViewModel.setSelectedDirection(newValue);
-            }
-        };
+        ChangeListener<@Nullable CompassDirection> comboSelectionListener =
+                (_, _, newValue) -> editToolBarViewModel.setSelectedDirection(newValue);
         ChangeListener<@Nullable CompassDirection> viewModelSelectionListener = (_, _, newValue) -> {
             if (directionComboBox.getValue() != newValue) {
                 if (newValue == null) {
@@ -247,6 +228,10 @@ public final class LangtonMainView
         var selectedDirectionProperty = editToolBarViewModel.selectedDirectionProperty();
         directionComboBox.valueProperty().addListener(comboSelectionListener);
         selectedDirectionProperty.addListener(viewModelSelectionListener);
+        registerEditToolBarCleanup(() -> {
+            directionComboBox.valueProperty().removeListener(comboSelectionListener);
+            selectedDirectionProperty.removeListener(viewModelSelectionListener);
+        });
 
         if (selectedToolId != null) {
             var enabledBinding = Bindings.createBooleanBinding(
@@ -267,13 +252,6 @@ public final class LangtonMainView
                 directionComboBox.visibleProperty().unbind();
                 directionComboBox.managedProperty().unbind();
                 enabledBinding.dispose();
-                directionComboBox.valueProperty().removeListener(comboSelectionListener);
-                selectedDirectionProperty.removeListener(viewModelSelectionListener);
-            });
-        } else {
-            registerEditToolBarCleanup(() -> {
-                directionComboBox.valueProperty().removeListener(comboSelectionListener);
-                selectedDirectionProperty.removeListener(viewModelSelectionListener);
             });
         }
 
@@ -281,6 +259,26 @@ public final class LangtonMainView
         optionPanel.getStyleClass().add(FXStyleClasses.SIMULATION_EDIT_TOOLBAR_OPTION_PANEL);
         optionPanel.setSpacing(EDIT_OPTION_BOX_SPACING);
         return optionPanel;
+    }
+
+    private void drawAnt(GridEntityDescriptor descriptor,
+                         FXGridCanvasPainter painter,
+                         GridCell<AntEntity> cell,
+                         CellDimension cellDimension) {
+        if ((cellEmojiFont != null)
+                && (cellDimension.innerRadius() > 5.0d)
+                && (descriptor.borderColor() != null)
+                && (cell.entity() instanceof Ant ant)) {
+            painter.drawCellInnerCircle(cell.coordinate(), descriptor.color(), descriptor.borderColor(), 1.0d,
+                    StrokeType.INSIDE);
+            painter.drawCenteredTextInCell(cell.coordinate(), ant.direction().arrow(), descriptor.borderColor(),
+                    cellEmojiFont);
+        } else if (cellDimension.innerRadius() > 2.0d) {
+            painter.drawCellInnerCircle(cell.coordinate(), descriptor.color(), null, NO_STROKE_LINE_WIDTH,
+                    StrokeType.INSIDE);
+        } else {
+            painter.drawCell(cell.coordinate(), descriptor.color(), null, NO_STROKE_LINE_WIDTH);
+        }
     }
 
     private ListCell<CompassDirection> createDirectionCell() {

@@ -1,7 +1,6 @@
 package de.mkalb.etpetssim.simulations.langton.model.entity;
 
 import de.mkalb.etpetssim.engine.model.entity.ConstantGridEntityDescriptorProvider;
-import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorRegistry;
 import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorSpec;
 import javafx.scene.paint.Color;
 
@@ -18,10 +17,6 @@ import java.util.Map;
  *
  * <p>Every constant carries a {@link GridEntityDescriptorSpec}
  * for descriptor-registry registration and rendering.
- *
- * @see LangtonEntity
- * @see ConstantGridEntityDescriptorProvider
- * @see GridEntityDescriptorRegistry
  */
 public enum TerrainConstant implements LangtonEntity, ConstantGridEntityDescriptorProvider {
 
@@ -43,8 +38,7 @@ public enum TerrainConstant implements LangtonEntity, ConstantGridEntityDescript
     COLOR_14(14, Color.DEEPPINK),
     COLOR_15(15, Color.GOLD);
 
-    private static final Map<Integer, TerrainConstant> BY_RULE_INDEX = HashMap
-            .newHashMap(TerrainConstant.values().length);
+    private static final Map<Integer, TerrainConstant> BY_RULE_INDEX = HashMap.newHashMap(values().length);
 
     static {
         for (TerrainConstant constant : values()) {
@@ -91,7 +85,7 @@ public enum TerrainConstant implements LangtonEntity, ConstantGridEntityDescript
     /**
      * Returns the rule index of this terrain constant.
      *
-     * <p>The value {@code -1} is used for {@link #UNVISITED}; values {@code 0}–{@code 15}
+     * <p>The value {@code -1} is used for {@link #UNVISITED}; values {@code 0} to {@code 15}
      * correspond to the color states used in Langton's Ant rule sets.
      *
      * @return the rule index

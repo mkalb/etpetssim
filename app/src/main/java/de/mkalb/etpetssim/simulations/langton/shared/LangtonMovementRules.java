@@ -52,31 +52,17 @@ public record LangtonMovementRules(
         String preparedString = ruleString.trim().toUpperCase(Locale.ROOT);
         List<AntTurn> result = new ArrayList<>();
         for (int i = 0; i < preparedString.length(); ) {
-            char c = preparedString.charAt(i);
-            switch (c) {
-                case 'L' -> {
-                    if (((i + 1) < preparedString.length()) && (preparedString.charAt(i + 1) == '2')) {
-                        result.add(AntTurn.LEFT2);
-                        i += 2;
-                    } else if (((i + 1) < preparedString.length()) && (preparedString.charAt(i + 1) == '1')) {
-                        result.add(AntTurn.LEFT);
-                        i += 2;
+            char symbol = preparedString.charAt(i);
+            switch (symbol) {
+                case 'L', 'R' -> {
+                    char next = ((i + 1) < preparedString.length()) ? preparedString.charAt(i + 1) : ' ';
+                    boolean twoSteps = next == '2';
+                    if (symbol == 'L') {
+                        result.add(twoSteps ? AntTurn.LEFT2 : AntTurn.LEFT);
                     } else {
-                        result.add(AntTurn.LEFT);
-                        i++;
+                        result.add(twoSteps ? AntTurn.RIGHT2 : AntTurn.RIGHT);
                     }
-                }
-                case 'R' -> {
-                    if (((i + 1) < preparedString.length()) && (preparedString.charAt(i + 1) == '2')) {
-                        result.add(AntTurn.RIGHT2);
-                        i += 2;
-                    } else if (((i + 1) < preparedString.length()) && (preparedString.charAt(i + 1) == '1')) {
-                        result.add(AntTurn.RIGHT);
-                        i += 2;
-                    } else {
-                        result.add(AntTurn.RIGHT);
-                        i++;
-                    }
+                    i += (twoSteps || (next == '1')) ? 2 : 1;
                 }
                 case 'N', 'C', 'F' -> {
                     result.add(AntTurn.NONE);
@@ -86,8 +72,8 @@ public record LangtonMovementRules(
                     result.add(AntTurn.U_TURN);
                     i++;
                 }
-                default -> throw new IllegalArgumentException("Unable to parse ruleString: unknown character '" + c
-                        + "', ruleString=" + ruleString);
+                default -> throw new IllegalArgumentException("Unable to parse ruleString: unknown character '"
+                        + symbol + "', ruleString=" + ruleString);
             }
         }
         return new LangtonMovementRules(result);
