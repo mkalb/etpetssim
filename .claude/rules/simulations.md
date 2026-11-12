@@ -51,6 +51,12 @@ Keep the cross-cutting files in sync, for example:
 Lists of simulations (e.g., the README table and gallery and the simulation dropdowns of the issue forms in
 `.github/ISSUE_TEMPLATE`) follow the declaration order of `SimulationType`.
 
+Give every public type of a simulation a type Javadoc whose first sentence names its role and the simulation by its
+title (`simulation.<name>.title`), without describing its content in detail (e.g., "Main view of Wa-Tor.",
+"Simulation manager of the Simulation Lab."); further sentences are for contracts, such as the condition of a
+termination condition. Javadoc names a simulation by its title; compound adjectives and attributive short forms
+(e.g., "Conway-specific", "Rebounding edit action") may stay.
+
 ## MVVM Dependencies
 
 ### Model
@@ -128,8 +134,17 @@ Check `simulations.core` before adding simulation-local infrastructure. Relevant
 - View helpers: `CellDrawer`, `CoordinateDrawer`, `DrawCallThrottler`, `DefaultControlView`
 - ViewModel/model helpers: `SeedProperty`, `SimulationConfig`
 
+Use the engine helpers instead of own logic: `EdgeBehaviorAction.isWithinGrid()` instead of comparisons with `VALID`
+and `WRAPPED`, `CellNeighborhoods.directionRing(..)` for the direction ring of a cell shape and neighborhood mode,
+`GridStructure.coordinatesList()` for all coordinates in row-major order, and `Collections.shuffle(list, random)`
+without cancellation checks instead of an own shuffle. A simulation whose directions do not follow the neighborhood
+mode may use the ring constants of `CellNeighborhoods` directly (e.g., Langton's Ant turns on the hexagon ring also
+for triangle cells).
+
 Use prefix `Abstract` only for classes that must be abstract; use prefix `Base` for complete base implementations that
-are meant to be extended (e.g., `BaseTimedSimulationStatistics`).
+are meant to be extended (e.g., `BaseTimedSimulationStatistics`). These classes are not `sealed`: their subclasses lie
+in the simulation packages, and a `permits` clause would break the package isolation; `sealed` is for closed families
+inside one simulation (see "Entity Design").
 
 ## JavaFX UI Patterns
 
@@ -152,6 +167,10 @@ are meant to be extended (e.g., `BaseTimedSimulationStatistics`).
 - Expose ViewModel state with `xProperty()` accessors; also provide `getX()`/`setX(...)` for plain JavaFX properties.
 - Keep property field types compatible with public accessor return types.
 - Do not mutate a bound property directly; update its source.
+- Offer a fixed catalog of choices in an edit toolbar ViewModel (e.g., the constants of an enum) as an
+  `InputChoiceProperty` that selects the first choice at its field declaration, without an explicit constructor, and
+  show it with `FXComponentFactory.createLabeledChoiceComboBox(..)`. Use an observable list with a `@Nullable`
+  selection only for choices that depend on the config (e.g., the patterns of `ConwayEditToolBarViewModel`).
 
 ### Threading
 
@@ -215,7 +234,8 @@ Use `CellDrawer` from `simulations.core.view`:
 - Order `*Config` components in four groups, each introduced by a line comment: `// Structure` (cell shape, edge
   behavior, width, height), `// Layout` (cell edge length, display mode, other rendering options),
   `// Initialization` (`seed` first, then the initial values), and `// Rules` (`neighborhoodMode` first, then the
-  rule parameters).
+  rule parameters). Config ViewModels and config views introduce the sections of their properties and controls with
+  the same four line comments, without sub-sections such as `// Rules - NeighborhoodMode`.
 - In `isValid()`, check in this order: `isBaseValid()`, `hasAllowedCoreSelections(..)`, fixed values
   (`hasExpectedSelection(..)`), selection lists (`isAllowedSelection(..)`), the private `hasValidRanges()` and
   `hasValidCombinedRanges()`, then rule objects (e.g., `hasValidTransitionRules()`).

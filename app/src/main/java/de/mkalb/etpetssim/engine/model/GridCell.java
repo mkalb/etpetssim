@@ -16,6 +16,5 @@ import de.mkalb.etpetssim.engine.model.entity.GridEntity;
  * @param coordinate the grid coordinate of this cell
  * @param entity     the entity stored at {@code coordinate}
  */
-public record GridCell<ENT extends GridEntity>(GridCoordinate coordinate, ENT entity)
-        implements GridCellView<ENT> {
+public record GridCell<ENT extends GridEntity>(GridCoordinate coordinate, ENT entity) implements GridCellView<ENT> {
 }

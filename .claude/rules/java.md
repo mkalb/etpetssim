@@ -13,6 +13,9 @@ Rules for all `.java` files; repository-wide instructions still apply.
 - Format code as `.editorconfig` and the IntelliJ defaults specify (e.g., 4 spaces, a continuation indent of 8, at
   most 120 characters per line, and chained method calls without alignment). End each file with exactly one newline,
   and put one blank line before the closing brace of a non-empty type body; the formatter does not add or remove it.
+  Put `extends` and `implements` on the line of the type declaration when the line fits within 120 characters;
+  otherwise break before them with continuation indent. A record whose components are wrapped puts `implements` on
+  its own line after the closing parenthesis (e.g., the `*Config` records).
 - Use single-type imports, also for static members; do not use on-demand imports (`.*`). Import a nested type with
   a regular import, not with `import static`.
 - Group imports as IntelliJ does, with one blank line between the groups: all other packages, `javax.*`, `java.*`,
@@ -312,7 +315,10 @@ Use `de.mkalb.etpetssim.core.AppLogger` for all application logging.
 - Use `Supplier<String>` overloads (`debug(() -> ...)`, `info(() -> ...)`) when message construction is non-trivial.
 - Use `*f` formatting overloads (`debugf`, `infof`, `warnf`, `errorf`) for parameterized messages instead of manual
   `String.format(...)`.
-- Prefix log messages with a short, stable component tag when helpful (e.g., `"SimulationTimer: ..."`).
+- Prefix every log message with the class name or a fixed component name and a colon (e.g., `"AppArgs: ..."`, or
+  `LOG_COMPONENT` as `"%s: ..."` with `"MainView"` in the shared main views), and write it without a final period.
+  Put values after a colon as `name: value` or `name=value` pairs. Start a message about ignored input with
+  `Ignoring ...` and one about a failed operation with `Failed to ...`; a failed lookup may use `... not found: ...`.
 - Do not log inside tight rendering or simulation step loops at `info` or higher.
 - Log exceptions via `AppLogger.error(throwable, message)`; do not concatenate stack traces into the message manually.
 - Commented-out `AppLogger` calls may be kept as diagnostic traces (e.g., in step logic); do not remove them as dead
