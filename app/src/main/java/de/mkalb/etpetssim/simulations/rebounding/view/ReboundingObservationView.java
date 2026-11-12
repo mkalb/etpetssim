@@ -12,7 +12,7 @@ import javafx.scene.layout.Region;
 import org.jspecify.annotations.Nullable;
 
 /**
- * Observation view of Rebounding.
+ * Observation view of Rebounding Entities.
  */
 public final class ReboundingObservationView
         extends AbstractObservationView<

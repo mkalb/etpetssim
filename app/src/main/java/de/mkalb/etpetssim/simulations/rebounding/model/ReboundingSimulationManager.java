@@ -28,7 +28,7 @@ import java.util.TreeSet;
 import static de.mkalb.etpetssim.engine.support.WorkCheckpoints.isCancellationCheckpoint;
 
 /**
- * Simulation manager of Rebounding.
+ * Simulation manager of Rebounding Entities.
  */
 public final class ReboundingSimulationManager
         extends AbstractTimedSimulationManager<ReboundingEntity, WritableGridModel<ReboundingEntity>, ReboundingConfig,

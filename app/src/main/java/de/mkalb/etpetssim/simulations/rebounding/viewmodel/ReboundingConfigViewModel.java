@@ -38,7 +38,7 @@ import static de.mkalb.etpetssim.simulations.rebounding.model.ReboundingConstrai
 import static de.mkalb.etpetssim.simulations.rebounding.model.ReboundingConstraints.VERTICAL_WALLS_STEP;
 
 /**
- * Config ViewModel of Rebounding.
+ * Config ViewModel of Rebounding Entities.
  */
 public final class ReboundingConfigViewModel extends AbstractConfigViewModel<ReboundingConfig> {
 

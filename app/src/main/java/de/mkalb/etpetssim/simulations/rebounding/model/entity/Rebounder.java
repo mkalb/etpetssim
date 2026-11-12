@@ -5,7 +5,7 @@ import de.mkalb.etpetssim.engine.neighborhood.CompassDirection;
 import java.util.Locale;
 
 /**
- * Rebounder of Rebounding, an agent that moves in its direction and rebounds from boundaries and walls.
+ * Rebounder of Rebounding Entities, an agent that moves in its direction and rebounds from boundaries and walls.
  */
 public final class Rebounder implements ReboundingEntity {
 

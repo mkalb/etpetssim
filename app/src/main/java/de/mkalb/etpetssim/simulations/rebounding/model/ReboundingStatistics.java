@@ -8,7 +8,7 @@ import de.mkalb.etpetssim.simulations.core.model.StatisticsMetric;
 import java.util.List;
 
 /**
- * Statistics of Rebounding with the wall and rebounder cell counts.
+ * Statistics of Rebounding Entities with the wall and rebounder cell counts.
  */
 public final class ReboundingStatistics extends BaseTimedSimulationStatistics {
 

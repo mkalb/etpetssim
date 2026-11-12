@@ -10,7 +10,7 @@ import de.mkalb.etpetssim.simulations.rebounding.shared.ReboundingUserActionCont
 import org.jspecify.annotations.Nullable;
 
 /**
- * User action of Rebounding that adds or removes walls and rebounders.
+ * User action of Rebounding Entities that adds or removes walls and rebounders.
  */
 public final class ReboundingUserAction
         implements SimulationUserAction<

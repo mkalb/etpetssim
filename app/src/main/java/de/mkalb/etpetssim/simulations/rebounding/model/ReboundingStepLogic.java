@@ -12,7 +12,7 @@ import de.mkalb.etpetssim.simulations.rebounding.model.entity.Rebounder;
 import de.mkalb.etpetssim.simulations.rebounding.model.entity.ReboundingEntity;
 
 /**
- * Agent step logic of Rebounding for the rebounders.
+ * Agent step logic of Rebounding Entities for the rebounders.
  */
 public final class ReboundingStepLogic implements AgentStepLogic<ReboundingEntity, ReboundingStatistics> {
 

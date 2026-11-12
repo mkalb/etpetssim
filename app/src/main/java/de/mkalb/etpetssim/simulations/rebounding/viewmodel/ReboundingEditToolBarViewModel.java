@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * Edit tool bar ViewModel of Rebounding with the direction of new rebounders.
+ * Edit tool bar ViewModel of Rebounding Entities with the direction of new rebounders.
  */
 public final class ReboundingEditToolBarViewModel {
 

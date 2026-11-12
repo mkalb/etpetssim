@@ -87,7 +87,7 @@ public final class ConwayRuleProperty {
     }
 
     /**
-     * Returns the label property (always empty for Conway; present for API symmetry with Langton).
+     * Returns the label property (always empty for Conway's Game of Life; present for API symmetry with Langton's Ant).
      *
      * @return the label property
      */

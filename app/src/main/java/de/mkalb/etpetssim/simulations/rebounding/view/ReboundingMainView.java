@@ -41,7 +41,7 @@ import java.util.List;
 import java.util.function.Function;
 
 /**
- * Main view of Rebounding.
+ * Main view of Rebounding Entities.
  */
 public final class ReboundingMainView
         extends AbstractDefaultMainView<

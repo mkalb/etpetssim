@@ -3,7 +3,7 @@ package de.mkalb.etpetssim.simulations.rebounding.model.entity;
 import de.mkalb.etpetssim.engine.model.entity.GridEntity;
 
 /**
- * Common contract for entities in the Rebounding simulation.
+ * Common contract for entities in the Rebounding Entities simulation.
  */
 public sealed interface ReboundingEntity extends GridEntity
         permits TerrainConstant, Rebounder {

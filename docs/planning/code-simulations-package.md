@@ -2105,8 +2105,9 @@ Decisions of this plan:
   closed families inside one simulation, such as `CreatureBase` and `ResourceBase` (C5, C6 to C8, D).
 - Every public type of a simulation has a short type Javadoc of one sentence in the forms of Wa-Tor, without a
   detailed description of its content (maintainer; D1, D).
-- Javadoc names a simulation by its title (`simulation.<name>.title`), e.g., "Sugarscape" and "Forest-fire model"
-  (maintainer; D4, D7, D8, D).
+- Javadoc names a simulation by its title (`simulation.<name>.title`), e.g., "Sugarscape", "Forest-fire model", and
+  "Rebounding Entities"; compound adjectives and attributive short forms such as "Conway-specific", "Conway-style",
+  and "Rebounding edit action" stay. The Javadoc of D1 to D6 was aligned after D8 (maintainer; D4, D7, D8, D).
 - `adjust...Cells(..)` and `adjustCellCounts(..)` of the statistics classes stay public, also with callers only in
   the own `model` package (maintainer; D1, D); `increment...` and `decrement...` methods with callers only in that
   package are package-private (D1, D2, D).

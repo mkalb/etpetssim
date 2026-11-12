@@ -10,7 +10,7 @@ import de.mkalb.etpetssim.ui.FXStyleClasses;
 import javafx.scene.layout.Region;
 
 /**
- * Config view of Rebounding.
+ * Config view of Rebounding Entities.
  */
 public final class ReboundingConfigView extends AbstractConfigView<ReboundingConfig, ReboundingConfigViewModel> {
 
