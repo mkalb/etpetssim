@@ -1,12 +1,19 @@
 package de.mkalb.etpetssim.simulations.lab.viewmodel;
 
+import de.mkalb.etpetssim.engine.CellShape;
 import de.mkalb.etpetssim.engine.GridCoordinate;
+import de.mkalb.etpetssim.engine.GridEdgeBehavior;
+import de.mkalb.etpetssim.engine.GridSize;
+import de.mkalb.etpetssim.engine.GridStructure;
+import de.mkalb.etpetssim.engine.GridTopology;
 import de.mkalb.etpetssim.engine.model.GridCell;
+import de.mkalb.etpetssim.engine.model.SparseGridModel;
 import de.mkalb.etpetssim.engine.neighborhood.CellConnectionType;
 import de.mkalb.etpetssim.engine.neighborhood.CellNeighborWithEdgeBehavior;
 import de.mkalb.etpetssim.engine.neighborhood.CompassDirection;
 import de.mkalb.etpetssim.engine.neighborhood.EdgeBehaviorAction;
 import de.mkalb.etpetssim.engine.neighborhood.EdgeBehaviorResult;
+import de.mkalb.etpetssim.engine.neighborhood.NeighborhoodMode;
 import de.mkalb.etpetssim.engine.neighborhood.RadiusRingCell;
 import de.mkalb.etpetssim.simulations.lab.model.entity.LabEntity;
 import org.junit.jupiter.api.Test;
@@ -23,6 +30,7 @@ import java.util.TreeSet;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 final class LabNeighborhoodHighlightsTest {
 
@@ -94,6 +102,33 @@ final class LabNeighborhoodHighlightsTest {
                 () -> assertThrows(UnsupportedOperationException.class,
                         () -> highlights.neighborEdgeBehaviorResults().add(new EdgeBehaviorResult(west, west,
                                 EdgeBehaviorAction.VALID)))
+        );
+    }
+
+    @Test
+    void testFrom() {
+        GridStructure structure = new GridStructure(new GridTopology(CellShape.SQUARE, GridEdgeBehavior.BLOCK_XY),
+                new GridSize(8, 8));
+        var model = new SparseGridModel<>(structure, LabEntity.NORMAL);
+        GridCoordinate center = new GridCoordinate(0, 0);
+        GridCoordinate east = new GridCoordinate(1, 0);
+        GridCoordinate south = new GridCoordinate(0, 1);
+        model.setEntity(east, LabEntity.HIGHLIGHTED);
+
+        LabNeighborhoodHighlights highlights = LabNeighborhoodHighlights.from(center, NeighborhoodMode.EDGES_ONLY,
+                structure, model);
+
+        assertAll(
+                () -> assertEquals(Set.of(center), highlights.ringCellsByRadius().get(0).keySet()),
+                () -> assertEquals(LabNeighborhoodHighlights.RING_MAX_RADIUS,
+                        highlights.ringCellsByRadius().lastKey()),
+                () -> assertEquals(LabEntity.HIGHLIGHTED,
+                        highlights.ringCellsByRadius().get(1).get(east).cell().entity()),
+                () -> assertTrue(highlights.validNeighborCoordinates().stream().allMatch(structure::isCoordinateValid)),
+                () -> assertTrue(highlights.validNeighborCoordinates().containsAll(List.of(east, south,
+                        new GridCoordinate(2, 0), new GridCoordinate(1, 1)))),
+                () -> assertEquals(Set.of(east, south), highlights.validNeighborsWithEdgeBehavior().keySet()),
+                () -> assertEquals(4, highlights.neighborEdgeBehaviorResults().size())
         );
     }
 
