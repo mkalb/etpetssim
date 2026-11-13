@@ -40,8 +40,7 @@ public final class SnakeFactory {
         var configViewModel = new SnakeConfigViewModel(readOnlySimulationState);
         var editToolBarViewModel = new SnakeEditToolBarViewModel();
         var controlViewModel = ControlViewModel.createWithMinStepDuration(readOnlySimulationState);
-        var observationViewModel =
-                new ObservationViewModel<SnakeEntity, GridCell<SnakeEntity>, SnakeStatistics>();
+        var observationViewModel = new ObservationViewModel<SnakeEntity, GridCell<SnakeEntity>, SnakeStatistics>();
         var viewModel =
                 new MainViewModel<>(simulationState, configViewModel, controlViewModel, observationViewModel,
                         SnakeSimulationManager::new, ReadableGridModel::getGridCell, new SnakeUserAction());

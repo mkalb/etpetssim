@@ -26,8 +26,7 @@ import static de.mkalb.etpetssim.engine.support.WorkCheckpoints.isCancellationCh
  * Simulation manager of Wa-Tor.
  */
 public final class WatorSimulationManager
-        extends AbstractSimulationManager<WatorEntity, WritableGridModel<WatorEntity>, WatorConfig,
-        WatorStatistics> {
+        extends AbstractSimulationManager<WatorEntity, WritableGridModel<WatorEntity>, WatorConfig, WatorStatistics> {
 
     private final GridStructure structure;
     private final WatorStatistics statistics;

@@ -127,8 +127,7 @@ public abstract class AbstractMainView<
     private boolean skipOverlayActive;
 
     protected AbstractMainView(MainViewModel<ENT, GC, GM, CON, STA, SM, CTX> viewModel,
-                               AbstractConfigView<CON, ?> configView, ControlView controlView,
-                               OV observationView,
+                               AbstractConfigView<CON, ?> configView, ControlView controlView, OV observationView,
                                GridEntityDescriptorRegistry entityDescriptorRegistry) {
         this.viewModel = viewModel;
         this.configView = configView;

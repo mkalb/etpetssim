@@ -32,8 +32,7 @@ import static de.mkalb.etpetssim.engine.support.WorkCheckpoints.isCancellationCh
  * Simulation manager of Snake.
  */
 public final class SnakeSimulationManager
-        extends AbstractSimulationManager<SnakeEntity, WritableGridModel<SnakeEntity>, SnakeConfig,
-        SnakeStatistics> {
+        extends AbstractSimulationManager<SnakeEntity, WritableGridModel<SnakeEntity>, SnakeConfig, SnakeStatistics> {
 
     private static final Comparator<GridCell<SnakeEntity>> AGENT_ORDERING_STRATEGY =
             Comparator.comparingInt(cell -> {

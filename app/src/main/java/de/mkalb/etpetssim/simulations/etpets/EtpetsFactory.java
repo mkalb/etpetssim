@@ -39,8 +39,7 @@ public final class EtpetsFactory {
         var configViewModel = new EtpetsConfigViewModel(readOnlySimulationState);
         var editToolBarViewModel = new EtpetsEditToolBarViewModel();
         var controlViewModel = new ControlViewModel(readOnlySimulationState);
-        var observationViewModel =
-                new ObservationViewModel<EtpetsEntity, EtpetsCell, EtpetsStatistics>();
+        var observationViewModel = new ObservationViewModel<EtpetsEntity, EtpetsCell, EtpetsStatistics>();
         var viewModel =
                 new MainViewModel<>(simulationState, configViewModel, controlViewModel, observationViewModel,
                         EtpetsSimulationManager::new, EtpetsCell::from, new EtpetsUserAction());

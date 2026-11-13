@@ -41,8 +41,7 @@ public abstract class AbstractSimulationManager<
      * @param config  the immutable simulation configuration
      * @param metrics metric descriptors sampled after each executed step
      */
-    protected AbstractSimulationManager(CON config,
-                                        List<StatisticsMetric<STA>> metrics) {
+    protected AbstractSimulationManager(CON config, List<StatisticsMetric<STA>> metrics) {
         this.config = config;
         this.metrics = List.copyOf(metrics);
         statisticsHistory = new StatisticsHistory();

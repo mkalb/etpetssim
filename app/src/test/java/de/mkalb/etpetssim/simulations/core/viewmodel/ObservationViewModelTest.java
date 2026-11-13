@@ -42,8 +42,7 @@ final class ObservationViewModelTest {
     void testGetStatisticsReturnsEmptyInitially() {
         var viewModel = FXTestSupport.supplyAndWaitNonNull(ObservationViewModelTest::createViewModel);
 
-        FXTestSupport.runAndWait(
-                () -> assertEquals(Optional.empty(), viewModel.getStatistics()));
+        FXTestSupport.runAndWait(() -> assertEquals(Optional.empty(), viewModel.getStatistics()));
     }
 
     @Test
@@ -62,8 +61,7 @@ final class ObservationViewModelTest {
     void testGetStatisticsExtremaReturnsEmptyInitially() {
         var viewModel = FXTestSupport.supplyAndWaitNonNull(ObservationViewModelTest::createViewModel);
 
-        FXTestSupport.runAndWait(
-                () -> assertEquals(StatisticsExtrema.empty(), viewModel.getStatisticsExtrema()));
+        FXTestSupport.runAndWait(() -> assertEquals(StatisticsExtrema.empty(), viewModel.getStatisticsExtrema()));
     }
 
     @Test
@@ -96,8 +94,7 @@ final class ObservationViewModelTest {
     void testStatisticsHistoryPropertyInitialValueIsEmpty() {
         var viewModel = FXTestSupport.supplyAndWaitNonNull(ObservationViewModelTest::createViewModel);
 
-        FXTestSupport.runAndWait(
-                () -> assertEquals(List.of(), viewModel.statisticsHistoryProperty().get()));
+        FXTestSupport.runAndWait(() -> assertEquals(List.of(), viewModel.statisticsHistoryProperty().get()));
     }
 
     @Test

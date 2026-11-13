@@ -37,8 +37,7 @@ public final class ForestFactory {
         // ViewModel
         var configViewModel = new ForestConfigViewModel(readOnlySimulationState);
         var controlViewModel = new ControlViewModel(readOnlySimulationState);
-        var observationViewModel =
-                new ObservationViewModel<ForestEntity, GridCell<ForestEntity>, ForestStatistics>();
+        var observationViewModel = new ObservationViewModel<ForestEntity, GridCell<ForestEntity>, ForestStatistics>();
         var viewModel =
                 new MainViewModel<>(simulationState, configViewModel, controlViewModel, observationViewModel,
                         ForestSimulationManager::new, ReadableGridModel::getGridCell, new ForestUserAction());

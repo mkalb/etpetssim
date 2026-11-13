@@ -18,8 +18,7 @@ import de.mkalb.etpetssim.simulations.langton.model.entity.TerrainConstant;
  * Simulation manager of Langton's Ant.
  */
 public final class LangtonSimulationManager
-        extends AbstractSimulationManager<LangtonEntity, LangtonGridModel, LangtonConfig,
-        LangtonStatistics> {
+        extends AbstractSimulationManager<LangtonEntity, LangtonGridModel, LangtonConfig, LangtonStatistics> {
 
     private final GridStructure structure;
     private final LangtonStatistics statistics;

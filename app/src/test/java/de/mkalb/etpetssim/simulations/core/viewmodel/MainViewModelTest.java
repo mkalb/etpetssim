@@ -82,8 +82,7 @@ final class MainViewModelTest {
         var configViewModel = new ConwayConfigViewModel(simulationState);
         var controlViewModel = new ControlViewModel(simulationState);
         controlViewModel.startModeProperty().setValue(SimulationStartMode.START_PAUSED);
-        var observationViewModel =
-                new ObservationViewModel<ConwayEntity, GridCell<ConwayEntity>, ConwayStatistics>();
+        var observationViewModel = new ObservationViewModel<ConwayEntity, GridCell<ConwayEntity>, ConwayStatistics>();
         return new Fixture(
                 new MainViewModel<>(
                         simulationState,
