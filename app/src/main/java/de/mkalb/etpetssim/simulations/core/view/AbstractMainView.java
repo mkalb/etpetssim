@@ -122,7 +122,7 @@ public abstract class AbstractMainView<
             DRAW_THROTTLER_MAX_SKIPS);
     protected @Nullable Font cellFont;
     protected @Nullable Font cellEmojiFont;
-    private @Nullable CanvasPainters painters;
+    private @Nullable CanvasPainters canvasPainters;
     private @Nullable ChangeListener<SimulationNotificationType> notificationListener;
     private @Nullable ChangeListener<@Nullable GC> selectedGridCellListener;
     private @Nullable Region mainRegion;
@@ -229,7 +229,7 @@ public abstract class AbstractMainView<
         }
         observationView.shutdownObservation();
         SimulationTerminationHandle terminationHandle = viewModel.shutdownSimulation();
-        painters = null;
+        canvasPainters = null;
         cellFont = null;
         cellEmojiFont = null;
         clearNotification();
@@ -252,12 +252,11 @@ public abstract class AbstractMainView<
      * <p>The returned node is managed by the common edit-toolbar lifecycle and will be made visible/managed only while
      * edit mode is active. Implementations should keep descriptor metadata and JavaFX node creation separate.
      *
-     * @param selectedToolId property of the selected stable tool id used for enablement bindings, or {@code null}
-     *                       when tool selection is not supported
+     * @param selectedToolId property of the selected stable tool id used for enablement bindings
      * @return option-panel node, or {@code null} when the simulation has no option controls
      */
     @SuppressWarnings("unused")
-    protected @Nullable Node createEditToolBarOptionPanel(@Nullable ObjectProperty<String> selectedToolId) {
+    protected @Nullable Node createEditToolBarOptionPanel(ObjectProperty<String> selectedToolId) {
         return null;
     }
 
@@ -281,7 +280,7 @@ public abstract class AbstractMainView<
      * shutdown
      */
     protected final @Nullable CanvasPainters painters() {
-        return painters;
+        return canvasPainters;
     }
 
     /**
@@ -526,10 +525,10 @@ public abstract class AbstractMainView<
      * {@code null} afterwards.
      */
     private void clearPainters() {
-        CanvasPainters oldPainters = painters;
+        CanvasPainters oldPainters = canvasPainters;
         if (oldPainters != null) {
             oldPainters.clearCanvasBackgrounds();
-            painters = null;
+            canvasPainters = null;
         }
     }
 
@@ -560,7 +559,7 @@ public abstract class AbstractMainView<
         overlayCanvas.setHeight(baseCanvas.getHeight());
 
         CanvasPainters newPainters = new CanvasPainters(basePainter, dynamicPainter, overlayPainter);
-        painters = newPainters;
+        canvasPainters = newPainters;
         CellDimension cellDimension = basePainter.cellDimension();
 
         AppLogger.infof("%s: Canvas painter created: painter=%s", LOG_COMPONENT, basePainter);

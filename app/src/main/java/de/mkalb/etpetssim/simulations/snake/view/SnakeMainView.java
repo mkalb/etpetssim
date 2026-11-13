@@ -246,7 +246,7 @@ public final class SnakeMainView
     }
 
     @Override
-    protected Node createEditToolBarOptionPanel(@Nullable ObjectProperty<String> selectedToolId) {
+    protected Node createEditToolBarOptionPanel(ObjectProperty<String> selectedToolId) {
         var strategyControl = FXComponentFactory.createLabeledChoiceComboBox(
                 editToolBarViewModel.selectedStrategyProperty(),
                 AppLocalization.getText(SNAKE_TOOLBAR_ADD_SNAKE_STRATEGY),
@@ -257,18 +257,13 @@ public final class SnakeMainView
         strategyLabel.getStyleClass().add(FXStyleClasses.SIMULATION_EDIT_TOOLBAR_OPTION_LABEL);
         var strategyComboBox = strategyControl.controlRegion();
 
-        if (selectedToolId == null) {
-            strategyLabel.setDisable(true);
-            strategyComboBox.setDisable(true);
-        } else {
-            var disableWhenNoAddSnakeToolSelected = Bindings.not(selectedToolId.isEqualTo(SNAKE_TOOL_ID_ADD_SNAKE));
-            strategyLabel.disableProperty().bind(disableWhenNoAddSnakeToolSelected);
-            strategyComboBox.disableProperty().bind(disableWhenNoAddSnakeToolSelected);
-            registerEditToolBarCleanup(() -> {
-                strategyLabel.disableProperty().unbind();
-                strategyComboBox.disableProperty().unbind();
-            });
-        }
+        var disableWhenNoAddSnakeToolSelected = Bindings.not(selectedToolId.isEqualTo(SNAKE_TOOL_ID_ADD_SNAKE));
+        strategyLabel.disableProperty().bind(disableWhenNoAddSnakeToolSelected);
+        strategyComboBox.disableProperty().bind(disableWhenNoAddSnakeToolSelected);
+        registerEditToolBarCleanup(() -> {
+            strategyLabel.disableProperty().unbind();
+            strategyComboBox.disableProperty().unbind();
+        });
 
         HBox optionPanel = new HBox(strategyLabel, strategyComboBox);
         optionPanel.getStyleClass().add(FXStyleClasses.SIMULATION_EDIT_TOOLBAR_OPTION_PANEL);

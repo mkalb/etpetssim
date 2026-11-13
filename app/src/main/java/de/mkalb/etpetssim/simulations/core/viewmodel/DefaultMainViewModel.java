@@ -263,6 +263,10 @@ public final class DefaultMainViewModel<
         return simulationState.get();
     }
 
+    private void setSimulationState(SimulationState simulationState) {
+        this.simulationState.set(simulationState);
+    }
+
     @Override
     public ObjectProperty<SimulationNotificationType> notificationTypeProperty() {
         return notificationType;
@@ -456,10 +460,6 @@ public final class DefaultMainViewModel<
         return !NO_OP_SIMULATION_INITIALIZED_LISTENER.equals(simulationInitializedListener)
                 || !NO_OP_SIMULATION_STEP_LISTENER.equals(simulationStepListener)
                 || !NO_OP_SIMULATION_RESET_LISTENER.equals(simulationResetListener);
-    }
-
-    private void setSimulationState(SimulationState simulationState) {
-        this.simulationState.set(simulationState);
     }
 
     private void resetClickedCoordinateProperties() {

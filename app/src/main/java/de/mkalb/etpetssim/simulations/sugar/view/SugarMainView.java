@@ -209,7 +209,7 @@ public final class SugarMainView
     }
 
     @Override
-    protected Node createEditToolBarOptionPanel(@Nullable ObjectProperty<String> selectedToolId) {
+    protected Node createEditToolBarOptionPanel(ObjectProperty<String> selectedToolId) {
         var levelControl = FXComponentFactory.createLabeledChoiceComboBox(
                 editToolBarViewModel.selectedAddSugarLevelProperty(),
                 AppLocalization.getText(SUGAR_TOOLBAR_ADD_SUGAR_LEVEL),
@@ -220,18 +220,13 @@ public final class SugarMainView
         levelLabel.getStyleClass().add(FXStyleClasses.SIMULATION_EDIT_TOOLBAR_OPTION_LABEL);
         var levelComboBox = levelControl.controlRegion();
 
-        if (selectedToolId == null) {
-            levelLabel.setDisable(true);
-            levelComboBox.setDisable(true);
-        } else {
-            var disableWhenNoAddSugarToolSelected = Bindings.not(selectedToolId.isEqualTo(SUGAR_TOOL_ID_ADD_SUGAR));
-            levelLabel.disableProperty().bind(disableWhenNoAddSugarToolSelected);
-            levelComboBox.disableProperty().bind(disableWhenNoAddSugarToolSelected);
-            registerEditToolBarCleanup(() -> {
-                levelLabel.disableProperty().unbind();
-                levelComboBox.disableProperty().unbind();
-            });
-        }
+        var disableWhenNoAddSugarToolSelected = Bindings.not(selectedToolId.isEqualTo(SUGAR_TOOL_ID_ADD_SUGAR));
+        levelLabel.disableProperty().bind(disableWhenNoAddSugarToolSelected);
+        levelComboBox.disableProperty().bind(disableWhenNoAddSugarToolSelected);
+        registerEditToolBarCleanup(() -> {
+            levelLabel.disableProperty().unbind();
+            levelComboBox.disableProperty().unbind();
+        });
 
         HBox optionPanel = new HBox(levelLabel, levelComboBox);
         optionPanel.getStyleClass().add(FXStyleClasses.SIMULATION_EDIT_TOOLBAR_OPTION_PANEL);

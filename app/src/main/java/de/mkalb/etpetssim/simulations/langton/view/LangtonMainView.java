@@ -195,7 +195,7 @@ public final class LangtonMainView
     }
 
     @Override
-    protected Node createEditToolBarOptionPanel(@Nullable ObjectProperty<String> selectedToolId) {
+    protected Node createEditToolBarOptionPanel(ObjectProperty<String> selectedToolId) {
         ObservableList<CompassDirection> availableDirections = editToolBarViewModel.availableDirections();
         ComboBox<CompassDirection> directionComboBox = new ComboBox<>();
         directionComboBox.setItems(availableDirections);
@@ -233,27 +233,25 @@ public final class LangtonMainView
             selectedDirectionProperty.removeListener(viewModelSelectionListener);
         });
 
-        if (selectedToolId != null) {
-            var enabledBinding = Bindings.createBooleanBinding(
-                    () -> LANGTON_TOOL_ID_ADD_ANT.equals(selectedToolId.get()),
-                    selectedToolId,
-                    availableDirections);
-            directionLabel.disableProperty().bind(enabledBinding.not());
-            directionComboBox.disableProperty().bind(enabledBinding.not());
-            directionLabel.visibleProperty().bind(Bindings.isNotEmpty(availableDirections));
-            directionLabel.managedProperty().bind(directionLabel.visibleProperty());
-            directionComboBox.visibleProperty().bind(Bindings.isNotEmpty(availableDirections));
-            directionComboBox.managedProperty().bind(directionComboBox.visibleProperty());
-            registerEditToolBarCleanup(() -> {
-                directionLabel.disableProperty().unbind();
-                directionComboBox.disableProperty().unbind();
-                directionLabel.visibleProperty().unbind();
-                directionLabel.managedProperty().unbind();
-                directionComboBox.visibleProperty().unbind();
-                directionComboBox.managedProperty().unbind();
-                enabledBinding.dispose();
-            });
-        }
+        var enabledBinding = Bindings.createBooleanBinding(
+                () -> LANGTON_TOOL_ID_ADD_ANT.equals(selectedToolId.get()),
+                selectedToolId,
+                availableDirections);
+        directionLabel.disableProperty().bind(enabledBinding.not());
+        directionComboBox.disableProperty().bind(enabledBinding.not());
+        directionLabel.visibleProperty().bind(Bindings.isNotEmpty(availableDirections));
+        directionLabel.managedProperty().bind(directionLabel.visibleProperty());
+        directionComboBox.visibleProperty().bind(Bindings.isNotEmpty(availableDirections));
+        directionComboBox.managedProperty().bind(directionComboBox.visibleProperty());
+        registerEditToolBarCleanup(() -> {
+            directionLabel.disableProperty().unbind();
+            directionComboBox.disableProperty().unbind();
+            directionLabel.visibleProperty().unbind();
+            directionLabel.managedProperty().unbind();
+            directionComboBox.visibleProperty().unbind();
+            directionComboBox.managedProperty().unbind();
+            enabledBinding.dispose();
+        });
 
         HBox optionPanel = new HBox(directionLabel, directionComboBox);
         optionPanel.getStyleClass().add(FXStyleClasses.SIMULATION_EDIT_TOOLBAR_OPTION_PANEL);

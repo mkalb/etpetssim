@@ -193,7 +193,7 @@ public final class ConwayMainView
     }
 
     @Override
-    protected Node createEditToolBarOptionPanel(@Nullable ObjectProperty<String> selectedToolId) {
+    protected Node createEditToolBarOptionPanel(ObjectProperty<String> selectedToolId) {
         ObservableList<ConwayPatternChoice> availablePatternChoices = editToolBarViewModel.availablePatternChoices();
         ComboBox<ConwayPatternChoice> patternComboBox = new ComboBox<>();
         patternComboBox.setItems(availablePatternChoices);
@@ -231,20 +231,18 @@ public final class ConwayMainView
             selectedPatternChoiceProperty.removeListener(viewModelSelectionListener);
         });
 
-        if (selectedToolId != null) {
-            var enabledBinding = Bindings.createBooleanBinding(
-                    () -> CONWAY_TOOL_ID_PLACE_PATTERN.equals(selectedToolId.get())
-                            && !availablePatternChoices.isEmpty(),
-                    selectedToolId,
-                    availablePatternChoices);
-            patternLabel.disableProperty().bind(enabledBinding.not());
-            patternComboBox.disableProperty().bind(enabledBinding.not());
-            registerEditToolBarCleanup(() -> {
-                patternLabel.disableProperty().unbind();
-                patternComboBox.disableProperty().unbind();
-                enabledBinding.dispose();
-            });
-        }
+        var enabledBinding = Bindings.createBooleanBinding(
+                () -> CONWAY_TOOL_ID_PLACE_PATTERN.equals(selectedToolId.get())
+                        && !availablePatternChoices.isEmpty(),
+                selectedToolId,
+                availablePatternChoices);
+        patternLabel.disableProperty().bind(enabledBinding.not());
+        patternComboBox.disableProperty().bind(enabledBinding.not());
+        registerEditToolBarCleanup(() -> {
+            patternLabel.disableProperty().unbind();
+            patternComboBox.disableProperty().unbind();
+            enabledBinding.dispose();
+        });
 
         HBox optionPanel = new HBox(patternLabel, patternComboBox);
         optionPanel.getStyleClass().add(FXStyleClasses.SIMULATION_EDIT_TOOLBAR_OPTION_PANEL);

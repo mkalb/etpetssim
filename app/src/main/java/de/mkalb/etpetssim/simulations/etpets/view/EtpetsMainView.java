@@ -305,7 +305,7 @@ public final class EtpetsMainView extends AbstractMainView<
     }
 
     @Override
-    protected Node createEditToolBarOptionPanel(@Nullable ObjectProperty<String> selectedToolId) {
+    protected Node createEditToolBarOptionPanel(ObjectProperty<String> selectedToolId) {
         HBox optionPanel = new HBox(
                 createOptionBox(editToolBarViewModel.selectedTerrainChoiceProperty(),
                         ETPETS_TOOLBAR_SET_TERRAIN_OPTION,
@@ -375,7 +375,7 @@ public final class EtpetsMainView extends AbstractMainView<
                                      String labelKey,
                                      String tooltipKey,
                                      String toolId,
-                                     @Nullable ObjectProperty<String> selectedToolId) {
+                                     ObjectProperty<String> selectedToolId) {
         var control = FXComponentFactory.createLabeledChoiceComboBox(
                 choiceProperty,
                 AppLocalization.getText(labelKey),
@@ -386,18 +386,13 @@ public final class EtpetsMainView extends AbstractMainView<
         label.getStyleClass().add(FXStyleClasses.SIMULATION_EDIT_TOOLBAR_OPTION_LABEL);
         var comboBox = control.controlRegion();
 
-        if (selectedToolId == null) {
-            label.setDisable(true);
-            comboBox.setDisable(true);
-        } else {
-            var disableWhenToolNotSelected = Bindings.not(selectedToolId.isEqualTo(toolId));
-            label.disableProperty().bind(disableWhenToolNotSelected);
-            comboBox.disableProperty().bind(disableWhenToolNotSelected);
-            registerEditToolBarCleanup(() -> {
-                label.disableProperty().unbind();
-                comboBox.disableProperty().unbind();
-            });
-        }
+        var disableWhenToolNotSelected = Bindings.not(selectedToolId.isEqualTo(toolId));
+        label.disableProperty().bind(disableWhenToolNotSelected);
+        comboBox.disableProperty().bind(disableWhenToolNotSelected);
+        registerEditToolBarCleanup(() -> {
+            label.disableProperty().unbind();
+            comboBox.disableProperty().unbind();
+        });
 
         HBox optionBox = new HBox(label, comboBox);
         optionBox.setAlignment(Pos.CENTER_LEFT);

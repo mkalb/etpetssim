@@ -75,14 +75,14 @@ final class EditToolBarView<CTX extends SimulationUserActionContext> {
 
     void rebuild(
             List<SimulationUserActionDescriptor<CTX>> descriptors,
-            @Nullable BooleanProperty editModeProperty,
-            @Nullable ObjectProperty<String> selectedToolId,
+            BooleanProperty editModeProperty,
+            ObjectProperty<String> selectedToolId,
             ReadOnlyObjectProperty<SimulationState> simulationState,
-            Function<@Nullable ObjectProperty<String>, @Nullable Node> optionPanelFactory,
+            Function<ObjectProperty<String>, @Nullable Node> optionPanelFactory,
             Consumer<SimulationUserActionDescriptor<CTX>> globalActionHandler) {
 
         clear();
-        if (descriptors.isEmpty() || (editModeProperty == null)) {
+        if (descriptors.isEmpty()) {
             return;
         }
 
@@ -139,29 +139,25 @@ final class EditToolBarView<CTX extends SimulationUserActionContext> {
     private List<Node> createEditToolBarNodes(
             List<SimulationUserActionDescriptor<CTX>> descriptors,
             BooleanProperty editModeProperty,
-            @Nullable ObjectProperty<String> selectedToolId,
-            Function<@Nullable ObjectProperty<String>, @Nullable Node> optionPanelFactory,
+            ObjectProperty<String> selectedToolId,
+            Function<ObjectProperty<String>, @Nullable Node> optionPanelFactory,
             Consumer<SimulationUserActionDescriptor<CTX>> globalActionHandler) {
 
         ToggleGroup cellActionToggleGroup = new ToggleGroup();
-        ToggleButton selectButton = null;
 
         List<Node> nodes = new ArrayList<>();
 
         Map<Toggle, SimulationUserActionDescriptor<CTX>> descriptorByToggle = new HashMap<>();
 
-        if (selectedToolId != null) {
-            selectButton =
-                    new ToggleButton(AppLocalization.getText(SimulationLocalizationKeys.SIMULATION_TOOLBAR_SELECT));
-            configureEditToolBarButton(selectButton, SimulationLocalizationKeys.SIMULATION_TOOLBAR_SELECT_TOOLTIP);
-            selectButton.setToggleGroup(cellActionToggleGroup);
-            bindVisibility(selectButton, editModeProperty);
-            nodes.add(selectButton);
-        }
+        ToggleButton selectButton =
+                new ToggleButton(AppLocalization.getText(SimulationLocalizationKeys.SIMULATION_TOOLBAR_SELECT));
+        configureEditToolBarButton(selectButton, SimulationLocalizationKeys.SIMULATION_TOOLBAR_SELECT_TOOLTIP);
+        selectButton.setToggleGroup(cellActionToggleGroup);
+        bindVisibility(selectButton, editModeProperty);
+        nodes.add(selectButton);
 
         for (var descriptor : descriptors) {
-            if ((descriptor.scope() == SimulationUserActionScope.CELL_SELECTED)
-                    && (selectedToolId != null)) {
+            if (descriptor.scope() == SimulationUserActionScope.CELL_SELECTED) {
                 ToggleButton actionButton = new ToggleButton(AppLocalization.getText(descriptor.labelKey()));
                 configureEditToolBarButton(actionButton, descriptor.tooltipKey());
                 actionButton.setToggleGroup(cellActionToggleGroup);
@@ -183,36 +179,33 @@ final class EditToolBarView<CTX extends SimulationUserActionContext> {
             nodes.add(optionPanelNode);
         }
 
-        if (selectedToolId != null) {
-            selectedToolIdProperty = selectedToolId;
-            var finalSelectButton = selectButton;
-
-            selectedToolIdListener = (_, _, toolId) -> {
-                if (SimulationUserActionDescriptor.SELECT_TOOL_ID.equals(toolId)) {
-                    cellActionToggleGroup.selectToggle(finalSelectButton);
+        selectedToolIdProperty = selectedToolId;
+        ChangeListener<String> toolIdListener = (_, _, toolId) -> {
+            if (SimulationUserActionDescriptor.SELECT_TOOL_ID.equals(toolId)) {
+                cellActionToggleGroup.selectToggle(selectButton);
+                return;
+            }
+            for (var entry : descriptorByToggle.entrySet()) {
+                if (toolId.equals(entry.getValue().toolId())) {
+                    cellActionToggleGroup.selectToggle(entry.getKey());
                     return;
                 }
-                for (var entry : descriptorByToggle.entrySet()) {
-                    if (toolId.equals(entry.getValue().toolId())) {
-                        cellActionToggleGroup.selectToggle(entry.getKey());
-                        return;
-                    }
-                }
-                cellActionToggleGroup.selectToggle(finalSelectButton);
-            };
-            selectedToolId.addListener(selectedToolIdListener);
+            }
+            cellActionToggleGroup.selectToggle(selectButton);
+        };
+        selectedToolIdListener = toolIdListener;
+        selectedToolId.addListener(toolIdListener);
 
-            String currentToolId = selectedToolId.get();
-            selectedToolIdListener.changed(selectedToolId, currentToolId, currentToolId);
+        String currentToolId = selectedToolId.get();
+        toolIdListener.changed(selectedToolId, currentToolId, currentToolId);
 
-            cellActionToggleGroup.selectedToggleProperty().addListener((_, _, selectedToggle) -> {
-                var descriptor = descriptorByToggle.get(selectedToggle);
-                selectedToolId.set(
-                        (descriptor != null)
-                                ? descriptor.toolId()
-                                : SimulationUserActionDescriptor.SELECT_TOOL_ID);
-            });
-        }
+        cellActionToggleGroup.selectedToggleProperty().addListener((_, _, selectedToggle) -> {
+            var descriptor = descriptorByToggle.get(selectedToggle);
+            selectedToolId.set(
+                    (descriptor != null)
+                            ? descriptor.toolId()
+                            : SimulationUserActionDescriptor.SELECT_TOOL_ID);
+        });
 
         return nodes;
     }

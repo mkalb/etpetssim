@@ -196,7 +196,7 @@ public final class ReboundingMainView
     }
 
     @Override
-    protected Node createEditToolBarOptionPanel(@Nullable ObjectProperty<String> selectedToolId) {
+    protected Node createEditToolBarOptionPanel(ObjectProperty<String> selectedToolId) {
         ObservableList<CompassDirection> availableDirections = editToolBarViewModel.availableDirections();
         ComboBox<CompassDirection> directionComboBox = new ComboBox<>();
         directionComboBox.setItems(availableDirections);
@@ -234,20 +234,18 @@ public final class ReboundingMainView
             selectedDirectionProperty.removeListener(viewModelSelectionListener);
         });
 
-        if (selectedToolId != null) {
-            var enabledBinding = Bindings.createBooleanBinding(
-                    () -> REBOUNDING_TOOL_ID_ADD_REBOUNDER.equals(selectedToolId.get())
-                            && !availableDirections.isEmpty(),
-                    selectedToolId,
-                    availableDirections);
-            directionLabel.disableProperty().bind(enabledBinding.not());
-            directionComboBox.disableProperty().bind(enabledBinding.not());
-            registerEditToolBarCleanup(() -> {
-                directionLabel.disableProperty().unbind();
-                directionComboBox.disableProperty().unbind();
-                enabledBinding.dispose();
-            });
-        }
+        var enabledBinding = Bindings.createBooleanBinding(
+                () -> REBOUNDING_TOOL_ID_ADD_REBOUNDER.equals(selectedToolId.get())
+                        && !availableDirections.isEmpty(),
+                selectedToolId,
+                availableDirections);
+        directionLabel.disableProperty().bind(enabledBinding.not());
+        directionComboBox.disableProperty().bind(enabledBinding.not());
+        registerEditToolBarCleanup(() -> {
+            directionLabel.disableProperty().unbind();
+            directionComboBox.disableProperty().unbind();
+            enabledBinding.dispose();
+        });
 
         HBox optionPanel = new HBox(directionLabel, directionComboBox);
         optionPanel.getStyleClass().add(FXStyleClasses.SIMULATION_EDIT_TOOLBAR_OPTION_PANEL);
