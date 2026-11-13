@@ -1,10 +1,9 @@
 package de.mkalb.etpetssim.simulations.core.model;
 
 import de.mkalb.etpetssim.engine.GridStructure;
-import de.mkalb.etpetssim.engine.executor.StepTimingStatistics;
 
 /**
- * Provides shared counters and the step timing that describe a simulation snapshot.
+ * Provides shared counters that describe a simulation snapshot.
  */
 public interface SimulationStatistics {
 
@@ -21,13 +20,6 @@ public interface SimulationStatistics {
      * @return grid structure used by the simulation
      */
     GridStructure gridStructure();
-
-    /**
-     * Returns timing statistics for simulation steps.
-     *
-     * @return timing statistics snapshot
-     */
-    StepTimingStatistics stepTimingStatistics();
 
     /**
      * Returns the total number of cells in the simulation grid.

@@ -5,7 +5,6 @@ import de.mkalb.etpetssim.engine.GridEdgeBehavior;
 import de.mkalb.etpetssim.engine.GridSize;
 import de.mkalb.etpetssim.engine.GridStructure;
 import de.mkalb.etpetssim.engine.GridTopology;
-import de.mkalb.etpetssim.engine.executor.StepTimingStatistics;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -18,7 +17,6 @@ final class BaseTimedSimulationStatisticsTest {
     private static final GridStructure STRUCTURE = new GridStructure(
             new GridTopology(CellShape.SQUARE, GridEdgeBehavior.BLOCK_XY),
             new GridSize(GridSize.MIN_SIZE, GridSize.MIN_SIZE));
-    private static final StepTimingStatistics TIMING = new StepTimingStatistics(20, 10, 30, 60, 20);
 
     @Test
     void testConstructor() {
@@ -26,37 +24,32 @@ final class BaseTimedSimulationStatisticsTest {
 
         assertAll(
                 () -> assertEquals(0, statistics.stepCount()),
-                () -> assertSame(STRUCTURE, statistics.gridStructure()),
-                () -> assertEquals(StepTimingStatistics.empty(), statistics.stepTimingStatistics())
+                () -> assertSame(STRUCTURE, statistics.gridStructure())
         );
     }
 
     @Test
-    void testSetStepData() {
+    void testSetStepCount() {
         var statistics = new BaseTimedSimulationStatistics(STRUCTURE);
 
-        statistics.setStepData(3, TIMING);
+        statistics.setStepCount(3);
 
-        assertAll(
-                () -> assertEquals(3, statistics.stepCount()),
-                () -> assertSame(TIMING, statistics.stepTimingStatistics())
-        );
+        assertEquals(3, statistics.stepCount());
     }
 
     @Test
-    void testSetStepDataRejectsNegativeStepCount() {
+    void testSetStepCountRejectsNegativeStepCount() {
         var statistics = new BaseTimedSimulationStatistics(STRUCTURE);
 
-        assertThrows(IllegalArgumentException.class, () -> statistics.setStepData(-1, TIMING));
+        assertThrows(IllegalArgumentException.class, () -> statistics.setStepCount(-1));
     }
 
     @Test
     void testBaseToString() {
         var statistics = new BaseTimedSimulationStatistics(STRUCTURE);
-        statistics.setStepData(3, TIMING);
+        statistics.setStepCount(3);
 
-        assertEquals("gridStructure=" + STRUCTURE + ", stepCount=3, stepTimingStatistics=" + TIMING,
-                statistics.baseToString());
+        assertEquals("gridStructure=" + STRUCTURE + ", stepCount=3", statistics.baseToString());
     }
 
 }

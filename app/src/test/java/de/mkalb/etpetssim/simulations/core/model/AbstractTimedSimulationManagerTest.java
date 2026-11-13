@@ -151,7 +151,7 @@ final class AbstractTimedSimulationManagerTest {
 
         @Override
         protected void updateStatistics() {
-            statistics.setStepData(executor.stepCount(), executor.stepTimingStatistics());
+            statistics.setStepCount(executor.stepCount());
         }
 
         @NonNull

@@ -1,7 +1,6 @@
 package de.mkalb.etpetssim.simulations.core.model;
 
 import de.mkalb.etpetssim.engine.GridStructure;
-import de.mkalb.etpetssim.engine.executor.StepTimingStatistics;
 import org.jspecify.annotations.NonNull;
 import org.junit.jupiter.api.Test;
 
@@ -134,12 +133,6 @@ final class StatisticsMetricTest {
         @Override
         public GridStructure gridStructure() {
             throw new UnsupportedOperationException();
-        }
-
-        @NonNull
-        @Override
-        public StepTimingStatistics stepTimingStatistics() {
-            return StepTimingStatistics.empty();
         }
 
     }

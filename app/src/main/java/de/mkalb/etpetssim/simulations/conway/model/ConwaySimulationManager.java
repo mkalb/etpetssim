@@ -61,9 +61,7 @@ public final class ConwaySimulationManager
 
     @Override
     protected void updateStatistics() {
-        statistics.setStepData(
-                executor.stepCount(),
-                executor.stepTimingStatistics());
+        statistics.setStepCount(executor.stepCount());
     }
 
     @Override
