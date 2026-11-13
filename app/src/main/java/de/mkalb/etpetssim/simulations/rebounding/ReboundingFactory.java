@@ -4,11 +4,11 @@ import de.mkalb.etpetssim.engine.model.GridCell;
 import de.mkalb.etpetssim.engine.model.ReadableGridModel;
 import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorRegistry;
 import de.mkalb.etpetssim.simulations.core.shared.SimulationState;
-import de.mkalb.etpetssim.simulations.core.view.DefaultControlView;
+import de.mkalb.etpetssim.simulations.core.view.ControlView;
 import de.mkalb.etpetssim.simulations.core.view.SimulationMainView;
-import de.mkalb.etpetssim.simulations.core.viewmodel.DefaultControlViewModel;
-import de.mkalb.etpetssim.simulations.core.viewmodel.DefaultMainViewModel;
-import de.mkalb.etpetssim.simulations.core.viewmodel.DefaultObservationViewModel;
+import de.mkalb.etpetssim.simulations.core.viewmodel.ControlViewModel;
+import de.mkalb.etpetssim.simulations.core.viewmodel.MainViewModel;
+import de.mkalb.etpetssim.simulations.core.viewmodel.ObservationViewModel;
 import de.mkalb.etpetssim.simulations.rebounding.model.ReboundingSimulationManager;
 import de.mkalb.etpetssim.simulations.rebounding.model.ReboundingStatistics;
 import de.mkalb.etpetssim.simulations.rebounding.model.ReboundingUserAction;
@@ -39,16 +39,16 @@ public final class ReboundingFactory {
         // ViewModel
         var configViewModel = new ReboundingConfigViewModel(readOnlySimulationState);
         var editToolBarViewModel = new ReboundingEditToolBarViewModel();
-        var controlViewModel = DefaultControlViewModel.createWithMinStepDuration(readOnlySimulationState);
+        var controlViewModel = ControlViewModel.createWithMinStepDuration(readOnlySimulationState);
         var observationViewModel =
-                new DefaultObservationViewModel<ReboundingEntity, GridCell<ReboundingEntity>, ReboundingStatistics>();
+                new ObservationViewModel<ReboundingEntity, GridCell<ReboundingEntity>, ReboundingStatistics>();
         var viewModel =
-                new DefaultMainViewModel<>(simulationState, configViewModel, controlViewModel, observationViewModel,
+                new MainViewModel<>(simulationState, configViewModel, controlViewModel, observationViewModel,
                         ReboundingSimulationManager::new, ReadableGridModel::getGridCell, new ReboundingUserAction());
 
         // View
         var configView = new ReboundingConfigView(configViewModel);
-        var controlView = new DefaultControlView(controlViewModel);
+        var controlView = new ControlView(controlViewModel);
         var observationView = new ReboundingObservationView(observationViewModel, entityDescriptorRegistry);
         return new ReboundingMainView(viewModel, editToolBarViewModel, entityDescriptorRegistry, configView,
                 controlView, observationView);

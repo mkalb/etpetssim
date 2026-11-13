@@ -2,11 +2,11 @@ package de.mkalb.etpetssim.simulations.etpets;
 
 import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorRegistry;
 import de.mkalb.etpetssim.simulations.core.shared.SimulationState;
-import de.mkalb.etpetssim.simulations.core.view.DefaultControlView;
+import de.mkalb.etpetssim.simulations.core.view.ControlView;
 import de.mkalb.etpetssim.simulations.core.view.SimulationMainView;
-import de.mkalb.etpetssim.simulations.core.viewmodel.DefaultControlViewModel;
-import de.mkalb.etpetssim.simulations.core.viewmodel.DefaultMainViewModel;
-import de.mkalb.etpetssim.simulations.core.viewmodel.DefaultObservationViewModel;
+import de.mkalb.etpetssim.simulations.core.viewmodel.ControlViewModel;
+import de.mkalb.etpetssim.simulations.core.viewmodel.MainViewModel;
+import de.mkalb.etpetssim.simulations.core.viewmodel.ObservationViewModel;
 import de.mkalb.etpetssim.simulations.etpets.model.EtpetsCell;
 import de.mkalb.etpetssim.simulations.etpets.model.EtpetsSimulationManager;
 import de.mkalb.etpetssim.simulations.etpets.model.EtpetsStatistics;
@@ -38,16 +38,16 @@ public final class EtpetsFactory {
         // ViewModel
         var configViewModel = new EtpetsConfigViewModel(readOnlySimulationState);
         var editToolBarViewModel = new EtpetsEditToolBarViewModel();
-        var controlViewModel = new DefaultControlViewModel(readOnlySimulationState);
+        var controlViewModel = new ControlViewModel(readOnlySimulationState);
         var observationViewModel =
-                new DefaultObservationViewModel<EtpetsEntity, EtpetsCell, EtpetsStatistics>();
+                new ObservationViewModel<EtpetsEntity, EtpetsCell, EtpetsStatistics>();
         var viewModel =
-                new DefaultMainViewModel<>(simulationState, configViewModel, controlViewModel, observationViewModel,
+                new MainViewModel<>(simulationState, configViewModel, controlViewModel, observationViewModel,
                         EtpetsSimulationManager::new, EtpetsCell::from, new EtpetsUserAction());
 
         // View
         var configView = new EtpetsConfigView(configViewModel);
-        var controlView = new DefaultControlView(controlViewModel);
+        var controlView = new ControlView(controlViewModel);
         var observationView = new EtpetsObservationView(observationViewModel, entityDescriptorRegistry);
         return new EtpetsMainView(viewModel, editToolBarViewModel, entityDescriptorRegistry, configView, controlView,
                 observationView);

@@ -8,8 +8,8 @@ import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorRegistry;
 import de.mkalb.etpetssim.simulations.core.shared.SimulationUserActionScope;
 import de.mkalb.etpetssim.simulations.core.view.AbstractMainView;
 import de.mkalb.etpetssim.simulations.core.view.CanvasPainters;
-import de.mkalb.etpetssim.simulations.core.view.DefaultControlView;
-import de.mkalb.etpetssim.simulations.core.viewmodel.DefaultMainViewModel;
+import de.mkalb.etpetssim.simulations.core.view.ControlView;
+import de.mkalb.etpetssim.simulations.core.viewmodel.MainViewModel;
 import de.mkalb.etpetssim.simulations.core.viewmodel.SimulationUserActionDescriptor;
 import de.mkalb.etpetssim.simulations.snake.model.SnakeConfig;
 import de.mkalb.etpetssim.simulations.snake.model.SnakeSimulationManager;
@@ -96,13 +96,13 @@ public final class SnakeMainView
     private final SnakeColors selectedColors;
     private final SnakeColors deadColors;
 
-    public SnakeMainView(DefaultMainViewModel<SnakeEntity, GridCell<SnakeEntity>, WritableGridModel<SnakeEntity>,
+    public SnakeMainView(MainViewModel<SnakeEntity, GridCell<SnakeEntity>, WritableGridModel<SnakeEntity>,
                                  SnakeConfig, SnakeStatistics, SnakeSimulationManager,
                                  SnakeUserActionContext> viewModel,
                          SnakeEditToolBarViewModel editToolBarViewModel,
                          GridEntityDescriptorRegistry entityDescriptorRegistry,
                          SnakeConfigView configView,
-                         DefaultControlView controlView,
+                         ControlView controlView,
                          SnakeObservationView observationView) {
         super(viewModel,
                 configView,

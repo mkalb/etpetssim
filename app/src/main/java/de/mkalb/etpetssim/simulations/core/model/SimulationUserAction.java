@@ -26,7 +26,7 @@ public interface SimulationUserAction<
         GM extends GridModel<ENT>,
         CON extends SimulationConfig,
         STA extends SimulationStatistics,
-        SM extends AbstractTimedSimulationManager<ENT, GM, CON, STA>,
+        SM extends AbstractSimulationManager<ENT, GM, CON, STA>,
         CTX extends SimulationUserActionContext> {
 
     /**

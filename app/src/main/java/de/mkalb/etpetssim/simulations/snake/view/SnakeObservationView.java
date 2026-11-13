@@ -3,7 +3,7 @@ package de.mkalb.etpetssim.simulations.snake.view;
 import de.mkalb.etpetssim.engine.model.GridCell;
 import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorRegistry;
 import de.mkalb.etpetssim.simulations.core.view.AbstractObservationView;
-import de.mkalb.etpetssim.simulations.core.viewmodel.DefaultObservationViewModel;
+import de.mkalb.etpetssim.simulations.core.viewmodel.ObservationViewModel;
 import de.mkalb.etpetssim.simulations.snake.model.SnakeStatistics;
 import de.mkalb.etpetssim.simulations.snake.model.entity.SnakeEntity;
 import de.mkalb.etpetssim.simulations.snake.model.entity.SnakeHead;
@@ -35,7 +35,7 @@ public final class SnakeObservationView
     private final Label snakeMaxSegmentCountLabel = new Label();
     private final Label snakePointsLabel = new Label();
 
-    public SnakeObservationView(DefaultObservationViewModel<SnakeEntity, GridCell<SnakeEntity>,
+    public SnakeObservationView(ObservationViewModel<SnakeEntity, GridCell<SnakeEntity>,
                                         SnakeStatistics> viewModel,
                                 GridEntityDescriptorRegistry entityDescriptorRegistry) {
         super(viewModel, entityDescriptorRegistry);

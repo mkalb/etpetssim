@@ -1,7 +1,7 @@
 package de.mkalb.etpetssim.simulations.lab.model;
 
 import de.mkalb.etpetssim.engine.GridStructure;
-import de.mkalb.etpetssim.simulations.core.model.BaseTimedSimulationStatistics;
+import de.mkalb.etpetssim.simulations.core.model.BaseSimulationStatistics;
 import de.mkalb.etpetssim.simulations.core.model.StatisticsChartGroup;
 import de.mkalb.etpetssim.simulations.core.model.StatisticsExtremaMode;
 import de.mkalb.etpetssim.simulations.core.model.StatisticsMetric;
@@ -11,7 +11,7 @@ import java.util.List;
 /**
  * Statistics of the Simulation Lab with the highlighted and normal cell counts.
  */
-public final class LabStatistics extends BaseTimedSimulationStatistics {
+public final class LabStatistics extends BaseSimulationStatistics {
 
     public static final String KEY_HIGHLIGHTED_CELLS = "highlightedCells";
     public static final String KEY_NORMAL_CELLS = "normalCells";

@@ -10,8 +10,8 @@ import de.mkalb.etpetssim.simulations.core.shared.SimulationUserActionScope;
 import de.mkalb.etpetssim.simulations.core.view.AbstractMainView;
 import de.mkalb.etpetssim.simulations.core.view.CanvasPainters;
 import de.mkalb.etpetssim.simulations.core.view.CellDrawer;
-import de.mkalb.etpetssim.simulations.core.view.DefaultControlView;
-import de.mkalb.etpetssim.simulations.core.viewmodel.DefaultMainViewModel;
+import de.mkalb.etpetssim.simulations.core.view.ControlView;
+import de.mkalb.etpetssim.simulations.core.viewmodel.MainViewModel;
 import de.mkalb.etpetssim.simulations.core.viewmodel.SimulationUserActionDescriptor;
 import de.mkalb.etpetssim.simulations.wator.model.WatorConfig;
 import de.mkalb.etpetssim.simulations.wator.model.WatorSimulationManager;
@@ -68,12 +68,12 @@ public final class WatorMainView
     private @Nullable CellDrawer<WatorEntity> cellDrawer;
     private int maxColorSharkEnergy = 1;
 
-    public WatorMainView(DefaultMainViewModel<WatorEntity, GridCell<WatorEntity>, WritableGridModel<WatorEntity>,
+    public WatorMainView(MainViewModel<WatorEntity, GridCell<WatorEntity>, WritableGridModel<WatorEntity>,
                                  WatorConfig, WatorStatistics, WatorSimulationManager,
                                  WatorUserActionContext> viewModel,
                          GridEntityDescriptorRegistry entityDescriptorRegistry,
                          WatorConfigView configView,
-                         DefaultControlView controlView,
+                         ControlView controlView,
                          WatorObservationView observationView) {
         super(viewModel,
                 configView,

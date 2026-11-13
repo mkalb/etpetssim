@@ -236,7 +236,7 @@ final class SimulationManagerTest {
     }
 
     private static <STA extends SimulationStatistics> void assertStepZeroSample(
-            AbstractTimedSimulationManager<?, ?, ?, STA> manager,
+            AbstractSimulationManager<?, ?, ?, STA> manager,
             List<StatisticsMetric<STA>> metrics) {
         var history = manager.statisticsHistory();
         Map<String, Double> expectedValues = new LinkedHashMap<>();
@@ -310,7 +310,7 @@ final class SimulationManagerTest {
     }
 
     @Test
-    void testConstructorRecordsStepZeroSampleForAllTimedManagers() {
+    void testConstructorRecordsStepZeroSampleForAllManagers() {
         assertAll(
                 () -> assertStepZeroSample(new ConwaySimulationManager(createConwayConfig()),
                         ConwayStatistics.metrics()),

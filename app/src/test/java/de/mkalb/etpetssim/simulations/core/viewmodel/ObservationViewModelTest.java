@@ -27,20 +27,20 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
 @Execution(ExecutionMode.SAME_THREAD)
-final class DefaultObservationViewModelTest {
+final class ObservationViewModelTest {
 
     @BeforeAll
     static void setUpBeforeAll() {
         FXTestSupport.ensureStarted();
     }
 
-    private static DefaultObservationViewModel<ConwayEntity, GridCell<ConwayEntity>, TestStatistics> createViewModel() {
-        return new DefaultObservationViewModel<>();
+    private static ObservationViewModel<ConwayEntity, GridCell<ConwayEntity>, TestStatistics> createViewModel() {
+        return new ObservationViewModel<>();
     }
 
     @Test
     void testGetStatisticsReturnsEmptyInitially() {
-        var viewModel = FXTestSupport.supplyAndWaitNonNull(DefaultObservationViewModelTest::createViewModel);
+        var viewModel = FXTestSupport.supplyAndWaitNonNull(ObservationViewModelTest::createViewModel);
 
         FXTestSupport.runAndWait(
                 () -> assertEquals(Optional.empty(), viewModel.getStatistics()));
@@ -48,7 +48,7 @@ final class DefaultObservationViewModelTest {
 
     @Test
     void testSetStatistics() {
-        var viewModel = FXTestSupport.supplyAndWaitNonNull(DefaultObservationViewModelTest::createViewModel);
+        var viewModel = FXTestSupport.supplyAndWaitNonNull(ObservationViewModelTest::createViewModel);
         var statistics = new TestStatistics(7);
 
         FXTestSupport.runAndWait(() -> {
@@ -60,7 +60,7 @@ final class DefaultObservationViewModelTest {
 
     @Test
     void testGetStatisticsExtremaReturnsEmptyInitially() {
-        var viewModel = FXTestSupport.supplyAndWaitNonNull(DefaultObservationViewModelTest::createViewModel);
+        var viewModel = FXTestSupport.supplyAndWaitNonNull(ObservationViewModelTest::createViewModel);
 
         FXTestSupport.runAndWait(
                 () -> assertEquals(StatisticsExtrema.empty(), viewModel.getStatisticsExtrema()));
@@ -68,7 +68,7 @@ final class DefaultObservationViewModelTest {
 
     @Test
     void testSetStatisticsExtrema() {
-        var viewModel = FXTestSupport.supplyAndWaitNonNull(DefaultObservationViewModelTest::createViewModel);
+        var viewModel = FXTestSupport.supplyAndWaitNonNull(ObservationViewModelTest::createViewModel);
         var extremum = new StatisticsExtremum(42.0, 7);
         var extrema = new StatisticsExtrema(Map.of("metric", extremum), Map.of());
 
@@ -81,7 +81,7 @@ final class DefaultObservationViewModelTest {
 
     @Test
     void testSetStatisticsExtremaResetsToEmpty() {
-        var viewModel = FXTestSupport.supplyAndWaitNonNull(DefaultObservationViewModelTest::createViewModel);
+        var viewModel = FXTestSupport.supplyAndWaitNonNull(ObservationViewModelTest::createViewModel);
 
         FXTestSupport.runAndWait(() -> {
             viewModel.setStatisticsExtrema(new StatisticsExtrema(
@@ -94,7 +94,7 @@ final class DefaultObservationViewModelTest {
 
     @Test
     void testStatisticsHistoryPropertyInitialValueIsEmpty() {
-        var viewModel = FXTestSupport.supplyAndWaitNonNull(DefaultObservationViewModelTest::createViewModel);
+        var viewModel = FXTestSupport.supplyAndWaitNonNull(ObservationViewModelTest::createViewModel);
 
         FXTestSupport.runAndWait(
                 () -> assertEquals(List.of(), viewModel.statisticsHistoryProperty().get()));
@@ -102,7 +102,7 @@ final class DefaultObservationViewModelTest {
 
     @Test
     void testStatisticsHistoryPropertyNotifiesListener() {
-        var viewModel = FXTestSupport.supplyAndWaitNonNull(DefaultObservationViewModelTest::createViewModel);
+        var viewModel = FXTestSupport.supplyAndWaitNonNull(ObservationViewModelTest::createViewModel);
         var history = List.of(new StatisticsSample(
                 1,
                 StepTimingStatistics.empty(),
@@ -119,7 +119,7 @@ final class DefaultObservationViewModelTest {
 
     @Test
     void testSetStatisticsHistory() {
-        var viewModel = FXTestSupport.supplyAndWaitNonNull(DefaultObservationViewModelTest::createViewModel);
+        var viewModel = FXTestSupport.supplyAndWaitNonNull(ObservationViewModelTest::createViewModel);
         var sample = new StatisticsSample(1, StepTimingStatistics.empty(), Map.of("metric", 3.0));
         var history = List.of(sample);
 
@@ -132,7 +132,7 @@ final class DefaultObservationViewModelTest {
 
     @Test
     void testSetStatisticsHistoryToEmptyResetsProperty() {
-        var viewModel = FXTestSupport.supplyAndWaitNonNull(DefaultObservationViewModelTest::createViewModel);
+        var viewModel = FXTestSupport.supplyAndWaitNonNull(ObservationViewModelTest::createViewModel);
 
         FXTestSupport.runAndWait(() -> {
             viewModel.setStatisticsHistory(List.of(new StatisticsSample(
@@ -145,7 +145,7 @@ final class DefaultObservationViewModelTest {
 
     @Test
     void testResetStatisticsClearsStatisticsExtremaAndHistory() {
-        var viewModel = FXTestSupport.supplyAndWaitNonNull(DefaultObservationViewModelTest::createViewModel);
+        var viewModel = FXTestSupport.supplyAndWaitNonNull(ObservationViewModelTest::createViewModel);
         var statistics = new TestStatistics(7);
         var extrema = new StatisticsExtrema(Map.of("metric", new StatisticsExtremum(42.0d, 7)), Map.of());
         var history = List.of(new StatisticsSample(7, StepTimingStatistics.empty(), Map.of("metric", 42.0d)));
@@ -166,7 +166,7 @@ final class DefaultObservationViewModelTest {
 
     @Test
     void testBindSelectedGridCellPropertyTracksSourceChanges() {
-        var viewModel = FXTestSupport.supplyAndWaitNonNull(DefaultObservationViewModelTest::createViewModel);
+        var viewModel = FXTestSupport.supplyAndWaitNonNull(ObservationViewModelTest::createViewModel);
         var source = new SimpleObjectProperty<GridCell<ConwayEntity>>();
         var selectedCell = new GridCell<>(new GridCoordinate(2, 3), ConwayEntity.ALIVE);
 
@@ -180,7 +180,7 @@ final class DefaultObservationViewModelTest {
 
     @Test
     void testBindSelectedGridCellPropertyReplacesPreviousBinding() {
-        var viewModel = FXTestSupport.supplyAndWaitNonNull(DefaultObservationViewModelTest::createViewModel);
+        var viewModel = FXTestSupport.supplyAndWaitNonNull(ObservationViewModelTest::createViewModel);
         var firstSource = new SimpleObjectProperty<GridCell<ConwayEntity>>();
         var secondSource = new SimpleObjectProperty<GridCell<ConwayEntity>>();
         var firstCell = new GridCell<>(new GridCoordinate(2, 3), ConwayEntity.ALIVE);

@@ -2,11 +2,11 @@ package de.mkalb.etpetssim.simulations.langton;
 
 import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorRegistry;
 import de.mkalb.etpetssim.simulations.core.shared.SimulationState;
-import de.mkalb.etpetssim.simulations.core.view.DefaultControlView;
+import de.mkalb.etpetssim.simulations.core.view.ControlView;
 import de.mkalb.etpetssim.simulations.core.view.SimulationMainView;
-import de.mkalb.etpetssim.simulations.core.viewmodel.DefaultControlViewModel;
-import de.mkalb.etpetssim.simulations.core.viewmodel.DefaultMainViewModel;
-import de.mkalb.etpetssim.simulations.core.viewmodel.DefaultObservationViewModel;
+import de.mkalb.etpetssim.simulations.core.viewmodel.ControlViewModel;
+import de.mkalb.etpetssim.simulations.core.viewmodel.MainViewModel;
+import de.mkalb.etpetssim.simulations.core.viewmodel.ObservationViewModel;
 import de.mkalb.etpetssim.simulations.langton.model.LangtonCell;
 import de.mkalb.etpetssim.simulations.langton.model.LangtonSimulationManager;
 import de.mkalb.etpetssim.simulations.langton.model.LangtonStatistics;
@@ -38,16 +38,16 @@ public final class LangtonFactory {
         // ViewModel
         var configViewModel = new LangtonConfigViewModel(readOnlySimulationState);
         var editToolBarViewModel = new LangtonEditToolBarViewModel();
-        var controlViewModel = DefaultControlViewModel.createWithMinStepDuration(readOnlySimulationState);
+        var controlViewModel = ControlViewModel.createWithMinStepDuration(readOnlySimulationState);
         var observationViewModel =
-                new DefaultObservationViewModel<LangtonEntity, LangtonCell, LangtonStatistics>();
+                new ObservationViewModel<LangtonEntity, LangtonCell, LangtonStatistics>();
         var viewModel =
-                new DefaultMainViewModel<>(simulationState, configViewModel, controlViewModel, observationViewModel,
+                new MainViewModel<>(simulationState, configViewModel, controlViewModel, observationViewModel,
                         LangtonSimulationManager::new, LangtonCell::from, new LangtonUserAction());
 
         // View
         var configView = new LangtonConfigView(configViewModel);
-        var controlView = new DefaultControlView(controlViewModel);
+        var controlView = new ControlView(controlViewModel);
         var observationView = new LangtonObservationView(observationViewModel, entityDescriptorRegistry);
         return new LangtonMainView(viewModel, editToolBarViewModel, entityDescriptorRegistry, configView, controlView,
                 observationView);

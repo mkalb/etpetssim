@@ -7,7 +7,7 @@ import de.mkalb.etpetssim.engine.executor.TimedSimulationExecutor;
 import de.mkalb.etpetssim.engine.model.ArrayGridModel;
 import de.mkalb.etpetssim.engine.model.SparseGridModel;
 import de.mkalb.etpetssim.engine.neighborhood.CompassDirection;
-import de.mkalb.etpetssim.simulations.core.model.AbstractTimedSimulationManager;
+import de.mkalb.etpetssim.simulations.core.model.AbstractSimulationManager;
 import de.mkalb.etpetssim.simulations.core.model.SimulationInitializationCancellation;
 import de.mkalb.etpetssim.simulations.langton.model.entity.Ant;
 import de.mkalb.etpetssim.simulations.langton.model.entity.LangtonEntity;
@@ -18,7 +18,7 @@ import de.mkalb.etpetssim.simulations.langton.model.entity.TerrainConstant;
  * Simulation manager of Langton's Ant.
  */
 public final class LangtonSimulationManager
-        extends AbstractTimedSimulationManager<LangtonEntity, LangtonGridModel, LangtonConfig,
+        extends AbstractSimulationManager<LangtonEntity, LangtonGridModel, LangtonConfig,
         LangtonStatistics> {
 
     private final GridStructure structure;

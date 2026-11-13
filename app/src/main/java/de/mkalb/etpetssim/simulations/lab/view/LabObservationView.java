@@ -3,7 +3,7 @@ package de.mkalb.etpetssim.simulations.lab.view;
 import de.mkalb.etpetssim.engine.model.GridCell;
 import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorRegistry;
 import de.mkalb.etpetssim.simulations.core.view.AbstractObservationView;
-import de.mkalb.etpetssim.simulations.core.viewmodel.DefaultObservationViewModel;
+import de.mkalb.etpetssim.simulations.core.viewmodel.ObservationViewModel;
 import de.mkalb.etpetssim.simulations.lab.model.LabStatistics;
 import de.mkalb.etpetssim.simulations.lab.model.entity.LabEntity;
 import javafx.scene.layout.Region;
@@ -13,7 +13,7 @@ import javafx.scene.layout.Region;
  */
 public final class LabObservationView extends AbstractObservationView<LabEntity, GridCell<LabEntity>, LabStatistics> {
 
-    public LabObservationView(DefaultObservationViewModel<LabEntity, GridCell<LabEntity>, LabStatistics> viewModel,
+    public LabObservationView(ObservationViewModel<LabEntity, GridCell<LabEntity>, LabStatistics> viewModel,
                               GridEntityDescriptorRegistry entityDescriptorRegistry) {
         super(viewModel, entityDescriptorRegistry);
 

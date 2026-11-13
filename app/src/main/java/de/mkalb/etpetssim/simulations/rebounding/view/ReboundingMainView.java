@@ -11,8 +11,8 @@ import de.mkalb.etpetssim.simulations.core.shared.SimulationUserActionScope;
 import de.mkalb.etpetssim.simulations.core.view.AbstractMainView;
 import de.mkalb.etpetssim.simulations.core.view.CanvasPainters;
 import de.mkalb.etpetssim.simulations.core.view.CellDrawer;
-import de.mkalb.etpetssim.simulations.core.view.DefaultControlView;
-import de.mkalb.etpetssim.simulations.core.viewmodel.DefaultMainViewModel;
+import de.mkalb.etpetssim.simulations.core.view.ControlView;
+import de.mkalb.etpetssim.simulations.core.viewmodel.MainViewModel;
 import de.mkalb.etpetssim.simulations.core.viewmodel.SimulationUserActionDescriptor;
 import de.mkalb.etpetssim.simulations.rebounding.model.ReboundingConfig;
 import de.mkalb.etpetssim.simulations.rebounding.model.ReboundingSimulationManager;
@@ -81,13 +81,13 @@ public final class ReboundingMainView
     private final ReboundingEditToolBarViewModel editToolBarViewModel;
     private @Nullable CellDrawer<ReboundingEntity> cellDrawer;
 
-    public ReboundingMainView(DefaultMainViewModel<ReboundingEntity, GridCell<ReboundingEntity>,
+    public ReboundingMainView(MainViewModel<ReboundingEntity, GridCell<ReboundingEntity>,
                                       WritableGridModel<ReboundingEntity>, ReboundingConfig, ReboundingStatistics,
                                       ReboundingSimulationManager, ReboundingUserActionContext> viewModel,
                               ReboundingEditToolBarViewModel editToolBarViewModel,
                               GridEntityDescriptorRegistry entityDescriptorRegistry,
                               ReboundingConfigView configView,
-                              DefaultControlView controlView,
+                              ControlView controlView,
                               ReboundingObservationView observationView) {
         super(viewModel,
                 configView,

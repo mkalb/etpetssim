@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-final class BaseTimedSimulationStatisticsTest {
+final class BaseSimulationStatisticsTest {
 
     private static final GridStructure STRUCTURE = new GridStructure(
             new GridTopology(CellShape.SQUARE, GridEdgeBehavior.BLOCK_XY),
@@ -20,7 +20,7 @@ final class BaseTimedSimulationStatisticsTest {
 
     @Test
     void testConstructor() {
-        var statistics = new BaseTimedSimulationStatistics(STRUCTURE);
+        var statistics = new BaseSimulationStatistics(STRUCTURE);
 
         assertAll(
                 () -> assertEquals(0, statistics.stepCount()),
@@ -30,7 +30,7 @@ final class BaseTimedSimulationStatisticsTest {
 
     @Test
     void testSetStepCount() {
-        var statistics = new BaseTimedSimulationStatistics(STRUCTURE);
+        var statistics = new BaseSimulationStatistics(STRUCTURE);
 
         statistics.setStepCount(3);
 
@@ -39,14 +39,14 @@ final class BaseTimedSimulationStatisticsTest {
 
     @Test
     void testSetStepCountRejectsNegativeStepCount() {
-        var statistics = new BaseTimedSimulationStatistics(STRUCTURE);
+        var statistics = new BaseSimulationStatistics(STRUCTURE);
 
         assertThrows(IllegalArgumentException.class, () -> statistics.setStepCount(-1));
     }
 
     @Test
     void testBaseToString() {
-        var statistics = new BaseTimedSimulationStatistics(STRUCTURE);
+        var statistics = new BaseSimulationStatistics(STRUCTURE);
         statistics.setStepCount(3);
 
         assertEquals("gridStructure=" + STRUCTURE + ", stepCount=3", statistics.baseToString());

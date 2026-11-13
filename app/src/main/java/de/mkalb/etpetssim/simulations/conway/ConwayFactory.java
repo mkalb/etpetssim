@@ -13,11 +13,11 @@ import de.mkalb.etpetssim.simulations.conway.view.ConwayObservationView;
 import de.mkalb.etpetssim.simulations.conway.viewmodel.ConwayConfigViewModel;
 import de.mkalb.etpetssim.simulations.conway.viewmodel.ConwayEditToolBarViewModel;
 import de.mkalb.etpetssim.simulations.core.shared.SimulationState;
-import de.mkalb.etpetssim.simulations.core.view.DefaultControlView;
+import de.mkalb.etpetssim.simulations.core.view.ControlView;
 import de.mkalb.etpetssim.simulations.core.view.SimulationMainView;
-import de.mkalb.etpetssim.simulations.core.viewmodel.DefaultControlViewModel;
-import de.mkalb.etpetssim.simulations.core.viewmodel.DefaultMainViewModel;
-import de.mkalb.etpetssim.simulations.core.viewmodel.DefaultObservationViewModel;
+import de.mkalb.etpetssim.simulations.core.viewmodel.ControlViewModel;
+import de.mkalb.etpetssim.simulations.core.viewmodel.MainViewModel;
+import de.mkalb.etpetssim.simulations.core.viewmodel.ObservationViewModel;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 
@@ -38,16 +38,16 @@ public final class ConwayFactory {
         // ViewModel
         var configViewModel = new ConwayConfigViewModel(readOnlySimulationState);
         var editToolBarViewModel = new ConwayEditToolBarViewModel();
-        var controlViewModel = new DefaultControlViewModel(readOnlySimulationState);
+        var controlViewModel = new ControlViewModel(readOnlySimulationState);
         var observationViewModel =
-                new DefaultObservationViewModel<ConwayEntity, GridCell<ConwayEntity>, ConwayStatistics>();
+                new ObservationViewModel<ConwayEntity, GridCell<ConwayEntity>, ConwayStatistics>();
         var viewModel =
-                new DefaultMainViewModel<>(simulationState, configViewModel, controlViewModel, observationViewModel,
+                new MainViewModel<>(simulationState, configViewModel, controlViewModel, observationViewModel,
                         ConwaySimulationManager::new, ReadableGridModel::getGridCell, new ConwayUserAction());
 
         // View
         var configView = new ConwayConfigView(configViewModel);
-        var controlView = new DefaultControlView(controlViewModel);
+        var controlView = new ControlView(controlViewModel);
         var observationView = new ConwayObservationView(observationViewModel, entityDescriptorRegistry);
         return new ConwayMainView(viewModel, editToolBarViewModel, entityDescriptorRegistry, configView, controlView,
                 observationView);

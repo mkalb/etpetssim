@@ -2,7 +2,7 @@ package de.mkalb.etpetssim.simulations.langton.view;
 
 import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorRegistry;
 import de.mkalb.etpetssim.simulations.core.view.AbstractObservationView;
-import de.mkalb.etpetssim.simulations.core.viewmodel.DefaultObservationViewModel;
+import de.mkalb.etpetssim.simulations.core.viewmodel.ObservationViewModel;
 import de.mkalb.etpetssim.simulations.langton.model.LangtonCell;
 import de.mkalb.etpetssim.simulations.langton.model.LangtonStatistics;
 import de.mkalb.etpetssim.simulations.langton.model.entity.LangtonEntity;
@@ -14,7 +14,7 @@ import javafx.scene.layout.Region;
 public final class LangtonObservationView
         extends AbstractObservationView<LangtonEntity, LangtonCell, LangtonStatistics> {
 
-    public LangtonObservationView(DefaultObservationViewModel<LangtonEntity, LangtonCell, LangtonStatistics> viewModel,
+    public LangtonObservationView(ObservationViewModel<LangtonEntity, LangtonCell, LangtonStatistics> viewModel,
                                   GridEntityDescriptorRegistry entityDescriptorRegistry) {
         super(viewModel, entityDescriptorRegistry);
 

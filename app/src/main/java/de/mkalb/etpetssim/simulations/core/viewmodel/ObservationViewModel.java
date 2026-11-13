@@ -15,13 +15,13 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * Default implementation of observation-related view-model state.
+ * View model of the observation state: statistics, extrema, history, and the selected grid cell.
  *
  * @param <ENT> entity type stored in grid cells
  * @param <GC>  grid cell type used for cell selection
  * @param <STA> statistics type exposed to observation views
  */
-public final class DefaultObservationViewModel<
+public final class ObservationViewModel<
         ENT extends GridEntity,
         GC extends GridCellView<ENT>,
         STA extends SimulationStatistics> {

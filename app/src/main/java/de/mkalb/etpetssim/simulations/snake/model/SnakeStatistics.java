@@ -1,7 +1,7 @@
 package de.mkalb.etpetssim.simulations.snake.model;
 
 import de.mkalb.etpetssim.engine.GridStructure;
-import de.mkalb.etpetssim.simulations.core.model.BaseTimedSimulationStatistics;
+import de.mkalb.etpetssim.simulations.core.model.BaseSimulationStatistics;
 import de.mkalb.etpetssim.simulations.core.model.StatisticsExtremaMode;
 import de.mkalb.etpetssim.simulations.core.model.StatisticsMetric;
 
@@ -10,7 +10,7 @@ import java.util.List;
 /**
  * Statistics of Snake with the snake head, wall, and food cell counts and the cumulative snake deaths.
  */
-public final class SnakeStatistics extends BaseTimedSimulationStatistics {
+public final class SnakeStatistics extends BaseSimulationStatistics {
 
     public static final String KEY_SNAKE_HEAD_CELLS = "snakeHeadCells";
     public static final String KEY_LIVING_SNAKE_HEAD_CELLS = "livingSnakeHeadCells";

@@ -4,11 +4,11 @@ import de.mkalb.etpetssim.engine.model.GridCell;
 import de.mkalb.etpetssim.engine.model.ReadableGridModel;
 import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorRegistry;
 import de.mkalb.etpetssim.simulations.core.shared.SimulationState;
-import de.mkalb.etpetssim.simulations.core.view.DefaultControlView;
+import de.mkalb.etpetssim.simulations.core.view.ControlView;
 import de.mkalb.etpetssim.simulations.core.view.SimulationMainView;
-import de.mkalb.etpetssim.simulations.core.viewmodel.DefaultControlViewModel;
-import de.mkalb.etpetssim.simulations.core.viewmodel.DefaultMainViewModel;
-import de.mkalb.etpetssim.simulations.core.viewmodel.DefaultObservationViewModel;
+import de.mkalb.etpetssim.simulations.core.viewmodel.ControlViewModel;
+import de.mkalb.etpetssim.simulations.core.viewmodel.MainViewModel;
+import de.mkalb.etpetssim.simulations.core.viewmodel.ObservationViewModel;
 import de.mkalb.etpetssim.simulations.wator.model.WatorSimulationManager;
 import de.mkalb.etpetssim.simulations.wator.model.WatorStatistics;
 import de.mkalb.etpetssim.simulations.wator.model.WatorUserAction;
@@ -37,16 +37,16 @@ public final class WatorFactory {
 
         // ViewModel
         var configViewModel = new WatorConfigViewModel(readOnlySimulationState);
-        var controlViewModel = new DefaultControlViewModel(readOnlySimulationState);
+        var controlViewModel = new ControlViewModel(readOnlySimulationState);
         var observationViewModel =
-                new DefaultObservationViewModel<WatorEntity, GridCell<WatorEntity>, WatorStatistics>();
+                new ObservationViewModel<WatorEntity, GridCell<WatorEntity>, WatorStatistics>();
         var viewModel =
-                new DefaultMainViewModel<>(simulationState, configViewModel, controlViewModel, observationViewModel,
+                new MainViewModel<>(simulationState, configViewModel, controlViewModel, observationViewModel,
                         WatorSimulationManager::new, ReadableGridModel::getGridCell, new WatorUserAction());
 
         // View
         var configView = new WatorConfigView(configViewModel);
-        var controlView = new DefaultControlView(controlViewModel);
+        var controlView = new ControlView(controlViewModel);
         var observationView = new WatorObservationView(observationViewModel, entityDescriptorRegistry);
         return new WatorMainView(viewModel, entityDescriptorRegistry, configView, controlView, observationView);
     }

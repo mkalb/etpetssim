@@ -8,7 +8,7 @@ import de.mkalb.etpetssim.engine.model.ArrayGridModel;
 import de.mkalb.etpetssim.engine.model.ReadableGridModel;
 import de.mkalb.etpetssim.engine.model.WritableGridModel;
 import de.mkalb.etpetssim.engine.support.GridInitializers;
-import de.mkalb.etpetssim.simulations.core.model.AbstractTimedSimulationManager;
+import de.mkalb.etpetssim.simulations.core.model.AbstractSimulationManager;
 import de.mkalb.etpetssim.simulations.core.model.SimulationInitializationCancellation;
 import de.mkalb.etpetssim.simulations.forest.model.entity.ForestEntity;
 
@@ -18,7 +18,7 @@ import java.util.Random;
  * Simulation manager of the Forest-fire model.
  */
 public final class ForestSimulationManager
-        extends AbstractTimedSimulationManager<ForestEntity, WritableGridModel<ForestEntity>, ForestConfig,
+        extends AbstractSimulationManager<ForestEntity, WritableGridModel<ForestEntity>, ForestConfig,
         ForestStatistics> {
 
     private final GridStructure structure;

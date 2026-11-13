@@ -1,7 +1,7 @@
 package de.mkalb.etpetssim.simulations.wator.model;
 
 import de.mkalb.etpetssim.engine.GridStructure;
-import de.mkalb.etpetssim.simulations.core.model.BaseTimedSimulationStatistics;
+import de.mkalb.etpetssim.simulations.core.model.BaseSimulationStatistics;
 import de.mkalb.etpetssim.simulations.core.model.StatisticsChartGroup;
 import de.mkalb.etpetssim.simulations.core.model.StatisticsExtremaMode;
 import de.mkalb.etpetssim.simulations.core.model.StatisticsMetric;
@@ -11,7 +11,7 @@ import java.util.List;
 /**
  * Statistics of Wa-Tor with the fish and shark cell counts.
  */
-public final class WatorStatistics extends BaseTimedSimulationStatistics {
+public final class WatorStatistics extends BaseSimulationStatistics {
 
     public static final String KEY_FISH_CELLS = "fishCells";
     public static final String KEY_SHARK_CELLS = "sharkCells";

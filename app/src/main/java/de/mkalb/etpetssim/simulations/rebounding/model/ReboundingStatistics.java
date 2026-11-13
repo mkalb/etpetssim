@@ -1,7 +1,7 @@
 package de.mkalb.etpetssim.simulations.rebounding.model;
 
 import de.mkalb.etpetssim.engine.GridStructure;
-import de.mkalb.etpetssim.simulations.core.model.BaseTimedSimulationStatistics;
+import de.mkalb.etpetssim.simulations.core.model.BaseSimulationStatistics;
 import de.mkalb.etpetssim.simulations.core.model.StatisticsExtremaMode;
 import de.mkalb.etpetssim.simulations.core.model.StatisticsMetric;
 
@@ -10,7 +10,7 @@ import java.util.List;
 /**
  * Statistics of Rebounding Entities with the wall and rebounder cell counts.
  */
-public final class ReboundingStatistics extends BaseTimedSimulationStatistics {
+public final class ReboundingStatistics extends BaseSimulationStatistics {
 
     public static final String KEY_WALL_CELLS = "wallCells";
     public static final String KEY_REBOUNDER_CELLS = "rebounderCells";

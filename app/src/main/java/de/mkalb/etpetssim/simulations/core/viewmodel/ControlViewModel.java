@@ -13,9 +13,9 @@ import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 
 /**
- * Default implementation of control view-model state and user requests.
+ * View model of the simulation control state and user requests.
  */
-public final class DefaultControlViewModel {
+public final class ControlViewModel {
 
     private static final int STEP_DURATION_DEFAULT = 700;
     private static final int STEP_DURATION_MIN = 50;
@@ -41,7 +41,7 @@ public final class DefaultControlViewModel {
     private final BooleanProperty actionButtonRequested = new SimpleBooleanProperty(false);
     private final BooleanProperty cancelButtonRequested = new SimpleBooleanProperty(false);
 
-    public DefaultControlViewModel(ReadOnlyObjectProperty<SimulationState> simulationState) {
+    public ControlViewModel(ReadOnlyObjectProperty<SimulationState> simulationState) {
         this.simulationState = simulationState;
     }
 
@@ -51,9 +51,9 @@ public final class DefaultControlViewModel {
      * @param simulationState shared simulation state
      * @return configured control view model
      */
-    public static DefaultControlViewModel createWithMinStepDuration(
+    public static ControlViewModel createWithMinStepDuration(
             ReadOnlyObjectProperty<SimulationState> simulationState) {
-        DefaultControlViewModel controlViewModel = new DefaultControlViewModel(simulationState);
+        ControlViewModel controlViewModel = new ControlViewModel(simulationState);
         controlViewModel.stepDuration.setValue(STEP_DURATION_MIN);
         return controlViewModel;
     }

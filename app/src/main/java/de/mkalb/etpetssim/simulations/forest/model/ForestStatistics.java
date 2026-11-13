@@ -1,7 +1,7 @@
 package de.mkalb.etpetssim.simulations.forest.model;
 
 import de.mkalb.etpetssim.engine.GridStructure;
-import de.mkalb.etpetssim.simulations.core.model.BaseTimedSimulationStatistics;
+import de.mkalb.etpetssim.simulations.core.model.BaseSimulationStatistics;
 import de.mkalb.etpetssim.simulations.core.model.StatisticsChartGroup;
 import de.mkalb.etpetssim.simulations.core.model.StatisticsExtremaMode;
 import de.mkalb.etpetssim.simulations.core.model.StatisticsMetric;
@@ -11,7 +11,7 @@ import java.util.List;
 /**
  * Statistics of the Forest-fire model with the empty, tree, and burning cell counts.
  */
-public final class ForestStatistics extends BaseTimedSimulationStatistics {
+public final class ForestStatistics extends BaseSimulationStatistics {
 
     public static final String KEY_EMPTY_CELLS = "emptyCells";
     public static final String KEY_TREE_CELLS = "treeCells";

@@ -9,7 +9,7 @@ import de.mkalb.etpetssim.engine.model.SparseGridModel;
 import de.mkalb.etpetssim.engine.model.WritableGridModel;
 import de.mkalb.etpetssim.engine.support.GridInitializers;
 import de.mkalb.etpetssim.simulations.conway.model.entity.ConwayEntity;
-import de.mkalb.etpetssim.simulations.core.model.AbstractTimedSimulationManager;
+import de.mkalb.etpetssim.simulations.core.model.AbstractSimulationManager;
 import de.mkalb.etpetssim.simulations.core.model.SimulationInitializationCancellation;
 
 import java.util.Random;
@@ -18,7 +18,7 @@ import java.util.Random;
  * Simulation manager of Conway's Game of Life.
  */
 public final class ConwaySimulationManager
-        extends AbstractTimedSimulationManager<ConwayEntity, WritableGridModel<ConwayEntity>, ConwayConfig,
+        extends AbstractSimulationManager<ConwayEntity, WritableGridModel<ConwayEntity>, ConwayConfig,
         ConwayStatistics> {
 
     private final GridStructure structure;

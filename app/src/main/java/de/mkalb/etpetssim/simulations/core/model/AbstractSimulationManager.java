@@ -24,7 +24,7 @@ import java.util.Map;
  * @param <CON> immutable configuration type
  * @param <STA> statistics snapshot type
  */
-public abstract class AbstractTimedSimulationManager<
+public abstract class AbstractSimulationManager<
         ENT extends GridEntity,
         GM extends GridModel<ENT>,
         CON extends SimulationConfig,
@@ -41,8 +41,8 @@ public abstract class AbstractTimedSimulationManager<
      * @param config  the immutable simulation configuration
      * @param metrics metric descriptors sampled after each executed step
      */
-    protected AbstractTimedSimulationManager(CON config,
-                                             List<StatisticsMetric<STA>> metrics) {
+    protected AbstractSimulationManager(CON config,
+                                        List<StatisticsMetric<STA>> metrics) {
         this.config = config;
         this.metrics = List.copyOf(metrics);
         statisticsHistory = new StatisticsHistory();
@@ -175,7 +175,7 @@ public abstract class AbstractTimedSimulationManager<
             double value = metric.extractor().applyAsDouble(liveStatistics);
             if (!Double.isFinite(value)) {
                 AppLogger
-                        .errorf("AbstractTimedSimulationManager: Replacing non-finite metric value with NaN: key: %s, "
+                        .errorf("AbstractSimulationManager: Replacing non-finite metric value with NaN: key: %s, "
                                         + "value: %f",
                                 metric.key(), value);
                 value = Double.NaN;

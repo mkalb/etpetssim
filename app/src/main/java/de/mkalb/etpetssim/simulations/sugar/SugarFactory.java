@@ -2,11 +2,11 @@ package de.mkalb.etpetssim.simulations.sugar;
 
 import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorRegistry;
 import de.mkalb.etpetssim.simulations.core.shared.SimulationState;
-import de.mkalb.etpetssim.simulations.core.view.DefaultControlView;
+import de.mkalb.etpetssim.simulations.core.view.ControlView;
 import de.mkalb.etpetssim.simulations.core.view.SimulationMainView;
-import de.mkalb.etpetssim.simulations.core.viewmodel.DefaultControlViewModel;
-import de.mkalb.etpetssim.simulations.core.viewmodel.DefaultMainViewModel;
-import de.mkalb.etpetssim.simulations.core.viewmodel.DefaultObservationViewModel;
+import de.mkalb.etpetssim.simulations.core.viewmodel.ControlViewModel;
+import de.mkalb.etpetssim.simulations.core.viewmodel.MainViewModel;
+import de.mkalb.etpetssim.simulations.core.viewmodel.ObservationViewModel;
 import de.mkalb.etpetssim.simulations.sugar.model.SugarCell;
 import de.mkalb.etpetssim.simulations.sugar.model.SugarSimulationManager;
 import de.mkalb.etpetssim.simulations.sugar.model.SugarStatistics;
@@ -38,16 +38,16 @@ public final class SugarFactory {
         // ViewModel
         var configViewModel = new SugarConfigViewModel(readOnlySimulationState);
         var editToolBarViewModel = new SugarEditToolBarViewModel();
-        var controlViewModel = new DefaultControlViewModel(readOnlySimulationState);
+        var controlViewModel = new ControlViewModel(readOnlySimulationState);
         var observationViewModel =
-                new DefaultObservationViewModel<SugarEntity, SugarCell, SugarStatistics>();
+                new ObservationViewModel<SugarEntity, SugarCell, SugarStatistics>();
         var viewModel =
-                new DefaultMainViewModel<>(simulationState, configViewModel, controlViewModel, observationViewModel,
+                new MainViewModel<>(simulationState, configViewModel, controlViewModel, observationViewModel,
                         SugarSimulationManager::new, SugarCell::from, new SugarUserAction());
 
         // View
         var configView = new SugarConfigView(configViewModel);
-        var controlView = new DefaultControlView(controlViewModel);
+        var controlView = new ControlView(controlViewModel);
         var observationView = new SugarObservationView(observationViewModel, entityDescriptorRegistry);
         return new SugarMainView(viewModel, editToolBarViewModel, entityDescriptorRegistry, configView, controlView,
                 observationView);

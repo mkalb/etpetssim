@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.fail;
 
 @Execution(ExecutionMode.SAME_THREAD)
-final class AbstractTimedSimulationManagerTest {
+final class AbstractSimulationManagerTest {
 
     private static final String KEY_INFINITE = "infinite";
 
@@ -119,7 +119,7 @@ final class AbstractTimedSimulationManagerTest {
     }
 
     private static final class TestSimulationManager
-            extends AbstractTimedSimulationManager<ConwayEntity, WritableGridModel<ConwayEntity>, ConwayConfig,
+            extends AbstractSimulationManager<ConwayEntity, WritableGridModel<ConwayEntity>, ConwayConfig,
             ConwayStatistics> {
 
         private final GridStructure structure;

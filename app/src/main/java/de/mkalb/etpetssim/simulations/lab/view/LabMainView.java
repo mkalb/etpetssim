@@ -14,8 +14,8 @@ import de.mkalb.etpetssim.simulations.core.shared.SimulationState;
 import de.mkalb.etpetssim.simulations.core.shared.SimulationUserActionScope;
 import de.mkalb.etpetssim.simulations.core.view.AbstractMainView;
 import de.mkalb.etpetssim.simulations.core.view.CanvasPainters;
-import de.mkalb.etpetssim.simulations.core.view.DefaultControlView;
-import de.mkalb.etpetssim.simulations.core.viewmodel.DefaultMainViewModel;
+import de.mkalb.etpetssim.simulations.core.view.ControlView;
+import de.mkalb.etpetssim.simulations.core.viewmodel.MainViewModel;
 import de.mkalb.etpetssim.simulations.core.viewmodel.SimulationUserActionDescriptor;
 import de.mkalb.etpetssim.simulations.lab.model.LabConfig;
 import de.mkalb.etpetssim.simulations.lab.model.LabSimulationManager;
@@ -103,11 +103,11 @@ public final class LabMainView
     private static final Color HOVER_POINTER_COLOR = Color.DARKGREEN;
     private static final double HOVER_POINTER_RADIUS = 2.0d;
 
-    public LabMainView(DefaultMainViewModel<LabEntity, GridCell<LabEntity>, WritableGridModel<LabEntity>,
+    public LabMainView(MainViewModel<LabEntity, GridCell<LabEntity>, WritableGridModel<LabEntity>,
                                LabConfig, LabStatistics, LabSimulationManager, NoUserActionContext> viewModel,
                        GridEntityDescriptorRegistry entityDescriptorRegistry,
                        LabConfigView configView,
-                       DefaultControlView controlView,
+                       ControlView controlView,
                        LabObservationView observationView) {
         super(viewModel,
                 configView,

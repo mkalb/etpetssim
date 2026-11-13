@@ -4,11 +4,11 @@ import de.mkalb.etpetssim.engine.model.GridCell;
 import de.mkalb.etpetssim.engine.model.ReadableGridModel;
 import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorRegistry;
 import de.mkalb.etpetssim.simulations.core.shared.SimulationState;
-import de.mkalb.etpetssim.simulations.core.view.DefaultControlView;
+import de.mkalb.etpetssim.simulations.core.view.ControlView;
 import de.mkalb.etpetssim.simulations.core.view.SimulationMainView;
-import de.mkalb.etpetssim.simulations.core.viewmodel.DefaultControlViewModel;
-import de.mkalb.etpetssim.simulations.core.viewmodel.DefaultMainViewModel;
-import de.mkalb.etpetssim.simulations.core.viewmodel.DefaultObservationViewModel;
+import de.mkalb.etpetssim.simulations.core.viewmodel.ControlViewModel;
+import de.mkalb.etpetssim.simulations.core.viewmodel.MainViewModel;
+import de.mkalb.etpetssim.simulations.core.viewmodel.ObservationViewModel;
 import de.mkalb.etpetssim.simulations.snake.model.SnakeSimulationManager;
 import de.mkalb.etpetssim.simulations.snake.model.SnakeStatistics;
 import de.mkalb.etpetssim.simulations.snake.model.SnakeUserAction;
@@ -39,16 +39,16 @@ public final class SnakeFactory {
         // ViewModel
         var configViewModel = new SnakeConfigViewModel(readOnlySimulationState);
         var editToolBarViewModel = new SnakeEditToolBarViewModel();
-        var controlViewModel = DefaultControlViewModel.createWithMinStepDuration(readOnlySimulationState);
+        var controlViewModel = ControlViewModel.createWithMinStepDuration(readOnlySimulationState);
         var observationViewModel =
-                new DefaultObservationViewModel<SnakeEntity, GridCell<SnakeEntity>, SnakeStatistics>();
+                new ObservationViewModel<SnakeEntity, GridCell<SnakeEntity>, SnakeStatistics>();
         var viewModel =
-                new DefaultMainViewModel<>(simulationState, configViewModel, controlViewModel, observationViewModel,
+                new MainViewModel<>(simulationState, configViewModel, controlViewModel, observationViewModel,
                         SnakeSimulationManager::new, ReadableGridModel::getGridCell, new SnakeUserAction());
 
         // View
         var configView = new SnakeConfigView(configViewModel);
-        var controlView = new DefaultControlView(controlViewModel);
+        var controlView = new ControlView(controlViewModel);
         var observationView = new SnakeObservationView(observationViewModel, entityDescriptorRegistry);
         return new SnakeMainView(viewModel, editToolBarViewModel, entityDescriptorRegistry, configView, controlView,
                 observationView);

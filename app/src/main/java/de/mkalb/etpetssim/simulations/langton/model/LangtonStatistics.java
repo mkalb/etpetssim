@@ -1,7 +1,7 @@
 package de.mkalb.etpetssim.simulations.langton.model;
 
 import de.mkalb.etpetssim.engine.GridStructure;
-import de.mkalb.etpetssim.simulations.core.model.BaseTimedSimulationStatistics;
+import de.mkalb.etpetssim.simulations.core.model.BaseSimulationStatistics;
 import de.mkalb.etpetssim.simulations.core.model.StatisticsExtremaMode;
 import de.mkalb.etpetssim.simulations.core.model.StatisticsMetric;
 
@@ -10,7 +10,7 @@ import java.util.List;
 /**
  * Statistics of Langton's Ant with the ant and visited cell counts.
  */
-public final class LangtonStatistics extends BaseTimedSimulationStatistics {
+public final class LangtonStatistics extends BaseSimulationStatistics {
 
     public static final String KEY_ANT_CELLS = "antCells";
     public static final String KEY_VISITED_CELLS = "visitedCells";

@@ -3,7 +3,7 @@ package de.mkalb.etpetssim.simulations.core.view;
 import de.mkalb.etpetssim.core.AppLocalization;
 import de.mkalb.etpetssim.simulations.conway.ConwayFactory;
 import de.mkalb.etpetssim.simulations.core.SimulationTerminationHandle;
-import de.mkalb.etpetssim.simulations.core.viewmodel.DefaultMainViewModel;
+import de.mkalb.etpetssim.simulations.core.viewmodel.MainViewModel;
 import de.mkalb.etpetssim.testsupport.FXTestSupport;
 import javafx.geometry.Orientation;
 import javafx.scene.control.SplitPane;
@@ -102,7 +102,7 @@ final class AbstractMainViewTest {
     void testShutdownSimulationForwardsViewModelTerminationHandle() {
         FXTestSupport.runAndWait(() -> {
             AbstractMainView<?, ?, ?, ?, ?, ?, ?, ?> view = createMainView();
-            DefaultMainViewModel<?, ?, ?, ?, ?, ?, ?> viewModel = view.viewModel;
+            MainViewModel<?, ?, ?, ?, ?, ?, ?> viewModel = view.viewModel;
 
             SimulationTerminationHandle terminationHandle = view.shutdownSimulation();
 

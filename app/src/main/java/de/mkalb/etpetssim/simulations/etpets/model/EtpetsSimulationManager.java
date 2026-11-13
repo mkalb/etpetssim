@@ -5,7 +5,7 @@ import de.mkalb.etpetssim.engine.GridStructure;
 import de.mkalb.etpetssim.engine.executor.DefaultSimulationExecutor;
 import de.mkalb.etpetssim.engine.executor.TimedSimulationExecutor;
 import de.mkalb.etpetssim.engine.model.SparseGridModel;
-import de.mkalb.etpetssim.simulations.core.model.AbstractTimedSimulationManager;
+import de.mkalb.etpetssim.simulations.core.model.AbstractSimulationManager;
 import de.mkalb.etpetssim.simulations.core.model.SimulationInitializationCancellation;
 import de.mkalb.etpetssim.simulations.etpets.model.entity.EtpetsEntity;
 import de.mkalb.etpetssim.simulations.etpets.model.entity.Insect;
@@ -28,7 +28,7 @@ import static de.mkalb.etpetssim.engine.support.WorkCheckpoints.isCancellationCh
  * Simulation manager of ET Pets.
  */
 public final class EtpetsSimulationManager
-        extends AbstractTimedSimulationManager<EtpetsEntity, EtpetsGridModel, EtpetsConfig, EtpetsStatistics> {
+        extends AbstractSimulationManager<EtpetsEntity, EtpetsGridModel, EtpetsConfig, EtpetsStatistics> {
 
     private final GridStructure structure;
     private final EtpetsStatistics statistics;

@@ -9,7 +9,7 @@ import de.mkalb.etpetssim.simulations.core.model.StatisticsChartGroup;
 import de.mkalb.etpetssim.simulations.core.model.StatisticsExtrema;
 import de.mkalb.etpetssim.simulations.core.model.StatisticsExtremum;
 import de.mkalb.etpetssim.simulations.core.model.StatisticsMetric;
-import de.mkalb.etpetssim.simulations.core.viewmodel.DefaultObservationViewModel;
+import de.mkalb.etpetssim.simulations.core.viewmodel.ObservationViewModel;
 import de.mkalb.etpetssim.ui.FXStyleClasses;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.value.ChangeListener;
@@ -45,7 +45,7 @@ public abstract class AbstractObservationView<
 
     private static final String LABEL_SEPARATOR = ":";
 
-    protected final DefaultObservationViewModel<ENT, GC, STA> viewModel;
+    protected final ObservationViewModel<ENT, GC, STA> viewModel;
     private final GridEntityDescriptorRegistry entityDescriptorRegistry;
     private final Label stepCountLabel = new Label();
     private final Label totalCellsLabel = new Label();
@@ -60,7 +60,7 @@ public abstract class AbstractObservationView<
     private @Nullable ReadOnlyObjectProperty<@Nullable GC> selectedGridCellProperty;
     private @Nullable ChangeListener<@Nullable GC> selectedGridCellListener;
 
-    protected AbstractObservationView(DefaultObservationViewModel<ENT, GC, STA> viewModel,
+    protected AbstractObservationView(ObservationViewModel<ENT, GC, STA> viewModel,
                                       GridEntityDescriptorRegistry entityDescriptorRegistry) {
         this.viewModel = viewModel;
         this.entityDescriptorRegistry = entityDescriptorRegistry;

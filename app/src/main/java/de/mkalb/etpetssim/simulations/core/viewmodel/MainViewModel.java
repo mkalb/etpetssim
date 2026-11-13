@@ -7,7 +7,7 @@ import de.mkalb.etpetssim.engine.model.GridCellView;
 import de.mkalb.etpetssim.engine.model.GridModel;
 import de.mkalb.etpetssim.engine.model.entity.GridEntity;
 import de.mkalb.etpetssim.simulations.core.SimulationTerminationHandle;
-import de.mkalb.etpetssim.simulations.core.model.AbstractTimedSimulationManager;
+import de.mkalb.etpetssim.simulations.core.model.AbstractSimulationManager;
 import de.mkalb.etpetssim.simulations.core.model.SimulationConfig;
 import de.mkalb.etpetssim.simulations.core.model.SimulationInitializationCanceledException;
 import de.mkalb.etpetssim.simulations.core.model.SimulationInitializationCancellation;
@@ -38,7 +38,7 @@ import java.util.function.BiFunction;
 import java.util.function.Consumer;
 
 /**
- * Default main view-model implementation that orchestrates timed and batch execution.
+ * Main view model of the simulations that orchestrates timed and batch execution.
  *
  * <p>Coordinates the config, control, and observation view models, the notification, and the cell selection.
  *
@@ -50,19 +50,19 @@ import java.util.function.Consumer;
  * @param <SM>  concrete simulation manager type
  * @param <CTX> simulation-specific user action context type
  */
-public final class DefaultMainViewModel<
+public final class MainViewModel<
         ENT extends GridEntity,
         GC extends GridCellView<ENT>,
         GM extends GridModel<ENT>,
         CON extends SimulationConfig,
         STA extends SimulationStatistics,
-        SM extends AbstractTimedSimulationManager<ENT, GM, CON, STA>,
+        SM extends AbstractSimulationManager<ENT, GM, CON, STA>,
         CTX extends SimulationUserActionContext> {
 
     private static final double TIMEOUT_EXECUTE_FACTOR = 0.4d;
     private static final double TIMEOUT_VIEW_FACTOR = 0.5d;
     private static final double THROTTLE_DRAW_FACTOR = 0.3d;
-    private static final String LOG_COMPONENT = "DefaultMainViewModel";
+    private static final String LOG_COMPONENT = "MainViewModel";
     private static final Runnable NO_OP_SIMULATION_INITIALIZED_LISTENER = () -> {};
     private static final Consumer<SimulationStepEvent> NO_OP_SIMULATION_STEP_LISTENER = _ -> {};
     private static final Runnable NO_OP_SIMULATION_RESET_LISTENER = () -> {};
@@ -71,8 +71,8 @@ public final class DefaultMainViewModel<
     private final ObjectProperty<SimulationNotificationType> notificationType =
             new SimpleObjectProperty<>(SimulationNotificationType.NONE);
     private final AbstractConfigViewModel<CON> configViewModel;
-    private final DefaultControlViewModel controlViewModel;
-    private final DefaultObservationViewModel<ENT, GC, STA> observationViewModel;
+    private final ControlViewModel controlViewModel;
+    private final ObservationViewModel<ENT, GC, STA> observationViewModel;
     private final BiFunction<CON, SimulationInitializationCancellation, SM> simulationManagerFactory;
     private final SimulationTimer timer;
     private final ExecutorService lifecycleExecutor;
@@ -113,25 +113,25 @@ public final class DefaultMainViewModel<
      * @param selectedGridCellProvider mapping from a clicked coordinate to the corresponding selected cell
      * @param simulationUserAction     user action applied to the current paused simulation state
      */
-    public DefaultMainViewModel(ObjectProperty<SimulationState> simulationState,
-                                AbstractConfigViewModel<CON> configViewModel,
-                                DefaultControlViewModel controlViewModel,
-                                DefaultObservationViewModel<ENT, GC, STA> observationViewModel,
-                                BiFunction<CON, SimulationInitializationCancellation, SM> simulationManagerFactory,
-                                BiFunction<GM, GridCoordinate, GC> selectedGridCellProvider,
-                                SimulationUserAction<ENT, GM, CON, STA, SM, CTX> simulationUserAction) {
+    public MainViewModel(ObjectProperty<SimulationState> simulationState,
+                         AbstractConfigViewModel<CON> configViewModel,
+                         ControlViewModel controlViewModel,
+                         ObservationViewModel<ENT, GC, STA> observationViewModel,
+                         BiFunction<CON, SimulationInitializationCancellation, SM> simulationManagerFactory,
+                         BiFunction<GM, GridCoordinate, GC> selectedGridCellProvider,
+                         SimulationUserAction<ENT, GM, CON, STA, SM, CTX> simulationUserAction) {
         this(simulationState, configViewModel, controlViewModel, observationViewModel, simulationManagerFactory,
                 selectedGridCellProvider, simulationUserAction, createLifecycleExecutor());
     }
 
-    DefaultMainViewModel(ObjectProperty<SimulationState> simulationState,
-                         AbstractConfigViewModel<CON> configViewModel,
-                         DefaultControlViewModel controlViewModel,
-                         DefaultObservationViewModel<ENT, GC, STA> observationViewModel,
-                         BiFunction<CON, SimulationInitializationCancellation, SM> simulationManagerFactory,
-                         BiFunction<GM, GridCoordinate, GC> selectedGridCellProvider,
-                         SimulationUserAction<ENT, GM, CON, STA, SM, CTX> simulationUserAction,
-                         ExecutorService lifecycleExecutor) {
+    MainViewModel(ObjectProperty<SimulationState> simulationState,
+                  AbstractConfigViewModel<CON> configViewModel,
+                  ControlViewModel controlViewModel,
+                  ObservationViewModel<ENT, GC, STA> observationViewModel,
+                  BiFunction<CON, SimulationInitializationCancellation, SM> simulationManagerFactory,
+                  BiFunction<GM, GridCoordinate, GC> selectedGridCellProvider,
+                  SimulationUserAction<ENT, GM, CON, STA, SM, CTX> simulationUserAction,
+                  ExecutorService lifecycleExecutor) {
         this.simulationState = simulationState;
         this.configViewModel = configViewModel;
         this.controlViewModel = controlViewModel;
@@ -240,7 +240,7 @@ public final class DefaultMainViewModel<
 
     /**
      * Sets the callback invoked whenever statistics are reset, i.e. right after
-     * {@link DefaultObservationViewModel#resetStatistics()} is called on simulation restart or shutdown.
+     * {@link ObservationViewModel#resetStatistics()} is called on simulation restart or shutdown.
      *
      * <p>Use this to refresh observation labels/charts to their initial placeholder state so stale
      * values from a previous or finished simulation do not linger until the next simulation initializes.

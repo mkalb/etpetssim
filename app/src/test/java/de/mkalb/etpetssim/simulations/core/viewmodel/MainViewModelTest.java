@@ -19,7 +19,7 @@ import de.mkalb.etpetssim.simulations.conway.model.entity.ConwayEntity;
 import de.mkalb.etpetssim.simulations.conway.shared.ConwayUserActionContext;
 import de.mkalb.etpetssim.simulations.conway.viewmodel.ConwayConfigViewModel;
 import de.mkalb.etpetssim.simulations.core.SimulationTerminationHandle;
-import de.mkalb.etpetssim.simulations.core.model.AbstractTimedSimulationManager;
+import de.mkalb.etpetssim.simulations.core.model.AbstractSimulationManager;
 import de.mkalb.etpetssim.simulations.core.model.SimulationInitializationCancellation;
 import de.mkalb.etpetssim.simulations.core.model.StatisticsExtrema;
 import de.mkalb.etpetssim.simulations.core.shared.SimulationMode;
@@ -57,7 +57,7 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Execution(ExecutionMode.SAME_THREAD)
-final class DefaultMainViewModelTest {
+final class MainViewModelTest {
 
     @BeforeAll
     static void setUpBeforeAll() {
@@ -74,18 +74,18 @@ final class DefaultMainViewModelTest {
 
     private static Fixture createFixture(
             BiFunction<ConwayConfig, SimulationInitializationCancellation,
-                    AbstractTimedSimulationManager<ConwayEntity, WritableGridModel<ConwayEntity>, ConwayConfig,
+                    AbstractSimulationManager<ConwayEntity, WritableGridModel<ConwayEntity>, ConwayConfig,
                             ConwayStatistics>> simulationManagerFactory,
             ExecutorService lifecycleExecutor) {
         ObjectProperty<SimulationState> simulationState =
                 new SimpleObjectProperty<>(SimulationState.READY);
         var configViewModel = new ConwayConfigViewModel(simulationState);
-        var controlViewModel = new DefaultControlViewModel(simulationState);
+        var controlViewModel = new ControlViewModel(simulationState);
         controlViewModel.startModeProperty().setValue(SimulationStartMode.START_PAUSED);
         var observationViewModel =
-                new DefaultObservationViewModel<ConwayEntity, GridCell<ConwayEntity>, ConwayStatistics>();
+                new ObservationViewModel<ConwayEntity, GridCell<ConwayEntity>, ConwayStatistics>();
         return new Fixture(
-                new DefaultMainViewModel<>(
+                new MainViewModel<>(
                         simulationState,
                         configViewModel,
                         controlViewModel,
@@ -179,7 +179,7 @@ final class DefaultMainViewModelTest {
 
     @Test
     void testSetSimulationResetListenerRunsOnStartAndShutdown() throws InterruptedException {
-        Fixture fixture = FXTestSupport.supplyAndWaitNonNull(DefaultMainViewModelTest::createFixture);
+        Fixture fixture = FXTestSupport.supplyAndWaitNonNull(MainViewModelTest::createFixture);
         AtomicInteger resetCallCount = new AtomicInteger();
 
         FXTestSupport
@@ -235,7 +235,7 @@ final class DefaultMainViewModelTest {
 
     @Test
     void testShutdownSimulationReturnsSameTerminationHandle() {
-        Fixture fixture = FXTestSupport.supplyAndWaitNonNull(DefaultMainViewModelTest::createFixture);
+        Fixture fixture = FXTestSupport.supplyAndWaitNonNull(MainViewModelTest::createFixture);
 
         SimulationTerminationHandle firstTerminationHandle = FXTestSupport.supplyAndWaitNonNull(
                 fixture.mainViewModel()::shutdownSimulation);
@@ -251,7 +251,7 @@ final class DefaultMainViewModelTest {
 
     @Test
     void testShutdownSimulationRemainsIdempotentWhenResetListenerFails() {
-        Fixture fixture = FXTestSupport.supplyAndWaitNonNull(DefaultMainViewModelTest::createFixture);
+        Fixture fixture = FXTestSupport.supplyAndWaitNonNull(MainViewModelTest::createFixture);
 
         FXTestSupport.runAndWait(() -> fixture.mainViewModel().setSimulationResetListener(
                 () -> {
@@ -307,7 +307,7 @@ final class DefaultMainViewModelTest {
 
     @Test
     void testShutdownSimulationClearsHistoryAndExtrema() throws InterruptedException {
-        Fixture fixture = FXTestSupport.supplyAndWaitNonNull(DefaultMainViewModelTest::createFixture);
+        Fixture fixture = FXTestSupport.supplyAndWaitNonNull(MainViewModelTest::createFixture);
         startAndAwaitInitialization(fixture);
 
         FXTestSupport.runAndWait(() -> {
@@ -323,7 +323,7 @@ final class DefaultMainViewModelTest {
 
     @Test
     void testShutdownSimulationKeepsShuttingDownWhenRunningBatchCompletes() throws InterruptedException {
-        Fixture fixture = FXTestSupport.supplyAndWaitNonNull(DefaultMainViewModelTest::createFixture);
+        Fixture fixture = FXTestSupport.supplyAndWaitNonNull(MainViewModelTest::createFixture);
         List<SimulationState> states = new ArrayList<>();
         AtomicReference<SimulationTerminationHandle> terminationHandle = new AtomicReference<>();
         CountDownLatch shutdownRequested = new CountDownLatch(1);
@@ -345,7 +345,7 @@ final class DefaultMainViewModelTest {
 
     @Test
     void testShutdownSimulationReleasesViewCallbacks() {
-        Fixture fixture = FXTestSupport.supplyAndWaitNonNull(DefaultMainViewModelTest::createFixture);
+        Fixture fixture = FXTestSupport.supplyAndWaitNonNull(MainViewModelTest::createFixture);
 
         FXTestSupport.runAndWait(() -> {
             fixture.mainViewModel().setSimulationInitializedListener(() -> {});
@@ -361,7 +361,7 @@ final class DefaultMainViewModelTest {
 
     @Test
     void testHandleCancelButtonCancelsRunningBatch() throws InterruptedException {
-        Fixture fixture = FXTestSupport.supplyAndWaitNonNull(DefaultMainViewModelTest::createFixture);
+        Fixture fixture = FXTestSupport.supplyAndWaitNonNull(MainViewModelTest::createFixture);
         List<SimulationState> states = new ArrayList<>();
         AtomicReference<CountDownLatch> canceled = new AtomicReference<>();
 
@@ -380,7 +380,7 @@ final class DefaultMainViewModelTest {
 
     @Test
     void testHandleCancelButtonCancelsRunningTimerWithFinalStep() throws InterruptedException {
-        Fixture fixture = FXTestSupport.supplyAndWaitNonNull(DefaultMainViewModelTest::createFixture);
+        Fixture fixture = FXTestSupport.supplyAndWaitNonNull(MainViewModelTest::createFixture);
         List<SimulationState> states = new ArrayList<>();
         List<SimulationStepEvent> events = new ArrayList<>();
         CountDownLatch firstStep = new CountDownLatch(1);
@@ -413,7 +413,7 @@ final class DefaultMainViewModelTest {
 
     @Test
     void testHandleStartActionForwardsInitialHistoryAndExtrema() throws InterruptedException {
-        Fixture fixture = FXTestSupport.supplyAndWaitNonNull(DefaultMainViewModelTest::createFixture);
+        Fixture fixture = FXTestSupport.supplyAndWaitNonNull(MainViewModelTest::createFixture);
         startAndAwaitInitialization(fixture);
 
         FXTestSupport.runAndWait(() -> assertAll(
@@ -582,7 +582,7 @@ final class DefaultMainViewModelTest {
 
     @Test
     void testHandleStartActionTransitionsToErrorWhenListenerFails() throws InterruptedException {
-        Fixture fixture = FXTestSupport.supplyAndWaitNonNull(DefaultMainViewModelTest::createFixture);
+        Fixture fixture = FXTestSupport.supplyAndWaitNonNull(MainViewModelTest::createFixture);
         CountDownLatch failureHandled = new CountDownLatch(1);
 
         FXTestSupport.runAndWait(() -> {
@@ -609,7 +609,7 @@ final class DefaultMainViewModelTest {
 
     @Test
     void testHandlePauseActionPausesRunningBatch() throws InterruptedException {
-        Fixture fixture = FXTestSupport.supplyAndWaitNonNull(DefaultMainViewModelTest::createFixture);
+        Fixture fixture = FXTestSupport.supplyAndWaitNonNull(MainViewModelTest::createFixture);
         List<SimulationState> states = new ArrayList<>();
         AtomicReference<CountDownLatch> paused = new AtomicReference<>();
 
@@ -682,22 +682,22 @@ final class DefaultMainViewModelTest {
     }
 
     private record Fixture(
-            DefaultMainViewModel<
+            MainViewModel<
                     ConwayEntity,
                     GridCell<ConwayEntity>,
                     WritableGridModel<ConwayEntity>,
                     ConwayConfig,
                     ConwayStatistics,
-                    AbstractTimedSimulationManager<ConwayEntity, WritableGridModel<ConwayEntity>, ConwayConfig,
+                    AbstractSimulationManager<ConwayEntity, WritableGridModel<ConwayEntity>, ConwayConfig,
                             ConwayStatistics>,
                     ConwayUserActionContext> mainViewModel,
             ConwayConfigViewModel configViewModel,
-            DefaultControlViewModel controlViewModel,
-            DefaultObservationViewModel<ConwayEntity, GridCell<ConwayEntity>, ConwayStatistics> observationViewModel) {
+            ControlViewModel controlViewModel,
+            ObservationViewModel<ConwayEntity, GridCell<ConwayEntity>, ConwayStatistics> observationViewModel) {
     }
 
     private static final class StubSimulationManager
-            extends AbstractTimedSimulationManager<ConwayEntity, WritableGridModel<ConwayEntity>, ConwayConfig,
+            extends AbstractSimulationManager<ConwayEntity, WritableGridModel<ConwayEntity>, ConwayConfig,
             ConwayStatistics> {
 
         private final GridStructure structure;

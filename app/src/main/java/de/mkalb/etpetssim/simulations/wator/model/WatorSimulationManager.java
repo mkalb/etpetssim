@@ -9,7 +9,7 @@ import de.mkalb.etpetssim.engine.model.ReadableGridModel;
 import de.mkalb.etpetssim.engine.model.WritableGridModel;
 import de.mkalb.etpetssim.engine.support.AgentOrderingStrategies;
 import de.mkalb.etpetssim.engine.support.GridInitializers;
-import de.mkalb.etpetssim.simulations.core.model.AbstractTimedSimulationManager;
+import de.mkalb.etpetssim.simulations.core.model.AbstractSimulationManager;
 import de.mkalb.etpetssim.simulations.core.model.SimulationInitializationCancellation;
 import de.mkalb.etpetssim.simulations.wator.model.entity.CreatureFactory;
 import de.mkalb.etpetssim.simulations.wator.model.entity.Fish;
@@ -26,7 +26,7 @@ import static de.mkalb.etpetssim.engine.support.WorkCheckpoints.isCancellationCh
  * Simulation manager of Wa-Tor.
  */
 public final class WatorSimulationManager
-        extends AbstractTimedSimulationManager<WatorEntity, WritableGridModel<WatorEntity>, WatorConfig,
+        extends AbstractSimulationManager<WatorEntity, WritableGridModel<WatorEntity>, WatorConfig,
         WatorStatistics> {
 
     private final GridStructure structure;

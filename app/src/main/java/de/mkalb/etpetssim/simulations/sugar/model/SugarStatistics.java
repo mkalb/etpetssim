@@ -1,7 +1,7 @@
 package de.mkalb.etpetssim.simulations.sugar.model;
 
 import de.mkalb.etpetssim.engine.GridStructure;
-import de.mkalb.etpetssim.simulations.core.model.BaseTimedSimulationStatistics;
+import de.mkalb.etpetssim.simulations.core.model.BaseSimulationStatistics;
 import de.mkalb.etpetssim.simulations.core.model.StatisticsExtremaMode;
 import de.mkalb.etpetssim.simulations.core.model.StatisticsMetric;
 
@@ -10,7 +10,7 @@ import java.util.List;
 /**
  * Statistics of Sugarscape with the resource and agent cell counts.
  */
-public final class SugarStatistics extends BaseTimedSimulationStatistics {
+public final class SugarStatistics extends BaseSimulationStatistics {
 
     public static final String KEY_RESOURCE_CELLS = "resourceCells";
     public static final String KEY_AGENT_CELLS = "agentCells";

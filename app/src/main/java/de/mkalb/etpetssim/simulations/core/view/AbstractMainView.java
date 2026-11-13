@@ -12,13 +12,13 @@ import de.mkalb.etpetssim.engine.model.entity.GridEntity;
 import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptor;
 import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorRegistry;
 import de.mkalb.etpetssim.simulations.core.SimulationTerminationHandle;
-import de.mkalb.etpetssim.simulations.core.model.AbstractTimedSimulationManager;
+import de.mkalb.etpetssim.simulations.core.model.AbstractSimulationManager;
 import de.mkalb.etpetssim.simulations.core.model.SimulationConfig;
 import de.mkalb.etpetssim.simulations.core.model.SimulationStatistics;
 import de.mkalb.etpetssim.simulations.core.shared.SimulationNotificationType;
 import de.mkalb.etpetssim.simulations.core.shared.SimulationStepEvent;
 import de.mkalb.etpetssim.simulations.core.shared.SimulationUserActionContext;
-import de.mkalb.etpetssim.simulations.core.viewmodel.DefaultMainViewModel;
+import de.mkalb.etpetssim.simulations.core.viewmodel.MainViewModel;
 import de.mkalb.etpetssim.simulations.core.viewmodel.SimulationUserActionDescriptor;
 import de.mkalb.etpetssim.ui.CellDimension;
 import de.mkalb.etpetssim.ui.FXGridCanvasPainter;
@@ -54,7 +54,7 @@ import java.util.concurrent.TimeUnit;
  * Abstract base of the main views of the regular 2D simulations.
  *
  * <p>Composes the config, control, and observation regions around the simulation canvas, binds
- * {@link DefaultMainViewModel}, and provides drawing and throttling support.
+ * {@link MainViewModel}, and provides drawing and throttling support.
  *
  * @param <ENT> entity type stored in grid cells
  * @param <GC>  grid cell type used for cell selection
@@ -71,7 +71,7 @@ public abstract class AbstractMainView<
         GM extends GridModel<ENT>,
         CON extends SimulationConfig,
         STA extends SimulationStatistics,
-        SM extends AbstractTimedSimulationManager<ENT, GM, CON, STA>,
+        SM extends AbstractSimulationManager<ENT, GM, CON, STA>,
         CTX extends SimulationUserActionContext,
         OV extends AbstractObservationView<ENT, GC, STA>>
         implements SimulationMainView {
@@ -102,11 +102,11 @@ public abstract class AbstractMainView<
     private static final boolean DEBUG_MODE = false;
     private static final String LOG_COMPONENT = "MainView";
 
-    protected final DefaultMainViewModel<ENT, GC, GM, CON, STA, SM, CTX> viewModel;
+    protected final MainViewModel<ENT, GC, GM, CON, STA, SM, CTX> viewModel;
     protected final OV observationView;
     protected final GridEntityDescriptorRegistry entityDescriptorRegistry;
     private final AbstractConfigView<CON, ?> configView;
-    private final DefaultControlView controlView;
+    private final ControlView controlView;
     private final Canvas baseCanvas;
     private final Canvas dynamicCanvas;
     private final Canvas overlayCanvas;
@@ -126,8 +126,8 @@ public abstract class AbstractMainView<
     private int lastDrawnStepCount = Integer.MIN_VALUE;
     private boolean skipOverlayActive;
 
-    protected AbstractMainView(DefaultMainViewModel<ENT, GC, GM, CON, STA, SM, CTX> viewModel,
-                               AbstractConfigView<CON, ?> configView, DefaultControlView controlView,
+    protected AbstractMainView(MainViewModel<ENT, GC, GM, CON, STA, SM, CTX> viewModel,
+                               AbstractConfigView<CON, ?> configView, ControlView controlView,
                                OV observationView,
                                GridEntityDescriptorRegistry entityDescriptorRegistry) {
         this.viewModel = viewModel;

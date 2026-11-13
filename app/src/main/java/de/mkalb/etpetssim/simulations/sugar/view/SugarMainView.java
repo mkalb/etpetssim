@@ -8,8 +8,8 @@ import de.mkalb.etpetssim.simulations.core.shared.SimulationUserActionScope;
 import de.mkalb.etpetssim.simulations.core.view.AbstractMainView;
 import de.mkalb.etpetssim.simulations.core.view.CanvasPainters;
 import de.mkalb.etpetssim.simulations.core.view.CellDrawer;
-import de.mkalb.etpetssim.simulations.core.view.DefaultControlView;
-import de.mkalb.etpetssim.simulations.core.viewmodel.DefaultMainViewModel;
+import de.mkalb.etpetssim.simulations.core.view.ControlView;
+import de.mkalb.etpetssim.simulations.core.viewmodel.MainViewModel;
 import de.mkalb.etpetssim.simulations.core.viewmodel.SimulationUserActionDescriptor;
 import de.mkalb.etpetssim.simulations.sugar.model.SugarCell;
 import de.mkalb.etpetssim.simulations.sugar.model.SugarConfig;
@@ -80,12 +80,12 @@ public final class SugarMainView
     private @Nullable CellDrawer<AgentEntity> cellAgentDrawer;
     private int maxColorAgentEnergy = 1;
 
-    public SugarMainView(DefaultMainViewModel<SugarEntity, SugarCell, SugarGridModel, SugarConfig, SugarStatistics,
+    public SugarMainView(MainViewModel<SugarEntity, SugarCell, SugarGridModel, SugarConfig, SugarStatistics,
                                  SugarSimulationManager, SugarUserActionContext> viewModel,
                          SugarEditToolBarViewModel editToolBarViewModel,
                          GridEntityDescriptorRegistry entityDescriptorRegistry,
                          SugarConfigView configView,
-                         DefaultControlView controlView,
+                         ControlView controlView,
                          SugarObservationView observationView) {
         super(viewModel,
                 configView,

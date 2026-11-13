@@ -112,7 +112,7 @@ public final class ExtremaGoldenValueAnalyzer {
     }
 
     private static void appendConway(StringBuilder sb) {
-        AbstractTimedSimulationManager<?, ?, ?, ?> manager = new ConwaySimulationManager(createConwayConfig());
+        AbstractSimulationManager<?, ?, ?, ?> manager = new ConwaySimulationManager(createConwayConfig());
         manager.executeSteps(STEP_COUNT, false, () -> {
         });
         var extrema = manager.statisticsExtrema();
@@ -124,7 +124,7 @@ public final class ExtremaGoldenValueAnalyzer {
     }
 
     private static void appendForest(StringBuilder sb) {
-        AbstractTimedSimulationManager<?, ?, ?, ?> manager = new ForestSimulationManager(createForestConfig());
+        AbstractSimulationManager<?, ?, ?, ?> manager = new ForestSimulationManager(createForestConfig());
         manager.executeSteps(STEP_COUNT, false, () -> {
         });
         var extrema = manager.statisticsExtrema();
@@ -137,7 +137,7 @@ public final class ExtremaGoldenValueAnalyzer {
     }
 
     private static void appendWator(StringBuilder sb) {
-        AbstractTimedSimulationManager<?, ?, ?, ?> manager = new WatorSimulationManager(createWatorConfig());
+        AbstractSimulationManager<?, ?, ?, ?> manager = new WatorSimulationManager(createWatorConfig());
         manager.executeSteps(STEP_COUNT, false, () -> {
         });
         var extrema = manager.statisticsExtrema();

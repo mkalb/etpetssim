@@ -2,7 +2,7 @@ package de.mkalb.etpetssim.simulations.etpets.view;
 
 import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorRegistry;
 import de.mkalb.etpetssim.simulations.core.view.AbstractObservationView;
-import de.mkalb.etpetssim.simulations.core.viewmodel.DefaultObservationViewModel;
+import de.mkalb.etpetssim.simulations.core.viewmodel.ObservationViewModel;
 import de.mkalb.etpetssim.simulations.etpets.model.EtpetsCell;
 import de.mkalb.etpetssim.simulations.etpets.model.EtpetsStatistics;
 import de.mkalb.etpetssim.simulations.etpets.model.entity.EtpetsEntity;
@@ -14,7 +14,7 @@ import org.jspecify.annotations.Nullable;
  */
 public final class EtpetsObservationView extends AbstractObservationView<EtpetsEntity, EtpetsCell, EtpetsStatistics> {
 
-    public EtpetsObservationView(DefaultObservationViewModel<EtpetsEntity, EtpetsCell, EtpetsStatistics> viewModel,
+    public EtpetsObservationView(ObservationViewModel<EtpetsEntity, EtpetsCell, EtpetsStatistics> viewModel,
                                  GridEntityDescriptorRegistry entityDescriptorRegistry) {
         super(viewModel, entityDescriptorRegistry);
 

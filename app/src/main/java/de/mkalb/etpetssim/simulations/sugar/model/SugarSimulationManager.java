@@ -8,7 +8,7 @@ import de.mkalb.etpetssim.engine.model.SparseGridModel;
 import de.mkalb.etpetssim.engine.neighborhood.CellNeighborhoods;
 import de.mkalb.etpetssim.engine.support.GridInitializer;
 import de.mkalb.etpetssim.engine.support.GridInitializers;
-import de.mkalb.etpetssim.simulations.core.model.AbstractTimedSimulationManager;
+import de.mkalb.etpetssim.simulations.core.model.AbstractSimulationManager;
 import de.mkalb.etpetssim.simulations.core.model.SimulationInitializationCancellation;
 import de.mkalb.etpetssim.simulations.sugar.model.entity.Agent;
 import de.mkalb.etpetssim.simulations.sugar.model.entity.AgentEntity;
@@ -33,7 +33,7 @@ import static de.mkalb.etpetssim.engine.support.WorkCheckpoints.isCancellationCh
  * Simulation manager of Sugarscape.
  */
 public final class SugarSimulationManager
-        extends AbstractTimedSimulationManager<SugarEntity, SugarGridModel, SugarConfig, SugarStatistics> {
+        extends AbstractSimulationManager<SugarEntity, SugarGridModel, SugarConfig, SugarStatistics> {
 
     private final GridStructure structure;
     private final SugarStatistics statistics;

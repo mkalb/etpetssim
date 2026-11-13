@@ -15,9 +15,9 @@ import de.mkalb.etpetssim.simulations.conway.viewmodel.ConwayEditToolBarViewMode
 import de.mkalb.etpetssim.simulations.core.shared.SimulationUserActionScope;
 import de.mkalb.etpetssim.simulations.core.view.AbstractMainView;
 import de.mkalb.etpetssim.simulations.core.view.CanvasPainters;
+import de.mkalb.etpetssim.simulations.core.view.ControlView;
 import de.mkalb.etpetssim.simulations.core.view.CoordinateDrawer;
-import de.mkalb.etpetssim.simulations.core.view.DefaultControlView;
-import de.mkalb.etpetssim.simulations.core.viewmodel.DefaultMainViewModel;
+import de.mkalb.etpetssim.simulations.core.viewmodel.MainViewModel;
 import de.mkalb.etpetssim.simulations.core.viewmodel.SimulationUserActionDescriptor;
 import de.mkalb.etpetssim.ui.CellDimension;
 import de.mkalb.etpetssim.ui.FXComponentFactory;
@@ -73,13 +73,13 @@ public final class ConwayMainView
     private final ConwayEditToolBarViewModel editToolBarViewModel;
     private @Nullable CoordinateDrawer coordinateDrawer;
 
-    public ConwayMainView(DefaultMainViewModel<ConwayEntity, GridCell<ConwayEntity>, WritableGridModel<ConwayEntity>,
+    public ConwayMainView(MainViewModel<ConwayEntity, GridCell<ConwayEntity>, WritableGridModel<ConwayEntity>,
                                   ConwayConfig, ConwayStatistics, ConwaySimulationManager,
                                   ConwayUserActionContext> viewModel,
                           ConwayEditToolBarViewModel editToolBarViewModel,
                           GridEntityDescriptorRegistry entityDescriptorRegistry,
                           ConwayConfigView configView,
-                          DefaultControlView controlView,
+                          ControlView controlView,
                           ConwayObservationView observationView) {
         super(viewModel,
                 configView,

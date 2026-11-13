@@ -4,11 +4,11 @@ import de.mkalb.etpetssim.engine.model.GridCell;
 import de.mkalb.etpetssim.engine.model.ReadableGridModel;
 import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorRegistry;
 import de.mkalb.etpetssim.simulations.core.shared.SimulationState;
-import de.mkalb.etpetssim.simulations.core.view.DefaultControlView;
+import de.mkalb.etpetssim.simulations.core.view.ControlView;
 import de.mkalb.etpetssim.simulations.core.view.SimulationMainView;
-import de.mkalb.etpetssim.simulations.core.viewmodel.DefaultControlViewModel;
-import de.mkalb.etpetssim.simulations.core.viewmodel.DefaultMainViewModel;
-import de.mkalb.etpetssim.simulations.core.viewmodel.DefaultObservationViewModel;
+import de.mkalb.etpetssim.simulations.core.viewmodel.ControlViewModel;
+import de.mkalb.etpetssim.simulations.core.viewmodel.MainViewModel;
+import de.mkalb.etpetssim.simulations.core.viewmodel.ObservationViewModel;
 import de.mkalb.etpetssim.simulations.forest.model.ForestSimulationManager;
 import de.mkalb.etpetssim.simulations.forest.model.ForestStatistics;
 import de.mkalb.etpetssim.simulations.forest.model.ForestUserAction;
@@ -36,16 +36,16 @@ public final class ForestFactory {
 
         // ViewModel
         var configViewModel = new ForestConfigViewModel(readOnlySimulationState);
-        var controlViewModel = new DefaultControlViewModel(readOnlySimulationState);
+        var controlViewModel = new ControlViewModel(readOnlySimulationState);
         var observationViewModel =
-                new DefaultObservationViewModel<ForestEntity, GridCell<ForestEntity>, ForestStatistics>();
+                new ObservationViewModel<ForestEntity, GridCell<ForestEntity>, ForestStatistics>();
         var viewModel =
-                new DefaultMainViewModel<>(simulationState, configViewModel, controlViewModel, observationViewModel,
+                new MainViewModel<>(simulationState, configViewModel, controlViewModel, observationViewModel,
                         ForestSimulationManager::new, ReadableGridModel::getGridCell, new ForestUserAction());
 
         // View
         var configView = new ForestConfigView(configViewModel);
-        var controlView = new DefaultControlView(controlViewModel);
+        var controlView = new ControlView(controlViewModel);
         var observationView = new ForestObservationView(observationViewModel, entityDescriptorRegistry);
         return new ForestMainView(viewModel, entityDescriptorRegistry, configView, controlView, observationView);
     }

@@ -8,13 +8,13 @@ import de.mkalb.etpetssim.engine.GridStructure;
  * <p>Subclasses inherit the standard {@link SimulationStatistics} implementation
  * and call {@link #setStepCount} to advance the shared step count.
  */
-public class BaseTimedSimulationStatistics implements SimulationStatistics {
+public class BaseSimulationStatistics implements SimulationStatistics {
 
     private final GridStructure gridStructure;
 
     private int stepCount;
 
-    protected BaseTimedSimulationStatistics(GridStructure gridStructure) {
+    protected BaseSimulationStatistics(GridStructure gridStructure) {
         this.gridStructure = gridStructure;
     }
 

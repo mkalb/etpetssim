@@ -8,7 +8,7 @@ import de.mkalb.etpetssim.engine.model.ReadableGridModel;
 import de.mkalb.etpetssim.engine.model.SparseGridModel;
 import de.mkalb.etpetssim.engine.model.WritableGridModel;
 import de.mkalb.etpetssim.engine.support.GridInitializers;
-import de.mkalb.etpetssim.simulations.core.model.AbstractTimedSimulationManager;
+import de.mkalb.etpetssim.simulations.core.model.AbstractSimulationManager;
 import de.mkalb.etpetssim.simulations.core.model.SimulationInitializationCancellation;
 import de.mkalb.etpetssim.simulations.lab.model.entity.LabEntity;
 
@@ -18,7 +18,7 @@ import java.util.Random;
  * Simulation manager of the Simulation Lab.
  */
 public final class LabSimulationManager
-        extends AbstractTimedSimulationManager<LabEntity, WritableGridModel<LabEntity>, LabConfig, LabStatistics> {
+        extends AbstractSimulationManager<LabEntity, WritableGridModel<LabEntity>, LabConfig, LabStatistics> {
 
     private final GridStructure structure;
     private final LabStatistics statistics;

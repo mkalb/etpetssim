@@ -10,8 +10,8 @@ import de.mkalb.etpetssim.simulations.core.shared.SimulationUserActionScope;
 import de.mkalb.etpetssim.simulations.core.view.AbstractMainView;
 import de.mkalb.etpetssim.simulations.core.view.CanvasPainters;
 import de.mkalb.etpetssim.simulations.core.view.CellDrawer;
-import de.mkalb.etpetssim.simulations.core.view.DefaultControlView;
-import de.mkalb.etpetssim.simulations.core.viewmodel.DefaultMainViewModel;
+import de.mkalb.etpetssim.simulations.core.view.ControlView;
+import de.mkalb.etpetssim.simulations.core.viewmodel.MainViewModel;
 import de.mkalb.etpetssim.simulations.core.viewmodel.SimulationUserActionDescriptor;
 import de.mkalb.etpetssim.simulations.forest.model.ForestConfig;
 import de.mkalb.etpetssim.simulations.forest.model.ForestSimulationManager;
@@ -50,12 +50,12 @@ public final class ForestMainView
 
     private @Nullable CellDrawer<ForestEntity> cellDrawer;
 
-    public ForestMainView(DefaultMainViewModel<ForestEntity, GridCell<ForestEntity>, WritableGridModel<ForestEntity>,
+    public ForestMainView(MainViewModel<ForestEntity, GridCell<ForestEntity>, WritableGridModel<ForestEntity>,
                                   ForestConfig, ForestStatistics, ForestSimulationManager,
                                   NoUserActionContext> viewModel,
                           GridEntityDescriptorRegistry entityDescriptorRegistry,
                           ForestConfigView configView,
-                          DefaultControlView controlView,
+                          ControlView controlView,
                           ForestObservationView observationView) {
         super(viewModel,
                 configView,

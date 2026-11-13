@@ -3,7 +3,7 @@ package de.mkalb.etpetssim.simulations.rebounding.view;
 import de.mkalb.etpetssim.engine.model.GridCell;
 import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorRegistry;
 import de.mkalb.etpetssim.simulations.core.view.AbstractObservationView;
-import de.mkalb.etpetssim.simulations.core.viewmodel.DefaultObservationViewModel;
+import de.mkalb.etpetssim.simulations.core.viewmodel.ObservationViewModel;
 import de.mkalb.etpetssim.simulations.rebounding.model.ReboundingStatistics;
 import de.mkalb.etpetssim.simulations.rebounding.model.entity.Rebounder;
 import de.mkalb.etpetssim.simulations.rebounding.model.entity.ReboundingEntity;
@@ -21,7 +21,7 @@ public final class ReboundingObservationView
 
     private final Label directionLabel = new Label();
 
-    public ReboundingObservationView(DefaultObservationViewModel<ReboundingEntity, GridCell<ReboundingEntity>,
+    public ReboundingObservationView(ObservationViewModel<ReboundingEntity, GridCell<ReboundingEntity>,
                                              ReboundingStatistics> viewModel,
                                      GridEntityDescriptorRegistry entityDescriptorRegistry) {
         super(viewModel, entityDescriptorRegistry);

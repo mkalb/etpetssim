@@ -13,7 +13,7 @@ import de.mkalb.etpetssim.engine.neighborhood.CompassDirection;
 import de.mkalb.etpetssim.engine.support.AgentOrderingStrategies;
 import de.mkalb.etpetssim.engine.support.GridInitializer;
 import de.mkalb.etpetssim.engine.support.GridInitializers;
-import de.mkalb.etpetssim.simulations.core.model.AbstractTimedSimulationManager;
+import de.mkalb.etpetssim.simulations.core.model.AbstractSimulationManager;
 import de.mkalb.etpetssim.simulations.core.model.SimulationInitializationCancellation;
 import de.mkalb.etpetssim.simulations.rebounding.model.entity.Rebounder;
 import de.mkalb.etpetssim.simulations.rebounding.model.entity.ReboundingEntity;
@@ -31,7 +31,7 @@ import static de.mkalb.etpetssim.engine.support.WorkCheckpoints.isCancellationCh
  * Simulation manager of Rebounding Entities.
  */
 public final class ReboundingSimulationManager
-        extends AbstractTimedSimulationManager<ReboundingEntity, WritableGridModel<ReboundingEntity>, ReboundingConfig,
+        extends AbstractSimulationManager<ReboundingEntity, WritableGridModel<ReboundingEntity>, ReboundingConfig,
         ReboundingStatistics> {
 
     private final GridStructure structure;

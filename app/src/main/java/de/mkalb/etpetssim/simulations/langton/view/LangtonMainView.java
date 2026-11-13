@@ -12,8 +12,8 @@ import de.mkalb.etpetssim.simulations.core.shared.SimulationUserActionScope;
 import de.mkalb.etpetssim.simulations.core.view.AbstractMainView;
 import de.mkalb.etpetssim.simulations.core.view.CanvasPainters;
 import de.mkalb.etpetssim.simulations.core.view.CellDrawer;
-import de.mkalb.etpetssim.simulations.core.view.DefaultControlView;
-import de.mkalb.etpetssim.simulations.core.viewmodel.DefaultMainViewModel;
+import de.mkalb.etpetssim.simulations.core.view.ControlView;
+import de.mkalb.etpetssim.simulations.core.viewmodel.MainViewModel;
 import de.mkalb.etpetssim.simulations.core.viewmodel.SimulationUserActionDescriptor;
 import de.mkalb.etpetssim.simulations.langton.model.LangtonCell;
 import de.mkalb.etpetssim.simulations.langton.model.LangtonConfig;
@@ -79,12 +79,12 @@ public final class LangtonMainView
     private @Nullable CellDrawer<AntEntity> cellAntDrawer;
     private @Nullable LangtonConfig currentConfig;
 
-    public LangtonMainView(DefaultMainViewModel<LangtonEntity, LangtonCell, LangtonGridModel, LangtonConfig,
+    public LangtonMainView(MainViewModel<LangtonEntity, LangtonCell, LangtonGridModel, LangtonConfig,
                                    LangtonStatistics, LangtonSimulationManager, LangtonUserActionContext> viewModel,
                            LangtonEditToolBarViewModel editToolBarViewModel,
                            GridEntityDescriptorRegistry entityDescriptorRegistry,
                            LangtonConfigView configView,
-                           DefaultControlView controlView,
+                           ControlView controlView,
                            LangtonObservationView observationView) {
         super(viewModel,
                 configView,

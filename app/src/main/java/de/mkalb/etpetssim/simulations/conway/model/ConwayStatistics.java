@@ -1,7 +1,7 @@
 package de.mkalb.etpetssim.simulations.conway.model;
 
 import de.mkalb.etpetssim.engine.GridStructure;
-import de.mkalb.etpetssim.simulations.core.model.BaseTimedSimulationStatistics;
+import de.mkalb.etpetssim.simulations.core.model.BaseSimulationStatistics;
 import de.mkalb.etpetssim.simulations.core.model.StatisticsChartGroup;
 import de.mkalb.etpetssim.simulations.core.model.StatisticsExtremaMode;
 import de.mkalb.etpetssim.simulations.core.model.StatisticsMetric;
@@ -11,7 +11,7 @@ import java.util.List;
 /**
  * Statistics of Conway's Game of Life with the alive, dead, and changed cell counts.
  */
-public final class ConwayStatistics extends BaseTimedSimulationStatistics {
+public final class ConwayStatistics extends BaseSimulationStatistics {
 
     public static final String KEY_ALIVE_CELLS = "aliveCells";
     public static final String KEY_DEAD_CELLS = "deadCells";

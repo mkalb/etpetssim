@@ -4,11 +4,11 @@ import de.mkalb.etpetssim.engine.model.GridCell;
 import de.mkalb.etpetssim.engine.model.ReadableGridModel;
 import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorRegistry;
 import de.mkalb.etpetssim.simulations.core.shared.SimulationState;
-import de.mkalb.etpetssim.simulations.core.view.DefaultControlView;
+import de.mkalb.etpetssim.simulations.core.view.ControlView;
 import de.mkalb.etpetssim.simulations.core.view.SimulationMainView;
-import de.mkalb.etpetssim.simulations.core.viewmodel.DefaultControlViewModel;
-import de.mkalb.etpetssim.simulations.core.viewmodel.DefaultMainViewModel;
-import de.mkalb.etpetssim.simulations.core.viewmodel.DefaultObservationViewModel;
+import de.mkalb.etpetssim.simulations.core.viewmodel.ControlViewModel;
+import de.mkalb.etpetssim.simulations.core.viewmodel.MainViewModel;
+import de.mkalb.etpetssim.simulations.core.viewmodel.ObservationViewModel;
 import de.mkalb.etpetssim.simulations.lab.model.LabSimulationManager;
 import de.mkalb.etpetssim.simulations.lab.model.LabStatistics;
 import de.mkalb.etpetssim.simulations.lab.model.LabUserAction;
@@ -36,16 +36,16 @@ public final class LabFactory {
 
         // ViewModel
         var configViewModel = new LabConfigViewModel(readOnlySimulationState);
-        var controlViewModel = DefaultControlViewModel.createWithMinStepDuration(readOnlySimulationState);
+        var controlViewModel = ControlViewModel.createWithMinStepDuration(readOnlySimulationState);
         var observationViewModel =
-                new DefaultObservationViewModel<LabEntity, GridCell<LabEntity>, LabStatistics>();
+                new ObservationViewModel<LabEntity, GridCell<LabEntity>, LabStatistics>();
         var viewModel =
-                new DefaultMainViewModel<>(simulationState, configViewModel, controlViewModel, observationViewModel,
+                new MainViewModel<>(simulationState, configViewModel, controlViewModel, observationViewModel,
                         LabSimulationManager::new, ReadableGridModel::getGridCell, new LabUserAction());
 
         // View
         var configView = new LabConfigView(configViewModel);
-        var controlView = new DefaultControlView(controlViewModel);
+        var controlView = new ControlView(controlViewModel);
         var observationView = new LabObservationView(observationViewModel, entityDescriptorRegistry);
         return new LabMainView(viewModel, entityDescriptorRegistry, configView, controlView, observationView);
     }

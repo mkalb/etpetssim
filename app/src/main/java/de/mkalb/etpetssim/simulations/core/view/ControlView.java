@@ -4,7 +4,7 @@ import de.mkalb.etpetssim.core.AppLocalization;
 import de.mkalb.etpetssim.simulations.core.shared.SimulationMode;
 import de.mkalb.etpetssim.simulations.core.shared.SimulationStartMode;
 import de.mkalb.etpetssim.simulations.core.shared.SimulationTerminationCheckMode;
-import de.mkalb.etpetssim.simulations.core.viewmodel.DefaultControlViewModel;
+import de.mkalb.etpetssim.simulations.core.viewmodel.ControlViewModel;
 import de.mkalb.etpetssim.ui.FXComponentFactory;
 import de.mkalb.etpetssim.ui.FXStyleClasses;
 import javafx.beans.binding.Bindings;
@@ -19,14 +19,14 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
 /**
- * Default JavaFX implementation of the simulation control view.
+ * View of the simulation controls: the action and cancel buttons, the execution settings, and the step number.
  */
-public final class DefaultControlView {
+public final class ControlView {
 
-    private final DefaultControlViewModel viewModel;
+    private final ControlViewModel viewModel;
     private final Label stepNumberLabel = new Label();
 
-    public DefaultControlView(DefaultControlViewModel viewModel) {
+    public ControlView(ControlViewModel viewModel) {
         this.viewModel = viewModel;
     }
 

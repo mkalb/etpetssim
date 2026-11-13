@@ -5,7 +5,7 @@ import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorRegistry;
 import de.mkalb.etpetssim.simulations.conway.model.ConwayStatistics;
 import de.mkalb.etpetssim.simulations.conway.model.entity.ConwayEntity;
 import de.mkalb.etpetssim.simulations.core.view.AbstractObservationView;
-import de.mkalb.etpetssim.simulations.core.viewmodel.DefaultObservationViewModel;
+import de.mkalb.etpetssim.simulations.core.viewmodel.ObservationViewModel;
 import javafx.scene.layout.Region;
 
 /**
@@ -14,7 +14,7 @@ import javafx.scene.layout.Region;
 public final class ConwayObservationView
         extends AbstractObservationView<ConwayEntity, GridCell<ConwayEntity>, ConwayStatistics> {
 
-    public ConwayObservationView(DefaultObservationViewModel<ConwayEntity, GridCell<ConwayEntity>,
+    public ConwayObservationView(ObservationViewModel<ConwayEntity, GridCell<ConwayEntity>,
                                          ConwayStatistics> viewModel,
                                  GridEntityDescriptorRegistry entityDescriptorRegistry) {
         super(viewModel, entityDescriptorRegistry);

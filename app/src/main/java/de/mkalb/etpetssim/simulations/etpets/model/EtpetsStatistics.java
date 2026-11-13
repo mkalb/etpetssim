@@ -1,7 +1,7 @@
 package de.mkalb.etpetssim.simulations.etpets.model;
 
 import de.mkalb.etpetssim.engine.GridStructure;
-import de.mkalb.etpetssim.simulations.core.model.BaseTimedSimulationStatistics;
+import de.mkalb.etpetssim.simulations.core.model.BaseSimulationStatistics;
 import de.mkalb.etpetssim.simulations.core.model.StatisticsChartGroup;
 import de.mkalb.etpetssim.simulations.core.model.StatisticsExtremaMode;
 import de.mkalb.etpetssim.simulations.core.model.StatisticsMetric;
@@ -11,7 +11,7 @@ import java.util.List;
 /**
  * Statistics of ET Pets with the active pet and egg cell counts and the cumulative pet deaths.
  */
-public final class EtpetsStatistics extends BaseTimedSimulationStatistics {
+public final class EtpetsStatistics extends BaseSimulationStatistics {
 
     public static final String KEY_ACTIVE_PET_CELLS = "activePetCells";
     public static final String KEY_EGG_CELLS = "eggCells";
