@@ -12,7 +12,7 @@ import de.mkalb.etpetssim.simulations.core.shared.CellDisplayMode;
 import de.mkalb.etpetssim.simulations.core.shared.NoUserActionContext;
 import de.mkalb.etpetssim.simulations.core.shared.SimulationState;
 import de.mkalb.etpetssim.simulations.core.shared.SimulationUserActionScope;
-import de.mkalb.etpetssim.simulations.core.view.AbstractDefaultMainView;
+import de.mkalb.etpetssim.simulations.core.view.AbstractMainView;
 import de.mkalb.etpetssim.simulations.core.view.CanvasPainters;
 import de.mkalb.etpetssim.simulations.core.view.DefaultControlView;
 import de.mkalb.etpetssim.simulations.core.viewmodel.DefaultMainViewModel;
@@ -46,7 +46,7 @@ import java.util.SortedMap;
  * shows the selected cell and the cell under the mouse pointer.
  */
 public final class LabMainView
-        extends AbstractDefaultMainView<
+        extends AbstractMainView<
         LabEntity,
         GridCell<LabEntity>,
         WritableGridModel<LabEntity>,

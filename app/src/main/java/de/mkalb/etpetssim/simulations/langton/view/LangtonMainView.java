@@ -9,7 +9,7 @@ import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorRegistry;
 import de.mkalb.etpetssim.engine.neighborhood.CompassDirection;
 import de.mkalb.etpetssim.simulations.core.shared.CellDisplayMode;
 import de.mkalb.etpetssim.simulations.core.shared.SimulationUserActionScope;
-import de.mkalb.etpetssim.simulations.core.view.AbstractDefaultMainView;
+import de.mkalb.etpetssim.simulations.core.view.AbstractMainView;
 import de.mkalb.etpetssim.simulations.core.view.CanvasPainters;
 import de.mkalb.etpetssim.simulations.core.view.CellDrawer;
 import de.mkalb.etpetssim.simulations.core.view.DefaultControlView;
@@ -51,7 +51,7 @@ import java.util.function.Function;
  * Main view of Langton's Ant.
  */
 public final class LangtonMainView
-        extends AbstractDefaultMainView<
+        extends AbstractMainView<
         LangtonEntity,
         LangtonCell,
         LangtonGridModel,

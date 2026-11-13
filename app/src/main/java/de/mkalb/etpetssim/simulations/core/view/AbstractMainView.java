@@ -6,17 +6,26 @@ import de.mkalb.etpetssim.engine.CellShape;
 import de.mkalb.etpetssim.engine.EdgeBehavior;
 import de.mkalb.etpetssim.engine.GridCoordinate;
 import de.mkalb.etpetssim.engine.GridStructure;
+import de.mkalb.etpetssim.engine.model.GridCellView;
+import de.mkalb.etpetssim.engine.model.GridModel;
+import de.mkalb.etpetssim.engine.model.entity.GridEntity;
+import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptor;
 import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorRegistry;
 import de.mkalb.etpetssim.simulations.core.SimulationTerminationHandle;
+import de.mkalb.etpetssim.simulations.core.model.AbstractTimedSimulationManager;
+import de.mkalb.etpetssim.simulations.core.model.SimulationConfig;
+import de.mkalb.etpetssim.simulations.core.model.SimulationStatistics;
 import de.mkalb.etpetssim.simulations.core.shared.SimulationNotificationType;
+import de.mkalb.etpetssim.simulations.core.shared.SimulationStepEvent;
 import de.mkalb.etpetssim.simulations.core.shared.SimulationUserActionContext;
-import de.mkalb.etpetssim.simulations.core.viewmodel.SimulationMainViewModel;
+import de.mkalb.etpetssim.simulations.core.viewmodel.DefaultMainViewModel;
+import de.mkalb.etpetssim.simulations.core.viewmodel.DefaultObservationViewModel;
 import de.mkalb.etpetssim.simulations.core.viewmodel.SimulationUserActionDescriptor;
 import de.mkalb.etpetssim.ui.CellDimension;
 import de.mkalb.etpetssim.ui.FXGridCanvasPainter;
+import de.mkalb.etpetssim.ui.FXPaintFactory;
 import de.mkalb.etpetssim.ui.FXStyleClasses;
 import de.mkalb.etpetssim.ui.GridGeometry;
-import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.geometry.Orientation;
@@ -33,31 +42,41 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import org.jspecify.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 /**
- * Generic base view that composes config, control and observation regions.
+ * Abstract base of the main views of the regular 2D simulations.
  *
- * <p>Thin common base of all main views. Regular simulations extend {@link AbstractDefaultMainView}, which adds the
- * timed-step rendering flow; the lab view extends this class directly because it draws on explicit requests instead.
+ * <p>Composes the config, control, and observation regions around the simulation canvas, binds
+ * {@link DefaultMainViewModel}, and provides drawing and throttling support.
  *
- * @param <VM>  main view model type
+ * @param <ENT> entity type stored in grid cells
+ * @param <GC>  grid cell type used for cell selection
+ * @param <GM>  grid model type managed by the simulation
+ * @param <CON> immutable simulation config type
+ * @param <STA> statistics type
+ * @param <SM>  concrete simulation manager type
  * @param <CTX> simulation-specific user action context type
  * @param <CFV> config view type
- * @param <CLV> control view type
  * @param <OV>  observation view type
  */
 public abstract class AbstractMainView<
-        VM extends SimulationMainViewModel,
+        ENT extends GridEntity,
+        GC extends GridCellView<ENT>,
+        GM extends GridModel<ENT>,
+        CON extends SimulationConfig,
+        STA extends SimulationStatistics,
+        SM extends AbstractTimedSimulationManager<ENT, GM, CON, STA>,
         CTX extends SimulationUserActionContext,
         CFV extends SimulationConfigView,
-        CLV extends SimulationControlView,
-        OV extends SimulationObservationView>
+        OV extends AbstractObservationView<ENT, GC, STA, DefaultObservationViewModel<ENT, GC, STA>>>
         implements SimulationMainView {
 
     protected static final double NO_STROKE_LINE_WIDTH = 0.0d;
@@ -71,13 +90,26 @@ public abstract class AbstractMainView<
     private static final double MIN_CELL_FONT_SIZE = 7.0d;
     private static final double MIN_EMOJI_FONT_SIZE = 3.0d;
     private static final double CENTER_SPLIT_PANE_DIVIDER_POSITION = 0.65d;
+    private static final Color SKIP_OVERLAY_TEXT_COLOR = FXPaintFactory.adjustColorAlpha(FXPaintFactory.BORDER_COLOR,
+            0.95);
+    private static final Color SKIP_OVERLAY_BACKGROUND_COLOR = FXPaintFactory
+            .adjustColorAlpha(FXPaintFactory.BACKGROUND_COLOR, 0.95);
+    private static final String SKIP_OVERLAY_SYMBOL = "⏳"; // Hourglass Not Done
+    private static final double SKIP_FONT_SIZE = 48.0d;
+    private static final double SKIP_PADDING = 24.0d;
+    private static final int DRAW_THROTTLER_HISTORY_SIZE = 3;
+    private static final int DRAW_THROTTLER_MAX_SKIPS = 4;
+    /**
+     * Only used for debugging purposes to log draw calls and performance.
+     */
+    private static final boolean DEBUG_MODE = false;
     private static final String LOG_COMPONENT = "MainView";
 
-    protected final VM viewModel;
-    protected final CFV configView;
-    protected final CLV controlView;
+    protected final DefaultMainViewModel<ENT, GC, GM, CON, STA, SM, CTX> viewModel;
     protected final OV observationView;
     protected final GridEntityDescriptorRegistry entityDescriptorRegistry;
+    private final CFV configView;
+    private final SimulationControlView controlView;
     private final Canvas baseCanvas;
     private final Canvas dynamicCanvas;
     private final Canvas overlayCanvas;
@@ -86,14 +118,19 @@ public abstract class AbstractMainView<
     private final Label notificationLabel;
     private final EditToolBarView<CTX> editToolBar = new EditToolBarView<>();
     private final Map<Double, Font> fontCache;
+    private final DrawCallThrottler drawThrottler = new DrawCallThrottler(DRAW_THROTTLER_HISTORY_SIZE,
+            DRAW_THROTTLER_MAX_SKIPS);
     protected @Nullable Font cellFont;
     protected @Nullable Font cellEmojiFont;
     private @Nullable CanvasPainters painters;
     private @Nullable ChangeListener<SimulationNotificationType> notificationListener;
+    private @Nullable ChangeListener<@Nullable GC> selectedGridCellListener;
     private @Nullable Region mainRegion;
+    private int lastDrawnStepCount = Integer.MIN_VALUE;
+    private boolean skipOverlayActive;
 
-    protected AbstractMainView(VM viewModel,
-                               CFV configView, CLV controlView, OV observationView,
+    protected AbstractMainView(DefaultMainViewModel<ENT, GC, GM, CON, STA, SM, CTX> viewModel,
+                               CFV configView, SimulationControlView controlView, OV observationView,
                                GridEntityDescriptorRegistry entityDescriptorRegistry) {
         this.viewModel = viewModel;
         this.configView = configView;
@@ -182,6 +219,10 @@ public abstract class AbstractMainView<
 
     @Override
     public SimulationTerminationHandle shutdownSimulation() {
+        if (selectedGridCellListener != null) {
+            viewModel.selectedGridCellProperty().removeListener(selectedGridCellListener);
+            selectedGridCellListener = null;
+        }
         if (notificationListener != null) {
             viewModel.notificationTypeProperty().removeListener(notificationListener);
             notificationListener = null;
@@ -194,20 +235,6 @@ public abstract class AbstractMainView<
         clearNotification();
         editToolBar.clear();
         return terminationHandle;
-    }
-
-    protected abstract void registerViewModelListeners();
-
-    protected abstract void handleMouseClickedCoordinate(GridCoordinate mouseCoordinate, FXGridCanvasPainter painter);
-
-    protected final void rebuildEditToolBar() {
-        editToolBar.rebuild(
-                createUserActionDescriptors(),
-                editModeActiveProperty(),
-                selectedUserActionToolIdProperty(),
-                viewModel.simulationStateProperty(),
-                this::createEditToolBarOptionPanel,
-                this::applyGlobalUserActionAndRedraw);
     }
 
     /**
@@ -243,31 +270,6 @@ public abstract class AbstractMainView<
         editToolBar.registerCleanup(cleanupAction);
     }
 
-    /**
-     * Exposes edit-mode state used by the compact Edit affordance.
-     *
-     * @return editable state property, or {@code null} when edit mode is not supported
-     */
-    protected @Nullable BooleanProperty editModeActiveProperty() {
-        return null;
-    }
-
-    /**
-     * Exposes the selected stable tool id used by toolbar toggle tools.
-     *
-     * @return selected tool-id property, or {@code null} when tool selection is not supported
-     */
-    protected @Nullable ObjectProperty<String> selectedUserActionToolIdProperty() {
-        return null;
-    }
-
-    /**
-     * Applies a global-scoped user action descriptor and refreshes the simulation view as needed.
-     *
-     * @param descriptor descriptor to apply
-     */
-    protected abstract void applyGlobalUserActionAndRedraw(SimulationUserActionDescriptor<CTX> descriptor);
-
     protected final Canvas overlayCanvas() {
         return overlayCanvas;
     }
@@ -275,18 +277,255 @@ public abstract class AbstractMainView<
     /**
      * Returns the painters of the canvas layers.
      *
-     * @return the current painters, or {@code null} before {@link #recreatePaintersAndResizeCanvases} and after
-     * {@link #clearPainters()} or the shutdown
+     * @return the current painters, or {@code null} before the simulation is initialized in the view and after the
+     * shutdown
      */
     protected final @Nullable CanvasPainters painters() {
         return painters;
     }
 
     /**
+     * Computes brightness variants of the descriptor color for value groups between {@code min} and {@code max}.
+     *
+     * @param descriptor     descriptor whose color is varied
+     * @param min            lower bound of the values (inclusive)
+     * @param max            upper bound of the values (inclusive)
+     * @param groupCount     number of brightness groups
+     * @param maxFactorDelta total brightness change (positive to brighten, negative to darken)
+     * @return the color variants by value, or {@code null} if the descriptor color is not a {@link Color}
+     * @see FXPaintFactory#computeBrightnessVariantsMap(Color, int, int, int, double)
+     */
+    protected final @Nullable Map<Integer, Color> computeBrightnessVariantsMap(GridEntityDescriptor descriptor,
+                                                                               int min,
+                                                                               int max,
+                                                                               int groupCount,
+                                                                               double maxFactorDelta) {
+        if (!(descriptor.color() instanceof Color baseColor)) {
+            return null;
+        }
+        return FXPaintFactory.computeBrightnessVariantsMap(baseColor, min, max, groupCount, maxFactorDelta);
+    }
+
+    protected abstract void handleSelectedGridCellChanged(FXGridCanvasPainter painter,
+                                                          @Nullable GC oldGridCell,
+                                                          @Nullable GC newGridCell);
+
+    protected abstract void initializeSimulation(CanvasPainters painters, CON config, CellDimension cellDimension);
+
+    /**
+     * Draws the current simulation state.
+     *
+     * @param painters           the painters of the canvas layers
+     * @param currentGridModel   the grid model to draw
+     * @param stepCount          the step count of the grid model
+     * @param lastDrawnStepCount the step count of the previous draw, {@link Integer#MIN_VALUE} before the first draw,
+     *                           or {@code stepCount} when the same step is redrawn after a user action; a gap greater
+     *                           than {@code 1} means that intermediate steps were not drawn
+     */
+    @SuppressWarnings("ParameterHidesMemberVariable")
+    protected abstract void drawSimulation(CanvasPainters painters, GM currentGridModel, int stepCount,
+                                           int lastDrawnStepCount);
+
+    final boolean hasNotificationListener() {
+        return notificationListener != null;
+    }
+
+    private void registerViewModelListeners() {
+        viewModel.setSimulationInitializedListener(this::handleSimulationInitialized);
+        viewModel.setSimulationResetListener(this::handleSimulationReset);
+        viewModel.setSimulationStepListener(this::handleSimulationStep);
+        selectedGridCellListener = (_, oldGridCell, newGridCell) -> {
+            CanvasPainters currentPainters = painters();
+            if (currentPainters != null) {
+                handleSelectedGridCellChanged(currentPainters.overlay(), oldGridCell, newGridCell);
+            }
+        };
+        viewModel.selectedGridCellProperty().addListener(selectedGridCellListener);
+    }
+
+    private void handleMouseClickedCoordinate(GridCoordinate mouseCoordinate) {
+        viewModel.updateClickedCoordinateProperties(mouseCoordinate);
+        applySelectedCellUserActionAndRedraw();
+    }
+
+    private void rebuildEditToolBar() {
+        editToolBar.rebuild(
+                createUserActionDescriptors(),
+                viewModel.editModeActiveProperty(),
+                viewModel.selectedUserActionToolIdProperty(),
+                viewModel.simulationStateProperty(),
+                this::createEditToolBarOptionPanel,
+                this::applyGlobalUserActionAndRedraw);
+    }
+
+    private void applyGlobalUserActionAndRedraw(SimulationUserActionDescriptor<CTX> descriptor) {
+        boolean changed = viewModel.applyUserAction(descriptor);
+        if (changed) {
+            redrawAfterUserAction();
+        }
+    }
+
+    private void applySelectedCellUserActionAndRedraw() {
+        boolean changed = viewModel.applySelectedCellUserAction(createUserActionDescriptors());
+        if (changed) {
+            redrawAfterUserAction();
+        }
+    }
+
+    private void redrawAfterUserAction() {
+        observationView.updateObservationLabels();
+        CanvasPainters currentPainters = painters();
+        if (currentPainters == null) {
+            AppLogger.warnf("%s: Skipping canvas redraw: painters are not initialized", LOG_COMPONENT);
+            return;
+        }
+        drawSimulation(currentPainters, viewModel.getCurrentGridModel(), viewModel.getStepCount(),
+                viewModel.getStepCount());
+    }
+
+    private void handleSimulationInitialized() {
+        int stepCount = viewModel.getStepCount();
+
+        AppLogger.infof("%s: Starting simulation view initialization: step=%d", LOG_COMPONENT, stepCount);
+
+        CanvasPainters newPainters = recreatePaintersAndResizeCanvases(viewModel.getStructure(),
+                viewModel.getCellEdgeLength());
+
+        updateCanvasBorderPane(viewModel.getStructure());
+
+        rebuildEditToolBar();
+
+        controlView.setStepCount(stepCount);
+        observationView.initializeObservationLabels();
+
+        initializeSimulation(newPainters, viewModel.getCurrentConfig(), newPainters.base().cellDimension());
+
+        AppLogger.infof("%s: Simulation initialized in the view: step=%d", LOG_COMPONENT, stepCount);
+
+        drawAndMeasureSimulationStep(newPainters, stepCount);
+
+        AppLogger.infof("%s: Initial simulation view draw completed: step=%d", LOG_COMPONENT, stepCount);
+    }
+
+    private void handleSimulationReset() {
+        AppLogger.infof("%s: Resetting simulation view", LOG_COMPONENT);
+        clearCanvasLayers();
+        controlView.setStepCount(0);
+        observationView.initializeObservationLabels();
+    }
+
+    private void clearCanvasLayers() {
+        CanvasPainters currentPainters = painters();
+        if (currentPainters != null) {
+            currentPainters.clearCanvasBackgrounds();
+        }
+        skipOverlayActive = false;
+    }
+
+    private void handleSimulationStep(SimulationStepEvent simulationStepEvent) {
+        int stepCount = simulationStepEvent.stepCount();
+        if (simulationStepEvent.batchModeRunning()) {
+            if (DEBUG_MODE) {
+                AppLogger.infof("%s: Handling simulation step in view for batch mode: event=%s", LOG_COMPONENT,
+                        simulationStepEvent);
+            }
+
+            controlView.setStepCount(stepCount);
+        } else {
+            if (DEBUG_MODE) {
+                AppLogger.infof("%s: Handling simulation step in view: event=%s", LOG_COMPONENT, simulationStepEvent);
+            }
+
+            controlView.setStepCount(stepCount);
+
+            observationView.updateObservationLabels();
+
+            CanvasPainters currentPainters = painters();
+            if (currentPainters == null) {
+                AppLogger.warnf("%s: Skipping step draw: painters are not initialized, event=%s", LOG_COMPONENT,
+                        simulationStepEvent);
+                return;
+            }
+
+            // Never draw the same step twice
+            if (lastDrawnStepCount != stepCount) {
+                throttleAndDrawSimulationStep(currentPainters, stepCount, simulationStepEvent.finalStep(),
+                        viewModel.getThrottleDrawMillis());
+            } else if (DEBUG_MODE) {
+                AppLogger.infof("%s: Skipping draw because step was already drawn: event=%s", LOG_COMPONENT,
+                        simulationStepEvent);
+            }
+        }
+    }
+
+    private void drawAndMeasureSimulationStep(CanvasPainters currentPainters, int stepCount) {
+        long startNanos = System.nanoTime();
+        drawSimulation(currentPainters, viewModel.getCurrentGridModel(), stepCount, lastDrawnStepCount);
+        long durationMillis = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startNanos);
+        drawThrottler.recordDurationMillis(durationMillis);
+
+        lastDrawnStepCount = stepCount;
+
+        if (DEBUG_MODE) {
+            AppLogger.infof("%s: Drawn step %d in %dms: averageDrawMillis=%d",
+                    LOG_COMPONENT,
+                    stepCount,
+                    durationMillis,
+                    drawThrottler.getAverageDurationMillis());
+        }
+    }
+
+    private void throttleAndDrawSimulationStep(CanvasPainters currentPainters,
+                                               int stepCount,
+                                               boolean finalStep,
+                                               long throttleDrawMillis) {
+        if (finalStep || !drawThrottler.shouldSkip(throttleDrawMillis)) {
+            clearSkipOverlay(currentPainters.overlay());
+            drawAndMeasureSimulationStep(currentPainters, stepCount);
+        } else {
+            showSkipOverlay(currentPainters.overlay());
+            if (DEBUG_MODE) {
+                AppLogger
+                        .infof("%s: Skipping draw for step %d due to high average draw time: averageMillis=%d, "
+                                        + "thresholdMillis=%d",
+                                LOG_COMPONENT,
+                                stepCount,
+                                drawThrottler.getAverageDurationMillis(),
+                                throttleDrawMillis);
+            }
+        }
+    }
+
+    private void showSkipOverlay(FXGridCanvasPainter overlayPainter) {
+        if (!skipOverlayActive) {
+            overlayPainter.clearCanvasBackground();
+
+            Point2D center = computeVisibleCanvasCenter();
+
+            overlayPainter.drawCenteredTextWithBackgroundAt(
+                    center,
+                    SKIP_OVERLAY_SYMBOL,
+                    SKIP_OVERLAY_TEXT_COLOR,
+                    resolvePreferredFont(SKIP_FONT_SIZE),
+                    SKIP_OVERLAY_BACKGROUND_COLOR,
+                    SKIP_PADDING
+            );
+            skipOverlayActive = true;
+        }
+    }
+
+    private void clearSkipOverlay(FXGridCanvasPainter overlayPainter) {
+        if (skipOverlayActive) {
+            overlayPainter.clearCanvasBackground();
+        }
+        skipOverlayActive = false;
+    }
+
+    /**
      * Clears the canvases of the current painters and removes the painters; {@link #painters()} returns
      * {@code null} afterwards.
      */
-    protected final void clearPainters() {
+    private void clearPainters() {
         CanvasPainters oldPainters = painters;
         if (oldPainters != null) {
             oldPainters.clearCanvasBackgrounds();
@@ -305,7 +544,7 @@ public abstract class AbstractMainView<
      * @param cellEdgeLength edge length of one cell in pixels
      * @return the new painters
      */
-    protected final CanvasPainters recreatePaintersAndResizeCanvases(GridStructure structure, double cellEdgeLength) {
+    private CanvasPainters recreatePaintersAndResizeCanvases(GridStructure structure, double cellEdgeLength) {
         clearPainters();
 
         FXGridCanvasPainter basePainter = new FXGridCanvasPainter(baseCanvas, structure, cellEdgeLength);
@@ -353,7 +592,7 @@ public abstract class AbstractMainView<
         return newPainters;
     }
 
-    protected final void updateCanvasBorderPane(GridStructure structure) {
+    private void updateCanvasBorderPane(GridStructure structure) {
         canvasBorderPane.setLeft((structure.edgeBehaviorX() == EdgeBehavior.WRAP) ? null :
                 createBorderRegion(FXStyleClasses.SIMULATION_LEFT_BORDERPANE));
         canvasBorderPane.setRight((structure.edgeBehaviorX() == EdgeBehavior.WRAP) ? null :
@@ -364,7 +603,7 @@ public abstract class AbstractMainView<
                 createBorderRegion(FXStyleClasses.SIMULATION_BOTTOM_BORDERPANE));
     }
 
-    final Point2D computeVisibleCanvasCenter() {
+    private Point2D computeVisibleCanvasCenter() {
         double viewportWidth = canvasScrollPane.getViewportBounds().getWidth();
         double viewportHeight = canvasScrollPane.getViewportBounds().getHeight();
 
@@ -382,7 +621,7 @@ public abstract class AbstractMainView<
         return new Point2D(x, y);
     }
 
-    final Font resolvePreferredFont(double size) {
+    private Font resolvePreferredFont(double size) {
         return fontCache.computeIfAbsent(size, s -> {
             if (Font.getFamilies().contains(MAIN_FONT_FAMILY)) {
                 return Font.font(MAIN_FONT_FAMILY, s);
@@ -390,10 +629,6 @@ public abstract class AbstractMainView<
                 return Font.font(FALLBACK_FONT_FAMILY, s);
             }
         });
-    }
-
-    final boolean hasNotificationListener() {
-        return notificationListener != null;
     }
 
     private Region createSimulationRegion() {
@@ -433,7 +668,7 @@ public abstract class AbstractMainView<
                 GridCoordinate mouseCoordinate = GridGeometry.fromCanvasPosition(mousePoint,
                         painter.cellDimension(), painter.gridDimension2D(), painter.gridStructure());
                 if (!mouseCoordinate.isIllegal() && painter.isInsideGrid(mouseCoordinate)) {
-                    handleMouseClickedCoordinate(mouseCoordinate, painter);
+                    handleMouseClickedCoordinate(mouseCoordinate);
                 }
             }
         });

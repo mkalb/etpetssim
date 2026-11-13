@@ -13,7 +13,7 @@ import de.mkalb.etpetssim.simulations.conway.shared.ConwayPatternChoice;
 import de.mkalb.etpetssim.simulations.conway.shared.ConwayUserActionContext;
 import de.mkalb.etpetssim.simulations.conway.viewmodel.ConwayEditToolBarViewModel;
 import de.mkalb.etpetssim.simulations.core.shared.SimulationUserActionScope;
-import de.mkalb.etpetssim.simulations.core.view.AbstractDefaultMainView;
+import de.mkalb.etpetssim.simulations.core.view.AbstractMainView;
 import de.mkalb.etpetssim.simulations.core.view.CanvasPainters;
 import de.mkalb.etpetssim.simulations.core.view.CoordinateDrawer;
 import de.mkalb.etpetssim.simulations.core.view.DefaultControlView;
@@ -45,7 +45,7 @@ import java.util.function.Function;
  * Main view of Conway's Game of Life.
  */
 public final class ConwayMainView
-        extends AbstractDefaultMainView<
+        extends AbstractMainView<
         ConwayEntity,
         GridCell<ConwayEntity>,
         WritableGridModel<ConwayEntity>,

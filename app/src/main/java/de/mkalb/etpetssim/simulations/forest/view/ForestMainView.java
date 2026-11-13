@@ -7,7 +7,7 @@ import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorRegistry;
 import de.mkalb.etpetssim.simulations.core.shared.CellDisplayMode;
 import de.mkalb.etpetssim.simulations.core.shared.NoUserActionContext;
 import de.mkalb.etpetssim.simulations.core.shared.SimulationUserActionScope;
-import de.mkalb.etpetssim.simulations.core.view.AbstractDefaultMainView;
+import de.mkalb.etpetssim.simulations.core.view.AbstractMainView;
 import de.mkalb.etpetssim.simulations.core.view.CanvasPainters;
 import de.mkalb.etpetssim.simulations.core.view.CellDrawer;
 import de.mkalb.etpetssim.simulations.core.view.DefaultControlView;
@@ -31,7 +31,7 @@ import java.util.function.Consumer;
  * Main view of the Forest-fire model.
  */
 public final class ForestMainView
-        extends AbstractDefaultMainView<
+        extends AbstractMainView<
         ForestEntity,
         GridCell<ForestEntity>,
         WritableGridModel<ForestEntity>,

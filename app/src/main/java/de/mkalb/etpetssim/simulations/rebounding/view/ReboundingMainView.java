@@ -8,7 +8,7 @@ import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorRegistry;
 import de.mkalb.etpetssim.engine.neighborhood.CompassDirection;
 import de.mkalb.etpetssim.simulations.core.shared.CellDisplayMode;
 import de.mkalb.etpetssim.simulations.core.shared.SimulationUserActionScope;
-import de.mkalb.etpetssim.simulations.core.view.AbstractDefaultMainView;
+import de.mkalb.etpetssim.simulations.core.view.AbstractMainView;
 import de.mkalb.etpetssim.simulations.core.view.CanvasPainters;
 import de.mkalb.etpetssim.simulations.core.view.CellDrawer;
 import de.mkalb.etpetssim.simulations.core.view.DefaultControlView;
@@ -44,7 +44,7 @@ import java.util.function.Function;
  * Main view of Rebounding Entities.
  */
 public final class ReboundingMainView
-        extends AbstractDefaultMainView<
+        extends AbstractMainView<
         ReboundingEntity,
         GridCell<ReboundingEntity>,
         WritableGridModel<ReboundingEntity>,

@@ -5,7 +5,7 @@ import de.mkalb.etpetssim.core.AppLogger;
 import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptor;
 import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorRegistry;
 import de.mkalb.etpetssim.simulations.core.shared.SimulationUserActionScope;
-import de.mkalb.etpetssim.simulations.core.view.AbstractDefaultMainView;
+import de.mkalb.etpetssim.simulations.core.view.AbstractMainView;
 import de.mkalb.etpetssim.simulations.core.view.CanvasPainters;
 import de.mkalb.etpetssim.simulations.core.view.CellDrawer;
 import de.mkalb.etpetssim.simulations.core.view.DefaultControlView;
@@ -55,7 +55,7 @@ import java.util.function.Function;
 /**
  * Main view of ET Pets.
  */
-public final class EtpetsMainView extends AbstractDefaultMainView<
+public final class EtpetsMainView extends AbstractMainView<
         EtpetsEntity,
         EtpetsCell,
         EtpetsGridModel,
