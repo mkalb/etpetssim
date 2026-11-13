@@ -29,7 +29,7 @@ public final class LabConfigView extends AbstractConfigView<LabConfig, LabConfig
     @Override
     public Region buildConfigRegion() {
         // Structure
-        var structurePane = createStructurePane(true);
+        var structurePane = createStructurePane();
 
         // Layout
         var colorModeControl = FXComponentFactory.createLabeledChoiceRadioButtons(viewModel.colorModeProperty(),
@@ -39,7 +39,7 @@ public final class LabConfigView extends AbstractConfigView<LabConfig, LabConfig
                 FXStyleClasses.CONFIG_RADIOBUTTON
         );
 
-        var layoutPane = createLayoutPane(true, colorModeControl);
+        var layoutPane = createLayoutPane(colorModeControl);
 
         // Initialization
         var seedControl = createSeedControl();
@@ -52,14 +52,14 @@ public final class LabConfigView extends AbstractConfigView<LabConfig, LabConfig
         );
 
         var initializationPane = createConfigTitledPane(
-                AppLocalization.getText(SimulationLocalizationKeys.CONFIG_TITLE_INITIALIZATION), true,
+                AppLocalization.getText(SimulationLocalizationKeys.CONFIG_TITLE_INITIALIZATION),
                 seedControl, highlightedPercentControl);
 
         // Rules
         var neighborhoodModeControl = createNeighborhoodModeControl(viewModel.neighborhoodModeProperty());
 
         var rulesPane = createConfigTitledPane(
-                AppLocalization.getText(SimulationLocalizationKeys.CONFIG_TITLE_RULES), true,
+                AppLocalization.getText(SimulationLocalizationKeys.CONFIG_TITLE_RULES),
                 neighborhoodModeControl);
 
         return createConfigMainBox(structurePane, layoutPane, initializationPane, rulesPane);

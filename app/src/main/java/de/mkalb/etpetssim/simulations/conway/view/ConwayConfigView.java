@@ -56,9 +56,9 @@ public final class ConwayConfigView extends AbstractConfigView<ConwayConfig, Con
     @Override
     public Region buildConfigRegion() {
         // Structure
-        var structurePane = createStructurePane(true);
+        var structurePane = createStructurePane();
         // Layout
-        var layoutPane = createLayoutPane(true);
+        var layoutPane = createLayoutPane();
 
         // Initialization
         var seedControl = createSeedControl();
@@ -99,7 +99,7 @@ public final class ConwayConfigView extends AbstractConfigView<ConwayConfig, Con
         var densityHintControl = new FXComponentFactory.LabeledControl<>(densityHintEmptyLabel, densityHintLabel);
 
         var initializationPane = createConfigTitledPane(
-                AppLocalization.getText(SimulationLocalizationKeys.CONFIG_TITLE_INITIALIZATION), true,
+                AppLocalization.getText(SimulationLocalizationKeys.CONFIG_TITLE_INITIALIZATION),
                 seedControl, alivePercentControl, densityHintControl);
 
         // Rules
@@ -144,7 +144,7 @@ public final class ConwayConfigView extends AbstractConfigView<ConwayConfig, Con
                 viewModel.maxNeighborCountProperty());
 
         var rulesPane = createConfigTitledPane(
-                AppLocalization.getText(SimulationLocalizationKeys.CONFIG_TITLE_RULES), true,
+                AppLocalization.getText(SimulationLocalizationKeys.CONFIG_TITLE_RULES),
                 presetTriangleControl, presetSquareControl, presetHexagonControl, inputControl, rulesControl);
 
         return createConfigMainBox(structurePane, layoutPane, initializationPane, rulesPane);

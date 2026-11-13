@@ -34,9 +34,9 @@ public final class LangtonConfigView extends AbstractConfigView<LangtonConfig, L
     @Override
     public Region buildConfigRegion() {
         // Structure
-        var structurePane = createStructurePane(true);
+        var structurePane = createStructurePane();
         // Layout
-        var layoutPane = createLayoutPane(true);
+        var layoutPane = createLayoutPane();
 
         // Rules
         var presetTriangleControl = FXComponentFactory.createLabeledChoiceComboBox(
@@ -75,7 +75,7 @@ public final class LangtonConfigView extends AbstractConfigView<LangtonConfig, L
         );
 
         var rulesPane = createConfigTitledPane(
-                AppLocalization.getText(SimulationLocalizationKeys.CONFIG_TITLE_RULES), true,
+                AppLocalization.getText(SimulationLocalizationKeys.CONFIG_TITLE_RULES),
                 presetTriangleControl, presetSquareControl, presetHexagonControl, ruleControl);
 
         return createConfigMainBox(structurePane, layoutPane, rulesPane);

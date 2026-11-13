@@ -33,9 +33,9 @@ public final class EtpetsConfigView extends AbstractConfigView<EtpetsConfig, Etp
     @Override
     public Region buildConfigRegion() {
         // Structure
-        var structurePane = createStructurePane(true);
+        var structurePane = createStructurePane();
         // Layout
-        var layoutPane = createLayoutPane(true);
+        var layoutPane = createLayoutPane();
 
         // Initialization
         var seedControl = createSeedControl();
@@ -71,13 +71,13 @@ public final class EtpetsConfigView extends AbstractConfigView<EtpetsConfig, Etp
         );
 
         var initializationPane = createConfigTitledPane(
-                AppLocalization.getText(SimulationLocalizationKeys.CONFIG_TITLE_INITIALIZATION), true,
+                AppLocalization.getText(SimulationLocalizationKeys.CONFIG_TITLE_INITIALIZATION),
                 seedControl, rockPercentControl, waterPercentControl, plantPercentControl, insectPercentControl,
                 petCountControl);
 
         // Rules
         var rulesPane = createConfigTitledPane(
-                AppLocalization.getText(SimulationLocalizationKeys.CONFIG_TITLE_RULES), true);
+                AppLocalization.getText(SimulationLocalizationKeys.CONFIG_TITLE_RULES));
 
         return createConfigMainBox(structurePane, layoutPane, initializationPane, rulesPane);
     }

@@ -28,9 +28,9 @@ public final class ReboundingConfigView extends AbstractConfigView<ReboundingCon
     @Override
     public Region buildConfigRegion() {
         // Structure
-        var structurePane = createStructurePane(true);
+        var structurePane = createStructurePane();
         // Layout
-        var layoutPane = createLayoutPane(true);
+        var layoutPane = createLayoutPane();
 
         // Initialization
         var seedControl = createSeedControl();
@@ -49,14 +49,14 @@ public final class ReboundingConfigView extends AbstractConfigView<ReboundingCon
         );
 
         var initializationPane = createConfigTitledPane(
-                AppLocalization.getText(SimulationLocalizationKeys.CONFIG_TITLE_INITIALIZATION), true,
+                AppLocalization.getText(SimulationLocalizationKeys.CONFIG_TITLE_INITIALIZATION),
                 seedControl, verticalWallsControl, rebounderPercentControl);
 
         // Rules
         var neighborhoodModeControl = createNeighborhoodModeControl(viewModel.neighborhoodModeProperty());
 
         var rulesPane = createConfigTitledPane(
-                AppLocalization.getText(SimulationLocalizationKeys.CONFIG_TITLE_RULES), true,
+                AppLocalization.getText(SimulationLocalizationKeys.CONFIG_TITLE_RULES),
                 neighborhoodModeControl);
 
         return createConfigMainBox(structurePane, layoutPane, initializationPane, rulesPane);

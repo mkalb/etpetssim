@@ -44,9 +44,9 @@ public final class SugarConfigView extends AbstractConfigView<SugarConfig, Sugar
     @Override
     public Region buildConfigRegion() {
         // Structure
-        var structurePane = createStructurePane(true);
+        var structurePane = createStructurePane();
         // Layout
-        var layoutPane = createLayoutPane(true);
+        var layoutPane = createLayoutPane();
 
         // Initialization
         var seedControl = createSeedControl();
@@ -83,7 +83,7 @@ public final class SugarConfigView extends AbstractConfigView<SugarConfig, Sugar
         );
 
         var initializationPane = createConfigTitledPane(
-                AppLocalization.getText(SimulationLocalizationKeys.CONFIG_TITLE_INITIALIZATION), true,
+                AppLocalization.getText(SimulationLocalizationKeys.CONFIG_TITLE_INITIALIZATION),
                 seedControl, agentPercentControl, sugarPeaksControl, sugarRadiusLimitControl, maxSugarAmountControl,
                 agentInitialEnergyControl);
 
@@ -116,7 +116,7 @@ public final class SugarConfigView extends AbstractConfigView<SugarConfig, Sugar
         );
 
         var rulesPane = createConfigTitledPane(
-                AppLocalization.getText(SimulationLocalizationKeys.CONFIG_TITLE_RULES), true,
+                AppLocalization.getText(SimulationLocalizationKeys.CONFIG_TITLE_RULES),
                 sugarRegenerationRateControl, agentMetabolismRateControl, agentVisionRangeControl, agentMaxAgeControl);
 
         return createConfigMainBox(structurePane, layoutPane, initializationPane, rulesPane);

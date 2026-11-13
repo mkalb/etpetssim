@@ -63,9 +63,9 @@ public final class WatorConfigView extends AbstractConfigView<WatorConfig, Wator
     @Override
     public Region buildConfigRegion() {
         // Structure
-        var structurePane = createStructurePane(true);
+        var structurePane = createStructurePane();
         // Layout
-        var layoutPane = createLayoutPane(true);
+        var layoutPane = createLayoutPane();
 
         // Initialization
         var seedControl = createSeedControl();
@@ -83,14 +83,14 @@ public final class WatorConfigView extends AbstractConfigView<WatorConfig, Wator
         );
 
         var initializationPane = createConfigTitledPane(
-                AppLocalization.getText(SimulationLocalizationKeys.CONFIG_TITLE_INITIALIZATION), true,
+                AppLocalization.getText(SimulationLocalizationKeys.CONFIG_TITLE_INITIALIZATION),
                 seedControl, fishPercentControl, sharkPercentControl);
 
         // Rules
         var neighborhoodModeControl = createNeighborhoodModeControl(viewModel.neighborhoodModeProperty());
 
         var rulesPane = createConfigTitledPane(
-                AppLocalization.getText(SimulationLocalizationKeys.CONFIG_TITLE_RULES), true,
+                AppLocalization.getText(SimulationLocalizationKeys.CONFIG_TITLE_RULES),
                 neighborhoodModeControl);
 
         var fishRulesPane = createFishRulesPane();
@@ -127,7 +127,6 @@ public final class WatorConfigView extends AbstractConfigView<WatorConfig, Wator
         );
 
         return createConfigTitledPane(AppLocalization.getText(WATOR_CONFIG_TITLE_FISH_RULES),
-                true,
                 fishMaxAgeControl,
                 fishMinReproductionAgeControl,
                 fishMinReproductionIntervalControl);
@@ -189,7 +188,6 @@ public final class WatorConfigView extends AbstractConfigView<WatorConfig, Wator
         );
 
         return createConfigTitledPane(AppLocalization.getText(WATOR_CONFIG_TITLE_SHARK_RULES),
-                true,
                 sharkMaxAgeControl,
                 sharkBirthEnergyControl,
                 sharkEnergyLossPerStepControl,

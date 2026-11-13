@@ -70,27 +70,23 @@ public abstract class AbstractConfigView<CON extends SimulationConfig, VM extend
     /**
      * Creates a titled config pane that stacks the labels and control regions of the given controls.
      *
-     * <p>A pane without controls is disabled and not collapsible.
+     * <p>The control regions are disabled while the simulation state is not startable. A pane without controls is
+     * disabled and not collapsible.
      *
-     * @param title                                         the pane title
-     * @param configControlsEnabledOnlyIfSimulationCanStart whether the control regions are disabled while the
-     *                                                      simulation state is not startable
-     * @param content                                       the labeled controls in display order
+     * @param title   the pane title
+     * @param content the labeled controls in display order
      * @return the titled pane
      */
     @SafeVarargs
     protected final TitledPane createConfigTitledPane(String title,
-                                                      boolean configControlsEnabledOnlyIfSimulationCanStart,
                                                       FXComponentFactory.LabeledControl<? extends Region>... content) {
         VBox box = new VBox();
         for (FXComponentFactory.LabeledControl<? extends Region> labeledControl : content) {
             box.getChildren().addAll(labeledControl.label(), labeledControl.controlRegion());
-            if (configControlsEnabledOnlyIfSimulationCanStart) {
-                labeledControl.controlRegion().disableProperty().bind(Bindings.createBooleanBinding(
-                        () -> !viewModel.getSimulationState().isStartable(),
-                        viewModel.simulationStateProperty()
-                ));
-            }
+            labeledControl.controlRegion().disableProperty().bind(Bindings.createBooleanBinding(
+                    () -> !viewModel.getSimulationState().isStartable(),
+                    viewModel.simulationStateProperty()
+            ));
         }
         box.getStyleClass().add(FXStyleClasses.CONFIG_VBOX);
 
@@ -117,7 +113,7 @@ public abstract class AbstractConfigView<CON extends SimulationConfig, VM extend
         controlRegion.managedProperty().bind(controlRegion.visibleProperty());
     }
 
-    protected final TitledPane createStructurePane(boolean configControlsEnabledOnlyIfSimulationCanStart) {
+    protected final TitledPane createStructurePane() {
         List<FXComponentFactory.LabeledControl<? extends Region>> content = new ArrayList<>(4);
 
         if (viewModel.cellShapeProperty().hasMultipleValidValues()) {
@@ -156,14 +152,12 @@ public abstract class AbstractConfigView<CON extends SimulationConfig, VM extend
 
         return createConfigTitledPane(
                 AppLocalization.getText(SimulationLocalizationKeys.CONFIG_TITLE_STRUCTURE),
-                configControlsEnabledOnlyIfSimulationCanStart,
                 toLabeledControlArray(content)
         );
     }
 
     @SafeVarargs
     protected final TitledPane createLayoutPane(
-            boolean configControlsEnabledOnlyIfSimulationCanStart,
             FXComponentFactory.LabeledControl<? extends Region>... additionalContent) {
         List<FXComponentFactory.LabeledControl<? extends Region>> content =
                 new ArrayList<>(2 + additionalContent.length);
@@ -189,7 +183,6 @@ public abstract class AbstractConfigView<CON extends SimulationConfig, VM extend
 
         return createConfigTitledPane(
                 AppLocalization.getText(SimulationLocalizationKeys.CONFIG_TITLE_LAYOUT),
-                configControlsEnabledOnlyIfSimulationCanStart,
                 toLabeledControlArray(content)
         );
     }
