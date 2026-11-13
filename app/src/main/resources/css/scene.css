@@ -189,10 +189,6 @@ ScrollPane .decrement-arrow {
     -fx-padding: 14;
 }
 
-.app-dialog-pane > .content.label {
-    -fx-text-fill: #aeefff;
-}
-
 .app-dialog-pane > .button-bar > .container {
     -fx-padding: 10 14 12 14;
 }
@@ -263,8 +259,8 @@ ScrollPane .decrement-arrow {
 
 .app-dialog-pane .text-area {
     -fx-font-family: 'Monospaced';
-    -fx-font-size: 12;
-    -fx-text-fill: #aeefff;
+    -fx-font-size: 13;
+    -fx-text-fill: #eaf6fb;
     -fx-background-color: #1a2233;
     -fx-background-insets: 0;
     -fx-background-radius: 0;
