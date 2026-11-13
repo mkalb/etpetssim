@@ -86,31 +86,6 @@ public final class LabMainView
     private static final double EDGE_RESULT_STROKE_WIDTH = 3.0d;
     private static final double HOVER_POINTER_RADIUS = 2.0d;
 
-    // Disabled in iteration 1 of #135; used by the test drawing at the end of this class.
-    // private static final double TEST_LINE_WIDTH = 6.0d;
-    // private static final double TEST_FILL_ALPHA = 0.5d;
-    // private static final int TEST_BOUNDING_BOX_COLUMN_1 = 2;
-    // private static final int TEST_BOUNDING_BOX_COLUMN_2 = 4;
-    // private static final int TEST_INNER_CIRCLE_COLUMN_1 = 6;
-    // private static final int TEST_INNER_CIRCLE_COLUMN_2 = 8;
-    // private static final int TEST_ROW_1 = 4;
-    // private static final int TEST_ROW_2 = 6;
-    // private static final int TEST_ROW_3 = 8;
-    // private static final int TEST_ROW_4 = 10;
-    // private static final int TEST_TRIANGLE_X = 11;
-    // private static final int TEST_TRIANGLE_Y = 4;
-    // private static final int TEST_HEXAGON_X = 9;
-    // private static final int TEST_HEXAGON_Y = 3;
-    // private static final int TEST_FRAME_SEGMENT_1_X = 0;
-    // private static final int TEST_FRAME_SEGMENT_1_Y = 1;
-    // private static final int TEST_FRAME_SEGMENT_2_X = 1;
-    // private static final int TEST_FRAME_SEGMENT_2_Y = 2;
-    // private static final int TEST_PIXEL_START_X = 50;
-    // private static final int TEST_PIXEL_END_X = 100;
-    // private static final int TEST_PIXEL_X_SCALE = 4;
-    // private static final int TEST_PIXEL_DIRECT_Y = 100;
-    // private static final int TEST_PIXEL_RECT_Y = 120;
-
     public LabMainView(DefaultMainViewModel<LabEntity, GridCell<LabEntity>, WritableGridModel<LabEntity>,
                                LabConfig, LabStatistics, LabSimulationManager, NoUserActionContext> viewModel,
                        GridEntityDescriptorRegistry entityDescriptorRegistry,
@@ -409,74 +384,5 @@ public final class LabMainView
                 .ifPresent(descriptor -> overlayPainter.drawCenteredTextInCell(
                         coordinate, descriptor.shortName(), Color.RED, cellFont));
     }
-
-    // Disabled in iteration 1 of #135: the test drawing of the former Draw Test button.
-    //
-    // private void drawTest() {
-    //     CanvasPainters currentPainters = painters();
-    //     if (currentPainters == null) {
-    //         AppLogger.warn("LabMainView: Skipping canvas draw: painters are not initialized");
-    //         return;
-    //     }
-    //     FXGridCanvasPainter basePainter = currentPainters.base();
-    //
-    //     Color red = FXPaintFactory.adjustColorAlpha(Color.RED, TEST_FILL_ALPHA);
-    //     Color yellow = FXPaintFactory.adjustColorAlpha(Color.YELLOW, TEST_FILL_ALPHA);
-    //
-    //     basePainter.drawCellBoundingBox(new GridCoordinate(TEST_BOUNDING_BOX_COLUMN_1, TEST_ROW_1), red, yellow,
-    //             TEST_LINE_WIDTH, StrokeType.INSIDE);
-    //     basePainter.drawCellBoundingBox(new GridCoordinate(TEST_BOUNDING_BOX_COLUMN_1, TEST_ROW_2), yellow, red,
-    //             TEST_LINE_WIDTH, StrokeType.INSIDE);
-    //     basePainter.drawCellBoundingBox(new GridCoordinate(TEST_BOUNDING_BOX_COLUMN_1, TEST_ROW_3), red, yellow,
-    //             TEST_LINE_WIDTH, StrokeType.OUTSIDE);
-    //     basePainter.drawCellBoundingBox(new GridCoordinate(TEST_BOUNDING_BOX_COLUMN_1, TEST_ROW_4), yellow, red,
-    //             TEST_LINE_WIDTH, StrokeType.OUTSIDE);
-    //
-    //     basePainter.drawCellBoundingBox(new GridCoordinate(TEST_BOUNDING_BOX_COLUMN_2, TEST_ROW_1), null, yellow,
-    //             TEST_LINE_WIDTH, StrokeType.INSIDE);
-    //     basePainter.drawCellBoundingBox(new GridCoordinate(TEST_BOUNDING_BOX_COLUMN_2, TEST_ROW_2), null, red,
-    //             TEST_LINE_WIDTH, StrokeType.INSIDE);
-    //     basePainter.drawCellBoundingBox(new GridCoordinate(TEST_BOUNDING_BOX_COLUMN_2, TEST_ROW_3), null, yellow,
-    //             TEST_LINE_WIDTH, StrokeType.OUTSIDE);
-    //     basePainter.drawCellBoundingBox(new GridCoordinate(TEST_BOUNDING_BOX_COLUMN_2, TEST_ROW_4), null, red,
-    //             TEST_LINE_WIDTH, StrokeType.OUTSIDE);
-    //
-    //     basePainter.drawCellInnerCircle(new GridCoordinate(TEST_INNER_CIRCLE_COLUMN_1, TEST_ROW_1), red, yellow,
-    //             TEST_LINE_WIDTH, StrokeType.INSIDE);
-    //     basePainter.drawCellInnerCircle(new GridCoordinate(TEST_INNER_CIRCLE_COLUMN_1, TEST_ROW_2), yellow, red,
-    //             TEST_LINE_WIDTH, StrokeType.INSIDE);
-    //     basePainter.drawCellInnerCircle(new GridCoordinate(TEST_INNER_CIRCLE_COLUMN_1, TEST_ROW_3), red, yellow,
-    //             TEST_LINE_WIDTH, StrokeType.OUTSIDE);
-    //     basePainter.drawCellInnerCircle(new GridCoordinate(TEST_INNER_CIRCLE_COLUMN_1, TEST_ROW_4), yellow, red,
-    //             TEST_LINE_WIDTH, StrokeType.OUTSIDE);
-    //
-    //     basePainter.drawCellInnerCircle(new GridCoordinate(TEST_INNER_CIRCLE_COLUMN_2, TEST_ROW_1), null, yellow,
-    //             TEST_LINE_WIDTH, StrokeType.INSIDE);
-    //     basePainter.drawCellInnerCircle(new GridCoordinate(TEST_INNER_CIRCLE_COLUMN_2, TEST_ROW_2), null, red,
-    //             TEST_LINE_WIDTH, StrokeType.INSIDE);
-    //     basePainter.drawCellInnerCircle(new GridCoordinate(TEST_INNER_CIRCLE_COLUMN_2, TEST_ROW_3), null, yellow,
-    //             TEST_LINE_WIDTH, StrokeType.OUTSIDE);
-    //     basePainter.drawCellInnerCircle(new GridCoordinate(TEST_INNER_CIRCLE_COLUMN_2, TEST_ROW_4), null, red,
-    //             TEST_LINE_WIDTH, StrokeType.OUTSIDE);
-    //
-    //     for (int x = TEST_PIXEL_START_X; x < TEST_PIXEL_END_X; x++) {
-    //         basePainter.drawPixelDirect(x * TEST_PIXEL_X_SCALE, TEST_PIXEL_DIRECT_Y, Color.MAGENTA);
-    //         basePainter.drawPixelRect(x * TEST_PIXEL_X_SCALE, TEST_PIXEL_RECT_Y, Color.RED);
-    //     }
-    //
-    //     basePainter.drawTriangle(new GridCoordinate(TEST_TRIANGLE_X, TEST_TRIANGLE_Y),
-    //             GridGeometry.computeEdgeLengthToMatchWidth(basePainter.cellDimension().edgeLength(),
-    //                     basePainter.gridStructure().cellShape(), CellShape.TRIANGLE),
-    //             Color.WHITE, Color.BLACK, TEST_LINE_WIDTH);
-    //     basePainter.drawHexagon(new GridCoordinate(TEST_HEXAGON_X, TEST_HEXAGON_Y),
-    //             GridGeometry.computeEdgeLengthToMatchWidth(basePainter.cellDimension().edgeLength(),
-    //                     basePainter.gridStructure().cellShape(), CellShape.HEXAGON),
-    //             Color.WHITE, Color.BLACK, TEST_LINE_WIDTH);
-    //
-    //     basePainter.drawCellFrameSegment(new GridCoordinate(TEST_FRAME_SEGMENT_1_X, TEST_FRAME_SEGMENT_1_Y),
-    //             Color.DARKGREEN, TEST_LINE_WIDTH, CellShapeSide.LEFT);
-    //     basePainter.drawCellFrameSegment(new GridCoordinate(TEST_FRAME_SEGMENT_2_X, TEST_FRAME_SEGMENT_2_Y),
-    //             Color.DARKBLUE, TEST_LINE_WIDTH, CellShapeSide.LEFT);
-    // }
 
 }
