@@ -128,10 +128,9 @@ termination condition. Javadoc names a simulation by its title; compound adjecti
 
 Check `simulations.core` before adding simulation-local infrastructure. Relevant examples include:
 
-- Views: `AbstractMainView`, `AbstractObservationView`, `AbstractConfigView`
-- ViewModels: `AbstractConfigViewModel`, `DefaultMainViewModel`, `DefaultControlViewModel`,
-  `DefaultObservationViewModel`
-- View helpers: `CellDrawer`, `CoordinateDrawer`, `DrawCallThrottler`, `DefaultControlView`
+- Views: `AbstractMainView`, `AbstractObservationView`, `AbstractConfigView`, `ControlView`
+- ViewModels: `AbstractConfigViewModel`, `MainViewModel`, `ControlViewModel`, `ObservationViewModel`
+- View helpers: `CellDrawer`, `CoordinateDrawer`, `DrawCallThrottler`
 - ViewModel/model helpers: `SeedProperty`, `SimulationConfig`
 
 Use the engine helpers instead of own logic: `EdgeBehaviorAction.isWithinGrid()` instead of comparisons with `VALID`
@@ -142,9 +141,9 @@ mode may use the ring constants of `CellNeighborhoods` directly (e.g., Langton's
 for triangle cells).
 
 Use prefix `Abstract` only for classes that must be abstract; use prefix `Base` for complete base implementations that
-are meant to be extended (e.g., `BaseTimedSimulationStatistics`). These classes are not `sealed`: their subclasses lie
-in the simulation packages, and a `permits` clause would break the package isolation; `sealed` is for closed families
-inside one simulation (see "Entity Design").
+are meant to be extended (e.g., `BaseSimulationStatistics`). These classes are not `sealed`: their subclasses lie in the
+simulation packages, and a `permits` clause would break the package isolation; `sealed` is for closed families inside
+one simulation (see "Entity Design").
 
 ## JavaFX UI Patterns
 
@@ -264,12 +263,13 @@ Use `CellDrawer` from `simulations.core.view`:
 
 ### Observation and Statistics
 
-- Implement `SimulationObservationViewModel` for custom statistics; use `DefaultObservationViewModel` otherwise.
+- Use `ObservationViewModel` with the statistics type of the simulation, a subclass of `BaseSimulationStatistics`, and
+  extend `AbstractObservationView` for simulation-specific sections.
 - Format statistics in the ViewModel and localize labels with `AppLocalization`.
 
 ### Control Panel
 
-- Use `DefaultControlView` for standard play/pause/step/reset controls; wire its actions to ViewModel methods.
+- Use `ControlView` with `ControlViewModel` for the simulation controls; `MainViewModel` handles their requests.
 
 ### Main View Composition
 

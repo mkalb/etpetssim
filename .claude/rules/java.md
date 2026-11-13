@@ -203,7 +203,7 @@ package-private members directly.
 - Check private state through the API or an observable property. If that is not possible, add a package-private
   accessor named by "Naming Conventions" (e.g., a noun-style name); do not open fields for tests.
 - Package-private constructors or overloads that let tests replace a dependency are allowed (e.g., the constructor of
-  `DefaultMainViewModel` that takes an `ExecutorService`).
+  `MainViewModel` that takes an `ExecutorService`).
 - Reserve `*ForTesting` methods for the test infrastructure of `core` (`core.md`), which changes the state of a class
   for tests (e.g., `AppLogger.initializeForTesting()`); other members for tests do not use the suffix.
 - Do not mark members opened for tests: no annotation such as `@VisibleForTesting`, and no Javadoc or comment that
@@ -304,7 +304,7 @@ Rules for main sources; `core.md` adds stricter rules for `core`, and test sourc
   for failed lookups. Use the exact code name of the checked value, its `toString()`, and string concatenation.
 - Catch specific exception types. Catch broadly (`RuntimeException`, `Error`) only at top-level boundaries, such as
   application startup, background tasks, and UI action handlers, and log the exception there (e.g.,
-  `DefaultMainViewModel`).
+  `MainViewModel`).
 - Do not leave a catch block empty, and do not log an exception and rethrow it; handle and log it in one place.
 - Use try-with-resources for `AutoCloseable` resources.
 
