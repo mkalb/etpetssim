@@ -21,13 +21,13 @@ import java.util.Map;
  * @param <ENT> entity type used by the simulation model
  * @param <GM>  model type used for simulation execution
  * @param <CON> immutable configuration type
- * @param <STA> timing-aware statistics snapshot type
+ * @param <STA> statistics snapshot type
  */
 public abstract class AbstractTimedSimulationManager<
         ENT extends GridEntity,
         GM extends GridModel<ENT>,
         CON extends SimulationConfig,
-        STA extends TimedSimulationStatistics>
+        STA extends SimulationStatistics>
         implements SimulationManager<ENT, GM, CON, STA> {
 
     private final CON config;

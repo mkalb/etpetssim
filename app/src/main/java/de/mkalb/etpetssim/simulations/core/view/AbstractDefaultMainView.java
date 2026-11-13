@@ -10,7 +10,7 @@ import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorRegistry;
 import de.mkalb.etpetssim.simulations.core.SimulationTerminationHandle;
 import de.mkalb.etpetssim.simulations.core.model.AbstractTimedSimulationManager;
 import de.mkalb.etpetssim.simulations.core.model.SimulationConfig;
-import de.mkalb.etpetssim.simulations.core.model.TimedSimulationStatistics;
+import de.mkalb.etpetssim.simulations.core.model.SimulationStatistics;
 import de.mkalb.etpetssim.simulations.core.shared.SimulationStepEvent;
 import de.mkalb.etpetssim.simulations.core.shared.SimulationUserActionContext;
 import de.mkalb.etpetssim.simulations.core.viewmodel.DefaultMainViewModel;
@@ -38,7 +38,7 @@ import java.util.concurrent.TimeUnit;
  * @param <GC>  grid cell type used for cell selection
  * @param <GM>  grid model type managed by the simulation
  * @param <CON> immutable simulation config type
- * @param <STA> timed statistics type
+ * @param <STA> statistics type
  * @param <SM>  concrete simulation manager type
  * @param <CTX> simulation-specific user action context type
  * @param <CFV> config view type
@@ -49,7 +49,7 @@ public abstract class AbstractDefaultMainView<
         GC extends GridCellView<ENT>,
         GM extends GridModel<ENT>,
         CON extends SimulationConfig,
-        STA extends TimedSimulationStatistics,
+        STA extends SimulationStatistics,
         SM extends AbstractTimedSimulationManager<ENT, GM, CON, STA>,
         CTX extends SimulationUserActionContext,
         CFV extends SimulationConfigView,

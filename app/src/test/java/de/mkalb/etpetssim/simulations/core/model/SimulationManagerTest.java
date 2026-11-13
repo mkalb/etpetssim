@@ -240,7 +240,7 @@ final class SimulationManagerTest {
         );
     }
 
-    private static <STA extends TimedSimulationStatistics> void assertStepZeroSample(
+    private static <STA extends SimulationStatistics> void assertStepZeroSample(
             AbstractTimedSimulationManager<?, ?, ?, STA> manager,
             List<StatisticsMetric<STA>> metrics) {
         var history = manager.statisticsHistory();

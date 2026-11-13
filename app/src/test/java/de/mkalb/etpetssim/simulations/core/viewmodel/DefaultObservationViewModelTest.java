@@ -224,6 +224,12 @@ final class DefaultObservationViewModelTest {
             throw new AssertionError("Grid structure is not needed by this test fixture");
         }
 
+        @NonNull
+        @Override
+        public StepTimingStatistics stepTimingStatistics() {
+            return StepTimingStatistics.empty();
+        }
+
     }
 
 }

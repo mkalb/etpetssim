@@ -11,8 +11,8 @@ import de.mkalb.etpetssim.simulations.core.model.AbstractTimedSimulationManager;
 import de.mkalb.etpetssim.simulations.core.model.SimulationConfig;
 import de.mkalb.etpetssim.simulations.core.model.SimulationInitializationCanceledException;
 import de.mkalb.etpetssim.simulations.core.model.SimulationInitializationCancellation;
+import de.mkalb.etpetssim.simulations.core.model.SimulationStatistics;
 import de.mkalb.etpetssim.simulations.core.model.SimulationUserAction;
-import de.mkalb.etpetssim.simulations.core.model.TimedSimulationStatistics;
 import de.mkalb.etpetssim.simulations.core.shared.SimulationNotificationType;
 import de.mkalb.etpetssim.simulations.core.shared.SimulationState;
 import de.mkalb.etpetssim.simulations.core.shared.SimulationStepEvent;
@@ -43,7 +43,7 @@ import java.util.function.Consumer;
  * @param <GC>  grid cell type used for cell selection
  * @param <GM>  grid model type managed by the simulation
  * @param <CON> immutable simulation config type
- * @param <STA> timed statistics type exposed to observation views
+ * @param <STA> statistics type exposed to observation views
  * @param <SM>  concrete simulation manager type
  * @param <CTX> simulation-specific user action context type
  */
@@ -52,7 +52,7 @@ public final class DefaultMainViewModel<
         GC extends GridCellView<ENT>,
         GM extends GridModel<ENT>,
         CON extends SimulationConfig,
-        STA extends TimedSimulationStatistics,
+        STA extends SimulationStatistics,
         SM extends AbstractTimedSimulationManager<ENT, GM, CON, STA>,
         CTX extends SimulationUserActionContext>
         extends AbstractMainViewModel<ENT, GM, CON, STA> {

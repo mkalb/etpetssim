@@ -16,7 +16,7 @@ import org.jspecify.annotations.Nullable;
  * @param <ENT> entity type stored in grid cells
  * @param <GM>  grid model type that the action may mutate
  * @param <CON> immutable simulation config type
- * @param <STA> timed statistics type that the action may update
+ * @param <STA> statistics type that the action may update
  * @param <SM>  concrete simulation manager type
  * @param <CTX> simulation-specific action context type
  */
@@ -25,7 +25,7 @@ public interface SimulationUserAction<
         ENT extends GridEntity,
         GM extends GridModel<ENT>,
         CON extends SimulationConfig,
-        STA extends TimedSimulationStatistics,
+        STA extends SimulationStatistics,
         SM extends SimulationManager<ENT, GM, CON, STA>,
         CTX extends SimulationUserActionContext> {
 

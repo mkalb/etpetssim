@@ -6,10 +6,10 @@ import de.mkalb.etpetssim.engine.executor.StepTimingStatistics;
 /**
  * Base class for simulation statistics that track step timing metrics.
  *
- * <p>Subclasses inherit the standard {@link TimedSimulationStatistics} implementation
+ * <p>Subclasses inherit the standard {@link SimulationStatistics} implementation
  * and call {@link #setStepData} to advance the shared counters.
  */
-public class BaseTimedSimulationStatistics implements TimedSimulationStatistics {
+public class BaseTimedSimulationStatistics implements SimulationStatistics {
 
     private final GridStructure gridStructure;
 

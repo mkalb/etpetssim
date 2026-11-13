@@ -5,6 +5,8 @@ import de.mkalb.etpetssim.engine.GridEdgeBehavior;
 import de.mkalb.etpetssim.engine.GridSize;
 import de.mkalb.etpetssim.engine.GridStructure;
 import de.mkalb.etpetssim.engine.GridTopology;
+import de.mkalb.etpetssim.engine.executor.StepTimingStatistics;
+import org.jspecify.annotations.NonNull;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -27,6 +29,12 @@ final class SimulationStatisticsTest {
         @Override
         public int stepCount() {
             return 0;
+        }
+
+        @NonNull
+        @Override
+        public StepTimingStatistics stepTimingStatistics() {
+            return StepTimingStatistics.empty();
         }
 
     }
