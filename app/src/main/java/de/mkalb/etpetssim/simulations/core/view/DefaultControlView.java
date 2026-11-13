@@ -10,27 +10,60 @@ import de.mkalb.etpetssim.ui.FXStyleClasses;
 import javafx.beans.binding.Bindings;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
-import java.util.Optional;
-
 /**
  * Default JavaFX implementation of the simulation control view.
  */
-public final class DefaultControlView extends AbstractControlView<DefaultControlViewModel> {
+public final class DefaultControlView implements SimulationControlView {
 
+    private final DefaultControlViewModel viewModel;
     private final Label stepNumberLabel = new Label();
 
     public DefaultControlView(DefaultControlViewModel viewModel) {
-        super(viewModel);
+        this.viewModel = viewModel;
+    }
+
+    private static Button createControlButton(String text) {
+        Button controlButton = new Button(text);
+        controlButton.getStyleClass().add(FXStyleClasses.CONTROL_BUTTON);
+        return controlButton;
     }
 
     @Override
-    protected Pane createControlButtonPane() {
+    public Region buildControlRegion() {
+        Region spacer = new Region();
+        HBox.setHgrow(spacer, Priority.ALWAYS);
+
+        HBox controlHBox = new HBox(createControlButtonPane(), createControlConfigPane(), spacer,
+                createControlObservationPane());
+        controlHBox.getStyleClass().add(FXStyleClasses.CONTROL_HBOX);
+
+        ScrollPane controlScrollPane = new ScrollPane();
+        controlScrollPane.getStyleClass().add(FXStyleClasses.CONTROL_SCROLLPANE);
+        controlScrollPane.setContent(controlHBox);
+        controlScrollPane.setFitToHeight(false);
+        controlScrollPane.setFitToWidth(true);
+        controlScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+        controlScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        controlScrollPane.setPannable(false);
+
+        return controlScrollPane;
+    }
+
+    @Override
+    public void setStepCount(int stepCount) {
+        stepNumberLabel.setText(
+                AppLocalization.getFormattedText(SimulationLocalizationKeys.CONTROL_STEP_NUMBER, stepCount));
+    }
+
+    private Pane createControlButtonPane() {
         String textStart = AppLocalization.getText(SimulationLocalizationKeys.CONTROL_START);
         String textPause = AppLocalization.getText(SimulationLocalizationKeys.CONTROL_PAUSE);
         String textResume = AppLocalization.getText(SimulationLocalizationKeys.CONTROL_RESUME);
@@ -63,8 +96,7 @@ public final class DefaultControlView extends AbstractControlView<DefaultControl
         return buttonBox;
     }
 
-    @Override
-    protected Optional<Pane> createControlConfigPane() {
+    private Pane createControlConfigPane() {
         var simulationModeControl = FXComponentFactory
                 .createLabeledChoiceRadioButtons(viewModel.simulationModeProperty(),
                         FXComponentFactory.createVBox(FXStyleClasses.CONFIG_RADIOBUTTON_BOX),
@@ -143,22 +175,15 @@ public final class DefaultControlView extends AbstractControlView<DefaultControl
 
         HBox configBox = new HBox(simulationModeBox, stepConfigPane, pauseBox);
         configBox.getStyleClass().add(FXStyleClasses.CONTROL_CONFIG_HBOX);
-        return Optional.of(configBox);
+        return configBox;
     }
 
-    @Override
-    protected Optional<Pane> createControlObservationPane() {
+    private Pane createControlObservationPane() {
         Label stepTitleLabel = new Label(AppLocalization.getText(SimulationLocalizationKeys.CONTROL_STEP_TITLE));
 
         VBox observationBox = new VBox(stepTitleLabel, stepNumberLabel);
         observationBox.getStyleClass().add(FXStyleClasses.CONTROL_OBSERVATION_VBOX);
-        return Optional.of(observationBox);
-    }
-
-    @Override
-    public void setStepCount(int stepCount) {
-        stepNumberLabel.setText(
-                AppLocalization.getFormattedText(SimulationLocalizationKeys.CONTROL_STEP_NUMBER, stepCount));
+        return observationBox;
     }
 
     private void bindActionButtonDisabled(Button actionButton) {
