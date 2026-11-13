@@ -23,7 +23,8 @@ simulation-specific part; `engine.model` is the generic grid model (`GridModel` 
 Special cases:
 
 - `start`: start screen only; no model/view/viewmodel structure
-- `lab`: development/testing showcase, not a simulation
+- `lab`: development showcase with the regular structure, hidden from the start screen; its steps change no cells
+  (`docs/development/simulation-lab.md`)
 
 ## Package Isolation
 
@@ -127,10 +128,9 @@ termination condition. Javadoc names a simulation by its title; compound adjecti
 
 Check `simulations.core` before adding simulation-local infrastructure. Relevant examples include:
 
-- Views: `AbstractMainView`, `AbstractDefaultMainView`, `AbstractObservationView`, `AbstractControlView`,
-  `AbstractConfigView`
-- ViewModels: `AbstractMainViewModel`, `AbstractConfigViewModel`, `DefaultMainViewModel`,
-  `DefaultControlViewModel`, `DefaultObservationViewModel`
+- Views: `AbstractMainView`, `AbstractObservationView`, `AbstractConfigView`
+- ViewModels: `AbstractConfigViewModel`, `DefaultMainViewModel`, `DefaultControlViewModel`,
+  `DefaultObservationViewModel`
 - View helpers: `CellDrawer`, `CoordinateDrawer`, `DrawCallThrottler`, `DefaultControlView`
 - ViewModel/model helpers: `SeedProperty`, `SimulationConfig`
 
@@ -254,7 +254,7 @@ Use `CellDrawer` from `simulations.core.view`:
 
 ## Lifecycle
 
-- Implement `initializeSimulation(...)` for view-specific setup in `AbstractDefaultMainView` subclasses.
+- Implement `initializeSimulation(...)` for view-specific setup in `AbstractMainView` subclasses.
 - In `shutdownSimulation()`, unbind explicit bindings, remove explicit listeners (scene-graph-lifetime listeners are
   exempt), stop timers and animations, and clear references to large data structures; do not shut down global
   resources such as `AppLogger`.
@@ -273,9 +273,9 @@ Use `CellDrawer` from `simulations.core.view`:
 
 ### Main View Composition
 
-- Extend `AbstractDefaultMainView` for the standard observation/canvas/config layout.
+- Extend `AbstractMainView` for the standard observation/canvas/config layout; it supplies the simulation canvas
+  region.
 - Implement `buildObservationRegion()` and `buildConfigRegion()` in the corresponding Observation and Config Views.
-- `AbstractMainView` supplies the simulation canvas region.
 - Use `buildMainRegion()` as the UI composition entry point.
 
 ### User Action Context
