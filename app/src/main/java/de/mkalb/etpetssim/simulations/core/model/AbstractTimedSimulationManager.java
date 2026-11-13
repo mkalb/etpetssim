@@ -1,6 +1,7 @@
 package de.mkalb.etpetssim.simulations.core.model;
 
 import de.mkalb.etpetssim.core.AppLogger;
+import de.mkalb.etpetssim.engine.GridStructure;
 import de.mkalb.etpetssim.engine.executor.StepExecutionResult;
 import de.mkalb.etpetssim.engine.executor.StepTimingStatistics;
 import de.mkalb.etpetssim.engine.executor.TimedSimulationExecutor;
@@ -27,8 +28,7 @@ public abstract class AbstractTimedSimulationManager<
         ENT extends GridEntity,
         GM extends GridModel<ENT>,
         CON extends SimulationConfig,
-        STA extends SimulationStatistics>
-        implements SimulationManager<ENT, GM, CON, STA> {
+        STA extends SimulationStatistics> {
 
     private final CON config;
     private final List<StatisticsMetric<STA>> metrics;
@@ -49,12 +49,24 @@ public abstract class AbstractTimedSimulationManager<
         statisticsExtremaTracker = new StatisticsExtremaTracker(metrics);
     }
 
-    @Override
     public final CON config() {
         return config;
     }
 
-    @Override
+    /**
+     * Returns the grid structure currently used by the simulation.
+     *
+     * @return grid structure
+     */
+    public abstract GridStructure structure();
+
+    /**
+     * Returns the latest statistics snapshot.
+     *
+     * @return simulation statistics
+     */
+    public abstract STA statistics();
+
     public final void executeStep() {
         var timedExecutor = executor();
         timedExecutor.executeStep();
@@ -62,7 +74,14 @@ public abstract class AbstractTimedSimulationManager<
         recordStatisticsSample();
     }
 
-    @Override
+    /**
+     * Executes multiple simulation steps with optional early termination.
+     *
+     * @param count            maximum number of steps to execute
+     * @param checkTermination whether logical termination should stop execution early
+     * @param onStep           callback invoked after each executed step
+     * @return aggregated execution result
+     */
     public final StepExecutionResult executeSteps(int count, boolean checkTermination, Runnable onStep) {
         var timedExecutor = executor();
         return timedExecutor.executeSteps(count, checkTermination, () -> {
@@ -72,32 +91,46 @@ public abstract class AbstractTimedSimulationManager<
         });
     }
 
-    @Override
+    /**
+     * Indicates whether the simulation reached its logical termination condition.
+     *
+     * @return {@code true} if logically finished
+     */
     public final boolean isFinished() {
         return executor().isFinished();
     }
 
-    @Override
+    /**
+     * Indicates whether the executor reached its technical step limit.
+     *
+     * @return {@code true} if technically finished
+     */
     public final boolean isExecutorFinished() {
         return executor().isExecutorFinished();
     }
 
-    @Override
     public final int stepCount() {
         return executor().stepCount();
     }
 
-    @Override
     public final GM currentGridModel() {
         return executor().currentGridModel();
     }
 
-    @Override
+    /**
+     * Returns immutable sampled statistics history ordered from oldest to newest.
+     *
+     * @return sampled statistics history
+     */
     public final List<StatisticsSample> statisticsHistory() {
         return statisticsHistory.toList();
     }
 
-    @Override
+    /**
+     * Returns tracked minimum and maximum metric values.
+     *
+     * @return tracked metric extrema
+     */
     public final StatisticsExtrema statisticsExtrema() {
         return statisticsExtremaTracker.snapshot();
     }

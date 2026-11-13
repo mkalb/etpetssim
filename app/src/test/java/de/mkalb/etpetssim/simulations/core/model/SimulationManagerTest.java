@@ -1,13 +1,9 @@
 package de.mkalb.etpetssim.simulations.core.model;
 
-import de.mkalb.etpetssim.engine.GridStructure;
-import de.mkalb.etpetssim.engine.executor.StepExecutionResult;
-import de.mkalb.etpetssim.engine.model.WritableGridModel;
 import de.mkalb.etpetssim.simulations.conway.model.ConwayConfig;
 import de.mkalb.etpetssim.simulations.conway.model.ConwayConstraints;
 import de.mkalb.etpetssim.simulations.conway.model.ConwaySimulationManager;
 import de.mkalb.etpetssim.simulations.conway.model.ConwayStatistics;
-import de.mkalb.etpetssim.simulations.conway.model.entity.ConwayEntity;
 import de.mkalb.etpetssim.simulations.etpets.model.EtpetsConfig;
 import de.mkalb.etpetssim.simulations.etpets.model.EtpetsConstraints;
 import de.mkalb.etpetssim.simulations.etpets.model.EtpetsSimulationManager;
@@ -42,7 +38,6 @@ import de.mkalb.etpetssim.simulations.wator.model.WatorConfig;
 import de.mkalb.etpetssim.simulations.wator.model.WatorConstraints;
 import de.mkalb.etpetssim.simulations.wator.model.WatorSimulationManager;
 import de.mkalb.etpetssim.simulations.wator.model.WatorStatistics;
-import org.jspecify.annotations.NonNull;
 import org.junit.jupiter.api.Test;
 
 import java.util.LinkedHashMap;
@@ -332,20 +327,6 @@ final class SimulationManagerTest {
                 () -> assertStepZeroSample(new SugarSimulationManager(createSugarConfig()), SugarStatistics.metrics()),
                 () -> assertStepZeroSample(new WatorSimulationManager(createWatorConfig()), WatorStatistics.metrics())
         );
-    }
-
-    @Test
-    void testStatisticsHistoryReturnsEmptyForNonTimedManager() {
-        SimulationManager<?, ?, ?, ?> manager = new TestSimulationManager();
-
-        assertEquals(List.of(), manager.statisticsHistory());
-    }
-
-    @Test
-    void testStatisticsExtremaReturnsEmptyForNonTimedManager() {
-        SimulationManager<?, ?, ?, ?> manager = new TestSimulationManager();
-
-        assertEquals(StatisticsExtrema.empty(), manager.statisticsExtrema());
     }
 
     @Test
@@ -639,62 +620,6 @@ final class SimulationManagerTest {
                         singleStep.statisticsExtrema().maximumValues().get(WatorStatistics.KEY_SHARK_CELLS).value(),
                         "singleStep: maxSharkCells")
         );
-    }
-
-    private static final class TestSimulationManager
-            implements SimulationManager<ConwayEntity, WritableGridModel<ConwayEntity>, ConwayConfig,
-            ConwayStatistics> {
-
-        @NonNull
-        @Override
-        public ConwayConfig config() {
-            throw new UnsupportedOperationException();
-        }
-
-        @NonNull
-        @Override
-        public GridStructure structure() {
-            throw new UnsupportedOperationException();
-        }
-
-        @NonNull
-        @Override
-        public ConwayStatistics statistics() {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public void executeStep() {
-            throw new UnsupportedOperationException();
-        }
-
-        @NonNull
-        @Override
-        public StepExecutionResult executeSteps(int count, boolean checkTermination, @NonNull Runnable onStep) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public boolean isFinished() {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public boolean isExecutorFinished() {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public int stepCount() {
-            throw new UnsupportedOperationException();
-        }
-
-        @NonNull
-        @Override
-        public WritableGridModel<ConwayEntity> currentGridModel() {
-            throw new UnsupportedOperationException();
-        }
-
     }
 
 }
