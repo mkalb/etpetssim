@@ -38,7 +38,7 @@ public final class LabFactory {
         var configViewModel = new LabConfigViewModel(readOnlySimulationState);
         var controlViewModel = DefaultControlViewModel.createWithMinStepDuration(readOnlySimulationState);
         var observationViewModel =
-                new DefaultObservationViewModel<LabEntity, GridCell<LabEntity>, LabStatistics>(readOnlySimulationState);
+                new DefaultObservationViewModel<LabEntity, GridCell<LabEntity>, LabStatistics>();
         var viewModel =
                 new DefaultMainViewModel<>(simulationState, configViewModel, controlViewModel, observationViewModel,
                         LabSimulationManager::new, ReadableGridModel::getGridCell, new LabUserAction());

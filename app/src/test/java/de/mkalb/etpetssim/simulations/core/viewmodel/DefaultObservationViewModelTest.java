@@ -9,7 +9,6 @@ import de.mkalb.etpetssim.simulations.core.model.SimulationStatistics;
 import de.mkalb.etpetssim.simulations.core.model.StatisticsExtrema;
 import de.mkalb.etpetssim.simulations.core.model.StatisticsExtremum;
 import de.mkalb.etpetssim.simulations.core.model.StatisticsSample;
-import de.mkalb.etpetssim.simulations.core.shared.SimulationState;
 import de.mkalb.etpetssim.testsupport.FXTestSupport;
 import javafx.beans.property.SimpleObjectProperty;
 import org.jspecify.annotations.NonNull;
@@ -35,88 +34,75 @@ final class DefaultObservationViewModelTest {
         FXTestSupport.ensureStarted();
     }
 
-    private static Fixture createFixture() {
-        var state = new SimpleObjectProperty<>(SimulationState.READY);
-        return new Fixture(state, new DefaultObservationViewModel<>(state));
-    }
-
-    @Test
-    void testSimulationStatePropertyIsForwarded() {
-        Fixture fixture = FXTestSupport.supplyAndWaitNonNull(DefaultObservationViewModelTest::createFixture);
-
-        FXTestSupport.runAndWait(() -> {
-            assertSame(fixture.state(), fixture.viewModel().simulationStateProperty());
-            fixture.state().set(SimulationState.PAUSED);
-
-            assertEquals(SimulationState.PAUSED, fixture.viewModel().getSimulationState());
-        });
+    private static DefaultObservationViewModel<ConwayEntity, GridCell<ConwayEntity>, TestStatistics> createViewModel() {
+        return new DefaultObservationViewModel<>();
     }
 
     @Test
     void testGetStatisticsReturnsEmptyInitially() {
-        Fixture fixture = FXTestSupport.supplyAndWaitNonNull(DefaultObservationViewModelTest::createFixture);
+        var viewModel = FXTestSupport.supplyAndWaitNonNull(DefaultObservationViewModelTest::createViewModel);
 
         FXTestSupport.runAndWait(
-                () -> assertEquals(Optional.empty(), fixture.viewModel().getStatistics()));
+                () -> assertEquals(Optional.empty(), viewModel.getStatistics()));
     }
 
     @Test
     void testSetStatistics() {
-        Fixture fixture = FXTestSupport.supplyAndWaitNonNull(DefaultObservationViewModelTest::createFixture);
+        var viewModel = FXTestSupport.supplyAndWaitNonNull(DefaultObservationViewModelTest::createViewModel);
         var statistics = new TestStatistics(7);
 
         FXTestSupport.runAndWait(() -> {
-            fixture.viewModel().setStatistics(statistics);
+            viewModel.setStatistics(statistics);
 
-            assertEquals(Optional.of(statistics), fixture.viewModel().getStatistics());
+            assertEquals(Optional.of(statistics), viewModel.getStatistics());
         });
     }
 
     @Test
     void testGetStatisticsExtremaReturnsEmptyInitially() {
-        Fixture fixture = FXTestSupport.supplyAndWaitNonNull(DefaultObservationViewModelTest::createFixture);
+        var viewModel = FXTestSupport.supplyAndWaitNonNull(DefaultObservationViewModelTest::createViewModel);
 
         FXTestSupport.runAndWait(
-                () -> assertEquals(StatisticsExtrema.empty(), fixture.viewModel().getStatisticsExtrema()));
+                () -> assertEquals(StatisticsExtrema.empty(), viewModel.getStatisticsExtrema()));
     }
 
     @Test
     void testSetStatisticsExtrema() {
-        Fixture fixture = FXTestSupport.supplyAndWaitNonNull(DefaultObservationViewModelTest::createFixture);
+        var viewModel = FXTestSupport.supplyAndWaitNonNull(DefaultObservationViewModelTest::createViewModel);
         var extremum = new StatisticsExtremum(42.0, 7);
         var extrema = new StatisticsExtrema(Map.of("metric", extremum), Map.of());
 
         FXTestSupport.runAndWait(() -> {
-            fixture.viewModel().setStatisticsExtrema(extrema);
+            viewModel.setStatisticsExtrema(extrema);
 
-            assertEquals(extrema, fixture.viewModel().getStatisticsExtrema());
+            assertEquals(extrema, viewModel.getStatisticsExtrema());
         });
     }
 
     @Test
     void testSetStatisticsExtremaResetsToEmpty() {
-        Fixture fixture = FXTestSupport.supplyAndWaitNonNull(DefaultObservationViewModelTest::createFixture);
+        var viewModel = FXTestSupport.supplyAndWaitNonNull(DefaultObservationViewModelTest::createViewModel);
 
         FXTestSupport.runAndWait(() -> {
-            fixture.viewModel().setStatisticsExtrema(new StatisticsExtrema(
+            viewModel.setStatisticsExtrema(new StatisticsExtrema(
                     Map.of("x", new StatisticsExtremum(1.0, 0)), Map.of()));
-            fixture.viewModel().setStatisticsExtrema(StatisticsExtrema.empty());
+            viewModel.setStatisticsExtrema(StatisticsExtrema.empty());
 
-            assertEquals(StatisticsExtrema.empty(), fixture.viewModel().getStatisticsExtrema());
+            assertEquals(StatisticsExtrema.empty(), viewModel.getStatisticsExtrema());
         });
     }
 
     @Test
     void testStatisticsHistoryPropertyInitialValueIsEmpty() {
-        Fixture fixture = FXTestSupport.supplyAndWaitNonNull(DefaultObservationViewModelTest::createFixture);
+        var viewModel = FXTestSupport.supplyAndWaitNonNull(DefaultObservationViewModelTest::createViewModel);
 
         FXTestSupport.runAndWait(
-                () -> assertEquals(List.of(), fixture.viewModel().statisticsHistoryProperty().get()));
+                () -> assertEquals(List.of(), viewModel.statisticsHistoryProperty().get()));
     }
 
     @Test
     void testStatisticsHistoryPropertyNotifiesListener() {
-        Fixture fixture = FXTestSupport.supplyAndWaitNonNull(DefaultObservationViewModelTest::createFixture);
+        var viewModel = FXTestSupport.supplyAndWaitNonNull(DefaultObservationViewModelTest::createViewModel);
         var history = List.of(new StatisticsSample(
                 1,
                 StepTimingStatistics.empty(),
@@ -124,8 +110,8 @@ final class DefaultObservationViewModelTest {
         var observedValues = new ArrayList<List<StatisticsSample>>();
 
         FXTestSupport.runAndWait(() -> {
-            fixture.viewModel().statisticsHistoryProperty().addListener((_, _, value) -> observedValues.add(value));
-            fixture.viewModel().setStatisticsHistory(history);
+            viewModel.statisticsHistoryProperty().addListener((_, _, value) -> observedValues.add(value));
+            viewModel.setStatisticsHistory(history);
         });
 
         assertEquals(List.of(history), observedValues);
@@ -133,87 +119,82 @@ final class DefaultObservationViewModelTest {
 
     @Test
     void testSetStatisticsHistory() {
-        Fixture fixture = FXTestSupport.supplyAndWaitNonNull(DefaultObservationViewModelTest::createFixture);
+        var viewModel = FXTestSupport.supplyAndWaitNonNull(DefaultObservationViewModelTest::createViewModel);
         var sample = new StatisticsSample(1, StepTimingStatistics.empty(), Map.of("metric", 3.0));
         var history = List.of(sample);
 
         FXTestSupport.runAndWait(() -> {
-            fixture.viewModel().setStatisticsHistory(history);
+            viewModel.setStatisticsHistory(history);
 
-            assertEquals(history, fixture.viewModel().statisticsHistoryProperty().get());
+            assertEquals(history, viewModel.statisticsHistoryProperty().get());
         });
     }
 
     @Test
     void testSetStatisticsHistoryToEmptyResetsProperty() {
-        Fixture fixture = FXTestSupport.supplyAndWaitNonNull(DefaultObservationViewModelTest::createFixture);
+        var viewModel = FXTestSupport.supplyAndWaitNonNull(DefaultObservationViewModelTest::createViewModel);
 
         FXTestSupport.runAndWait(() -> {
-            fixture.viewModel().setStatisticsHistory(List.of(new StatisticsSample(
+            viewModel.setStatisticsHistory(List.of(new StatisticsSample(
                     1, StepTimingStatistics.empty(), Map.of())));
-            fixture.viewModel().setStatisticsHistory(List.of());
+            viewModel.setStatisticsHistory(List.of());
 
-            assertEquals(List.of(), fixture.viewModel().statisticsHistoryProperty().get());
+            assertEquals(List.of(), viewModel.statisticsHistoryProperty().get());
         });
     }
 
     @Test
     void testResetStatisticsClearsStatisticsExtremaAndHistory() {
-        Fixture fixture = FXTestSupport.supplyAndWaitNonNull(DefaultObservationViewModelTest::createFixture);
+        var viewModel = FXTestSupport.supplyAndWaitNonNull(DefaultObservationViewModelTest::createViewModel);
         var statistics = new TestStatistics(7);
         var extrema = new StatisticsExtrema(Map.of("metric", new StatisticsExtremum(42.0d, 7)), Map.of());
         var history = List.of(new StatisticsSample(7, StepTimingStatistics.empty(), Map.of("metric", 42.0d)));
 
         FXTestSupport.runAndWait(() -> {
-            fixture.viewModel().setStatistics(statistics);
-            fixture.viewModel().setStatisticsExtrema(extrema);
-            fixture.viewModel().setStatisticsHistory(history);
-            fixture.viewModel().resetStatistics();
+            viewModel.setStatistics(statistics);
+            viewModel.setStatisticsExtrema(extrema);
+            viewModel.setStatisticsHistory(history);
+            viewModel.resetStatistics();
 
             assertAll(
-                    () -> assertEquals(Optional.empty(), fixture.viewModel().getStatistics()),
-                    () -> assertEquals(StatisticsExtrema.empty(), fixture.viewModel().getStatisticsExtrema()),
-                    () -> assertEquals(List.of(), fixture.viewModel().statisticsHistoryProperty().get())
+                    () -> assertEquals(Optional.empty(), viewModel.getStatistics()),
+                    () -> assertEquals(StatisticsExtrema.empty(), viewModel.getStatisticsExtrema()),
+                    () -> assertEquals(List.of(), viewModel.statisticsHistoryProperty().get())
             );
         });
     }
 
     @Test
     void testBindSelectedGridCellPropertyTracksSourceChanges() {
-        Fixture fixture = FXTestSupport.supplyAndWaitNonNull(DefaultObservationViewModelTest::createFixture);
+        var viewModel = FXTestSupport.supplyAndWaitNonNull(DefaultObservationViewModelTest::createViewModel);
         var source = new SimpleObjectProperty<GridCell<ConwayEntity>>();
         var selectedCell = new GridCell<>(new GridCoordinate(2, 3), ConwayEntity.ALIVE);
 
         FXTestSupport.runAndWait(() -> {
-            fixture.viewModel().bindSelectedGridCellProperty(source);
+            viewModel.bindSelectedGridCellProperty(source);
             source.set(selectedCell);
 
-            assertSame(selectedCell, fixture.viewModel().selectedGridCellProperty().get());
+            assertSame(selectedCell, viewModel.selectedGridCellProperty().get());
         });
     }
 
     @Test
     void testBindSelectedGridCellPropertyReplacesPreviousBinding() {
-        Fixture fixture = FXTestSupport.supplyAndWaitNonNull(DefaultObservationViewModelTest::createFixture);
+        var viewModel = FXTestSupport.supplyAndWaitNonNull(DefaultObservationViewModelTest::createViewModel);
         var firstSource = new SimpleObjectProperty<GridCell<ConwayEntity>>();
         var secondSource = new SimpleObjectProperty<GridCell<ConwayEntity>>();
         var firstCell = new GridCell<>(new GridCoordinate(2, 3), ConwayEntity.ALIVE);
         var secondCell = new GridCell<>(new GridCoordinate(4, 5), ConwayEntity.DEAD);
 
         FXTestSupport.runAndWait(() -> {
-            fixture.viewModel().bindSelectedGridCellProperty(firstSource);
+            viewModel.bindSelectedGridCellProperty(firstSource);
             firstSource.set(firstCell);
-            fixture.viewModel().bindSelectedGridCellProperty(secondSource);
+            viewModel.bindSelectedGridCellProperty(secondSource);
             secondSource.set(secondCell);
             firstSource.set(null);
 
-            assertSame(secondCell, fixture.viewModel().selectedGridCellProperty().get());
+            assertSame(secondCell, viewModel.selectedGridCellProperty().get());
         });
-    }
-
-    private record Fixture(
-            SimpleObjectProperty<SimulationState> state,
-            DefaultObservationViewModel<ConwayEntity, GridCell<ConwayEntity>, TestStatistics> viewModel) {
     }
 
     private record TestStatistics(int stepCount) implements SimulationStatistics {

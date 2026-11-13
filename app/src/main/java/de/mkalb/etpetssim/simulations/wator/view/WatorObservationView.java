@@ -17,11 +17,7 @@ import java.util.Optional;
  * Observation view of Wa-Tor.
  */
 public final class WatorObservationView
-        extends AbstractObservationView<
-        WatorEntity,
-        GridCell<WatorEntity>,
-        WatorStatistics,
-        DefaultObservationViewModel<WatorEntity, GridCell<WatorEntity>, WatorStatistics>> {
+        extends AbstractObservationView<WatorEntity, GridCell<WatorEntity>, WatorStatistics> {
 
     private static final String WATOR_OBSERVATION_AGE = "wator.observation.age";
 

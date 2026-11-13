@@ -40,7 +40,7 @@ public final class EtpetsFactory {
         var editToolBarViewModel = new EtpetsEditToolBarViewModel();
         var controlViewModel = new DefaultControlViewModel(readOnlySimulationState);
         var observationViewModel =
-                new DefaultObservationViewModel<EtpetsEntity, EtpetsCell, EtpetsStatistics>(readOnlySimulationState);
+                new DefaultObservationViewModel<EtpetsEntity, EtpetsCell, EtpetsStatistics>();
         var viewModel =
                 new DefaultMainViewModel<>(simulationState, configViewModel, controlViewModel, observationViewModel,
                         EtpetsSimulationManager::new, EtpetsCell::from, new EtpetsUserAction());

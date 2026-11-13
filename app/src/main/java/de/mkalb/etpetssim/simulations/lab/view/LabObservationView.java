@@ -11,12 +11,7 @@ import javafx.scene.layout.Region;
 /**
  * Observation view of the Simulation Lab.
  */
-public final class LabObservationView
-        extends AbstractObservationView<
-        LabEntity,
-        GridCell<LabEntity>,
-        LabStatistics,
-        DefaultObservationViewModel<LabEntity, GridCell<LabEntity>, LabStatistics>> {
+public final class LabObservationView extends AbstractObservationView<LabEntity, GridCell<LabEntity>, LabStatistics> {
 
     public LabObservationView(DefaultObservationViewModel<LabEntity, GridCell<LabEntity>, LabStatistics> viewModel,
                               GridEntityDescriptorRegistry entityDescriptorRegistry) {

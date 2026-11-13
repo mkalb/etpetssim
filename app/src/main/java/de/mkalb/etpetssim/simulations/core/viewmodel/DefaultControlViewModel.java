@@ -15,7 +15,7 @@ import javafx.beans.property.SimpleBooleanProperty;
 /**
  * Default implementation of control view-model state and user requests.
  */
-public final class DefaultControlViewModel implements SimulationControlViewModel {
+public final class DefaultControlViewModel {
 
     private static final int STEP_DURATION_DEFAULT = 700;
     private static final int STEP_DURATION_MIN = 50;
@@ -58,12 +58,10 @@ public final class DefaultControlViewModel implements SimulationControlViewModel
         return controlViewModel;
     }
 
-    @Override
     public ReadOnlyObjectProperty<SimulationState> simulationStateProperty() {
         return simulationState;
     }
 
-    @Override
     public SimulationState getSimulationState() {
         return simulationState.get();
     }

@@ -17,11 +17,7 @@ import java.util.Optional;
  * Observation view of Snake.
  */
 public final class SnakeObservationView
-        extends AbstractObservationView<
-        SnakeEntity,
-        GridCell<SnakeEntity>,
-        SnakeStatistics,
-        DefaultObservationViewModel<SnakeEntity, GridCell<SnakeEntity>, SnakeStatistics>> {
+        extends AbstractObservationView<SnakeEntity, GridCell<SnakeEntity>, SnakeStatistics> {
 
     private static final String SNAKE_OBSERVATION_SNAKE_ID = "snake.observation.snake.id";
     private static final String SNAKE_OBSERVATION_SNAKE_AGE = "snake.observation.snake.age";

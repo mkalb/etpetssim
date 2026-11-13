@@ -9,7 +9,7 @@ import de.mkalb.etpetssim.simulations.core.model.StatisticsChartGroup;
 import de.mkalb.etpetssim.simulations.core.model.StatisticsExtrema;
 import de.mkalb.etpetssim.simulations.core.model.StatisticsExtremum;
 import de.mkalb.etpetssim.simulations.core.model.StatisticsMetric;
-import de.mkalb.etpetssim.simulations.core.viewmodel.SimulationObservationViewModel;
+import de.mkalb.etpetssim.simulations.core.viewmodel.DefaultObservationViewModel;
 import de.mkalb.etpetssim.ui.FXStyleClasses;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.value.ChangeListener;
@@ -37,18 +37,16 @@ import java.util.Optional;
  * @param <ENT> entity type stored in grid cells
  * @param <GC>  grid cell type used for cell selection
  * @param <STA> statistics type shown by the view
- * @param <VM>  observation view model type
  */
 public abstract class AbstractObservationView<
         ENT extends GridEntity,
         GC extends GridCellView<ENT>,
-        STA extends SimulationStatistics,
-        VM extends SimulationObservationViewModel<STA>>
+        STA extends SimulationStatistics>
         implements SimulationObservationView {
 
     private static final String LABEL_SEPARATOR = ":";
 
-    protected final VM viewModel;
+    protected final DefaultObservationViewModel<ENT, GC, STA> viewModel;
     private final GridEntityDescriptorRegistry entityDescriptorRegistry;
     private final Label stepCountLabel = new Label();
     private final Label totalCellsLabel = new Label();
@@ -63,7 +61,7 @@ public abstract class AbstractObservationView<
     private @Nullable ReadOnlyObjectProperty<@Nullable GC> selectedGridCellProperty;
     private @Nullable ChangeListener<@Nullable GC> selectedGridCellListener;
 
-    protected AbstractObservationView(VM viewModel,
+    protected AbstractObservationView(DefaultObservationViewModel<ENT, GC, STA> viewModel,
                                       GridEntityDescriptorRegistry entityDescriptorRegistry) {
         this.viewModel = viewModel;
         this.entityDescriptorRegistry = entityDescriptorRegistry;

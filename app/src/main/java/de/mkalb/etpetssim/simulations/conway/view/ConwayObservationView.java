@@ -12,11 +12,7 @@ import javafx.scene.layout.Region;
  * Observation view of Conway's Game of Life.
  */
 public final class ConwayObservationView
-        extends AbstractObservationView<
-        ConwayEntity,
-        GridCell<ConwayEntity>,
-        ConwayStatistics,
-        DefaultObservationViewModel<ConwayEntity, GridCell<ConwayEntity>, ConwayStatistics>> {
+        extends AbstractObservationView<ConwayEntity, GridCell<ConwayEntity>, ConwayStatistics> {
 
     public ConwayObservationView(DefaultObservationViewModel<ConwayEntity, GridCell<ConwayEntity>,
                                          ConwayStatistics> viewModel,

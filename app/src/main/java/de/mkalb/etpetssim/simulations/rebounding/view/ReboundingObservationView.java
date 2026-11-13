@@ -15,11 +15,7 @@ import org.jspecify.annotations.Nullable;
  * Observation view of Rebounding Entities.
  */
 public final class ReboundingObservationView
-        extends AbstractObservationView<
-        ReboundingEntity,
-        GridCell<ReboundingEntity>,
-        ReboundingStatistics,
-        DefaultObservationViewModel<ReboundingEntity, GridCell<ReboundingEntity>, ReboundingStatistics>> {
+        extends AbstractObservationView<ReboundingEntity, GridCell<ReboundingEntity>, ReboundingStatistics> {
 
     private static final String REBOUNDING_OBSERVATION_DIRECTION = "rebounding.observation.direction";
 

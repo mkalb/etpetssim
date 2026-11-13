@@ -25,7 +25,7 @@ import java.util.function.Supplier;
  *
  * @param <CON> immutable simulation config type
  */
-public abstract class AbstractConfigViewModel<CON extends SimulationConfig> implements SimulationConfigViewModel<CON> {
+public abstract class AbstractConfigViewModel<CON extends SimulationConfig> {
 
     private final List<ConfigValidationRule> configValidationRules = new ArrayList<>();
     private final ReadOnlyBooleanWrapper hasConfigValidationIssues = new ReadOnlyBooleanWrapper(false);
@@ -74,12 +74,10 @@ public abstract class AbstractConfigViewModel<CON extends SimulationConfig> impl
         seed = new SeedProperty(commonConfigSettings.seedDefault());
     }
 
-    @Override
     public final ReadOnlyObjectProperty<SimulationState> simulationStateProperty() {
         return simulationState;
     }
 
-    @Override
     public final SimulationState getSimulationState() {
         return simulationState.get();
     }
@@ -124,6 +122,15 @@ public abstract class AbstractConfigViewModel<CON extends SimulationConfig> impl
     public final ReadOnlyStringProperty configValidationMessageProperty() {
         return configValidationMessage.getReadOnlyProperty();
     }
+
+    /**
+     * Creates an immutable simulation configuration from the current input values.
+     *
+     * <p>The configuration may be invalid; callers check it with {@link SimulationConfig#isValid()}.
+     *
+     * @return simulation configuration
+     */
+    public abstract CON createConfig();
 
     /**
      * Registers a UI-facing configuration validation rule.

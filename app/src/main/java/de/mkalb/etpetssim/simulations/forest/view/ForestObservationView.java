@@ -12,11 +12,7 @@ import javafx.scene.layout.Region;
  * Observation view of the Forest-fire model.
  */
 public final class ForestObservationView
-        extends AbstractObservationView<
-        ForestEntity,
-        GridCell<ForestEntity>,
-        ForestStatistics,
-        DefaultObservationViewModel<ForestEntity, GridCell<ForestEntity>, ForestStatistics>> {
+        extends AbstractObservationView<ForestEntity, GridCell<ForestEntity>, ForestStatistics> {
 
     public ForestObservationView(DefaultObservationViewModel<ForestEntity, GridCell<ForestEntity>,
                                          ForestStatistics> viewModel,

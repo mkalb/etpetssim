@@ -12,11 +12,7 @@ import javafx.scene.layout.Region;
  * Observation view of Langton's Ant.
  */
 public final class LangtonObservationView
-        extends AbstractObservationView<
-        LangtonEntity,
-        LangtonCell,
-        LangtonStatistics,
-        DefaultObservationViewModel<LangtonEntity, LangtonCell, LangtonStatistics>> {
+        extends AbstractObservationView<LangtonEntity, LangtonCell, LangtonStatistics> {
 
     public LangtonObservationView(DefaultObservationViewModel<LangtonEntity, LangtonCell, LangtonStatistics> viewModel,
                                   GridEntityDescriptorRegistry entityDescriptorRegistry) {

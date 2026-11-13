@@ -12,12 +12,7 @@ import org.jspecify.annotations.Nullable;
 /**
  * Observation view of ET Pets.
  */
-public final class EtpetsObservationView
-        extends AbstractObservationView<
-        EtpetsEntity,
-        EtpetsCell,
-        EtpetsStatistics,
-        DefaultObservationViewModel<EtpetsEntity, EtpetsCell, EtpetsStatistics>> {
+public final class EtpetsObservationView extends AbstractObservationView<EtpetsEntity, EtpetsCell, EtpetsStatistics> {
 
     public EtpetsObservationView(DefaultObservationViewModel<EtpetsEntity, EtpetsCell, EtpetsStatistics> viewModel,
                                  GridEntityDescriptorRegistry entityDescriptorRegistry) {

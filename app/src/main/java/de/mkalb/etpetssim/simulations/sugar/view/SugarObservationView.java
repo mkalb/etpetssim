@@ -15,12 +15,7 @@ import org.jspecify.annotations.Nullable;
 /**
  * Observation view of Sugarscape.
  */
-public final class SugarObservationView
-        extends AbstractObservationView<
-        SugarEntity,
-        SugarCell,
-        SugarStatistics,
-        DefaultObservationViewModel<SugarEntity, SugarCell, SugarStatistics>> {
+public final class SugarObservationView extends AbstractObservationView<SugarEntity, SugarCell, SugarStatistics> {
 
     private static final String SUGAR_OBSERVATION_CURRENT_ENERGY = "sugar.observation.currentenergy";
     private static final String SUGAR_OBSERVATION_CURRENT_AMOUNT = "sugar.observation.currentamount";

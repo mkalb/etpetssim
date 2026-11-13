@@ -5,7 +5,6 @@ import de.mkalb.etpetssim.engine.model.entity.GridEntity;
 import de.mkalb.etpetssim.simulations.core.model.SimulationStatistics;
 import de.mkalb.etpetssim.simulations.core.model.StatisticsExtrema;
 import de.mkalb.etpetssim.simulations.core.model.StatisticsSample;
-import de.mkalb.etpetssim.simulations.core.shared.SimulationState;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.ReadOnlyObjectWrapper;
@@ -25,10 +24,8 @@ import java.util.Optional;
 public final class DefaultObservationViewModel<
         ENT extends GridEntity,
         GC extends GridCellView<ENT>,
-        STA extends SimulationStatistics>
-        implements SimulationObservationViewModel<STA> {
+        STA extends SimulationStatistics> {
 
-    private final ReadOnlyObjectProperty<SimulationState> simulationState;
     private final ObjectProperty<@Nullable STA> statistics = new SimpleObjectProperty<>();
     private final ObjectProperty<@Nullable GC> selectedGridCell = new SimpleObjectProperty<>();
     private final ObjectProperty<StatisticsExtrema> statisticsExtrema =
@@ -36,31 +33,24 @@ public final class DefaultObservationViewModel<
     private final ReadOnlyObjectWrapper<List<StatisticsSample>> statisticsHistory =
             new ReadOnlyObjectWrapper<>(List.of());
 
-    public DefaultObservationViewModel(ReadOnlyObjectProperty<SimulationState> simulationState) {
-        this.simulationState = simulationState;
-    }
-
-    @Override
-    public ReadOnlyObjectProperty<SimulationState> simulationStateProperty() {
-        return simulationState;
-    }
-
-    @Override
-    public SimulationState getSimulationState() {
-        return simulationState.get();
-    }
-
-    @Override
+    /**
+     * Returns the current statistics snapshot.
+     *
+     * @return the statistics snapshot, or empty before initialization or after a reset
+     */
     public Optional<STA> getStatistics() {
         return Optional.ofNullable(statistics.get());
     }
 
-    @Override
     public void setStatistics(STA statistics) {
         this.statistics.set(statistics);
     }
 
-    @Override
+    /**
+     * Returns the current statistic extrema snapshot.
+     *
+     * @return the latest extrema, or an empty snapshot before any step executes
+     */
     public StatisticsExtrema getStatisticsExtrema() {
         return statisticsExtrema.get();
     }
@@ -74,7 +64,11 @@ public final class DefaultObservationViewModel<
         statisticsExtrema.set(extrema);
     }
 
-    @Override
+    /**
+     * Exposes the current statistics history snapshot as an observable property.
+     *
+     * @return read-only property containing an immutable ordered list of samples, oldest first
+     */
     public ReadOnlyObjectProperty<List<StatisticsSample>> statisticsHistoryProperty() {
         return statisticsHistory.getReadOnlyProperty();
     }

@@ -57,8 +57,7 @@ public final class DefaultMainViewModel<
         CON extends SimulationConfig,
         STA extends SimulationStatistics,
         SM extends AbstractTimedSimulationManager<ENT, GM, CON, STA>,
-        CTX extends SimulationUserActionContext>
-        implements SimulationMainViewModel {
+        CTX extends SimulationUserActionContext> {
 
     private static final double TIMEOUT_EXECUTE_FACTOR = 0.4d;
     private static final double TIMEOUT_VIEW_FACTOR = 0.5d;
@@ -71,7 +70,7 @@ public final class DefaultMainViewModel<
     private final ObjectProperty<SimulationState> simulationState;
     private final ObjectProperty<SimulationNotificationType> notificationType =
             new SimpleObjectProperty<>(SimulationNotificationType.NONE);
-    private final SimulationConfigViewModel<CON> configViewModel;
+    private final AbstractConfigViewModel<CON> configViewModel;
     private final DefaultControlViewModel controlViewModel;
     private final DefaultObservationViewModel<ENT, GC, STA> observationViewModel;
     private final BiFunction<CON, SimulationInitializationCancellation, SM> simulationManagerFactory;
@@ -115,7 +114,7 @@ public final class DefaultMainViewModel<
      * @param simulationUserAction     user action applied to the current paused simulation state
      */
     public DefaultMainViewModel(ObjectProperty<SimulationState> simulationState,
-                                SimulationConfigViewModel<CON> configViewModel,
+                                AbstractConfigViewModel<CON> configViewModel,
                                 DefaultControlViewModel controlViewModel,
                                 DefaultObservationViewModel<ENT, GC, STA> observationViewModel,
                                 BiFunction<CON, SimulationInitializationCancellation, SM> simulationManagerFactory,
@@ -126,7 +125,7 @@ public final class DefaultMainViewModel<
     }
 
     DefaultMainViewModel(ObjectProperty<SimulationState> simulationState,
-                         SimulationConfigViewModel<CON> configViewModel,
+                         AbstractConfigViewModel<CON> configViewModel,
                          DefaultControlViewModel controlViewModel,
                          DefaultObservationViewModel<ENT, GC, STA> observationViewModel,
                          BiFunction<CON, SimulationInitializationCancellation, SM> simulationManagerFactory,
@@ -252,12 +251,10 @@ public final class DefaultMainViewModel<
         simulationResetListener = listener;
     }
 
-    @Override
     public ReadOnlyObjectProperty<SimulationState> simulationStateProperty() {
         return simulationState;
     }
 
-    @Override
     public SimulationState getSimulationState() {
         return simulationState.get();
     }
@@ -266,29 +263,47 @@ public final class DefaultMainViewModel<
         this.simulationState.set(simulationState);
     }
 
-    @Override
+    /**
+     * Exposes the notification type shown by the main view; {@link SimulationNotificationType#NONE} hides the
+     * notification.
+     *
+     * @return mutable notification type property
+     */
     public ObjectProperty<SimulationNotificationType> notificationTypeProperty() {
         return notificationType;
     }
 
-    @Override
     public void setNotificationType(SimulationNotificationType notificationType) {
         this.notificationType.set(notificationType);
     }
 
-    @Override
+    /**
+     * Returns the grid structure of the active simulation.
+     *
+     * @return simulation structure
+     */
     public GridStructure getStructure() {
         Objects.requireNonNull(simulationManager, "Unable to access simulationManager: not initialized");
         return simulationManager.structure();
     }
 
-    @Override
+    /**
+     * Returns the configured visual edge length of one cell of the active simulation.
+     *
+     * @return edge length in pixels
+     */
     public double getCellEdgeLength() {
         Objects.requireNonNull(simulationManager, "Unable to access simulationManager: not initialized");
         return simulationManager.config().cellEdgeLength();
     }
 
-    @Override
+    /**
+     * Immediately stops the simulation and releases resources on the JavaFX Application Thread.
+     *
+     * <p>This operation is idempotent and must not wait for background work to terminate.
+     *
+     * @return termination handle for application-exit bookkeeping
+     */
     public SimulationTerminationHandle shutdownSimulation() {
         if (disposed) {
             return Objects.requireNonNull(terminationHandle);

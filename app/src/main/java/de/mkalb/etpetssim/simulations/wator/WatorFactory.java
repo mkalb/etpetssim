@@ -39,8 +39,7 @@ public final class WatorFactory {
         var configViewModel = new WatorConfigViewModel(readOnlySimulationState);
         var controlViewModel = new DefaultControlViewModel(readOnlySimulationState);
         var observationViewModel =
-                new DefaultObservationViewModel<WatorEntity, GridCell<WatorEntity>,
-                        WatorStatistics>(readOnlySimulationState);
+                new DefaultObservationViewModel<WatorEntity, GridCell<WatorEntity>, WatorStatistics>();
         var viewModel =
                 new DefaultMainViewModel<>(simulationState, configViewModel, controlViewModel, observationViewModel,
                         WatorSimulationManager::new, ReadableGridModel::getGridCell, new WatorUserAction());

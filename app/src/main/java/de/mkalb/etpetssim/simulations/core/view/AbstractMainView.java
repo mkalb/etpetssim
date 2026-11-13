@@ -19,7 +19,6 @@ import de.mkalb.etpetssim.simulations.core.shared.SimulationNotificationType;
 import de.mkalb.etpetssim.simulations.core.shared.SimulationStepEvent;
 import de.mkalb.etpetssim.simulations.core.shared.SimulationUserActionContext;
 import de.mkalb.etpetssim.simulations.core.viewmodel.DefaultMainViewModel;
-import de.mkalb.etpetssim.simulations.core.viewmodel.DefaultObservationViewModel;
 import de.mkalb.etpetssim.simulations.core.viewmodel.SimulationUserActionDescriptor;
 import de.mkalb.etpetssim.ui.CellDimension;
 import de.mkalb.etpetssim.ui.FXGridCanvasPainter;
@@ -76,7 +75,7 @@ public abstract class AbstractMainView<
         SM extends AbstractTimedSimulationManager<ENT, GM, CON, STA>,
         CTX extends SimulationUserActionContext,
         CFV extends SimulationConfigView,
-        OV extends AbstractObservationView<ENT, GC, STA, DefaultObservationViewModel<ENT, GC, STA>>>
+        OV extends AbstractObservationView<ENT, GC, STA>>
         implements SimulationMainView {
 
     protected static final double NO_STROKE_LINE_WIDTH = 0.0d;
