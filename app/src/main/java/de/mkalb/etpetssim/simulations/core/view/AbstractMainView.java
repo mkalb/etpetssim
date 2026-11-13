@@ -63,7 +63,6 @@ import java.util.concurrent.TimeUnit;
  * @param <STA> statistics type
  * @param <SM>  concrete simulation manager type
  * @param <CTX> simulation-specific user action context type
- * @param <CFV> config view type
  * @param <OV>  observation view type
  */
 public abstract class AbstractMainView<
@@ -74,7 +73,6 @@ public abstract class AbstractMainView<
         STA extends SimulationStatistics,
         SM extends AbstractTimedSimulationManager<ENT, GM, CON, STA>,
         CTX extends SimulationUserActionContext,
-        CFV extends SimulationConfigView,
         OV extends AbstractObservationView<ENT, GC, STA>>
         implements SimulationMainView {
 
@@ -107,8 +105,8 @@ public abstract class AbstractMainView<
     protected final DefaultMainViewModel<ENT, GC, GM, CON, STA, SM, CTX> viewModel;
     protected final OV observationView;
     protected final GridEntityDescriptorRegistry entityDescriptorRegistry;
-    private final CFV configView;
-    private final SimulationControlView controlView;
+    private final AbstractConfigView<CON, ?> configView;
+    private final DefaultControlView controlView;
     private final Canvas baseCanvas;
     private final Canvas dynamicCanvas;
     private final Canvas overlayCanvas;
@@ -129,7 +127,8 @@ public abstract class AbstractMainView<
     private boolean skipOverlayActive;
 
     protected AbstractMainView(DefaultMainViewModel<ENT, GC, GM, CON, STA, SM, CTX> viewModel,
-                               CFV configView, SimulationControlView controlView, OV observationView,
+                               AbstractConfigView<CON, ?> configView, DefaultControlView controlView,
+                               OV observationView,
                                GridEntityDescriptorRegistry entityDescriptorRegistry) {
         this.viewModel = viewModel;
         this.configView = configView;

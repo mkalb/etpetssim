@@ -48,7 +48,6 @@ public final class SnakeMainView
         SnakeStatistics,
         SnakeSimulationManager,
         SnakeUserActionContext,
-        SnakeConfigView,
         SnakeObservationView> {
 
     private static final String SNAKE_TOOLBAR_ADD_FOOD = "snake.toolbar.addfood";

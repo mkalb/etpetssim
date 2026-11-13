@@ -63,7 +63,6 @@ public final class EtpetsMainView extends AbstractMainView<
         EtpetsStatistics,
         EtpetsSimulationManager,
         EtpetsUserActionContext,
-        EtpetsConfigView,
         EtpetsObservationView> {
 
     private static final int TRAIL_GROUP_COUNT = 5;

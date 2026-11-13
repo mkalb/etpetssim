@@ -59,7 +59,6 @@ public final class LangtonMainView
         LangtonStatistics,
         LangtonSimulationManager,
         LangtonUserActionContext,
-        LangtonConfigView,
         LangtonObservationView> {
 
     private static final String LANGTON_TOOL_ID_ADD_ANT = "langton.addAnt";

@@ -52,7 +52,6 @@ public final class ReboundingMainView
         ReboundingStatistics,
         ReboundingSimulationManager,
         ReboundingUserActionContext,
-        ReboundingConfigView,
         ReboundingObservationView> {
 
     private static final Color SELECTED_STROKE_COLOR = Color.WHITE;

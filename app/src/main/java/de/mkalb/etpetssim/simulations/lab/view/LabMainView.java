@@ -54,7 +54,6 @@ public final class LabMainView
         LabStatistics,
         LabSimulationManager,
         NoUserActionContext,
-        LabConfigView,
         LabObservationView> {
 
     // Edit toolbar

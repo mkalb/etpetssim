@@ -55,7 +55,6 @@ public final class SugarMainView
         SugarStatistics,
         SugarSimulationManager,
         SugarUserActionContext,
-        SugarConfigView,
         SugarObservationView> {
 
     private static final double SUGAR_MAX_FACTOR_DELTA = 0.3d;

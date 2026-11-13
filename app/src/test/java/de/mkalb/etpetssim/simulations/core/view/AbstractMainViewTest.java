@@ -34,7 +34,7 @@ final class AbstractMainViewTest {
         FXTestSupport.ensureStarted();
     }
 
-    private static AbstractMainView<?, ?, ?, ?, ?, ?, ?, ?, ?> createMainView() {
+    private static AbstractMainView<?, ?, ?, ?, ?, ?, ?, ?> createMainView() {
         return assertInstanceOf(AbstractMainView.class, ConwayFactory.createMainView());
     }
 
@@ -69,7 +69,7 @@ final class AbstractMainViewTest {
     @Test
     void testShutdownSimulationUnregistersNotificationListener() {
         FXTestSupport.runAndWait(() -> {
-            AbstractMainView<?, ?, ?, ?, ?, ?, ?, ?, ?> view = createMainView();
+            AbstractMainView<?, ?, ?, ?, ?, ?, ?, ?> view = createMainView();
             view.buildMainRegion();
             boolean registeredBeforeShutdown = view.hasNotificationListener();
 
@@ -85,7 +85,7 @@ final class AbstractMainViewTest {
     @Test
     void testShutdownSimulationUnregistersObservationListener() {
         FXTestSupport.runAndWait(() -> {
-            AbstractMainView<?, ?, ?, ?, ?, ?, ?, ?, ?> view = createMainView();
+            AbstractMainView<?, ?, ?, ?, ?, ?, ?, ?> view = createMainView();
             AbstractObservationView<?, ?, ?> observationView = view.observationView;
             boolean registeredBeforeShutdown = observationView.hasSelectedGridCellListener();
 
@@ -101,7 +101,7 @@ final class AbstractMainViewTest {
     @Test
     void testShutdownSimulationForwardsViewModelTerminationHandle() {
         FXTestSupport.runAndWait(() -> {
-            AbstractMainView<?, ?, ?, ?, ?, ?, ?, ?, ?> view = createMainView();
+            AbstractMainView<?, ?, ?, ?, ?, ?, ?, ?> view = createMainView();
             DefaultMainViewModel<?, ?, ?, ?, ?, ?, ?> viewModel = view.viewModel;
 
             SimulationTerminationHandle terminationHandle = view.shutdownSimulation();

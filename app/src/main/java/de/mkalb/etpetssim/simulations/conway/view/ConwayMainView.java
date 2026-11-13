@@ -53,7 +53,6 @@ public final class ConwayMainView
         ConwayStatistics,
         ConwaySimulationManager,
         ConwayUserActionContext,
-        ConwayConfigView,
         ConwayObservationView> {
 
     private static final Color SELECTED_STROKE_COLOR = Color.BLACK;

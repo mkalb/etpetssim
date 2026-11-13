@@ -39,7 +39,6 @@ public final class ForestMainView
         ForestStatistics,
         ForestSimulationManager,
         NoUserActionContext,
-        ForestConfigView,
         ForestObservationView> {
 
     private static final String FOREST_TOOL_ID_CYCLE_STATE = "forest.cycleState";

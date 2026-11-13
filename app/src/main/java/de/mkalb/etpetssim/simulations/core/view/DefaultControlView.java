@@ -21,7 +21,7 @@ import javafx.scene.layout.VBox;
 /**
  * Default JavaFX implementation of the simulation control view.
  */
-public final class DefaultControlView implements SimulationControlView {
+public final class DefaultControlView {
 
     private final DefaultControlViewModel viewModel;
     private final Label stepNumberLabel = new Label();
@@ -36,7 +36,6 @@ public final class DefaultControlView implements SimulationControlView {
         return controlButton;
     }
 
-    @Override
     public Region buildControlRegion() {
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
@@ -57,7 +56,15 @@ public final class DefaultControlView implements SimulationControlView {
         return controlScrollPane;
     }
 
-    @Override
+    /**
+     * Sets the displayed simulation step count.
+     *
+     * <p><strong>Threading:</strong> Must be called on the JavaFX Application Thread.
+     * Callers originating from a background thread must marshal the call via
+     * {@code Platform.runLater(...)}.
+     *
+     * @param stepCount current step count
+     */
     public void setStepCount(int stepCount) {
         stepNumberLabel.setText(
                 AppLocalization.getFormattedText(SimulationLocalizationKeys.CONTROL_STEP_NUMBER, stepCount));

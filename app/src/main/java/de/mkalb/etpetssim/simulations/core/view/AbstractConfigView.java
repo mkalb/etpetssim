@@ -31,8 +31,7 @@ import java.util.List;
  * @param <CON> immutable simulation config type
  * @param <VM>  config view model type
  */
-public abstract class AbstractConfigView<CON extends SimulationConfig, VM extends AbstractConfigViewModel<CON>>
-        implements SimulationConfigView {
+public abstract class AbstractConfigView<CON extends SimulationConfig, VM extends AbstractConfigViewModel<CON>> {
 
     private static final double PERCENT_SCALE = 100.0d;
 
@@ -41,6 +40,13 @@ public abstract class AbstractConfigView<CON extends SimulationConfig, VM extend
     protected AbstractConfigView(VM viewModel) {
         this.viewModel = viewModel;
     }
+
+    /**
+     * Builds the configuration UI region.
+     *
+     * @return root region for simulation configuration
+     */
+    public abstract Region buildConfigRegion();
 
     protected final Region createConfigMainBox(TitledPane... titledPanes) {
         HBox configHBox = new HBox(titledPanes);

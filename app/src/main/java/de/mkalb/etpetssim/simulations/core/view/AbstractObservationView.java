@@ -41,8 +41,7 @@ import java.util.Optional;
 public abstract class AbstractObservationView<
         ENT extends GridEntity,
         GC extends GridCellView<ENT>,
-        STA extends SimulationStatistics>
-        implements SimulationObservationView {
+        STA extends SimulationStatistics> {
 
     private static final String LABEL_SEPARATOR = ":";
 
@@ -67,16 +66,24 @@ public abstract class AbstractObservationView<
         this.entityDescriptorRegistry = entityDescriptorRegistry;
     }
 
-    @Override
+    /**
+     * Builds the observation UI region.
+     *
+     * @return root region for simulation observation
+     */
     public abstract Region buildObservationRegion();
 
-    @Override
+    /**
+     * Initializes observation labels when the simulation has been created.
+     */
     public final void initializeObservationLabels() {
         updateGridSectionLabel();
         updateObservationLabels();
     }
 
-    @Override
+    /**
+     * Releases listeners and bindings owned by the observation view.
+     */
     public final void shutdownObservation() {
         if ((selectedGridCellProperty != null) && (selectedGridCellListener != null)) {
             selectedGridCellProperty.removeListener(selectedGridCellListener);

@@ -43,7 +43,6 @@ public final class WatorMainView
         WatorStatistics,
         WatorSimulationManager,
         WatorUserActionContext,
-        WatorConfigView,
         WatorObservationView> {
 
     private static final String WATOR_TOOL_ID_ADD_FISH = "wator.addFish";
