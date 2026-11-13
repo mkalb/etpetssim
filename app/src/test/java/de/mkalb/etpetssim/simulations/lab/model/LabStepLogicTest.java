@@ -1,7 +1,11 @@
 package de.mkalb.etpetssim.simulations.lab.model;
 
+import de.mkalb.etpetssim.engine.CellShape;
 import de.mkalb.etpetssim.engine.GridCoordinate;
+import de.mkalb.etpetssim.engine.GridEdgeBehavior;
+import de.mkalb.etpetssim.engine.GridSize;
 import de.mkalb.etpetssim.engine.GridStructure;
+import de.mkalb.etpetssim.engine.GridTopology;
 import de.mkalb.etpetssim.engine.model.SparseGridModel;
 import de.mkalb.etpetssim.simulations.lab.model.entity.LabEntity;
 import org.junit.jupiter.api.Test;
@@ -15,18 +19,8 @@ final class LabStepLogicTest {
 
     @Test
     void testPerformSynchronousStep() {
-        GridStructure structure = new LabConfig(
-                LabConstraints.CELL_SHAPE_DEFAULT,
-                LabConstraints.GRID_EDGE_BEHAVIOR_DEFAULT,
-                LabConstraints.GRID_WIDTH_DEFAULT,
-                LabConstraints.GRID_HEIGHT_DEFAULT,
-                LabConstraints.CELL_EDGE_LENGTH_DEFAULT,
-                LabConstraints.CELL_DISPLAY_MODE_DEFAULT,
-                LabConstraints.COLOR_MODE_DEFAULT,
-                1L,
-                LabConstraints.HIGHLIGHTED_PERCENT_DEFAULT,
-                LabConstraints.NEIGHBORHOOD_MODE_DEFAULT
-        ).createGridStructure();
+        GridStructure structure = new GridStructure(new GridTopology(CellShape.SQUARE, GridEdgeBehavior.WRAP_XY),
+                new GridSize(8, 8));
         var currentGridModel = new SparseGridModel<>(structure, LabEntity.NORMAL);
         var nextGridModel = new SparseGridModel<>(structure, LabEntity.NORMAL);
         var statistics = new LabStatistics(structure);

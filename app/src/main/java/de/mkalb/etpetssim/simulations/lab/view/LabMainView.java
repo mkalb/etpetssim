@@ -57,33 +57,51 @@ public final class LabMainView
         LabConfigView,
         LabObservationView> {
 
+    // Edit toolbar
     private static final String LAB_TOOL_ID_SWITCH_ENTITY = "lab.switchEntity";
     private static final String LAB_TOOLBAR_SWITCH_ENTITY = "lab.toolbar.switchentity";
     private static final String LAB_TOOLBAR_SWITCH_ENTITY_TOOLTIP = "lab.toolbar.switchentity.tooltip";
 
-    private static final Color SELECTED_CELL_COLOR = Color.ROSYBROWN;
-    private static final Color MOUSE_HOVER_COLOR = Color.DARKSLATEBLUE;
-    private static final Color TEXT_COLOR = Color.DARKSLATEGRAY;
-    private static final Color TEXT_COLOR_GRAYSCALE = Color.BLACK;
-    private static final Color STROKE_COLOR = Color.BLACK;
+    // Base layer: checkerboard with the coordinates
     private static final Color CANVAS_COLOR = Color.BLACK;
     private static final Color GRID_BACKGROUND_COLOR = Color.DIMGRAY;
-    private static final Color TRANSLUCENT_WHITE = FXPaintFactory.adjustColorAlpha(Color.WHITE, 0.2);
-    private static final double SELECTED_CELL_LINE_WIDTH = 4.0d;
-    private static final double MOUSE_HOVER_LINE_WIDTH = 2.0d;
-    private static final double SHAPE_LINE_WIDTH = 0.5d;
-    private static final double HOVER_MIN_EDGE_LENGTH = 6.0d;
-    private static final double MODEL_FILL_ALPHA = 0.5d;
-    private static final int OUTER_HIGHLIGHT_RING_RADIUS = LabNeighborhoodHighlights.RING_MAX_RADIUS;
-    private static final int INNER_HIGHLIGHT_RING_RADIUS = 3;
-    private static final int HIGHLIGHT_RING_STROKE_SCALE = 2;
-    private static final int NEIGHBOR_DIRECTION_TEXT_CAPACITY = 4;
+    private static final Color GRID_BACKGROUND_COLOR_GRAYSCALE = Color.WHITE;
+    private static final Color CHECKER_STROKE_COLOR = Color.BLACK;
+    private static final double CHECKER_LINE_WIDTH = 0.5d;
     private static final int CHECKER_GROUP_SIZE = 2;
     private static final int CHECKER_GROUP_SHIFT = 1;
+    private static final Color COORDINATE_TEXT_COLOR = Color.DARKSLATEGRAY;
+    private static final Color COORDINATE_TEXT_COLOR_GRAYSCALE = Color.BLACK;
 
-    private static final double ESTIMATED_CELL_STROKE_WIDTH = 1.0d;
-    private static final double NEIGHBOR_COORDINATE_STROKE_WIDTH = 2.0d;
-    private static final double EDGE_RESULT_STROKE_WIDTH = 3.0d;
+    // Dynamic layer: highlighted cells and neighborhood highlights of the selected cell
+    private static final Color HIGHLIGHTED_CELL_COLOR = FXPaintFactory.adjustColorAlpha(Color.RED, 0.5);
+    private static final int OUTER_RING_RADIUS = LabNeighborhoodHighlights.RING_MAX_RADIUS;
+    private static final Color OUTER_RING_COLOR = Color.GOLD;
+    private static final int INNER_RING_RADIUS = 3;
+    private static final Color INNER_RING_COLOR = Color.TOMATO;
+    private static final int RING_LINE_WIDTH_SCALE = 2;
+    private static final Color NEIGHBOR_COORDINATE_COLOR = Color.ORANGE;
+    private static final double NEIGHBOR_COORDINATE_LINE_WIDTH = 2.0d;
+    private static final Color NEIGHBOR_FILL_COLOR = Color.YELLOW;
+    private static final Color NEIGHBOR_DIRECTION_TEXT_COLOR = Color.BLACK;
+    private static final int NEIGHBOR_DIRECTION_TEXT_CAPACITY = 4;
+    private static final Color EDGE_RESULT_VALID_COLOR = Color.DARKORANGE;
+    private static final Color EDGE_RESULT_WRAPPED_COLOR = Color.DARKRED;
+    private static final Color EDGE_RESULT_BLOCKED_COLOR = Color.DARKRED;
+    private static final double EDGE_RESULT_LINE_WIDTH = 3.0d;
+
+    // Overlay: selected cell and hover
+    private static final Color SELECTED_CELL_COLOR = Color.ROSYBROWN;
+    private static final Color SELECTED_CELL_FILL_COLOR = FXPaintFactory.adjustColorAlpha(Color.WHITE, 0.2);
+    private static final double SELECTED_CELL_LINE_WIDTH = 4.0d;
+    private static final Color HOVER_ESTIMATED_CELL_COLOR = Color.RED;
+    private static final double HOVER_ESTIMATED_CELL_LINE_WIDTH = 1.0d;
+    private static final Color HOVER_CELL_COLOR = Color.DARKSLATEBLUE;
+    private static final Color HOVER_CELL_FILL_COLOR = Color.WHITE;
+    private static final double HOVER_CELL_LINE_WIDTH = 2.0d;
+    private static final double HOVER_CELL_MIN_EDGE_LENGTH = 6.0d;
+    private static final Color HOVER_TEXT_COLOR = Color.RED;
+    private static final Color HOVER_POINTER_COLOR = Color.DARKGREEN;
     private static final double HOVER_POINTER_RADIUS = 2.0d;
 
     public LabMainView(DefaultMainViewModel<LabEntity, GridCell<LabEntity>, WritableGridModel<LabEntity>,
@@ -142,8 +160,8 @@ public final class LabMainView
         boolean colorModeGrayscale = (config.colorMode() == LabColorMode.GRAYSCALE);
         boolean renderingModeCircle = (config.cellDisplayMode() == CellDisplayMode.CIRCLE)
                 || (config.cellDisplayMode() == CellDisplayMode.CIRCLE_BORDERED);
-        Color textColor = colorModeGrayscale ? TEXT_COLOR_GRAYSCALE : TEXT_COLOR;
-        Color strokeColor = config.cellDisplayMode().hasBorder() ? STROKE_COLOR : null;
+        Color textColor = colorModeGrayscale ? COORDINATE_TEXT_COLOR_GRAYSCALE : COORDINATE_TEXT_COLOR;
+        Color strokeColor = config.cellDisplayMode().hasBorder() ? CHECKER_STROKE_COLOR : null;
 
         drawBaseCanvasBackground(basePainter, colorModeGrayscale);
 
@@ -188,7 +206,7 @@ public final class LabMainView
     private void drawBaseCanvasBackground(FXGridCanvasPainter basePainter, boolean colorModeGrayscale) {
         basePainter.fillCanvasBackground(CANVAS_COLOR);
         if (colorModeGrayscale) {
-            basePainter.fillGridBackground(Color.WHITE);
+            basePainter.fillGridBackground(GRID_BACKGROUND_COLOR_GRAYSCALE);
         } else {
             basePainter.fillGridBackground(FXPaintFactory.createHorizontalGradient(GRID_BACKGROUND_COLOR.darker(),
                     GRID_BACKGROUND_COLOR.brighter()));
@@ -203,9 +221,9 @@ public final class LabMainView
                                           Color textColor) {
         Color color = colorModeGrayscale ? computeCheckerGrayscaleColor(coordinate) : computeCheckerColor(coordinate);
         if (renderingModeCircle) {
-            basePainter.drawCellInnerCircle(coordinate, color, strokeColor, SHAPE_LINE_WIDTH, StrokeType.CENTERED);
+            basePainter.drawCellInnerCircle(coordinate, color, strokeColor, CHECKER_LINE_WIDTH, StrokeType.CENTERED);
         } else {
-            basePainter.drawCell(coordinate, color, strokeColor, SHAPE_LINE_WIDTH);
+            basePainter.drawCell(coordinate, color, strokeColor, CHECKER_LINE_WIDTH);
         }
         if (cellFont != null) {
             basePainter.drawCenteredTextInCell(coordinate, coordinate.toDisplayString(), textColor, cellFont);
@@ -217,9 +235,9 @@ public final class LabMainView
                                   @Nullable GridCell<LabEntity> selectedGridCell) {
         dynamicPainter.clearCanvasBackground();
 
-        Color fillColor = FXPaintFactory.adjustColorAlpha(Color.RED, MODEL_FILL_ALPHA);
         currentGridModel.nonDefaultCells()
-                .forEach(cell -> dynamicPainter.drawCell(cell.coordinate(), fillColor, null, NO_STROKE_LINE_WIDTH));
+                .forEach(cell -> dynamicPainter.drawCell(cell.coordinate(), HIGHLIGHTED_CELL_COLOR, null,
+                        NO_STROKE_LINE_WIDTH));
 
         if (selectedGridCell != null) {
             drawNeighborhoodHighlights(LabNeighborhoodHighlights.from(
@@ -233,8 +251,8 @@ public final class LabMainView
 
     private void drawNeighborhoodHighlights(LabNeighborhoodHighlights highlights,
                                             FXGridCanvasPainter painter) {
-        drawRing(highlights.ringCellsByRadius(), OUTER_HIGHLIGHT_RING_RADIUS, Color.GOLD, painter);
-        drawRing(highlights.ringCellsByRadius(), INNER_HIGHLIGHT_RING_RADIUS, Color.TOMATO, painter);
+        drawRing(highlights.ringCellsByRadius(), OUTER_RING_RADIUS, OUTER_RING_COLOR, painter);
+        drawRing(highlights.ringCellsByRadius(), INNER_RING_RADIUS, INNER_RING_COLOR, painter);
         drawNeighborCoordinates(highlights.validNeighborCoordinates(), painter);
         drawNeighborsWithEdgeBehavior(highlights.validNeighborsWithEdgeBehavior(), painter);
         drawNeighborEdgeBehaviorResults(highlights.neighborEdgeBehaviorResults(), painter);
@@ -249,14 +267,14 @@ public final class LabMainView
                 .forEach(ringCell -> painter.drawCellInnerCircle(ringCell.coordinate(),
                         null,
                         strokeColor,
-                        HIGHLIGHT_RING_STROKE_SCALE * ringCell.reachedFromPreviousRing().size(),
+                        RING_LINE_WIDTH_SCALE * ringCell.reachedFromPreviousRing().size(),
                         StrokeType.INSIDE));
     }
 
     private void drawNeighborCoordinates(Collection<GridCoordinate> neighborCoordinates,
                                          FXGridCanvasPainter painter) {
-        neighborCoordinates.forEach(neighborCoordinate -> painter.drawCell(neighborCoordinate, null, Color.ORANGE,
-                NEIGHBOR_COORDINATE_STROKE_WIDTH));
+        neighborCoordinates.forEach(neighborCoordinate -> painter.drawCell(neighborCoordinate, null,
+                NEIGHBOR_COORDINATE_COLOR, NEIGHBOR_COORDINATE_LINE_WIDTH));
     }
 
     private void drawNeighborsWithEdgeBehavior(Map<GridCoordinate,
@@ -269,7 +287,7 @@ public final class LabMainView
     private void drawNeighborWithEdgeBehavior(GridCoordinate neighborCoordinate,
                                               Collection<CellNeighborWithEdgeBehavior> neighborCells,
                                               FXGridCanvasPainter painter) {
-        painter.drawCell(neighborCoordinate, Color.YELLOW, null, NO_STROKE_LINE_WIDTH);
+        painter.drawCell(neighborCoordinate, NEIGHBOR_FILL_COLOR, null, NO_STROKE_LINE_WIDTH);
         drawNeighborDirections(neighborCoordinate, neighborCells, painter);
     }
 
@@ -287,19 +305,19 @@ public final class LabMainView
             }
             builder.append(neighborCell.direction().arrow());
         }
-        painter.drawCenteredTextInCell(coordinate, builder.toString(), Color.BLACK, cellFont);
+        painter.drawCenteredTextInCell(coordinate, builder.toString(), NEIGHBOR_DIRECTION_TEXT_COLOR, cellFont);
     }
 
     private void drawNeighborEdgeBehaviorResults(Collection<EdgeBehaviorResult> edgeBehaviorResults,
                                                  FXGridCanvasPainter painter) {
         edgeBehaviorResults.forEach(edgeBehaviorResult -> {
             switch (edgeBehaviorResult.action()) {
-                case VALID ->
-                        painter.drawCell(edgeBehaviorResult.mapped(), null, Color.DARKORANGE, EDGE_RESULT_STROKE_WIDTH);
-                case WRAPPED ->
-                        painter.drawCell(edgeBehaviorResult.mapped(), null, Color.DARKRED, EDGE_RESULT_STROKE_WIDTH);
-                case BLOCKED ->
-                        painter.drawCell(edgeBehaviorResult.mapped(), Color.DARKRED, null, NO_STROKE_LINE_WIDTH);
+                case VALID -> painter.drawCell(edgeBehaviorResult.mapped(), null, EDGE_RESULT_VALID_COLOR,
+                        EDGE_RESULT_LINE_WIDTH);
+                case WRAPPED -> painter.drawCell(edgeBehaviorResult.mapped(), null, EDGE_RESULT_WRAPPED_COLOR,
+                        EDGE_RESULT_LINE_WIDTH);
+                case BLOCKED -> painter.drawCell(edgeBehaviorResult.mapped(), EDGE_RESULT_BLOCKED_COLOR, null,
+                        NO_STROKE_LINE_WIDTH);
                 case ABSORBED -> {
                     // nothing to render
                 }
@@ -310,8 +328,8 @@ public final class LabMainView
     private void drawSelectedCellMarker(FXGridCanvasPainter overlayPainter,
                                         @Nullable GridCell<LabEntity> selectedGridCell) {
         if (selectedGridCell != null) {
-            overlayPainter.drawCellOuterCircle(selectedGridCell.coordinate(), TRANSLUCENT_WHITE, SELECTED_CELL_COLOR,
-                    SELECTED_CELL_LINE_WIDTH, StrokeType.OUTSIDE);
+            overlayPainter.drawCellOuterCircle(selectedGridCell.coordinate(), SELECTED_CELL_FILL_COLOR,
+                    SELECTED_CELL_COLOR, SELECTED_CELL_LINE_WIDTH, StrokeType.OUTSIDE);
         }
     }
 
@@ -341,7 +359,7 @@ public final class LabMainView
         drawEstimatedHoverCoordinate(mousePoint, overlayPainter);
         drawPreciseHoverCoordinate(mousePoint, overlayPainter);
         drawSelectedCellMarker(overlayPainter, viewModel.selectedGridCellProperty().get());
-        overlayPainter.drawCircle(mousePoint, HOVER_POINTER_RADIUS, Color.DARKGREEN, null, NO_STROKE_LINE_WIDTH,
+        overlayPainter.drawCircle(mousePoint, HOVER_POINTER_RADIUS, HOVER_POINTER_COLOR, null, NO_STROKE_LINE_WIDTH,
                 StrokeType.CENTERED);
     }
 
@@ -352,7 +370,8 @@ public final class LabMainView
                 overlayPainter.gridDimension2D(),
                 overlayPainter.gridStructure());
         if (!estimatedCoordinate.isIllegal()) {
-            overlayPainter.drawCell(estimatedCoordinate, null, Color.RED, ESTIMATED_CELL_STROKE_WIDTH);
+            overlayPainter.drawCell(estimatedCoordinate, null, HOVER_ESTIMATED_CELL_COLOR,
+                    HOVER_ESTIMATED_CELL_LINE_WIDTH);
         }
     }
 
@@ -366,11 +385,11 @@ public final class LabMainView
             return;
         }
 
-        overlayPainter.drawCellBoundingBox(coordinate, null, MOUSE_HOVER_COLOR, MOUSE_HOVER_LINE_WIDTH,
+        overlayPainter.drawCellBoundingBox(coordinate, null, HOVER_CELL_COLOR, HOVER_CELL_LINE_WIDTH,
                 StrokeType.OUTSIDE);
-        if (overlayPainter.cellDimension().edgeLength() >= HOVER_MIN_EDGE_LENGTH) {
-            overlayPainter.drawCellInnerCircle(coordinate, Color.WHITE, MOUSE_HOVER_COLOR, MOUSE_HOVER_LINE_WIDTH,
-                    StrokeType.INSIDE);
+        if (overlayPainter.cellDimension().edgeLength() >= HOVER_CELL_MIN_EDGE_LENGTH) {
+            overlayPainter.drawCellInnerCircle(coordinate, HOVER_CELL_FILL_COLOR, HOVER_CELL_COLOR,
+                    HOVER_CELL_LINE_WIDTH, StrokeType.INSIDE);
             drawHoverDescriptor(coordinate, overlayPainter);
         }
     }
@@ -382,7 +401,7 @@ public final class LabMainView
         LabEntity entity = viewModel.getCurrentGridModel().getEntity(coordinate);
         entityDescriptorRegistry.findByDescriptorId(entity.descriptorId())
                 .ifPresent(descriptor -> overlayPainter.drawCenteredTextInCell(
-                        coordinate, descriptor.shortName(), Color.RED, cellFont));
+                        coordinate, descriptor.shortName(), HOVER_TEXT_COLOR, cellFont));
     }
 
 }
