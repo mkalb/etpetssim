@@ -167,8 +167,7 @@ public final class DefaultMainViewModel<
         };
         simulationStateProperty().addListener(simulationStateListener);
 
-        // Initialize clicked coordinate and selected grid cell handling
-        observationViewModel.lastClickedCoordinateProperty().bind(lastClickedCoordinate);
+        // Initialize selected grid cell handling
         observationViewModel.bindSelectedGridCellProperty(selectedGridCell);
         lastClickedCoordinateListener = (_, _, newValue) -> {
             if ((newValue != null) && hasSimulationManager() && isSelectionState(getSimulationState())) {
@@ -302,12 +301,11 @@ public final class DefaultMainViewModel<
         controlViewModel.cancelButtonRequestedProperty().removeListener(cancelButtonRequestedListener);
         lastClickedCoordinate.removeListener(lastClickedCoordinateListener);
         simulationStateProperty().removeListener(simulationStateListener);
-        observationViewModel.lastClickedCoordinateProperty().unbind();
         observationViewModel.selectedGridCellProperty().unbind();
 
         editToolBarViewModel.resetToSelectMode();
         resetSelectedProperties();
-        resetClickedCoordinateProperties();
+        resetClickedCoordinate();
         stopTimer();
         cancelInitialization();
         cancelBatch();
@@ -376,7 +374,7 @@ public final class DefaultMainViewModel<
      *
      * @param coordinate new coordinate
      */
-    public void updateClickedCoordinateProperties(GridCoordinate coordinate) {
+    public void updateClickedCoordinate(GridCoordinate coordinate) {
         lastClickedCoordinate.set(coordinate);
     }
 
@@ -462,7 +460,7 @@ public final class DefaultMainViewModel<
                 || !NO_OP_SIMULATION_RESET_LISTENER.equals(simulationResetListener);
     }
 
-    private void resetClickedCoordinateProperties() {
+    private void resetClickedCoordinate() {
         lastClickedCoordinate.set(null);
     }
 
@@ -503,7 +501,7 @@ public final class DefaultMainViewModel<
 
     private void handleCancelButton() {
         setNotificationType(SimulationNotificationType.NONE);
-        resetClickedCoordinateProperties();
+        resetClickedCoordinate();
 
         switch (getSimulationState()) {
             case RUNNING_TIMED -> {
@@ -533,7 +531,7 @@ public final class DefaultMainViewModel<
 
     private void handleStartAction() {
         setNotificationType(SimulationNotificationType.NONE);
-        resetClickedCoordinateProperties();
+        resetClickedCoordinate();
         resetSelectedProperties();
 
         observationViewModel.resetStatistics();
@@ -565,7 +563,7 @@ public final class DefaultMainViewModel<
     }
 
     private void handlePauseAction() {
-        resetClickedCoordinateProperties();
+        resetClickedCoordinate();
 
         if (getSimulationState() == SimulationState.RUNNING_TIMED) {
             setSimulationState(SimulationState.PAUSED);
@@ -582,7 +580,7 @@ public final class DefaultMainViewModel<
 
     private void handleResumeAction() {
         setNotificationType(SimulationNotificationType.NONE);
-        resetClickedCoordinateProperties();
+        resetClickedCoordinate();
 
         configureSimulationTimeout(controlViewModel.isModeTimed(), controlViewModel.stepDurationProperty().getValue());
         if (controlViewModel.isModeTimed()) {

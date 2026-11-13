@@ -38,17 +38,17 @@ final class EditToolBarViewModel<CTX extends SimulationUserActionContext> {
         selectedUserActionToolId.set(SimulationUserActionDescriptor.SELECT_TOOL_ID);
     }
 
-    Optional<SimulationUserActionDescriptor<CTX>> findSelectedUserActionDescriptor(
-            List<SimulationUserActionDescriptor<CTX>> descriptors) {
-        return descriptors.stream()
-                .filter(descriptor -> selectedUserActionToolId.get().equals(descriptor.toolId()))
-                .findFirst();
-    }
-
     Optional<SimulationUserActionDescriptor<CTX>> findSelectedCellActionDescriptor(
             List<SimulationUserActionDescriptor<CTX>> descriptors) {
         return findSelectedUserActionDescriptor(descriptors)
                 .filter(descriptor -> descriptor.scope() == SimulationUserActionScope.CELL_SELECTED);
+    }
+
+    private Optional<SimulationUserActionDescriptor<CTX>> findSelectedUserActionDescriptor(
+            List<SimulationUserActionDescriptor<CTX>> descriptors) {
+        return descriptors.stream()
+                .filter(descriptor -> selectedUserActionToolId.get().equals(descriptor.toolId()))
+                .findFirst();
     }
 
 }

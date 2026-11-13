@@ -343,7 +343,7 @@ public abstract class AbstractMainView<
     }
 
     private void handleMouseClickedCoordinate(GridCoordinate mouseCoordinate) {
-        viewModel.updateClickedCoordinateProperties(mouseCoordinate);
+        viewModel.updateClickedCoordinate(mouseCoordinate);
         applySelectedCellUserActionAndRedraw();
     }
 

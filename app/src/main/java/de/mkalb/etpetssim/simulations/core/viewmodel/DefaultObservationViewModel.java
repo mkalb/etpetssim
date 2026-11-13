@@ -1,6 +1,5 @@
 package de.mkalb.etpetssim.simulations.core.viewmodel;
 
-import de.mkalb.etpetssim.engine.GridCoordinate;
 import de.mkalb.etpetssim.engine.model.GridCellView;
 import de.mkalb.etpetssim.engine.model.entity.GridEntity;
 import de.mkalb.etpetssim.simulations.core.model.SimulationStatistics;
@@ -32,7 +31,6 @@ public final class DefaultObservationViewModel<
     private final ReadOnlyObjectProperty<SimulationState> simulationState;
     private final ObjectProperty<@Nullable STA> statistics = new SimpleObjectProperty<>();
     private final ObjectProperty<@Nullable GC> selectedGridCell = new SimpleObjectProperty<>();
-    private final ObjectProperty<@Nullable GridCoordinate> lastClickedCoordinate = new SimpleObjectProperty<>();
     private final ObjectProperty<StatisticsExtrema> statisticsExtrema =
             new SimpleObjectProperty<>(StatisticsExtrema.empty());
     private final ReadOnlyObjectWrapper<List<StatisticsSample>> statisticsHistory =
@@ -120,11 +118,6 @@ public final class DefaultObservationViewModel<
 
     public ObjectProperty<@Nullable GC> selectedGridCellProperty() {
         return selectedGridCell;
-    }
-
-    @Override
-    public ObjectProperty<@Nullable GridCoordinate> lastClickedCoordinateProperty() {
-        return lastClickedCoordinate;
     }
 
 }
