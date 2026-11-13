@@ -3,6 +3,7 @@ package de.mkalb.etpetssim.simulations.core.model;
 import de.mkalb.etpetssim.simulations.conway.model.ConwayStatistics;
 import de.mkalb.etpetssim.simulations.etpets.model.EtpetsStatistics;
 import de.mkalb.etpetssim.simulations.forest.model.ForestStatistics;
+import de.mkalb.etpetssim.simulations.lab.model.LabStatistics;
 import de.mkalb.etpetssim.simulations.langton.model.LangtonStatistics;
 import de.mkalb.etpetssim.simulations.rebounding.model.ReboundingStatistics;
 import de.mkalb.etpetssim.simulations.snake.model.SnakeStatistics;
@@ -22,6 +23,7 @@ final class StatisticsMetricLabelKeyTest {
                         ConwayStatistics.metrics(),
                         EtpetsStatistics.metrics(),
                         ForestStatistics.metrics(),
+                        LabStatistics.metrics(),
                         LangtonStatistics.metrics(),
                         ReboundingStatistics.metrics(),
                         SnakeStatistics.metrics(),

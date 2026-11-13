@@ -29,11 +29,14 @@ public final class LabObservationView
     public Region buildObservationRegion() {
         Region statusSection = createStatusSection();
         Region gridSection = createGridSection();
+        Region metricsSection = createGenericMetricSection(LabStatistics.metrics());
         Region selectedCellSection = createSelectedCellSection();
 
         return createObservationScrollPane(
                 statusSection,
                 gridSection,
+                metricsSection,
+                createChartSection(),
                 selectedCellSection
         );
     }

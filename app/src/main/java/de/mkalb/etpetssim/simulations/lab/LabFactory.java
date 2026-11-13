@@ -1,19 +1,22 @@
 package de.mkalb.etpetssim.simulations.lab;
 
 import de.mkalb.etpetssim.engine.model.GridCell;
+import de.mkalb.etpetssim.engine.model.ReadableGridModel;
 import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorRegistry;
 import de.mkalb.etpetssim.simulations.core.shared.SimulationState;
+import de.mkalb.etpetssim.simulations.core.view.DefaultControlView;
 import de.mkalb.etpetssim.simulations.core.view.SimulationMainView;
+import de.mkalb.etpetssim.simulations.core.viewmodel.DefaultControlViewModel;
+import de.mkalb.etpetssim.simulations.core.viewmodel.DefaultMainViewModel;
 import de.mkalb.etpetssim.simulations.core.viewmodel.DefaultObservationViewModel;
+import de.mkalb.etpetssim.simulations.lab.model.LabSimulationManager;
 import de.mkalb.etpetssim.simulations.lab.model.LabStatistics;
+import de.mkalb.etpetssim.simulations.lab.model.LabUserAction;
 import de.mkalb.etpetssim.simulations.lab.model.entity.LabEntity;
 import de.mkalb.etpetssim.simulations.lab.view.LabConfigView;
-import de.mkalb.etpetssim.simulations.lab.view.LabControlView;
 import de.mkalb.etpetssim.simulations.lab.view.LabMainView;
 import de.mkalb.etpetssim.simulations.lab.view.LabObservationView;
 import de.mkalb.etpetssim.simulations.lab.viewmodel.LabConfigViewModel;
-import de.mkalb.etpetssim.simulations.lab.viewmodel.LabControlViewModel;
-import de.mkalb.etpetssim.simulations.lab.viewmodel.LabMainViewModel;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 
@@ -33,15 +36,16 @@ public final class LabFactory {
 
         // ViewModel
         var configViewModel = new LabConfigViewModel(readOnlySimulationState);
-        var controlViewModel = new LabControlViewModel(readOnlySimulationState);
+        var controlViewModel = new DefaultControlViewModel(readOnlySimulationState);
         var observationViewModel =
                 new DefaultObservationViewModel<LabEntity, GridCell<LabEntity>, LabStatistics>(readOnlySimulationState);
         var viewModel =
-                new LabMainViewModel(simulationState, configViewModel, controlViewModel, observationViewModel);
+                new DefaultMainViewModel<>(simulationState, configViewModel, controlViewModel, observationViewModel,
+                        LabSimulationManager::new, ReadableGridModel::getGridCell, new LabUserAction());
 
         // View
         var configView = new LabConfigView(configViewModel);
-        var controlView = new LabControlView(controlViewModel);
+        var controlView = new DefaultControlView(controlViewModel);
         var observationView = new LabObservationView(observationViewModel, entityDescriptorRegistry);
         return new LabMainView(viewModel, entityDescriptorRegistry, configView, controlView, observationView);
     }

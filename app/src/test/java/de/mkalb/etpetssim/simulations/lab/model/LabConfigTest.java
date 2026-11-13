@@ -16,7 +16,11 @@ import static de.mkalb.etpetssim.simulations.lab.model.LabConstraints.COLOR_MODE
 import static de.mkalb.etpetssim.simulations.lab.model.LabConstraints.GRID_EDGE_BEHAVIOR_DEFAULT;
 import static de.mkalb.etpetssim.simulations.lab.model.LabConstraints.GRID_HEIGHT_DEFAULT;
 import static de.mkalb.etpetssim.simulations.lab.model.LabConstraints.GRID_WIDTH_DEFAULT;
+import static de.mkalb.etpetssim.simulations.lab.model.LabConstraints.HIGHLIGHTED_PERCENT_DEFAULT;
+import static de.mkalb.etpetssim.simulations.lab.model.LabConstraints.HIGHLIGHTED_PERCENT_MAX;
+import static de.mkalb.etpetssim.simulations.lab.model.LabConstraints.HIGHLIGHTED_PERCENT_MIN;
 import static de.mkalb.etpetssim.simulations.lab.model.LabConstraints.NEIGHBORHOOD_MODE_DEFAULT;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -45,8 +49,24 @@ final class LabConfigTest {
     }
 
     @Test
+    void testIsValidAcceptsBoundaryValues() {
+        assertAll(
+                () -> assertTrue(isValidWith(v -> v.highlightedPercent = HIGHLIGHTED_PERCENT_MIN)),
+                () -> assertTrue(isValidWith(v -> v.highlightedPercent = HIGHLIGHTED_PERCENT_MAX))
+        );
+    }
+
+    @Test
     void testIsValidRejectsUnsupportedCellDisplayMode() {
         assertFalse(isValidWith(v -> v.cellDisplayMode = CellDisplayMode.EMOJI));
+    }
+
+    @Test
+    void testIsValidRejectsHighlightedPercentOutsideRange() {
+        assertAll(
+                () -> assertFalse(isValidWith(v -> v.highlightedPercent = Math.nextDown(HIGHLIGHTED_PERCENT_MIN))),
+                () -> assertFalse(isValidWith(v -> v.highlightedPercent = Math.nextUp(HIGHLIGHTED_PERCENT_MAX)))
+        );
     }
 
     private static final class ConfigValues {
@@ -55,11 +75,12 @@ final class LabConfigTest {
         GridEdgeBehavior gridEdgeBehavior = GRID_EDGE_BEHAVIOR_DEFAULT;
         CellDisplayMode cellDisplayMode = CELL_DISPLAY_MODE_DEFAULT;
         LabColorMode colorMode = COLOR_MODE_DEFAULT;
+        double highlightedPercent = HIGHLIGHTED_PERCENT_DEFAULT;
         NeighborhoodMode neighborhoodMode = NEIGHBORHOOD_MODE_DEFAULT;
 
         LabConfig toConfig() {
             return new LabConfig(cellShape, gridEdgeBehavior, GRID_WIDTH_DEFAULT, GRID_HEIGHT_DEFAULT,
-                    CELL_EDGE_LENGTH_DEFAULT, cellDisplayMode, colorMode, 1L, neighborhoodMode);
+                    CELL_EDGE_LENGTH_DEFAULT, cellDisplayMode, colorMode, 1L, highlightedPercent, neighborhoodMode);
         }
 
     }

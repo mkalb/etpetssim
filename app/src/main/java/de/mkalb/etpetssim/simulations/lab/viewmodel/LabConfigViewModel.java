@@ -10,11 +10,9 @@ import de.mkalb.etpetssim.simulations.core.viewmodel.AbstractConfigViewModel;
 import de.mkalb.etpetssim.simulations.lab.model.LabConfig;
 import de.mkalb.etpetssim.simulations.lab.shared.LabColorMode;
 import de.mkalb.etpetssim.ui.InputChoiceProperty;
+import de.mkalb.etpetssim.ui.InputDoubleProperty;
 import javafx.beans.binding.Bindings;
-import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ReadOnlyObjectProperty;
-import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.value.ChangeListener;
 
 import static de.mkalb.etpetssim.simulations.lab.model.LabConstraints.CELL_DISPLAY_MODE_DEFAULT;
 import static de.mkalb.etpetssim.simulations.lab.model.LabConstraints.CELL_DISPLAY_MODE_VALUES;
@@ -35,6 +33,9 @@ import static de.mkalb.etpetssim.simulations.lab.model.LabConstraints.GRID_WIDTH
 import static de.mkalb.etpetssim.simulations.lab.model.LabConstraints.GRID_WIDTH_MAX;
 import static de.mkalb.etpetssim.simulations.lab.model.LabConstraints.GRID_WIDTH_MIN;
 import static de.mkalb.etpetssim.simulations.lab.model.LabConstraints.GRID_WIDTH_STEP;
+import static de.mkalb.etpetssim.simulations.lab.model.LabConstraints.HIGHLIGHTED_PERCENT_DEFAULT;
+import static de.mkalb.etpetssim.simulations.lab.model.LabConstraints.HIGHLIGHTED_PERCENT_MAX;
+import static de.mkalb.etpetssim.simulations.lab.model.LabConstraints.HIGHLIGHTED_PERCENT_MIN;
 import static de.mkalb.etpetssim.simulations.lab.model.LabConstraints.NEIGHBORHOOD_MODE_DEFAULT;
 import static de.mkalb.etpetssim.simulations.lab.model.LabConstraints.SEED_DEFAULT;
 
@@ -71,14 +72,17 @@ public final class LabConfigViewModel extends AbstractConfigViewModel<LabConfig>
             COLOR_MODE_VALUES,
             e -> AppLocalization.getText(e.resourceKey()));
 
+    // Initialization
+    private final InputDoubleProperty highlightedPercent = InputDoubleProperty.of(
+            HIGHLIGHTED_PERCENT_DEFAULT,
+            HIGHLIGHTED_PERCENT_MIN,
+            HIGHLIGHTED_PERCENT_MAX);
+
     // Rules
     private final InputChoiceProperty<NeighborhoodMode> neighborhoodMode = InputChoiceProperty.ofEnum(
             NEIGHBORHOOD_MODE_DEFAULT,
             NeighborhoodMode.class,
             e -> AppLocalization.getText(e.resourceKey()));
-
-    // Internal state
-    private final BooleanProperty configChangedRequested = new SimpleBooleanProperty(false);
 
     public LabConfigViewModel(ReadOnlyObjectProperty<SimulationState> simulationState) {
         super(simulationState, COMMON_SETTINGS);
@@ -95,7 +99,6 @@ public final class LabConfigViewModel extends AbstractConfigViewModel<LabConfig>
                 ),
                 () -> AppLocalization.getText(LAB_CONFIG_VALIDATION_GRID_STRUCTURE)
         );
-        initializeConfigListeners();
     }
 
     @Override
@@ -109,6 +112,7 @@ public final class LabConfigViewModel extends AbstractConfigViewModel<LabConfig>
                 cellDisplayModeProperty().property().getValue(),
                 colorMode.getValue(),
                 seedProperty().computeSeedAndUpdateLabel(),
+                highlightedPercent.getValue(),
                 neighborhoodMode.getValue()
         );
     }
@@ -117,25 +121,12 @@ public final class LabConfigViewModel extends AbstractConfigViewModel<LabConfig>
         return colorMode;
     }
 
+    public InputDoubleProperty highlightedPercentProperty() {
+        return highlightedPercent;
+    }
+
     public InputChoiceProperty<NeighborhoodMode> neighborhoodModeProperty() {
         return neighborhoodMode;
-    }
-
-    public BooleanProperty configChangedRequestedProperty() {
-        return configChangedRequested;
-    }
-
-    private void initializeConfigListeners() {
-        ChangeListener<Object> configChangedListener = (_, _, _) -> configChangedRequested.set(true);
-        cellShapeProperty().property().addListener(configChangedListener);
-        gridEdgeBehaviorProperty().property().addListener(configChangedListener);
-        gridWidthProperty().property().addListener(configChangedListener);
-        gridHeightProperty().property().addListener(configChangedListener);
-        cellEdgeLengthProperty().property().addListener(configChangedListener);
-        cellDisplayModeProperty().property().addListener(configChangedListener);
-        colorMode.property().addListener(configChangedListener);
-        seedProperty().stringProperty().addListener(configChangedListener);
-        neighborhoodMode.property().addListener(configChangedListener);
     }
 
 }

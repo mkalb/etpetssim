@@ -43,6 +43,9 @@ public final class LabConstraints {
 
     // Initialization
     public static final String SEED_DEFAULT = "";
+    public static final double HIGHLIGHTED_PERCENT_DEFAULT = 0.1d;
+    public static final double HIGHLIGHTED_PERCENT_MIN = 0.0d;
+    public static final double HIGHLIGHTED_PERCENT_MAX = 1.0d;
 
     // Rules
     public static final NeighborhoodMode NEIGHBORHOOD_MODE_DEFAULT = NeighborhoodMode.EDGES_AND_VERTICES;

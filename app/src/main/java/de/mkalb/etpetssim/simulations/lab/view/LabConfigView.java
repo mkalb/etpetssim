@@ -18,6 +18,10 @@ public final class LabConfigView extends AbstractConfigView<LabConfig, LabConfig
     // Layout
     private static final String LAB_CONFIG_COLOR_TOOLTIP = "lab.config.color.tooltip";
 
+    // Initialization
+    private static final String LAB_CONFIG_HIGHLIGHTED_PERCENT = "lab.config.highlightedpercent";
+    private static final String LAB_CONFIG_HIGHLIGHTED_PERCENT_TOOLTIP = "lab.config.highlightedpercent.tooltip";
+
     public LabConfigView(LabConfigViewModel viewModel) {
         super(viewModel);
     }
@@ -39,10 +43,17 @@ public final class LabConfigView extends AbstractConfigView<LabConfig, LabConfig
 
         // Initialization
         var seedControl = createSeedControl();
+        var highlightedPercentControl = FXComponentFactory.createLabeledPercentSlider(
+                viewModel.highlightedPercentProperty(),
+                AppLocalization.getText(LAB_CONFIG_HIGHLIGHTED_PERCENT),
+                formatPercentRangeTooltip(LAB_CONFIG_HIGHLIGHTED_PERCENT_TOOLTIP,
+                        viewModel.highlightedPercentProperty()),
+                FXStyleClasses.CONFIG_SLIDER
+        );
 
         var initializationPane = createConfigTitledPane(
                 AppLocalization.getText(SimulationLocalizationKeys.CONFIG_TITLE_INITIALIZATION), false,
-                seedControl);
+                seedControl, highlightedPercentControl);
 
         // Rules
         var neighborhoodModeControl = createNeighborhoodModeControl(viewModel.neighborhoodModeProperty());

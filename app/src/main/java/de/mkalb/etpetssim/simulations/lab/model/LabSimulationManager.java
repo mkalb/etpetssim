@@ -1,58 +1,51 @@
 package de.mkalb.etpetssim.simulations.lab.model;
 
-import de.mkalb.etpetssim.engine.GridCoordinate;
-import de.mkalb.etpetssim.engine.GridOffset;
 import de.mkalb.etpetssim.engine.GridStructure;
-import de.mkalb.etpetssim.engine.executor.StepExecutionResult;
+import de.mkalb.etpetssim.engine.executor.DefaultSimulationExecutor;
+import de.mkalb.etpetssim.engine.executor.SynchronousStepRunner;
+import de.mkalb.etpetssim.engine.executor.TimedSimulationExecutor;
+import de.mkalb.etpetssim.engine.model.ReadableGridModel;
 import de.mkalb.etpetssim.engine.model.SparseGridModel;
 import de.mkalb.etpetssim.engine.model.WritableGridModel;
 import de.mkalb.etpetssim.engine.support.GridInitializers;
-import de.mkalb.etpetssim.engine.support.GridPatterns;
-import de.mkalb.etpetssim.simulations.core.model.SimulationManager;
+import de.mkalb.etpetssim.simulations.core.model.AbstractTimedSimulationManager;
+import de.mkalb.etpetssim.simulations.core.model.SimulationInitializationCancellation;
 import de.mkalb.etpetssim.simulations.lab.model.entity.LabEntity;
 
-import java.util.List;
 import java.util.Random;
 
 /**
- * Simulation manager of the Simulation Lab; it places highlighted cells and executes no steps.
+ * Simulation manager of the Simulation Lab.
  */
 public final class LabSimulationManager
-        implements SimulationManager<LabEntity, WritableGridModel<LabEntity>, LabConfig, LabStatistics> {
+        extends AbstractTimedSimulationManager<LabEntity, WritableGridModel<LabEntity>, LabConfig, LabStatistics> {
 
-    private static final int INITIAL_HIGHLIGHTED_COUNT = 3;
-
-    private final LabConfig config;
     private final GridStructure structure;
     private final LabStatistics statistics;
-    private final WritableGridModel<LabEntity> model;
+    private final TimedSimulationExecutor<LabEntity, WritableGridModel<LabEntity>> executor;
 
     public LabSimulationManager(LabConfig config) {
-        this.config = config;
+        this(config, SimulationInitializationCancellation.none());
+    }
+
+    public LabSimulationManager(LabConfig config, SimulationInitializationCancellation cancellation) {
+        super(config, LabStatistics.metrics());
+        cancellation.checkCanceled();
 
         structure = config.createGridStructure();
         statistics = new LabStatistics(structure);
+        var random = new Random(config.seed());
+        var model = new SparseGridModel<>(structure, LabEntity.NORMAL);
 
-        model = new SparseGridModel<>(structure, LabEntity.NORMAL);
-        GridInitializers.placeRandomCount(INITIAL_HIGHLIGHTED_COUNT,
-                        () -> LabEntity.HIGHLIGHTED,
-                        e -> e == LabEntity.NORMAL,
-                        new Random(config.seed()))
-                // Place a symmetric small cross pattern of highlighted entities
-                .andThen(GridInitializers.placePattern(
-                        GridPatterns.of(LabEntity.HIGHLIGHTED, List.of(
-                                new GridOffset(0, 1),
-                                new GridOffset(1, 0),
-                                new GridOffset(2, 1),
-                                new GridOffset(1, 2)
-                        )),
-                        new GridCoordinate(5, 5)))
-                .initialize(model);
-    }
+        var runner = new SynchronousStepRunner<>(model, new LabStepLogic());
+        var terminationCondition = new LabTerminationCondition();
+        executor = new TimedSimulationExecutor<>(new DefaultSimulationExecutor<>(runner, runner::currentGridModel,
+                terminationCondition, statistics));
 
-    @Override
-    public LabConfig config() {
-        return config;
+        initializeGrid(model, random, cancellation);
+        cancellation.checkCanceled();
+        initializeStatistics(model);
+        recordInitialStatisticsSample();
     }
 
     @Override
@@ -66,32 +59,32 @@ public final class LabSimulationManager
     }
 
     @Override
-    public void executeStep() {
+    protected void updateStatistics() {
+        statistics.setStepData(
+                executor.stepCount(),
+                executor.stepTimingStatistics());
     }
 
     @Override
-    public StepExecutionResult executeSteps(int count, boolean checkTermination, Runnable onStep) {
-        return new StepExecutionResult(stepCount(), 0, true, false);
+    protected TimedSimulationExecutor<LabEntity, WritableGridModel<LabEntity>> executor() {
+        return executor;
     }
 
-    @Override
-    public boolean isFinished() {
-        return true;
+    private void initializeGrid(WritableGridModel<LabEntity> model,
+                                Random random,
+                                SimulationInitializationCancellation cancellation) {
+        var gridInitializer = GridInitializers.fillRandomPercent(
+                config().highlightedPercent(),
+                () -> LabEntity.HIGHLIGHTED,
+                LabEntity.NORMAL,
+                random,
+                cancellation::checkCanceled);
+        gridInitializer.initialize(model);
     }
 
-    @Override
-    public boolean isExecutorFinished() {
-        return true;
-    }
-
-    @Override
-    public int stepCount() {
-        return 0;
-    }
-
-    @Override
-    public WritableGridModel<LabEntity> currentGridModel() {
-        return model;
+    private void initializeStatistics(ReadableGridModel<LabEntity> model) {
+        int highlightedCellsInitial = Math.toIntExact(model.countEntities(e -> e == LabEntity.HIGHLIGHTED));
+        statistics.setCellCounts(highlightedCellsInitial);
     }
 
 }

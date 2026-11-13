@@ -1,9 +1,13 @@
 package de.mkalb.etpetssim.simulations.core.model;
 
+import de.mkalb.etpetssim.engine.GridStructure;
+import de.mkalb.etpetssim.engine.executor.StepExecutionResult;
+import de.mkalb.etpetssim.engine.model.WritableGridModel;
 import de.mkalb.etpetssim.simulations.conway.model.ConwayConfig;
 import de.mkalb.etpetssim.simulations.conway.model.ConwayConstraints;
 import de.mkalb.etpetssim.simulations.conway.model.ConwaySimulationManager;
 import de.mkalb.etpetssim.simulations.conway.model.ConwayStatistics;
+import de.mkalb.etpetssim.simulations.conway.model.entity.ConwayEntity;
 import de.mkalb.etpetssim.simulations.etpets.model.EtpetsConfig;
 import de.mkalb.etpetssim.simulations.etpets.model.EtpetsConstraints;
 import de.mkalb.etpetssim.simulations.etpets.model.EtpetsSimulationManager;
@@ -15,6 +19,7 @@ import de.mkalb.etpetssim.simulations.forest.model.ForestStatistics;
 import de.mkalb.etpetssim.simulations.lab.model.LabConfig;
 import de.mkalb.etpetssim.simulations.lab.model.LabConstraints;
 import de.mkalb.etpetssim.simulations.lab.model.LabSimulationManager;
+import de.mkalb.etpetssim.simulations.lab.model.LabStatistics;
 import de.mkalb.etpetssim.simulations.langton.model.LangtonConfig;
 import de.mkalb.etpetssim.simulations.langton.model.LangtonConstraints;
 import de.mkalb.etpetssim.simulations.langton.model.LangtonSimulationManager;
@@ -37,6 +42,7 @@ import de.mkalb.etpetssim.simulations.wator.model.WatorConfig;
 import de.mkalb.etpetssim.simulations.wator.model.WatorConstraints;
 import de.mkalb.etpetssim.simulations.wator.model.WatorSimulationManager;
 import de.mkalb.etpetssim.simulations.wator.model.WatorStatistics;
+import org.jspecify.annotations.NonNull;
 import org.junit.jupiter.api.Test;
 
 import java.util.LinkedHashMap;
@@ -216,15 +222,20 @@ final class SimulationManagerTest {
     }
 
     private static LabConfig createLabConfig() {
+        return createLabConfig(LabConstraints.GRID_WIDTH_DEFAULT, LabConstraints.GRID_HEIGHT_DEFAULT);
+    }
+
+    private static LabConfig createLabConfig(int gridWidth, int gridHeight) {
         return new LabConfig(
                 LabConstraints.CELL_SHAPE_DEFAULT,
                 LabConstraints.GRID_EDGE_BEHAVIOR_DEFAULT,
-                LabConstraints.GRID_WIDTH_DEFAULT,
-                LabConstraints.GRID_HEIGHT_DEFAULT,
+                gridWidth,
+                gridHeight,
                 LabConstraints.CELL_EDGE_LENGTH_DEFAULT,
                 LabConstraints.CELL_DISPLAY_MODE_DEFAULT,
                 LabConstraints.COLOR_MODE_DEFAULT,
                 1L,
+                LabConstraints.HIGHLIGHTED_PERCENT_DEFAULT,
                 LabConstraints.NEIGHBORHOOD_MODE_DEFAULT
         );
     }
@@ -266,6 +277,14 @@ final class SimulationManagerTest {
     }
 
     @Test
+    void testConstructorHonorsCancellationForLabDuringGridPopulation() {
+        assertThrows(SimulationInitializationCanceledException.class,
+                () -> new LabSimulationManager(
+                        createLabConfig(LabConstraints.GRID_WIDTH_MAX, LabConstraints.GRID_HEIGHT_MAX),
+                        cancellationOnCheck(3)));
+    }
+
+    @Test
     void testConstructorHonorsCancellationForLangtonBeforeGridInitialization() {
         assertThrows(SimulationInitializationCanceledException.class,
                 () -> new LangtonSimulationManager(createLangtonConfig(), cancellationOnCheck(1)));
@@ -304,6 +323,7 @@ final class SimulationManagerTest {
                         EtpetsStatistics.metrics()),
                 () -> assertStepZeroSample(new ForestSimulationManager(createForestConfig()),
                         ForestStatistics.metrics()),
+                () -> assertStepZeroSample(new LabSimulationManager(createLabConfig()), LabStatistics.metrics()),
                 () -> assertStepZeroSample(new LangtonSimulationManager(createLangtonConfig()),
                         LangtonStatistics.metrics()),
                 () -> assertStepZeroSample(new ReboundingSimulationManager(createReboundingConfig()),
@@ -316,14 +336,14 @@ final class SimulationManagerTest {
 
     @Test
     void testStatisticsHistoryReturnsEmptyForNonTimedManager() {
-        SimulationManager<?, ?, ?, ?> manager = new LabSimulationManager(createLabConfig());
+        SimulationManager<?, ?, ?, ?> manager = new TestSimulationManager();
 
         assertEquals(List.of(), manager.statisticsHistory());
     }
 
     @Test
     void testStatisticsExtremaReturnsEmptyForNonTimedManager() {
-        SimulationManager<?, ?, ?, ?> manager = new LabSimulationManager(createLabConfig());
+        SimulationManager<?, ?, ?, ?> manager = new TestSimulationManager();
 
         assertEquals(StatisticsExtrema.empty(), manager.statisticsExtrema());
     }
@@ -619,6 +639,62 @@ final class SimulationManagerTest {
                         singleStep.statisticsExtrema().maximumValues().get(WatorStatistics.KEY_SHARK_CELLS).value(),
                         "singleStep: maxSharkCells")
         );
+    }
+
+    private static final class TestSimulationManager
+            implements SimulationManager<ConwayEntity, WritableGridModel<ConwayEntity>, ConwayConfig,
+            ConwayStatistics> {
+
+        @NonNull
+        @Override
+        public ConwayConfig config() {
+            throw new UnsupportedOperationException();
+        }
+
+        @NonNull
+        @Override
+        public GridStructure structure() {
+            throw new UnsupportedOperationException();
+        }
+
+        @NonNull
+        @Override
+        public ConwayStatistics statistics() {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public void executeStep() {
+            throw new UnsupportedOperationException();
+        }
+
+        @NonNull
+        @Override
+        public StepExecutionResult executeSteps(int count, boolean checkTermination, @NonNull Runnable onStep) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public boolean isFinished() {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public boolean isExecutorFinished() {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public int stepCount() {
+            throw new UnsupportedOperationException();
+        }
+
+        @NonNull
+        @Override
+        public WritableGridModel<ConwayEntity> currentGridModel() {
+            throw new UnsupportedOperationException();
+        }
+
     }
 
 }
