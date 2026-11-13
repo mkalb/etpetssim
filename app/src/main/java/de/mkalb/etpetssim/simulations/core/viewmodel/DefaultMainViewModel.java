@@ -21,6 +21,7 @@ import de.mkalb.etpetssim.ui.SimulationTimer;
 import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.util.Duration;
@@ -39,6 +40,8 @@ import java.util.function.Consumer;
 /**
  * Default main view-model implementation that orchestrates timed and batch execution.
  *
+ * <p>Coordinates the config, control, and observation view models, the notification, and the cell selection.
+ *
  * @param <ENT> entity type stored in grid cells
  * @param <GC>  grid cell type used for cell selection
  * @param <GM>  grid model type managed by the simulation
@@ -55,7 +58,7 @@ public final class DefaultMainViewModel<
         STA extends SimulationStatistics,
         SM extends AbstractTimedSimulationManager<ENT, GM, CON, STA>,
         CTX extends SimulationUserActionContext>
-        extends AbstractMainViewModel<ENT, GM, CON, STA> {
+        implements SimulationMainViewModel {
 
     private static final double TIMEOUT_EXECUTE_FACTOR = 0.4d;
     private static final double TIMEOUT_VIEW_FACTOR = 0.5d;
@@ -65,8 +68,12 @@ public final class DefaultMainViewModel<
     private static final Consumer<SimulationStepEvent> NO_OP_SIMULATION_STEP_LISTENER = _ -> {};
     private static final Runnable NO_OP_SIMULATION_RESET_LISTENER = () -> {};
 
+    private final ObjectProperty<SimulationState> simulationState;
+    private final ObjectProperty<SimulationNotificationType> notificationType =
+            new SimpleObjectProperty<>(SimulationNotificationType.NONE);
+    private final SimulationConfigViewModel<CON> configViewModel;
     private final DefaultControlViewModel controlViewModel;
-    private final DefaultObservationViewModel<ENT, GC, STA> observationStateViewModel;
+    private final DefaultObservationViewModel<ENT, GC, STA> observationViewModel;
     private final BiFunction<CON, SimulationInitializationCancellation, SM> simulationManagerFactory;
     private final SimulationTimer timer;
     private final ExecutorService lifecycleExecutor;
@@ -74,6 +81,7 @@ public final class DefaultMainViewModel<
     private final ChangeListener<Boolean> cancelButtonRequestedListener;
     private final ChangeListener<SimulationState> simulationStateListener;
     private final ChangeListener<@Nullable GridCoordinate> lastClickedCoordinateListener;
+    private final ObjectProperty<@Nullable GridCoordinate> lastClickedCoordinate = new SimpleObjectProperty<>();
     private final ObjectProperty<@Nullable GC> selectedGridCell = new SimpleObjectProperty<>();
     private final ObjectProperty<@Nullable ENT> lastSelectedEntity = new SimpleObjectProperty<>();
     private final BiFunction<GM, GridCoordinate, GC> selectedGridCellProvider;
@@ -125,12 +133,10 @@ public final class DefaultMainViewModel<
                          BiFunction<GM, GridCoordinate, GC> selectedGridCellProvider,
                          SimulationUserAction<ENT, GM, CON, STA, SM, CTX> simulationUserAction,
                          ExecutorService lifecycleExecutor) {
-        super(simulationState, configViewModel, observationViewModel);
+        this.simulationState = simulationState;
+        this.configViewModel = configViewModel;
         this.controlViewModel = controlViewModel;
-        // Keep a concrete-typed reference because the inherited `observationViewModel`
-        // is declared as `SimulationObservationViewModel` and does not expose
-        // `selectedGridCellProperty()` used during shutdown/unbinding.
-        observationStateViewModel = observationViewModel;
+        this.observationViewModel = observationViewModel;
         this.simulationManagerFactory = simulationManagerFactory;
         this.selectedGridCellProvider = selectedGridCellProvider;
         this.simulationUserAction = simulationUserAction;
@@ -161,7 +167,8 @@ public final class DefaultMainViewModel<
         };
         simulationStateProperty().addListener(simulationStateListener);
 
-        // Initialize selected grid cell handling
+        // Initialize clicked coordinate and selected grid cell handling
+        observationViewModel.lastClickedCoordinateProperty().bind(lastClickedCoordinate);
         observationViewModel.bindSelectedGridCellProperty(selectedGridCell);
         lastClickedCoordinateListener = (_, _, newValue) -> {
             if ((newValue != null) && hasSimulationManager() && isSelectionState(getSimulationState())) {
@@ -170,7 +177,7 @@ public final class DefaultMainViewModel<
                 selectedGridCell.set(null);
             }
         };
-        lastClickedCoordinateProperty().addListener(lastClickedCoordinateListener);
+        lastClickedCoordinate.addListener(lastClickedCoordinateListener);
     }
 
     private static ExecutorService createLifecycleExecutor() {
@@ -247,6 +254,26 @@ public final class DefaultMainViewModel<
     }
 
     @Override
+    public ReadOnlyObjectProperty<SimulationState> simulationStateProperty() {
+        return simulationState;
+    }
+
+    @Override
+    public SimulationState getSimulationState() {
+        return simulationState.get();
+    }
+
+    @Override
+    public ObjectProperty<SimulationNotificationType> notificationTypeProperty() {
+        return notificationType;
+    }
+
+    @Override
+    public void setNotificationType(SimulationNotificationType notificationType) {
+        this.notificationType.set(notificationType);
+    }
+
+    @Override
     public GridStructure getStructure() {
         Objects.requireNonNull(simulationManager, "Unable to access simulationManager: not initialized");
         return simulationManager.structure();
@@ -269,10 +296,10 @@ public final class DefaultMainViewModel<
 
         controlViewModel.actionButtonRequestedProperty().removeListener(actionButtonRequestedListener);
         controlViewModel.cancelButtonRequestedProperty().removeListener(cancelButtonRequestedListener);
-        lastClickedCoordinateProperty().removeListener(lastClickedCoordinateListener);
+        lastClickedCoordinate.removeListener(lastClickedCoordinateListener);
         simulationStateProperty().removeListener(simulationStateListener);
-        unbindObservationBindings();
-        observationStateViewModel.selectedGridCellProperty().unbind();
+        observationViewModel.lastClickedCoordinateProperty().unbind();
+        observationViewModel.selectedGridCellProperty().unbind();
 
         editToolBarViewModel.resetToSelectMode();
         resetSelectedProperties();
@@ -282,7 +309,7 @@ public final class DefaultMainViewModel<
         cancelBatch();
         shutdownLifecycleExecutor();
         simulationManager = null;
-        observationStateViewModel.resetStatistics();
+        observationViewModel.resetStatistics();
         terminationHandle = new ExecutorSimulationTerminationHandle(lifecycleExecutor);
         Runnable resetListener = simulationResetListener;
         simulationInitializedListener = NO_OP_SIMULATION_INITIALIZED_LISTENER;
@@ -296,18 +323,30 @@ public final class DefaultMainViewModel<
         return terminationHandle;
     }
 
-    @Override
+    /**
+     * Returns the configuration of the active simulation.
+     *
+     * @return current immutable config
+     */
     public CON getCurrentConfig() {
         Objects.requireNonNull(simulationManager, "Unable to access simulationManager: not initialized");
         return simulationManager.config();
     }
 
-    @Override
+    /**
+     * Checks whether a simulation manager is currently available.
+     *
+     * @return {@code true} when a manager exists
+     */
     public boolean hasSimulationManager() {
         return simulationManager != null;
     }
 
-    @Override
+    /**
+     * Returns the grid model of the active simulation.
+     *
+     * @return current model snapshot
+     */
     public GM getCurrentGridModel() {
         Objects.requireNonNull(simulationManager, "Unable to access simulationManager: not initialized");
         return simulationManager.currentGridModel();
@@ -325,6 +364,16 @@ public final class DefaultMainViewModel<
      */
     public long getThrottleDrawMillis() {
         return throttleDrawMillis;
+    }
+
+    /**
+     * Stores a new last-clicked coordinate, which selects the cell at this coordinate if the simulation state allows a
+     * selection.
+     *
+     * @param coordinate new coordinate
+     */
+    public void updateClickedCoordinateProperties(GridCoordinate coordinate) {
+        lastClickedCoordinate.set(coordinate);
     }
 
     /**
@@ -409,6 +458,14 @@ public final class DefaultMainViewModel<
                 || !NO_OP_SIMULATION_RESET_LISTENER.equals(simulationResetListener);
     }
 
+    private void setSimulationState(SimulationState simulationState) {
+        this.simulationState.set(simulationState);
+    }
+
+    private void resetClickedCoordinateProperties() {
+        lastClickedCoordinate.set(null);
+    }
+
     private void resetSelectedProperties() {
         selectedGridCell.set(null);
         lastSelectedEntity.set(null);
@@ -479,7 +536,7 @@ public final class DefaultMainViewModel<
         resetClickedCoordinateProperties();
         resetSelectedProperties();
 
-        observationStateViewModel.resetStatistics();
+        observationViewModel.resetStatistics();
         simulationResetListener.run();
         simulationManager = null;
 
@@ -878,10 +935,10 @@ public final class DefaultMainViewModel<
         if (Platform.isFxApplicationThread()) {
             observationViewModel.setStatistics(statistics);
             if (extrema != null) {
-                observationStateViewModel.setStatisticsExtrema(extrema);
+                observationViewModel.setStatisticsExtrema(extrema);
             }
             if (history != null) {
-                observationStateViewModel.setStatisticsHistory(history);
+                observationViewModel.setStatisticsHistory(history);
             }
             return;
         }
@@ -889,10 +946,10 @@ public final class DefaultMainViewModel<
             if (getSimulationState() != SimulationState.SHUTTING_DOWN) {
                 observationViewModel.setStatistics(statistics);
                 if (extrema != null) {
-                    observationStateViewModel.setStatisticsExtrema(extrema);
+                    observationViewModel.setStatisticsExtrema(extrema);
                 }
                 if (history != null) {
-                    observationStateViewModel.setStatisticsHistory(history);
+                    observationViewModel.setStatisticsHistory(history);
                 }
             }
         });
