@@ -64,7 +64,6 @@ final class StartScreenTest {
         });
     }
 
-    @SuppressWarnings("unchecked")
     @Test
     void testCreateRegionReportsLanguageSelection() {
         FXTestSupport.runAndWait(() -> {
@@ -76,8 +75,8 @@ final class StartScreenTest {
                     .orElseThrow();
 
             Region region = StartScreen.createRegion(selectedType::set, selectedLocale::set);
-            ComboBox<CountryLocale> comboBox = findChild(region, ComboBox.class, _ -> true);
-            comboBox.setValue(expectedLocale);
+            ComboBox<?> comboBox = findChild(region, ComboBox.class, _ -> true);
+            comboBox.getSelectionModel().select(AppLocalization.supportedLocales().indexOf(expectedLocale));
 
             assertAll(
                     () -> assertEquals(expectedLocale, selectedLocale.get()),
