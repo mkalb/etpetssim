@@ -28,17 +28,6 @@ final class AbstractConfigViewModelTest {
     private static final String MESSAGE_FIRST = "first";
     private static final String MESSAGE_SECOND = "second";
 
-    private static AbstractConfigViewModel.CommonConfigConstraints createConstraints() {
-        return new AbstractConfigViewModel.CommonConfigConstraints(
-                CellShape.HEXAGON, List.of(CellShape.SQUARE, CellShape.HEXAGON),
-                GridEdgeBehavior.BLOCK_XY, List.of(GridEdgeBehavior.BLOCK_XY, GridEdgeBehavior.WRAP_XY),
-                40, 10, 100, 2,
-                30, 10, 80, 5,
-                12, 4, 20,
-                CellDisplayMode.SHAPE, List.of(CellDisplayMode.values()),
-                SEED_DEFAULT);
-    }
-
     private static TestConfigViewModel createViewModel() {
         return new TestConfigViewModel(new SimpleObjectProperty<>(SimulationState.READY));
     }
@@ -187,6 +176,17 @@ final class AbstractConfigViewModelTest {
 
         TestConfigViewModel(ObjectProperty<SimulationState> simulationState) {
             super(simulationState, createConstraints());
+        }
+
+        private static CommonConfigConstraints createConstraints() {
+            return new CommonConfigConstraints(
+                    CellShape.HEXAGON, List.of(CellShape.SQUARE, CellShape.HEXAGON),
+                    GridEdgeBehavior.BLOCK_XY, List.of(GridEdgeBehavior.BLOCK_XY, GridEdgeBehavior.WRAP_XY),
+                    40, 10, 100, 2,
+                    30, 10, 80, 5,
+                    12, 4, 20,
+                    CellDisplayMode.SHAPE, List.of(CellDisplayMode.values()),
+                    SEED_DEFAULT);
         }
 
         @NonNull
