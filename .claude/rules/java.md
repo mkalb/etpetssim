@@ -10,6 +10,10 @@ Rules for all `.java` files; repository-wide instructions still apply.
 ## Code Style
 
 - Do not add comments that only restate obvious code.
+- Mark a deliberate deviation from a rule in `.claude/rules` with a line comment at its site in the form
+  `// Rule deviation (<rule file>): <reason>`; add one only when the rule cannot be followed there, and ask the
+  maintainer before adding a new deviation. Reviews do not report commented deviations. `@SuppressWarnings` follows
+  "Suppressions Policy" instead.
 - Format code as `.editorconfig` and the IntelliJ defaults specify (e.g., 4 spaces, a continuation indent of 8, at
   most 120 characters per line, and chained method calls without alignment). End each file with exactly one newline,
   and put one blank line before the closing brace of a non-empty type body; the formatter does not add or remove it.

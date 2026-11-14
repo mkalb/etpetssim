@@ -25,7 +25,7 @@ public final class EtpetssimLauncher {
     }
 
     /**
-     * Application entry point.
+     * Launches the application.
      *
      * <p>Arguments are parsed first, then logging and localization are initialized, and finally the JavaFX
      * application is launched.

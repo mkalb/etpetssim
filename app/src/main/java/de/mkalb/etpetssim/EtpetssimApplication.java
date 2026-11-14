@@ -101,9 +101,9 @@ public final class EtpetssimApplication extends Application {
         double cx = stage.getX() + (stage.getWidth() / 2.0d);
         double cy = stage.getY() + (stage.getHeight() / 2.0d);
 
-        for (Screen s : Screen.getScreens()) {
-            if (s.getBounds().contains(cx, cy)) {
-                return s;
+        for (Screen screen : Screen.getScreens()) {
+            if (screen.getBounds().contains(cx, cy)) {
+                return screen;
             }
         }
         return Screen.getPrimary();

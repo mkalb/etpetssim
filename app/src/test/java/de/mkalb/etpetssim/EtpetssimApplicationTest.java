@@ -38,6 +38,7 @@ final class EtpetssimApplicationTest {
 
     @BeforeEach
     void setUpBeforeEach() {
+        // Rule deviation (junit.md): stop() shuts down the AppLogger
         AppLogger.initializeForTesting();
     }
 
@@ -122,7 +123,7 @@ final class EtpetssimApplicationTest {
 
     @SuppressWarnings("ResultOfMethodCallIgnored")
     @Test
-    void testStopInterruptionEscalatesEveryPendingTermination() {
+    void testStopEscalatesEveryPendingTerminationWhenInterrupted() {
         CountingTerminationHandle interruptedTerminationHandle =
                 new CountingTerminationHandle(TerminationAwaitOutcome.INTERRUPTED);
         CountingTerminationHandle pendingTerminationHandle =

@@ -58,9 +58,10 @@ Rules for test sources only; repository-wide and Java instructions still apply.
   `test`.
 - Aim for at most about 70 characters per test method name; do not repeat the test class name in the method name and do
   not use historical terms such as `Legacy`.
-- Test sources contain no block comments and no line comments. Exception: inside a test method body, a line comment may
-  precede one or more assertions when it explains something important that is not immediately evident; `//noinspection`
-  directives are allowed. Do not comment helpers, fixtures, constants, or fields; a better name carries the intent.
+- Test sources contain no block comments and no line comments. Exceptions: inside a test method body, a line comment
+  may precede one or more assertions when it explains something important that is not immediately evident, and a line
+  comment may mark a deliberate rule deviation (`java.md`, "Code Style"). Do not comment helpers, fixtures, constants,
+  or fields; a better name carries the intent.
 - Prefer one behavior per test; group related checks with `assertAll(...)`.
 - Write variations of one behavior (inputs, boundaries) as one `@ParameterizedTest` instead of copied test methods.
 - Do not write tests that only check what the compiler or `@NullMarked` guarantees (e.g., `assertInstanceOf` on a
