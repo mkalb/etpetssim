@@ -352,6 +352,25 @@ final class FXGridCanvasPainterTest {
     }
 
     @Test
+    void testDrawTriangleMatchingCellWidthSkipsEdgeLengthAboveMax() {
+        FXTestSupport.runAndWait(() -> {
+            double maxHexagonEdgeLength = GridGeometry.MAX_EDGE_LENGTH / 2.0d;
+            Canvas atMaxCanvas = new Canvas(CANVAS_SIZE, CANVAS_SIZE);
+            Canvas aboveMaxCanvas = new Canvas(CANVAS_SIZE, CANVAS_SIZE);
+
+            new FXGridCanvasPainter(atMaxCanvas, createStructure(CellShape.HEXAGON), maxHexagonEdgeLength)
+                    .drawTriangleMatchingCellWidth(GridCoordinate.ORIGIN, Color.GREEN, null, 0.0d);
+            new FXGridCanvasPainter(aboveMaxCanvas, createStructure(CellShape.HEXAGON), maxHexagonEdgeLength + 1.0d)
+                    .drawTriangleMatchingCellWidth(GridCoordinate.ORIGIN, Color.GREEN, null, 0.0d);
+
+            assertAll(
+                    () -> assertTrue(countPaintedPixels(atMaxCanvas) > 0),
+                    () -> assertEquals(0, countPaintedPixels(aboveMaxCanvas))
+            );
+        });
+    }
+
+    @Test
     void testDrawHexagon() {
         FXTestSupport.runAndWait(() -> {
             Canvas canvas = new Canvas(CANVAS_SIZE, CANVAS_SIZE);
@@ -372,6 +391,25 @@ final class FXGridCanvasPainterTest {
             painter.drawHexagonMatchingCellWidth(new GridCoordinate(6, 0), Color.YELLOW, null, 0.0d);
 
             assertTrue(snapshotColorAt(canvas, 65, 5).getOpacity() > 0.0d);
+        });
+    }
+
+    @Test
+    void testDrawHexagonMatchingCellWidthSkipsEdgeLengthBelowMin() {
+        FXTestSupport.runAndWait(() -> {
+            double minSquareEdgeLength = GridGeometry.MIN_EDGE_LENGTH * 2.0d;
+            Canvas atMinCanvas = new Canvas(CANVAS_SIZE, CANVAS_SIZE);
+            Canvas belowMinCanvas = new Canvas(CANVAS_SIZE, CANVAS_SIZE);
+
+            new FXGridCanvasPainter(atMinCanvas, createStructure(), minSquareEdgeLength)
+                    .drawHexagonMatchingCellWidth(new GridCoordinate(1, 1), Color.YELLOW, null, 0.0d);
+            new FXGridCanvasPainter(belowMinCanvas, createStructure(), GridGeometry.MIN_EDGE_LENGTH)
+                    .drawHexagonMatchingCellWidth(new GridCoordinate(1, 1), Color.YELLOW, null, 0.0d);
+
+            assertAll(
+                    () -> assertTrue(countPaintedPixels(atMinCanvas) > 0),
+                    () -> assertEquals(0, countPaintedPixels(belowMinCanvas))
+            );
         });
     }
 

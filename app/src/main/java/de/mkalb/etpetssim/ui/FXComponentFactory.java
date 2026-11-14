@@ -30,11 +30,9 @@ import javafx.util.converter.IntegerStringConverter;
 import org.jspecify.annotations.Nullable;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 /**
  * Creates styled JavaFX controls and containers, and labeled controls bound to input properties.
@@ -244,15 +242,10 @@ public final class FXComponentFactory {
             String tooltip,
             String styleClass,
             Consumer<Runnable> cleanupRegistrar) {
-        Map<T, String> displayNames = inputChoiceProperty
-                .validValues()
-                .stream()
-                .collect(Collectors.toMap(Function.identity(), inputChoiceProperty.displayNameProvider()));
-
         ComboBox<T> comboBox = new ComboBox<>();
         comboBox.getItems().addAll(inputChoiceProperty.validValues());
         comboBox.setValue(inputChoiceProperty.getValue());
-        Function<T, String> textProvider = item -> displayNames.getOrDefault(item, item.toString());
+        Function<T, String> textProvider = inputChoiceProperty.displayNameProvider();
         comboBox.setCellFactory(_ -> createTextListCell(textProvider));
         comboBox.setButtonCell(createTextListCell(textProvider));
         comboBox.getStyleClass().add(styleClass);
@@ -395,6 +388,8 @@ public final class FXComponentFactory {
      * @param tooltip             the tooltip text for both the label and the slider
      * @param styleClass          the CSS style class to apply to the slider
      * @return a LabeledControl containing the label and the slider
+     * @throws IllegalArgumentException if the range of the property, limited to 0.0..1.0 and rounded inward to whole
+     *                                  percent, does not contain at least two whole percent values
      */
     public static LabeledControl<Slider> createLabeledPercentSlider(
             InputDoubleProperty inputDoubleProperty,
@@ -403,6 +398,11 @@ public final class FXComponentFactory {
             String styleClass) {
         long minPercent = Math.max(0L, roundInwardToPercent(inputDoubleProperty.min(), true));
         long maxPercent = Math.min(100L, roundInwardToPercent(inputDoubleProperty.max(), false));
+        if (minPercent >= maxPercent) {
+            throw new IllegalArgumentException("minPercent must be < maxPercent, but was: minPercent=" + minPercent
+                    + ", maxPercent=" + maxPercent + ", min=" + inputDoubleProperty.min()
+                    + ", max=" + inputDoubleProperty.max());
+        }
         int range = Math.toIntExact(maxPercent - minPercent);
 
         Slider slider = createRoundingSlider(inputDoubleProperty, minPercent / 100.0d, maxPercent / 100.0d, 100.0d,

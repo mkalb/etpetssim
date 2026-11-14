@@ -75,6 +75,10 @@ public final class FXGridCanvasPainter {
         return new double[][]{newX, newY};
     }
 
+    private static boolean isDrawableEdgeLength(double edgeLength) {
+        return (edgeLength >= GridGeometry.MIN_EDGE_LENGTH) && (edgeLength <= GridGeometry.MAX_EDGE_LENGTH);
+    }
+
     public Canvas canvas() {
         return canvas;
     }
@@ -290,20 +294,22 @@ public final class FXGridCanvasPainter {
      * Draws a triangle at the specified grid coordinate with its edge length converted
      * so that the triangle matches the width of the current cell shape.
      * The triangle is drawn with optional fill and stroke properties.
+     * Nothing is drawn if the converted edge length is outside
+     * [{@link GridGeometry#MIN_EDGE_LENGTH}, {@link GridGeometry#MAX_EDGE_LENGTH}].
      *
      * @param coordinate      the grid coordinate where the triangle will be drawn
      * @param fillColor       the color used to fill the triangle, or {@code null} if no fill is desired
      * @param strokeColor     the color used to draw the triangle's border, or {@code null} if no border is desired
      * @param strokeLineWidth the width of the stroke line in pixels
-     * @throws IllegalArgumentException if the converted edge length is outside
-     *                                  [{@link GridGeometry#MIN_EDGE_LENGTH}, {@link GridGeometry#MAX_EDGE_LENGTH}]
      */
     public void drawTriangleMatchingCellWidth(GridCoordinate coordinate,
                                               @Nullable Paint fillColor, @Nullable Paint strokeColor,
                                               double strokeLineWidth) {
         double convertedEdgeLength = GridGeometry.computeEdgeLengthToMatchWidth(cellDimension.edgeLength(),
                 structure.cellShape(), CellShape.TRIANGLE);
-        drawTriangle(coordinate, convertedEdgeLength, fillColor, strokeColor, strokeLineWidth);
+        if (isDrawableEdgeLength(convertedEdgeLength)) {
+            drawTriangle(coordinate, convertedEdgeLength, fillColor, strokeColor, strokeLineWidth);
+        }
     }
 
     /**
@@ -331,20 +337,22 @@ public final class FXGridCanvasPainter {
      * Draws a hexagon at the specified grid coordinate with its edge length converted
      * so that the hexagon matches the width of the current cell shape.
      * The hexagon is drawn with optional fill and stroke properties.
+     * Nothing is drawn if the converted edge length is outside
+     * [{@link GridGeometry#MIN_EDGE_LENGTH}, {@link GridGeometry#MAX_EDGE_LENGTH}].
      *
      * @param coordinate      the grid coordinate where the hexagon will be drawn
      * @param fillColor       the color used to fill the hexagon, or {@code null} if no fill is desired
      * @param strokeColor     the color used to draw the hexagon's border, or {@code null} if no border is desired
      * @param strokeLineWidth the width of the stroke line in pixels
-     * @throws IllegalArgumentException if the converted edge length is outside
-     *                                  [{@link GridGeometry#MIN_EDGE_LENGTH}, {@link GridGeometry#MAX_EDGE_LENGTH}]
      */
     public void drawHexagonMatchingCellWidth(GridCoordinate coordinate,
                                              @Nullable Paint fillColor, @Nullable Paint strokeColor,
                                              double strokeLineWidth) {
         double convertedEdgeLength = GridGeometry.computeEdgeLengthToMatchWidth(cellDimension.edgeLength(),
                 structure.cellShape(), CellShape.HEXAGON);
-        drawHexagon(coordinate, convertedEdgeLength, fillColor, strokeColor, strokeLineWidth);
+        if (isDrawableEdgeLength(convertedEdgeLength)) {
+            drawHexagon(coordinate, convertedEdgeLength, fillColor, strokeColor, strokeLineWidth);
+        }
     }
 
     /**

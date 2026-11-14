@@ -454,6 +454,22 @@ final class FXComponentFactoryTest {
         });
     }
 
+    @ParameterizedTest
+    @CsvSource({
+            "0.075, 0.071, 0.079",
+            "0.075, 0.07, 0.0799",
+            "1.5, 1.0, 2.0",
+            "-0.75, -1.0, -0.5"
+    })
+    void testCreateLabeledPercentSliderRejectsRangeWithoutTwoWholePercents(double value, double min, double max) {
+        FXTestSupport.runAndWait(() -> {
+            InputDoubleProperty property = InputDoubleProperty.of(value, min, max);
+
+            assertThrows(IllegalArgumentException.class,
+                    () -> FXComponentFactory.createLabeledPercentSlider(property, "%.0f %%", TOOLTIP, STYLE_CLASS));
+        });
+    }
+
     @Test
     void testCreateLabeledDoubleSlider() {
         FXTestSupport.runAndWait(() -> {
