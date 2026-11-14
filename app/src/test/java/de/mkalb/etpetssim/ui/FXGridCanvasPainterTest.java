@@ -21,6 +21,8 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -32,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @Execution(ExecutionMode.SAME_THREAD)
 final class FXGridCanvasPainterTest {
 
-    private static final double CANVAS_SIZE = 120.0d;
+    private static final int CANVAS_SIZE = 120;
     private static final double EDGE_LENGTH = 10.0d;
 
     @BeforeAll
@@ -41,7 +43,11 @@ final class FXGridCanvasPainterTest {
     }
 
     private static GridStructure createStructure() {
-        return new GridStructure(new GridTopology(CellShape.SQUARE, GridEdgeBehavior.ABSORB_XY),
+        return createStructure(CellShape.SQUARE);
+    }
+
+    private static GridStructure createStructure(CellShape shape) {
+        return new GridStructure(new GridTopology(shape, GridEdgeBehavior.ABSORB_XY),
                 GridSize.square(GridSize.MIN_SIZE));
     }
 
@@ -54,6 +60,37 @@ final class FXGridCanvasPainterTest {
         parameters.setFill(Color.TRANSPARENT);
         WritableImage snapshot = canvas.snapshot(parameters, null);
         return snapshot.getPixelReader().getColor(x, y);
+    }
+
+    private static boolean isPaintedAt(Canvas canvas, int x, int y) {
+        return snapshotColorAt(canvas, x, y).getOpacity() > 0.0d;
+    }
+
+    private static int countPaintedPixels(Canvas canvas) {
+        SnapshotParameters parameters = new SnapshotParameters();
+        parameters.setFill(Color.TRANSPARENT);
+        PixelReader pixelReader = canvas.snapshot(parameters, null).getPixelReader();
+        int count = 0;
+        for (int x = 0; x < CANVAS_SIZE; x++) {
+            for (int y = 0; y < CANVAS_SIZE; y++) {
+                if (pixelReader.getColor(x, y).getOpacity() > 0.0d) {
+                    count++;
+                }
+            }
+        }
+        return count;
+    }
+
+    private static Canvas createStrokedRectangleCanvas(Rectangle2D rectangle, StrokeType strokeType) {
+        Canvas canvas = new Canvas(CANVAS_SIZE, CANVAS_SIZE);
+        createPainter(canvas).drawRectangle(rectangle, null, Color.RED, 4.0d, strokeType);
+        return canvas;
+    }
+
+    private static Canvas createStrokedCircleCanvas(StrokeType strokeType) {
+        Canvas canvas = new Canvas(CANVAS_SIZE, CANVAS_SIZE);
+        createPainter(canvas).drawCircle(new Point2D(60, 60), 10.0d, null, Color.RED, 4.0d, strokeType);
+        return canvas;
     }
 
     private static boolean isPaintedNear(Canvas canvas, int x, int y) {
@@ -207,6 +244,26 @@ final class FXGridCanvasPainterTest {
         });
     }
 
+    @ParameterizedTest
+    @EnumSource(CellShape.class)
+    void testDrawCellFillsCellCenterForEachShape(CellShape shape) {
+        FXTestSupport.runAndWait(() -> {
+            Canvas canvas = new Canvas(CANVAS_SIZE, CANVAS_SIZE);
+            FXGridCanvasPainter painter = new FXGridCanvasPainter(canvas, createStructure(shape), EDGE_LENGTH);
+            GridCoordinate coordinate = new GridCoordinate(1, 1);
+            Point2D center = GridGeometry.computeCellCenter(coordinate, painter.cellDimension(), shape);
+            int centerX = Math.toIntExact(Math.round(center.getX()));
+            int centerY = Math.toIntExact(Math.round(center.getY()));
+
+            painter.drawCell(coordinate, Color.RED, null, 0.0d);
+
+            assertAll(
+                    () -> assertEquals(Color.RED, snapshotColorAt(canvas, centerX, centerY)),
+                    () -> assertFalse(isPaintedAt(canvas, 0, 0))
+            );
+        });
+    }
+
     @SuppressWarnings("TestMethodWithoutAssertion")
     @Test
     void testDrawScaledCell() {
@@ -331,6 +388,37 @@ final class FXGridCanvasPainterTest {
         });
     }
 
+    @Test
+    void testDrawRectangleAppliesStrokeType() {
+        FXTestSupport.runAndWait(() -> {
+            Rectangle2D rectangle = new Rectangle2D(20, 20, 20, 20);
+            Canvas inside = createStrokedRectangleCanvas(rectangle, StrokeType.INSIDE);
+            Canvas centered = createStrokedRectangleCanvas(rectangle, StrokeType.CENTERED);
+            Canvas outside = createStrokedRectangleCanvas(rectangle, StrokeType.OUTSIDE);
+
+            // The stroke of width 4 covers x in [20, 24] (inside), [18, 22] (centered), or [16, 20] (outside).
+            assertAll(
+                    () -> assertTrue(isPaintedAt(inside, 21, 30)),
+                    () -> assertFalse(isPaintedAt(inside, 18, 30)),
+                    () -> assertTrue(isPaintedAt(centered, 18, 30)),
+                    () -> assertTrue(isPaintedAt(centered, 21, 30)),
+                    () -> assertFalse(isPaintedAt(centered, 16, 30)),
+                    () -> assertFalse(isPaintedAt(centered, 23, 30)),
+                    () -> assertTrue(isPaintedAt(outside, 17, 30)),
+                    () -> assertFalse(isPaintedAt(outside, 22, 30))
+            );
+        });
+    }
+
+    @Test
+    void testDrawRectangleSkipsInsideStrokeAsWideAsShorterSide() {
+        FXTestSupport.runAndWait(() -> {
+            Canvas canvas = createStrokedRectangleCanvas(new Rectangle2D(20, 20, 4, 20), StrokeType.INSIDE);
+
+            assertEquals(0, countPaintedPixels(canvas));
+        });
+    }
+
     @SuppressWarnings("TestMethodWithoutAssertion")
     @Test
     void testDrawPolygon() {
@@ -341,6 +429,19 @@ final class FXGridCanvasPainterTest {
             painter.drawPolygon(new double[]{40, 50, 40}, new double[]{40, 40, 50}, Color.BLUE, null, 0.0d);
 
             assertColorEquals(Color.BLUE, snapshotColorAt(canvas, 42, 42));
+        });
+    }
+
+    @Test
+    void testDrawPolygonIgnoresInvalidPointArrays() {
+        FXTestSupport.runAndWait(() -> {
+            Canvas canvas = new Canvas(CANVAS_SIZE, CANVAS_SIZE);
+            FXGridCanvasPainter painter = createPainter(canvas);
+
+            painter.drawPolygon(new double[0], new double[0], Color.BLUE, Color.BLUE, 1.0d);
+            painter.drawPolygon(new double[]{40, 50, 40}, new double[]{40, 40}, Color.BLUE, Color.BLUE, 1.0d);
+
+            assertEquals(0, countPaintedPixels(canvas));
         });
     }
 
@@ -357,18 +458,50 @@ final class FXGridCanvasPainterTest {
     }
 
     @Test
+    void testDrawPolylineIgnoresInvalidPointArrays() {
+        FXTestSupport.runAndWait(() -> {
+            Canvas canvas = new Canvas(CANVAS_SIZE, CANVAS_SIZE);
+            FXGridCanvasPainter painter = createPainter(canvas);
+
+            painter.drawPolyline(new double[0], new double[0], Color.BLACK, 1.0d);
+            painter.drawPolyline(new double[]{60, 70, 80}, new double[]{60, 60}, Color.BLACK, 1.0d);
+
+            assertEquals(0, countPaintedPixels(canvas));
+        });
+    }
+
+    @Test
     void testDrawPixelDirect() {
         FXTestSupport.runAndWait(() -> {
             Canvas canvas = new Canvas(CANVAS_SIZE, CANVAS_SIZE);
             FXGridCanvasPainter painter = createPainter(canvas);
 
             painter.drawPixelDirect(1, 1, Color.GREEN);
-            painter.drawPixelDirect(-1, 1, Color.RED);
             painter.drawPixelDirect(2, 2, null);
 
             assertAll(
                     () -> assertColorEquals(Color.GREEN, snapshotColorAt(canvas, 1, 1)),
                     () -> assertEquals(0.0d, snapshotColorAt(canvas, 2, 2).getOpacity(), 0.000_001d)
+            );
+        });
+    }
+
+    @Test
+    void testDrawPixelDirectIgnoresPixelsOutsideCanvas() {
+        FXTestSupport.runAndWait(() -> {
+            Canvas canvas = new Canvas(CANVAS_SIZE, CANVAS_SIZE);
+            FXGridCanvasPainter painter = createPainter(canvas);
+            int last = CANVAS_SIZE - 1;
+
+            painter.drawPixelDirect(last, last, Color.BLUE);
+            painter.drawPixelDirect(-1, 1, Color.RED);
+            painter.drawPixelDirect(1, -1, Color.RED);
+            painter.drawPixelDirect(last + 1, 1, Color.RED);
+            painter.drawPixelDirect(1, last + 1, Color.RED);
+
+            assertAll(
+                    () -> assertEquals(Color.BLUE, snapshotColorAt(canvas, last, last)),
+                    () -> assertEquals(1, countPaintedPixels(canvas))
             );
         });
     }
@@ -429,6 +562,27 @@ final class FXGridCanvasPainterTest {
             painter.drawCircle(new Point2D(25, 25), 5, Color.GREEN, null, 0.0d, StrokeType.CENTERED);
 
             assertColorEquals(Color.GREEN, snapshotColorAt(canvas, 25, 25));
+        });
+    }
+
+    @Test
+    void testDrawCircleAppliesStrokeType() {
+        FXTestSupport.runAndWait(() -> {
+            Canvas inside = createStrokedCircleCanvas(StrokeType.INSIDE);
+            Canvas centered = createStrokedCircleCanvas(StrokeType.CENTERED);
+            Canvas outside = createStrokedCircleCanvas(StrokeType.OUTSIDE);
+
+            // The stroke of width 4 covers the distances [6, 10] (inside), [8, 12] (centered), or [10, 14] (outside)
+            // from the center.
+            assertAll(
+                    () -> assertTrue(isPaintedAt(inside, 68, 60)),
+                    () -> assertFalse(isPaintedAt(inside, 71, 60)),
+                    () -> assertTrue(isPaintedAt(centered, 69, 60)),
+                    () -> assertFalse(isPaintedAt(centered, 66, 60)),
+                    () -> assertFalse(isPaintedAt(centered, 73, 60)),
+                    () -> assertTrue(isPaintedAt(outside, 72, 60)),
+                    () -> assertFalse(isPaintedAt(outside, 67, 60))
+            );
         });
     }
 

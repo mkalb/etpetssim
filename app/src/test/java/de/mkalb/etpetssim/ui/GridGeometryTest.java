@@ -243,8 +243,24 @@ final class GridGeometryTest {
     }
 
     @Test
+    void testEstimateGridCoordinateForTriangle() {
+        Point2D center = GridGeometry.computeCellCenter(TEST_COORDINATE, createCellDimension(CellShape.TRIANGLE),
+                CellShape.TRIANGLE);
+
+        assertEquals(TEST_COORDINATE, estimateGridCoordinate(center, CellShape.TRIANGLE));
+    }
+
+    @Test
     void testEstimateGridCoordinateForSquare() {
         assertEquals(TEST_COORDINATE, estimateGridCoordinate(new Point2D(35.5d, 45.5d), CellShape.SQUARE));
+    }
+
+    @Test
+    void testEstimateGridCoordinateForHexagon() {
+        Point2D center = GridGeometry.computeCellCenter(TEST_COORDINATE, createCellDimension(CellShape.HEXAGON),
+                CellShape.HEXAGON);
+
+        assertEquals(TEST_COORDINATE, estimateGridCoordinate(center, CellShape.HEXAGON));
     }
 
     @Test
@@ -287,6 +303,21 @@ final class GridGeometryTest {
                 () -> assertTrue(fromCanvasPosition(new Point2D(-10, -10), CellShape.TRIANGLE).isIllegal()),
                 () -> assertTrue(fromCanvasPosition(new Point2D(-10, -10), CellShape.SQUARE).isIllegal()),
                 () -> assertTrue(fromCanvasPosition(new Point2D(-10, -10), CellShape.HEXAGON).isIllegal())
+        );
+    }
+
+    @Test
+    void testFromCanvasPositionReturnsIllegalForPointInGridAreaOutsideCells() {
+        // Triangle: corners left of the first and right of the last cell of row 0.
+        // Hexagon: above the first cell of the odd column 1 and below the last cell of the even column 0.
+        assertAll(
+                () -> assertTrue(fromCanvasPosition(new Point2D(1.0d, 0.9d * TRIANGLE_HEIGHT), CellShape.TRIANGLE)
+                        .isIllegal()),
+                () -> assertTrue(fromCanvasPosition(new Point2D(44.0d, 0.1d * TRIANGLE_HEIGHT), CellShape.TRIANGLE)
+                        .isIllegal()),
+                () -> assertTrue(fromCanvasPosition(new Point2D(25.0d, 2.0d), CellShape.HEXAGON).isIllegal()),
+                () -> assertTrue(fromCanvasPosition(new Point2D(10.0d, (GRID_HEIGHT * HEXAGON_HEIGHT) + 2.0d),
+                        CellShape.HEXAGON).isIllegal())
         );
     }
 

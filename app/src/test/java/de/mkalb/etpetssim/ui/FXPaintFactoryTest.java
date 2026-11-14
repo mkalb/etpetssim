@@ -13,6 +13,7 @@ import java.util.Set;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 final class FXPaintFactoryTest {
 
@@ -109,6 +110,9 @@ final class FXPaintFactoryTest {
         assertAll(
                 () -> assertEquals(0.0d, horizontal.getStartX(), DELTA),
                 () -> assertEquals(1.0d, horizontal.getEndX(), DELTA),
+                () -> assertEquals(0.0d, horizontal.getStartY(), DELTA),
+                () -> assertEquals(0.0d, horizontal.getEndY(), DELTA),
+                () -> assertTrue(horizontal.isProportional()),
                 () -> assertEquals(List.of(new Stop(0, Color.RED), new Stop(1, Color.BLUE)), horizontal.getStops())
         );
     }
@@ -118,8 +122,11 @@ final class FXPaintFactoryTest {
         LinearGradient vertical = (LinearGradient) FXPaintFactory.createVerticalGradient(Color.RED, Color.BLUE);
 
         assertAll(
+                () -> assertEquals(0.0d, vertical.getStartX(), DELTA),
+                () -> assertEquals(0.0d, vertical.getEndX(), DELTA),
                 () -> assertEquals(0.0d, vertical.getStartY(), DELTA),
                 () -> assertEquals(1.0d, vertical.getEndY(), DELTA),
+                () -> assertTrue(vertical.isProportional()),
                 () -> assertEquals(List.of(new Stop(0, Color.RED), new Stop(1, Color.BLUE)), vertical.getStops())
         );
     }

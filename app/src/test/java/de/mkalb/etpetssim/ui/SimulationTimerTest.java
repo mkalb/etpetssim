@@ -21,6 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 final class SimulationTimerTest {
 
     private static final double STEP_INTERVAL_MILLIS = 20.0d;
+    private static final long NO_STEP_WAIT_MILLIS = 300L;
 
     @BeforeAll
     static void setUpBeforeAll() {
@@ -60,6 +61,24 @@ final class SimulationTimerTest {
                 () -> assertTrue(stepCount.get() >= 2),
                 () -> assertFalse(timer.isRunning())
         );
+    }
+
+    @Test
+    void testStartStopsPreviousTimeline() throws InterruptedException {
+        CountDownLatch stepLatch = new CountDownLatch(1);
+        SimulationTimer timer = new SimulationTimer(stepLatch::countDown);
+
+        try {
+            FXTestSupport.runAndWait(() -> {
+                timer.start(Duration.millis(STEP_INTERVAL_MILLIS));
+                timer.start(Duration.hours(1));
+            });
+            // The first timeline would run a step within NO_STEP_WAIT_MILLIS if the restart had not stopped it.
+            assertFalse(stepLatch.await(NO_STEP_WAIT_MILLIS, TimeUnit.MILLISECONDS));
+            assertTrue(timer.isRunning());
+        } finally {
+            FXTestSupport.runAndWait(timer::stop);
+        }
     }
 
     @Test

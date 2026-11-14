@@ -96,9 +96,11 @@ final class FXComponentFactoryTest {
 
             RadioButton alphaButton = (RadioButton) container.getChildren().getFirst();
             RadioButton betaButton = (RadioButton) container.getChildren().get(1);
-            betaButton.setSelected(true);
-            property.setValue(TestMode.GAMMA);
             RadioButton gammaButton = (RadioButton) container.getChildren().get(2);
+            boolean alphaSelectedInitially = alphaButton.isSelected();
+            betaButton.setSelected(true);
+            TestMode valueAfterButtonSelection = property.getValue();
+            property.setValue(TestMode.GAMMA);
 
             assertAll(
                     () -> assertSame(container, control.controlRegion()),
@@ -108,9 +110,12 @@ final class FXComponentFactoryTest {
                     () -> assertEquals("ALPHA", alphaButton.getText()),
                     () -> assertTrue(alphaButton.getStyleClass().contains(STYLE_CLASS)),
                     () -> assertSame(control.label().getTooltip(), alphaButton.getTooltip()),
+                    () -> assertTrue(alphaSelectedInitially),
                     () -> assertEquals(TestMode.BETA, betaButton.getUserData()),
+                    () -> assertEquals(TestMode.BETA, valueAfterButtonSelection),
                     () -> assertEquals(TestMode.GAMMA, property.getValue()),
-                    () -> assertTrue(gammaButton.isSelected())
+                    () -> assertTrue(gammaButton.isSelected()),
+                    () -> assertFalse(betaButton.isSelected())
             );
         });
     }
@@ -383,6 +388,29 @@ final class FXComponentFactoryTest {
     }
 
     @Test
+    void testCreateLabeledIntSpinnerUpdatesPropertyOnStep() {
+        FXTestSupport.runAndWait(() -> {
+            InputIntegerProperty property = InputIntegerProperty.of(10, 0, 20, 5);
+            Spinner<Integer> spinner = FXComponentFactory.createLabeledIntSpinner(
+                    property,
+                    "%d items",
+                    TOOLTIP,
+                    STYLE_CLASS).controlRegion();
+
+            spinner.increment();
+            int valueAfterIncrement = property.getValue();
+            spinner.decrement(2);
+
+            assertAll(
+                    () -> assertEquals(15, valueAfterIncrement),
+                    () -> assertEquals(5, property.getValue()),
+                    () -> assertEquals(Integer.valueOf(5), spinner.getValueFactory().getValue()),
+                    () -> assertEquals("5", spinner.getEditor().getText())
+            );
+        });
+    }
+
+    @Test
     void testCreateLabeledPercentSlider() {
         FXTestSupport.runAndWait(() -> {
             InputDoubleProperty property = InputDoubleProperty.of(0.255d, 0.0d, 1.0d);
@@ -539,6 +567,30 @@ final class FXComponentFactoryTest {
                     () -> assertEquals("", inputProperty.get()),
                     () -> assertEquals("Label: label", control.label().getText()),
                     () -> assertSame(textField, control.label().getLabelFor())
+            );
+        });
+    }
+
+    @Test
+    void testCreateLabeledControl() {
+        FXTestSupport.runAndWait(() -> {
+            TextField textField = new TextField("content");
+
+            FXComponentFactory.LabeledControl<TextField> control = FXComponentFactory.createLabeledControl(
+                    textField,
+                    "Label",
+                    TOOLTIP,
+                    STYLE_CLASS);
+
+            assertAll(
+                    () -> assertSame(textField, control.controlRegion()),
+                    () -> assertEquals("Label", control.label().getText()),
+                    () -> assertTrue(control.label().getStyleClass().contains(STYLE_CLASS)),
+                    () -> assertSame(textField, control.label().getLabelFor()),
+                    () -> assertEquals(TOOLTIP, control.label().getTooltip().getText()),
+                    () -> assertSame(control.label().getTooltip(), textField.getTooltip()),
+                    () -> assertEquals("content", textField.getText()),
+                    () -> assertFalse(textField.getStyleClass().contains(STYLE_CLASS))
             );
         });
     }
