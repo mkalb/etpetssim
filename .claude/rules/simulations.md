@@ -20,9 +20,8 @@ Regular 2D simulations use:
 Both `<simulation>.model` and `simulations.core.model` belong to the MVVM model layer and hold the
 simulation-specific part; `engine.model` is the generic grid model (`GridModel` and its implementations) they use.
 
-Special cases:
+Special case:
 
-- `start`: start screen only; no model/view/viewmodel structure
 - `lab`: development showcase with the regular structure, hidden from the start screen; its steps change no cells
   (`docs/development/simulation-lab.md`)
 
@@ -155,9 +154,8 @@ one simulation (see "Entity Design").
   (`createLabeled*(..)`, or `createLabeledControl(..)` for a custom control). Buttons without a label control get
   their own `Tooltip`, e.g., the edit toolbar buttons in `EditToolBarView` (action buttons with the tooltip key of
   their `SimulationUserActionDescriptor`, the edit and select buttons with the fixed keys of
-  `SimulationLocalizationKeys`) and the start screen buttons (with the subtitle of their `SimulationType`). Create
-  other `Tooltip` instances directly only for computed texts without a fixed key (e.g., the min and max values in
-  `AbstractObservationView`).
+  `SimulationLocalizationKeys`). Create other `Tooltip` instances directly only for computed texts without a fixed
+  key (e.g., the min and max values in `AbstractObservationView`).
 - Keep `Scene`, `Stage`, and root wiring in entry-point/View classes.
 
 ### Properties and Bindings
@@ -199,8 +197,7 @@ one simulation (see "Entity Design").
 Each simulation package root must provide a factory:
 
 - Name it `<SimulationName>Factory` and make it a `public` utility class (`java.md`).
-- Regular simulations provide `public static SimulationMainView createMainView()`; `StartFactory` may accept its
-  `Stage` navigation dependencies.
+- Provide `public static SimulationMainView createMainView()`.
 - Let `simulations.core.SimulationFactory` wrap the returned view in `SimulationInstance`.
 - Wire model, ViewModel, and view components; delegate complex construction to layer-specific `create...` methods.
 
