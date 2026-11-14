@@ -1,7 +1,6 @@
 package de.mkalb.etpetssim.simulations.core.viewmodel;
 
 import de.mkalb.etpetssim.simulations.core.shared.SimulationUserActionContext;
-import de.mkalb.etpetssim.simulations.core.shared.SimulationUserActionScope;
 
 import java.util.Optional;
 import java.util.function.Supplier;

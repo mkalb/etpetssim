@@ -8,8 +8,8 @@ import de.mkalb.etpetssim.core.AppLogger;
 import de.mkalb.etpetssim.core.AppResources;
 import de.mkalb.etpetssim.core.AppSettings;
 import de.mkalb.etpetssim.simulations.core.SimulationFactory;
-import de.mkalb.etpetssim.simulations.core.SimulationInstance;
-import de.mkalb.etpetssim.simulations.core.SimulationTerminationHandle;
+import de.mkalb.etpetssim.simulations.core.SimulationScreen;
+import de.mkalb.etpetssim.simulations.core.SimulationShutdownHandle;
 import de.mkalb.etpetssim.simulations.core.SimulationType;
 import de.mkalb.etpetssim.ui.AboutDialog;
 import de.mkalb.etpetssim.ui.FXComponentFactory;
@@ -68,9 +68,9 @@ public final class EtpetssimApplication extends Application {
     private static final double DEFAULT_WINDOW_MARGIN = 8.0d;
     private static final long TERMINATION_TIMEOUT_SECONDS = 5L;
 
-    private final List<SimulationTerminationHandle> pendingTerminationHandles = new ArrayList<>();
+    private final List<SimulationShutdownHandle> pendingShutdownHandles = new ArrayList<>();
     private List<Image> appIcons = List.of();
-    private @Nullable SimulationInstance currentSimulationInstance;
+    private @Nullable SimulationScreen currentSimulationScreen;
     private boolean terminationAwaited;
 
     /**
@@ -195,37 +195,37 @@ public final class EtpetssimApplication extends Application {
     }
 
     /**
-     * Sets the active simulation instance without shutting down the previous one;
+     * Sets the active simulation screen without shutting down the previous one;
      * {@link #switchToSimulation(Stage, SimulationType)} shuts it down first.
      *
-     * @param simulationInstance simulation instance shown on the primary stage
+     * @param simulationScreen simulation screen shown on the primary stage
      */
-    void setCurrentSimulationInstance(SimulationInstance simulationInstance) {
-        currentSimulationInstance = simulationInstance;
+    void setCurrentSimulationScreen(SimulationScreen simulationScreen) {
+        currentSimulationScreen = simulationScreen;
     }
 
     /**
-     * Shuts down the currently active simulation instance, if one exists.
+     * Shuts down the currently active simulation screen, if one exists.
      *
-     * <p>The instance reference is cleared before invoking simulation shutdown so
+     * <p>The screen reference is cleared before invoking simulation shutdown so
      * repeated lifecycle paths, such as close request followed by {@link #stop()},
-     * cannot shut down the same instance twice.
+     * cannot shut down the same screen twice.
      */
     void shutdownCurrentSimulation() {
-        SimulationInstance simulationInstance = currentSimulationInstance;
-        if (simulationInstance == null) {
+        SimulationScreen simulationScreen = currentSimulationScreen;
+        if (simulationScreen == null) {
             return;
         }
 
-        currentSimulationInstance = null;
+        currentSimulationScreen = null;
         try {
             AppLogger.infof("EtpetssimApplication: Shutting down simulation: %s",
-                    simulationInstance.simulationType());
-            simulationInstance.region().setDisable(true);
-            pendingTerminationHandles.add(simulationInstance.simulationMainView().shutdownSimulation());
+                    simulationScreen.simulationType());
+            simulationScreen.region().setDisable(true);
+            pendingShutdownHandles.add(simulationScreen.simulationMainView().shutdownSimulation());
         } catch (RuntimeException e) {
             AppLogger.errorf(e, "EtpetssimApplication: Failed to shut down simulation: %s",
-                    simulationInstance.simulationType());
+                    simulationScreen.simulationType());
         }
     }
 
@@ -266,7 +266,7 @@ public final class EtpetssimApplication extends Application {
     /**
      * Switches the primary stage to a simulation.
      *
-     * <p>The current simulation is shut down, a new simulation instance is created and becomes the active one, and the
+     * <p>The current simulation is shut down, a new simulation screen is created and becomes the active one, and the
      * stage content is replaced by the header and the region of the simulation.
      *
      * @param stage          primary application stage
@@ -276,8 +276,8 @@ public final class EtpetssimApplication extends Application {
         AppLogger.infof("EtpetssimApplication: Switching to simulation: %s", simulationType);
         shutdownCurrentSimulation();
 
-        var simulationInstance = SimulationFactory.createInstance(simulationType);
-        setCurrentSimulationInstance(simulationInstance);
+        var simulationScreen = SimulationFactory.createScreen(simulationType);
+        setCurrentSimulationScreen(simulationScreen);
 
         List<Node> linkNodes = new ArrayList<>();
         linkNodes.add(createHeaderLink(AppLocalization.getText(AppLocalizationKeys.HEADER_STARTSCREEN_LINK),
@@ -289,7 +289,7 @@ public final class EtpetssimApplication extends Application {
 
         String title = simulationType.title();
         Node headerNode = createHeaderNode(title, simulationType.subtitle().orElse(null), linkNodes);
-        setStageContent(stage, headerNode, simulationInstance.region(), simulationType.cssUrl().orElse(null),
+        setStageContent(stage, headerNode, simulationScreen.region(), simulationType.cssUrl().orElse(null),
                 AppLocalization.getFormattedText(AppLocalizationKeys.WINDOW_TITLE, title));
     }
 
@@ -350,7 +350,7 @@ public final class EtpetssimApplication extends Application {
      * Waits for the pending simulation terminations, at most once per application.
      *
      * <p>All terminations share one timeout budget of {@value #TERMINATION_TIMEOUT_SECONDS} seconds; a termination
-     * that does not complete in time is forced with {@link SimulationTerminationHandle#shutdownNow()}. If the waiting
+     * that does not complete in time is forced with {@link SimulationShutdownHandle#shutdownNow()}. If the waiting
      * thread is interrupted, all pending terminations are forced and the interrupted status is restored.
      */
     private void awaitPendingTerminations() {
@@ -361,22 +361,22 @@ public final class EtpetssimApplication extends Application {
 
         long deadlineNanos = System.nanoTime() + TimeUnit.SECONDS.toNanos(TERMINATION_TIMEOUT_SECONDS);
         boolean interrupted = false;
-        for (SimulationTerminationHandle terminationHandle : pendingTerminationHandles) {
+        for (SimulationShutdownHandle shutdownHandle : pendingShutdownHandles) {
             long remainingNanos = deadlineNanos - System.nanoTime();
             try {
                 if ((remainingNanos <= 0L)
-                        || !terminationHandle.awaitTermination(remainingNanos, TimeUnit.NANOSECONDS)) {
+                        || !shutdownHandle.awaitTermination(remainingNanos, TimeUnit.NANOSECONDS)) {
                     AppLogger.warn("EtpetssimApplication: Simulation did not terminate within shutdown timeout");
-                    terminationHandle.shutdownNow();
+                    shutdownHandle.shutdownNow();
                 }
             } catch (InterruptedException e) {
                 AppLogger.warn("EtpetssimApplication: Interrupted while waiting for simulation terminations");
                 interrupted = true;
-                pendingTerminationHandles.forEach(SimulationTerminationHandle::shutdownNow);
+                pendingShutdownHandles.forEach(SimulationShutdownHandle::shutdownNow);
                 break;
             }
         }
-        pendingTerminationHandles.clear();
+        pendingShutdownHandles.clear();
         if (interrupted) {
             Thread.currentThread().interrupt();
         }

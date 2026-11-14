@@ -2,8 +2,8 @@ package de.mkalb.etpetssim.simulations.forest.viewmodel;
 
 import de.mkalb.etpetssim.core.AppLocalization;
 import de.mkalb.etpetssim.engine.neighborhood.NeighborhoodMode;
-import de.mkalb.etpetssim.simulations.core.shared.SimulationState;
 import de.mkalb.etpetssim.simulations.core.viewmodel.AbstractConfigViewModel;
+import de.mkalb.etpetssim.simulations.core.viewmodel.SimulationState;
 import de.mkalb.etpetssim.simulations.forest.model.ForestConfig;
 import de.mkalb.etpetssim.ui.InputChoiceProperty;
 import de.mkalb.etpetssim.ui.InputDoubleProperty;
@@ -53,7 +53,7 @@ public final class ForestConfigViewModel extends AbstractConfigViewModel<ForestC
      */
     public static final int LIGHTNING_IGNITION_DECIMALS = 4;
 
-    private static final CommonConfigSettings COMMON_SETTINGS = new CommonConfigSettings(
+    private static final CommonConfigConstraints COMMON_CONSTRAINTS = new CommonConfigConstraints(
             CELL_SHAPE_DEFAULT,
             CELL_SHAPE_VALUES,
             GRID_EDGE_BEHAVIOR_DEFAULT,
@@ -95,7 +95,7 @@ public final class ForestConfigViewModel extends AbstractConfigViewModel<ForestC
             LIGHTNING_IGNITION_PROBABILITY_MAX);
 
     public ForestConfigViewModel(ReadOnlyObjectProperty<SimulationState> simulationState) {
-        super(simulationState, COMMON_SETTINGS);
+        super(simulationState, COMMON_CONSTRAINTS);
     }
 
     @Override

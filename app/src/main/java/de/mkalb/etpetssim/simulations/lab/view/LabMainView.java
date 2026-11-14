@@ -10,13 +10,13 @@ import de.mkalb.etpetssim.engine.neighborhood.EdgeBehaviorResult;
 import de.mkalb.etpetssim.engine.neighborhood.RadiusRingCell;
 import de.mkalb.etpetssim.simulations.core.shared.CellDisplayMode;
 import de.mkalb.etpetssim.simulations.core.shared.NoUserActionContext;
-import de.mkalb.etpetssim.simulations.core.shared.SimulationState;
-import de.mkalb.etpetssim.simulations.core.shared.SimulationUserActionScope;
 import de.mkalb.etpetssim.simulations.core.view.AbstractMainView;
 import de.mkalb.etpetssim.simulations.core.view.CanvasPainters;
 import de.mkalb.etpetssim.simulations.core.view.ControlView;
 import de.mkalb.etpetssim.simulations.core.viewmodel.MainViewModel;
+import de.mkalb.etpetssim.simulations.core.viewmodel.SimulationState;
 import de.mkalb.etpetssim.simulations.core.viewmodel.SimulationUserActionDescriptor;
+import de.mkalb.etpetssim.simulations.core.viewmodel.SimulationUserActionScope;
 import de.mkalb.etpetssim.simulations.lab.model.LabConfig;
 import de.mkalb.etpetssim.simulations.lab.model.LabSimulationManager;
 import de.mkalb.etpetssim.simulations.lab.model.LabStatistics;
@@ -197,7 +197,7 @@ public final class LabMainView
         return List.of(new SimulationUserActionDescriptor<>(
                 LAB_TOOL_ID_SWITCH_ENTITY,
                 NoUserActionContext.NO_CONTEXT,
-                SimulationUserActionScope.CELL_SELECTED,
+                SimulationUserActionScope.SELECTED_CELL,
                 LAB_TOOLBAR_SWITCH_ENTITY,
                 LAB_TOOLBAR_SWITCH_ENTITY_TOOLTIP));
     }

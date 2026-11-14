@@ -11,14 +11,14 @@ import de.mkalb.etpetssim.engine.model.GridModel;
 import de.mkalb.etpetssim.engine.model.entity.GridEntity;
 import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptor;
 import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorRegistry;
-import de.mkalb.etpetssim.simulations.core.SimulationTerminationHandle;
+import de.mkalb.etpetssim.simulations.core.SimulationShutdownHandle;
 import de.mkalb.etpetssim.simulations.core.model.AbstractSimulationManager;
 import de.mkalb.etpetssim.simulations.core.model.SimulationConfig;
 import de.mkalb.etpetssim.simulations.core.model.SimulationStatistics;
-import de.mkalb.etpetssim.simulations.core.shared.SimulationNotificationType;
-import de.mkalb.etpetssim.simulations.core.shared.SimulationStepEvent;
 import de.mkalb.etpetssim.simulations.core.shared.SimulationUserActionContext;
 import de.mkalb.etpetssim.simulations.core.viewmodel.MainViewModel;
+import de.mkalb.etpetssim.simulations.core.viewmodel.SimulationNotificationType;
+import de.mkalb.etpetssim.simulations.core.viewmodel.SimulationStepEvent;
 import de.mkalb.etpetssim.simulations.core.viewmodel.SimulationUserActionDescriptor;
 import de.mkalb.etpetssim.ui.CellDimension;
 import de.mkalb.etpetssim.ui.FXGridCanvasPainter;
@@ -215,7 +215,7 @@ public abstract class AbstractMainView<
     }
 
     @Override
-    public SimulationTerminationHandle shutdownSimulation() {
+    public SimulationShutdownHandle shutdownSimulation() {
         if (selectedGridCellListener != null) {
             viewModel.selectedGridCellProperty().removeListener(selectedGridCellListener);
             selectedGridCellListener = null;
@@ -225,13 +225,13 @@ public abstract class AbstractMainView<
             notificationListener = null;
         }
         observationView.shutdownObservation();
-        SimulationTerminationHandle terminationHandle = viewModel.shutdownSimulation();
+        SimulationShutdownHandle shutdownHandle = viewModel.shutdownSimulation();
         canvasPainters = null;
         cellFont = null;
         cellEmojiFont = null;
         clearNotification();
         editToolBar.clear();
-        return terminationHandle;
+        return shutdownHandle;
     }
 
     /**

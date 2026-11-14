@@ -1,4 +1,4 @@
-package de.mkalb.etpetssim.simulations.core.shared;
+package de.mkalb.etpetssim.simulations.core.viewmodel;
 
 import org.junit.jupiter.api.Test;
 

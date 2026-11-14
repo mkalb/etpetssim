@@ -2,10 +2,10 @@ package de.mkalb.etpetssim.simulations.core.view;
 
 import de.mkalb.etpetssim.core.AppLocalization;
 import de.mkalb.etpetssim.core.AppLogger;
-import de.mkalb.etpetssim.simulations.core.shared.SimulationState;
 import de.mkalb.etpetssim.simulations.core.shared.SimulationUserActionContext;
-import de.mkalb.etpetssim.simulations.core.shared.SimulationUserActionScope;
+import de.mkalb.etpetssim.simulations.core.viewmodel.SimulationState;
 import de.mkalb.etpetssim.simulations.core.viewmodel.SimulationUserActionDescriptor;
+import de.mkalb.etpetssim.simulations.core.viewmodel.SimulationUserActionScope;
 import de.mkalb.etpetssim.ui.FXStyleClasses;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
@@ -157,7 +157,7 @@ final class EditToolBarView<CTX extends SimulationUserActionContext> {
         nodes.add(selectButton);
 
         for (var descriptor : descriptors) {
-            if (descriptor.scope() == SimulationUserActionScope.CELL_SELECTED) {
+            if (descriptor.scope() == SimulationUserActionScope.SELECTED_CELL) {
                 ToggleButton actionButton = new ToggleButton(AppLocalization.getText(descriptor.labelKey()));
                 configureEditToolBarButton(actionButton, descriptor.tooltipKey());
                 actionButton.setToggleGroup(cellActionToggleGroup);

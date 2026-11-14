@@ -1,4 +1,4 @@
-package de.mkalb.etpetssim.simulations.core.shared;
+package de.mkalb.etpetssim.simulations.core.viewmodel;
 
 /**
  * Controls whether the simulation termination condition is evaluated during execution.

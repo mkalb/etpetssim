@@ -31,7 +31,7 @@ public final class SimulationLocalizationKeys {
     public static final String CONTROL_CANCEL = "control.cancel";
     public static final String CONTROL_PAUSE = "control.pause";
     public static final String CONTROL_RESUME = "control.resume";
-    public static final String CONTROL_SIMULATION_MODE_TOOLTIP = "control.simulationmode.tooltip";
+    public static final String CONTROL_SIMULATION_EXECUTION_MODE_TOOLTIP = "control.simulationexecutionmode.tooltip";
     public static final String CONTROL_START = "control.start";
     public static final String CONTROL_START_PAUSED = "control.startpaused";
     public static final String CONTROL_START_PAUSED_TOOLTIP = "control.startpaused.tooltip";

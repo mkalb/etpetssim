@@ -12,13 +12,13 @@ import de.mkalb.etpetssim.simulations.conway.model.entity.ConwayEntity;
 import de.mkalb.etpetssim.simulations.conway.shared.ConwayPatternChoice;
 import de.mkalb.etpetssim.simulations.conway.shared.ConwayUserActionContext;
 import de.mkalb.etpetssim.simulations.conway.viewmodel.ConwayEditToolBarViewModel;
-import de.mkalb.etpetssim.simulations.core.shared.SimulationUserActionScope;
 import de.mkalb.etpetssim.simulations.core.view.AbstractMainView;
 import de.mkalb.etpetssim.simulations.core.view.CanvasPainters;
 import de.mkalb.etpetssim.simulations.core.view.ControlView;
 import de.mkalb.etpetssim.simulations.core.view.CoordinateDrawer;
 import de.mkalb.etpetssim.simulations.core.viewmodel.MainViewModel;
 import de.mkalb.etpetssim.simulations.core.viewmodel.SimulationUserActionDescriptor;
+import de.mkalb.etpetssim.simulations.core.viewmodel.SimulationUserActionScope;
 import de.mkalb.etpetssim.ui.CellDimension;
 import de.mkalb.etpetssim.ui.FXComponentFactory;
 import de.mkalb.etpetssim.ui.FXGridCanvasPainter;
@@ -179,12 +179,12 @@ public final class ConwayMainView
                 new SimulationUserActionDescriptor<>(
                         CONWAY_TOOL_ID_TOGGLE_CELL,
                         ConwayUserActionContext.FixedAction.TOGGLE_CELL,
-                        SimulationUserActionScope.CELL_SELECTED,
+                        SimulationUserActionScope.SELECTED_CELL,
                         CONWAY_TOOLBAR_TOGGLE_CELL,
                         CONWAY_TOOLBAR_TOGGLE_CELL_TOOLTIP),
                 new SimulationUserActionDescriptor<>(
                         CONWAY_TOOL_ID_PLACE_PATTERN,
-                        SimulationUserActionScope.CELL_SELECTED,
+                        SimulationUserActionScope.SELECTED_CELL,
                         CONWAY_TOOLBAR_PLACE_PATTERN,
                         CONWAY_TOOLBAR_PLACE_PATTERN_TOOLTIP,
                         () -> editToolBarViewModel.resolveSelectedPatternContext()

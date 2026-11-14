@@ -1,10 +1,6 @@
 package de.mkalb.etpetssim.simulations.core.viewmodel;
 
 import de.mkalb.etpetssim.core.AppLocalization;
-import de.mkalb.etpetssim.simulations.core.shared.SimulationMode;
-import de.mkalb.etpetssim.simulations.core.shared.SimulationStartMode;
-import de.mkalb.etpetssim.simulations.core.shared.SimulationState;
-import de.mkalb.etpetssim.simulations.core.shared.SimulationTerminationCheckMode;
 import de.mkalb.etpetssim.ui.InputChoiceProperty;
 import de.mkalb.etpetssim.ui.InputDoubleIntRangeProperty;
 import de.mkalb.etpetssim.ui.InputIntegerProperty;
@@ -26,8 +22,9 @@ public final class ControlViewModel {
     private static final int STEP_COUNT_STEP = 1;
 
     private final ReadOnlyObjectProperty<SimulationState> simulationState;
-    private final InputChoiceProperty<SimulationMode> simulationMode = InputChoiceProperty.ofEnum(SimulationMode.TIMED,
-            SimulationMode.class,
+    private final InputChoiceProperty<SimulationExecutionMode> simulationExecutionMode = InputChoiceProperty.ofEnum(
+            SimulationExecutionMode.TIMED,
+            SimulationExecutionMode.class,
             e -> AppLocalization.getText(e.resourceKey()));
     private final InputDoubleIntRangeProperty stepDuration = InputDoubleIntRangeProperty.of(STEP_DURATION_DEFAULT,
             STEP_DURATION_MIN, STEP_DURATION_MAX);
@@ -98,8 +95,8 @@ public final class ControlViewModel {
         cancelButtonRequested.set(true);
     }
 
-    public InputChoiceProperty<SimulationMode> simulationModeProperty() {
-        return simulationMode;
+    public InputChoiceProperty<SimulationExecutionMode> simulationExecutionModeProperty() {
+        return simulationExecutionMode;
     }
 
     /**
@@ -141,7 +138,7 @@ public final class ControlViewModel {
     }
 
     public boolean isModeTimed() {
-        return simulationMode.getValue() == SimulationMode.TIMED;
+        return simulationExecutionMode.getValue() == SimulationExecutionMode.TIMED;
     }
 
     /**
@@ -154,11 +151,11 @@ public final class ControlViewModel {
     }
 
     public boolean isModeBatchSingle() {
-        return simulationMode.getValue() == SimulationMode.BATCH_SINGLE;
+        return simulationExecutionMode.getValue() == SimulationExecutionMode.BATCH_SINGLE;
     }
 
     public boolean isModeBatchContinuous() {
-        return simulationMode.getValue() == SimulationMode.BATCH_CONTINUOUS;
+        return simulationExecutionMode.getValue() == SimulationExecutionMode.BATCH_CONTINUOUS;
     }
 
     /**

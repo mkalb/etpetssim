@@ -11,7 +11,7 @@ import de.mkalb.etpetssim.simulations.sugar.SugarFactory;
 import de.mkalb.etpetssim.simulations.wator.WatorFactory;
 
 /**
- * Factory for creating simulation main views and wrapping them in {@link SimulationInstance} objects.
+ * Factory for creating simulation main views and wrapping them in {@link SimulationScreen} objects.
  */
 public final class SimulationFactory {
 
@@ -19,13 +19,13 @@ public final class SimulationFactory {
     }
 
     /**
-     * Creates a new instance of a simulation of the provided type.
+     * Creates a new screen for a simulation of the provided type.
      *
      * @param simulationType the type of simulation to create
-     * @return a new {@link SimulationInstance} for the specified type
+     * @return a new {@link SimulationScreen} for the specified type
      */
-    public static SimulationInstance createInstance(SimulationType simulationType) {
-        return SimulationInstance.of(simulationType, switch (simulationType) {
+    public static SimulationScreen createScreen(SimulationType simulationType) {
+        return SimulationScreen.of(simulationType, switch (simulationType) {
             case ET_PETS -> EtpetsFactory.createMainView();
             case WATOR -> WatorFactory.createMainView();
             case CONWAYS_LIFE -> ConwayFactory.createMainView();

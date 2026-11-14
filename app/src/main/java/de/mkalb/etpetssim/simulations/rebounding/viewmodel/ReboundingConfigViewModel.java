@@ -2,8 +2,8 @@ package de.mkalb.etpetssim.simulations.rebounding.viewmodel;
 
 import de.mkalb.etpetssim.core.AppLocalization;
 import de.mkalb.etpetssim.engine.neighborhood.NeighborhoodMode;
-import de.mkalb.etpetssim.simulations.core.shared.SimulationState;
 import de.mkalb.etpetssim.simulations.core.viewmodel.AbstractConfigViewModel;
+import de.mkalb.etpetssim.simulations.core.viewmodel.SimulationState;
 import de.mkalb.etpetssim.simulations.rebounding.model.ReboundingConfig;
 import de.mkalb.etpetssim.ui.InputChoiceProperty;
 import de.mkalb.etpetssim.ui.InputDoubleProperty;
@@ -42,7 +42,7 @@ import static de.mkalb.etpetssim.simulations.rebounding.model.ReboundingConstrai
  */
 public final class ReboundingConfigViewModel extends AbstractConfigViewModel<ReboundingConfig> {
 
-    private static final CommonConfigSettings COMMON_SETTINGS = new CommonConfigSettings(
+    private static final CommonConfigConstraints COMMON_CONSTRAINTS = new CommonConfigConstraints(
             CELL_SHAPE_DEFAULT,
             CELL_SHAPE_VALUES,
             GRID_EDGE_BEHAVIOR_DEFAULT,
@@ -81,7 +81,7 @@ public final class ReboundingConfigViewModel extends AbstractConfigViewModel<Reb
             e -> AppLocalization.getText(e.resourceKey()));
 
     public ReboundingConfigViewModel(ReadOnlyObjectProperty<SimulationState> simulationState) {
-        super(simulationState, COMMON_SETTINGS);
+        super(simulationState, COMMON_CONSTRAINTS);
     }
 
     @Override

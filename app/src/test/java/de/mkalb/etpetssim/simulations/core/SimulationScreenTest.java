@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
 @Execution(ExecutionMode.SAME_THREAD)
-final class SimulationInstanceTest {
+final class SimulationScreenTest {
 
     @BeforeAll
     static void setUpBeforeAll() {
@@ -25,12 +25,12 @@ final class SimulationInstanceTest {
     void testOf() {
         StubMainView view = FXTestSupport.supplyAndWaitNonNull(() -> new StubMainView(new Region()));
 
-        SimulationInstance instance = SimulationInstance.of(SimulationType.ET_PETS, view);
+        SimulationScreen screen = SimulationScreen.of(SimulationType.ET_PETS, view);
 
         assertAll(
-                () -> assertEquals(SimulationType.ET_PETS, instance.simulationType()),
-                () -> assertSame(view, instance.simulationMainView()),
-                () -> assertSame(view.region(), instance.region())
+                () -> assertEquals(SimulationType.ET_PETS, screen.simulationType()),
+                () -> assertSame(view, screen.simulationMainView()),
+                () -> assertSame(view.region(), screen.region())
         );
     }
 
@@ -44,8 +44,8 @@ final class SimulationInstanceTest {
 
         @NonNull
         @Override
-        public SimulationTerminationHandle shutdownSimulation() {
-            return SimulationTerminationHandle.completed();
+        public SimulationShutdownHandle shutdownSimulation() {
+            return SimulationShutdownHandle.completed();
         }
 
     }

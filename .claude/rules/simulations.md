@@ -198,7 +198,7 @@ Each simulation package root must provide a factory:
 
 - Name it `<SimulationName>Factory` and make it a `public` utility class (`java.md`).
 - Provide `public static SimulationMainView createMainView()`.
-- Let `simulations.core.SimulationFactory` wrap the returned view in `SimulationInstance`.
+- Let `simulations.core.SimulationFactory` wrap the returned view in `SimulationScreen`.
 - Wire model, ViewModel, and view components; delegate complex construction to layer-specific `create...` methods.
 
 ## Canvas Rendering

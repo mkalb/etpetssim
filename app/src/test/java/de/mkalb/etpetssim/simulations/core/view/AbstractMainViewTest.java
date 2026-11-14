@@ -2,7 +2,7 @@ package de.mkalb.etpetssim.simulations.core.view;
 
 import de.mkalb.etpetssim.core.AppLocalization;
 import de.mkalb.etpetssim.simulations.conway.ConwayFactory;
-import de.mkalb.etpetssim.simulations.core.SimulationTerminationHandle;
+import de.mkalb.etpetssim.simulations.core.SimulationShutdownHandle;
 import de.mkalb.etpetssim.simulations.core.viewmodel.MainViewModel;
 import de.mkalb.etpetssim.testsupport.FXTestSupport;
 import javafx.geometry.Orientation;
@@ -99,14 +99,14 @@ final class AbstractMainViewTest {
     }
 
     @Test
-    void testShutdownSimulationForwardsViewModelTerminationHandle() {
+    void testShutdownSimulationForwardsViewModelShutdownHandle() {
         FXTestSupport.runAndWait(() -> {
             AbstractMainView<?, ?, ?, ?, ?, ?, ?, ?> view = createMainView();
             MainViewModel<?, ?, ?, ?, ?, ?, ?> viewModel = view.viewModel;
 
-            SimulationTerminationHandle terminationHandle = view.shutdownSimulation();
+            SimulationShutdownHandle shutdownHandle = view.shutdownSimulation();
 
-            assertSame(terminationHandle, viewModel.shutdownSimulation());
+            assertSame(shutdownHandle, viewModel.shutdownSimulation());
         });
     }
 
@@ -117,10 +117,10 @@ final class AbstractMainViewTest {
             view.buildMainRegion();
             view.buildMainRegion();
 
-            SimulationTerminationHandle firstTerminationHandle = view.shutdownSimulation();
-            SimulationTerminationHandle secondTerminationHandle = view.shutdownSimulation();
+            SimulationShutdownHandle firstShutdownHandle = view.shutdownSimulation();
+            SimulationShutdownHandle secondShutdownHandle = view.shutdownSimulation();
 
-            assertSame(firstTerminationHandle, secondTerminationHandle);
+            assertSame(firstShutdownHandle, secondShutdownHandle);
         });
     }
 

@@ -5,7 +5,6 @@ import de.mkalb.etpetssim.engine.CellShape;
 import de.mkalb.etpetssim.engine.GridEdgeBehavior;
 import de.mkalb.etpetssim.simulations.core.model.SimulationConfig;
 import de.mkalb.etpetssim.simulations.core.shared.CellDisplayMode;
-import de.mkalb.etpetssim.simulations.core.shared.SimulationState;
 import de.mkalb.etpetssim.ui.InputChoiceProperty;
 import de.mkalb.etpetssim.ui.InputDoubleIntRangeProperty;
 import de.mkalb.etpetssim.ui.InputIntegerProperty;
@@ -42,36 +41,36 @@ public abstract class AbstractConfigViewModel<CON extends SimulationConfig> {
     private final SeedProperty seed;
 
     protected AbstractConfigViewModel(ReadOnlyObjectProperty<SimulationState> simulationState,
-                                      CommonConfigSettings commonConfigSettings) {
+                                      CommonConfigConstraints commonConfigConstraints) {
         this.simulationState = simulationState;
 
         cellShape = InputChoiceProperty.ofList(
-                commonConfigSettings.cellShapeDefault(),
-                commonConfigSettings.cellShapeValues(),
+                commonConfigConstraints.cellShapeDefault(),
+                commonConfigConstraints.cellShapeValues(),
                 e -> AppLocalization.getText(e.resourceKey()));
         gridEdgeBehavior = InputChoiceProperty.ofList(
-                commonConfigSettings.gridEdgeBehaviorDefault(),
-                commonConfigSettings.gridEdgeBehaviorValues(),
+                commonConfigConstraints.gridEdgeBehaviorDefault(),
+                commonConfigConstraints.gridEdgeBehaviorValues(),
                 e -> AppLocalization.getText(e.resourceKey()));
         gridWidth = InputIntegerProperty.of(
-                commonConfigSettings.gridWidthDefault(),
-                commonConfigSettings.gridWidthMin(),
-                commonConfigSettings.gridWidthMax(),
-                commonConfigSettings.gridWidthStep());
+                commonConfigConstraints.gridWidthDefault(),
+                commonConfigConstraints.gridWidthMin(),
+                commonConfigConstraints.gridWidthMax(),
+                commonConfigConstraints.gridWidthStep());
         gridHeight = InputIntegerProperty.of(
-                commonConfigSettings.gridHeightDefault(),
-                commonConfigSettings.gridHeightMin(),
-                commonConfigSettings.gridHeightMax(),
-                commonConfigSettings.gridHeightStep());
+                commonConfigConstraints.gridHeightDefault(),
+                commonConfigConstraints.gridHeightMin(),
+                commonConfigConstraints.gridHeightMax(),
+                commonConfigConstraints.gridHeightStep());
         cellEdgeLength = InputDoubleIntRangeProperty.of(
-                commonConfigSettings.cellEdgeLengthDefault(),
-                commonConfigSettings.cellEdgeLengthMin(),
-                commonConfigSettings.cellEdgeLengthMax());
+                commonConfigConstraints.cellEdgeLengthDefault(),
+                commonConfigConstraints.cellEdgeLengthMin(),
+                commonConfigConstraints.cellEdgeLengthMax());
         cellDisplayMode = InputChoiceProperty.ofList(
-                commonConfigSettings.cellDisplayModeDefault(),
-                commonConfigSettings.cellDisplayModeValues(),
+                commonConfigConstraints.cellDisplayModeDefault(),
+                commonConfigConstraints.cellDisplayModeValues(),
                 e -> AppLocalization.getText(e.resourceKey()));
-        seed = new SeedProperty(commonConfigSettings.seedDefault());
+        seed = new SeedProperty(commonConfigConstraints.seedDefault());
     }
 
     public final ReadOnlyObjectProperty<SimulationState> simulationStateProperty() {
@@ -180,7 +179,7 @@ public abstract class AbstractConfigViewModel<CON extends SimulationConfig> {
      * @param cellDisplayModeValues   selectable cell display modes
      * @param seedDefault             default seed text
      */
-    public record CommonConfigSettings(
+    public record CommonConfigConstraints(
             CellShape cellShapeDefault,
             List<CellShape> cellShapeValues,
             GridEdgeBehavior gridEdgeBehaviorDefault,
@@ -201,7 +200,7 @@ public abstract class AbstractConfigViewModel<CON extends SimulationConfig> {
             String seedDefault
     ) {
 
-        public CommonConfigSettings {
+        public CommonConfigConstraints {
             cellShapeValues = List.copyOf(cellShapeValues);
             gridEdgeBehaviorValues = List.copyOf(gridEdgeBehaviorValues);
             cellDisplayModeValues = List.copyOf(cellDisplayModeValues);

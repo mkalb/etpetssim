@@ -8,13 +8,13 @@ import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptor;
 import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorRegistry;
 import de.mkalb.etpetssim.engine.neighborhood.CompassDirection;
 import de.mkalb.etpetssim.simulations.core.shared.CellDisplayMode;
-import de.mkalb.etpetssim.simulations.core.shared.SimulationUserActionScope;
 import de.mkalb.etpetssim.simulations.core.view.AbstractMainView;
 import de.mkalb.etpetssim.simulations.core.view.CanvasPainters;
 import de.mkalb.etpetssim.simulations.core.view.CellDrawer;
 import de.mkalb.etpetssim.simulations.core.view.ControlView;
 import de.mkalb.etpetssim.simulations.core.viewmodel.MainViewModel;
 import de.mkalb.etpetssim.simulations.core.viewmodel.SimulationUserActionDescriptor;
+import de.mkalb.etpetssim.simulations.core.viewmodel.SimulationUserActionScope;
 import de.mkalb.etpetssim.simulations.langton.model.LangtonCell;
 import de.mkalb.etpetssim.simulations.langton.model.LangtonConfig;
 import de.mkalb.etpetssim.simulations.langton.model.LangtonGridModel;
@@ -182,12 +182,12 @@ public final class LangtonMainView
                 new SimulationUserActionDescriptor<>(
                         LANGTON_TOOL_ID_REMOVE_ANT,
                         LangtonUserActionContext.FixedAction.REMOVE_ANT,
-                        SimulationUserActionScope.CELL_SELECTED,
+                        SimulationUserActionScope.SELECTED_CELL,
                         LANGTON_TOOLBAR_REMOVE_ANT,
                         LANGTON_TOOLBAR_REMOVE_ANT_TOOLTIP),
                 new SimulationUserActionDescriptor<>(
                         LANGTON_TOOL_ID_ADD_ANT,
-                        SimulationUserActionScope.CELL_SELECTED,
+                        SimulationUserActionScope.SELECTED_CELL,
                         LANGTON_TOOLBAR_ADD_ANT,
                         LANGTON_TOOLBAR_ADD_ANT_TOOLTIP,
                         () -> resolveSelectedAddAntContext().map(Function.identity())));

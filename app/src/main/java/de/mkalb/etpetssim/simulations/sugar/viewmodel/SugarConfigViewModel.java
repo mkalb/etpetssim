@@ -1,7 +1,7 @@
 package de.mkalb.etpetssim.simulations.sugar.viewmodel;
 
-import de.mkalb.etpetssim.simulations.core.shared.SimulationState;
 import de.mkalb.etpetssim.simulations.core.viewmodel.AbstractConfigViewModel;
+import de.mkalb.etpetssim.simulations.core.viewmodel.SimulationState;
 import de.mkalb.etpetssim.simulations.sugar.model.SugarConfig;
 import de.mkalb.etpetssim.ui.InputDoubleProperty;
 import de.mkalb.etpetssim.ui.InputIntegerProperty;
@@ -68,7 +68,7 @@ import static de.mkalb.etpetssim.simulations.sugar.model.SugarConstraints.SUGAR_
  */
 public final class SugarConfigViewModel extends AbstractConfigViewModel<SugarConfig> {
 
-    private static final CommonConfigSettings COMMON_SETTINGS = new CommonConfigSettings(
+    private static final CommonConfigConstraints COMMON_CONSTRAINTS = new CommonConfigConstraints(
             CELL_SHAPE_DEFAULT,
             CELL_SHAPE_VALUES,
             GRID_EDGE_BEHAVIOR_DEFAULT,
@@ -138,7 +138,7 @@ public final class SugarConfigViewModel extends AbstractConfigViewModel<SugarCon
             AGENT_MAX_AGE_STEP);
 
     public SugarConfigViewModel(ReadOnlyObjectProperty<SimulationState> simulationState) {
-        super(simulationState, COMMON_SETTINGS);
+        super(simulationState, COMMON_CONSTRAINTS);
     }
 
     @Override

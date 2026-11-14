@@ -7,13 +7,13 @@ import de.mkalb.etpetssim.engine.model.WritableGridModel;
 import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorRegistry;
 import de.mkalb.etpetssim.engine.neighborhood.CompassDirection;
 import de.mkalb.etpetssim.simulations.core.shared.CellDisplayMode;
-import de.mkalb.etpetssim.simulations.core.shared.SimulationUserActionScope;
 import de.mkalb.etpetssim.simulations.core.view.AbstractMainView;
 import de.mkalb.etpetssim.simulations.core.view.CanvasPainters;
 import de.mkalb.etpetssim.simulations.core.view.CellDrawer;
 import de.mkalb.etpetssim.simulations.core.view.ControlView;
 import de.mkalb.etpetssim.simulations.core.viewmodel.MainViewModel;
 import de.mkalb.etpetssim.simulations.core.viewmodel.SimulationUserActionDescriptor;
+import de.mkalb.etpetssim.simulations.core.viewmodel.SimulationUserActionScope;
 import de.mkalb.etpetssim.simulations.rebounding.model.ReboundingConfig;
 import de.mkalb.etpetssim.simulations.rebounding.model.ReboundingSimulationManager;
 import de.mkalb.etpetssim.simulations.rebounding.model.ReboundingStatistics;
@@ -164,19 +164,19 @@ public final class ReboundingMainView
                 new SimulationUserActionDescriptor<>(
                         REBOUNDING_TOOL_ID_ADD_WALL,
                         ReboundingUserActionContext.FixedAction.ADD_WALL,
-                        SimulationUserActionScope.CELL_SELECTED,
+                        SimulationUserActionScope.SELECTED_CELL,
                         REBOUNDING_TOOLBAR_ADD_WALL,
                         REBOUNDING_TOOLBAR_ADD_WALL_TOOLTIP),
                 new SimulationUserActionDescriptor<>(
                         REBOUNDING_TOOL_ID_REMOVE_WALL,
                         ReboundingUserActionContext.FixedAction.REMOVE_WALL,
-                        SimulationUserActionScope.CELL_SELECTED,
+                        SimulationUserActionScope.SELECTED_CELL,
                         REBOUNDING_TOOLBAR_REMOVE_WALL,
                         REBOUNDING_TOOLBAR_REMOVE_WALL_TOOLTIP),
                 new SimulationUserActionDescriptor<>(
                         REBOUNDING_TOOL_ID_REMOVE_REBOUNDER,
                         ReboundingUserActionContext.FixedAction.REMOVE_REBOUNDER,
-                        SimulationUserActionScope.CELL_SELECTED,
+                        SimulationUserActionScope.SELECTED_CELL,
                         REBOUNDING_TOOLBAR_REMOVE_REBOUNDER,
                         REBOUNDING_TOOLBAR_REMOVE_REBOUNDER_TOOLTIP),
                 new SimulationUserActionDescriptor<>(
@@ -187,7 +187,7 @@ public final class ReboundingMainView
                         REBOUNDING_TOOLBAR_FILL_WALLS_TOOLTIP),
                 new SimulationUserActionDescriptor<>(
                         REBOUNDING_TOOL_ID_ADD_REBOUNDER,
-                        SimulationUserActionScope.CELL_SELECTED,
+                        SimulationUserActionScope.SELECTED_CELL,
                         REBOUNDING_TOOLBAR_ADD_REBOUNDER,
                         REBOUNDING_TOOLBAR_ADD_REBOUNDER_TOOLTIP,
                         () -> editToolBarViewModel.resolveSelectedAddRebounderContext()

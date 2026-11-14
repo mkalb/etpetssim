@@ -1,10 +1,10 @@
 package de.mkalb.etpetssim.simulations.core.view;
 
 import de.mkalb.etpetssim.core.AppLocalization;
-import de.mkalb.etpetssim.simulations.core.shared.SimulationMode;
-import de.mkalb.etpetssim.simulations.core.shared.SimulationStartMode;
-import de.mkalb.etpetssim.simulations.core.shared.SimulationTerminationCheckMode;
 import de.mkalb.etpetssim.simulations.core.viewmodel.ControlViewModel;
+import de.mkalb.etpetssim.simulations.core.viewmodel.SimulationExecutionMode;
+import de.mkalb.etpetssim.simulations.core.viewmodel.SimulationStartMode;
+import de.mkalb.etpetssim.simulations.core.viewmodel.SimulationTerminationCheckMode;
 import de.mkalb.etpetssim.ui.FXComponentFactory;
 import de.mkalb.etpetssim.ui.FXStyleClasses;
 import javafx.beans.binding.Bindings;
@@ -104,15 +104,15 @@ public final class ControlView {
     }
 
     private Pane createControlConfigPane() {
-        var simulationModeControl = FXComponentFactory
-                .createLabeledChoiceRadioButtons(viewModel.simulationModeProperty(),
+        var simulationExecutionModeControl = FXComponentFactory
+                .createLabeledChoiceRadioButtons(viewModel.simulationExecutionModeProperty(),
                         FXComponentFactory.createVBox(FXStyleClasses.CONFIG_RADIOBUTTON_BOX),
-                        AppLocalization.getText(SimulationMode.labelResourceKey()),
-                        AppLocalization.getText(SimulationLocalizationKeys.CONTROL_SIMULATION_MODE_TOOLTIP),
+                        AppLocalization.getText(SimulationExecutionMode.labelResourceKey()),
+                        AppLocalization.getText(SimulationLocalizationKeys.CONTROL_SIMULATION_EXECUTION_MODE_TOOLTIP),
                         FXStyleClasses.CONFIG_RADIOBUTTON
                 );
 
-        bindControlConfigDisabled(simulationModeControl.controlRegion());
+        bindControlConfigDisabled(simulationExecutionModeControl.controlRegion());
 
         var stepDurationControl = FXComponentFactory.createLabeledIntSlider(
                 viewModel.stepDurationProperty(),
@@ -155,8 +155,9 @@ public final class ControlView {
 
         bindControlConfigDisabled(terminationCheckControl.controlRegion());
 
-        VBox simulationModeBox = new VBox(simulationModeControl.label(), simulationModeControl.controlRegion());
-        simulationModeBox.getStyleClass().add(FXStyleClasses.CONTROL_CONFIG_VBOX);
+        VBox simulationExecutionModeBox = new VBox(simulationExecutionModeControl.label(),
+                simulationExecutionModeControl.controlRegion());
+        simulationExecutionModeBox.getStyleClass().add(FXStyleClasses.CONTROL_CONFIG_VBOX);
 
         VBox stepDurationBox = new VBox(stepDurationControl.label(), stepDurationControl.controlRegion());
         stepDurationBox.getStyleClass().add(FXStyleClasses.CONTROL_CONFIG_VBOX);
@@ -170,17 +171,18 @@ public final class ControlView {
 
         // Show stepDurationBox only in TIMED mode
         stepDurationBox.visibleProperty()
-                .bind(viewModel.simulationModeProperty().property().isEqualTo(SimulationMode.TIMED));
+                .bind(viewModel.simulationExecutionModeProperty().property().isEqualTo(SimulationExecutionMode.TIMED));
         stepDurationBox.managedProperty().bind(stepDurationBox.visibleProperty());
 
         // Show stepCountBox only in BATCH mode (not TIMED mode)
         stepCountBox.visibleProperty()
-                .bind(viewModel.simulationModeProperty().property().isNotEqualTo(SimulationMode.TIMED));
+                .bind(viewModel.simulationExecutionModeProperty().property()
+                        .isNotEqualTo(SimulationExecutionMode.TIMED));
         stepCountBox.managedProperty().bind(stepCountBox.visibleProperty());
 
         StackPane stepConfigPane = new StackPane(stepDurationBox, stepCountBox);
 
-        HBox configBox = new HBox(simulationModeBox, stepConfigPane, pauseBox);
+        HBox configBox = new HBox(simulationExecutionModeBox, stepConfigPane, pauseBox);
         configBox.getStyleClass().add(FXStyleClasses.CONTROL_CONFIG_HBOX);
         return configBox;
     }

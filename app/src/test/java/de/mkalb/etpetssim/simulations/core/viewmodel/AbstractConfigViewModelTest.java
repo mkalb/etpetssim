@@ -15,48 +15,49 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 final class AbstractConfigViewModelTest {
 
     @Test
-    void testCommonConfigSettingsRecord() {
+    void testCommonConfigConstraintsRecord() {
         List<CellShape> cellShapes = new ArrayList<>(List.of(CellShape.SQUARE, CellShape.HEXAGON));
         List<GridEdgeBehavior> gridEdgeBehaviors = new ArrayList<>(List.of(GridEdgeBehavior.values()));
         List<CellDisplayMode> cellDisplayModes = new ArrayList<>(List.of(CellDisplayMode.values()));
 
-        AbstractConfigViewModel.CommonConfigSettings settings = new AbstractConfigViewModel.CommonConfigSettings(
-                CellShape.SQUARE, cellShapes,
-                GridEdgeBehavior.values()[0], gridEdgeBehaviors,
-                40, 10, 100, 2,
-                30, 10, 80, 5,
-                12, 4, 20,
-                CellDisplayMode.values()[0], cellDisplayModes,
-                "seed");
+        AbstractConfigViewModel.CommonConfigConstraints constraints =
+                new AbstractConfigViewModel.CommonConfigConstraints(
+                        CellShape.SQUARE, cellShapes,
+                        GridEdgeBehavior.values()[0], gridEdgeBehaviors,
+                        40, 10, 100, 2,
+                        30, 10, 80, 5,
+                        12, 4, 20,
+                        CellDisplayMode.values()[0], cellDisplayModes,
+                        "seed");
         cellShapes.clear();
         gridEdgeBehaviors.clear();
         cellDisplayModes.clear();
 
         assertAll(
-                () -> assertEquals(CellShape.SQUARE, settings.cellShapeDefault()),
-                () -> assertEquals(List.of(CellShape.SQUARE, CellShape.HEXAGON), settings.cellShapeValues()),
-                () -> assertEquals(GridEdgeBehavior.values()[0], settings.gridEdgeBehaviorDefault()),
-                () -> assertEquals(List.of(GridEdgeBehavior.values()), settings.gridEdgeBehaviorValues()),
-                () -> assertEquals(40, settings.gridWidthDefault()),
-                () -> assertEquals(10, settings.gridWidthMin()),
-                () -> assertEquals(100, settings.gridWidthMax()),
-                () -> assertEquals(2, settings.gridWidthStep()),
-                () -> assertEquals(30, settings.gridHeightDefault()),
-                () -> assertEquals(10, settings.gridHeightMin()),
-                () -> assertEquals(80, settings.gridHeightMax()),
-                () -> assertEquals(5, settings.gridHeightStep()),
-                () -> assertEquals(12, settings.cellEdgeLengthDefault()),
-                () -> assertEquals(4, settings.cellEdgeLengthMin()),
-                () -> assertEquals(20, settings.cellEdgeLengthMax()),
-                () -> assertEquals(CellDisplayMode.values()[0], settings.cellDisplayModeDefault()),
-                () -> assertEquals(List.of(CellDisplayMode.values()), settings.cellDisplayModeValues()),
-                () -> assertEquals("seed", settings.seedDefault()),
+                () -> assertEquals(CellShape.SQUARE, constraints.cellShapeDefault()),
+                () -> assertEquals(List.of(CellShape.SQUARE, CellShape.HEXAGON), constraints.cellShapeValues()),
+                () -> assertEquals(GridEdgeBehavior.values()[0], constraints.gridEdgeBehaviorDefault()),
+                () -> assertEquals(List.of(GridEdgeBehavior.values()), constraints.gridEdgeBehaviorValues()),
+                () -> assertEquals(40, constraints.gridWidthDefault()),
+                () -> assertEquals(10, constraints.gridWidthMin()),
+                () -> assertEquals(100, constraints.gridWidthMax()),
+                () -> assertEquals(2, constraints.gridWidthStep()),
+                () -> assertEquals(30, constraints.gridHeightDefault()),
+                () -> assertEquals(10, constraints.gridHeightMin()),
+                () -> assertEquals(80, constraints.gridHeightMax()),
+                () -> assertEquals(5, constraints.gridHeightStep()),
+                () -> assertEquals(12, constraints.cellEdgeLengthDefault()),
+                () -> assertEquals(4, constraints.cellEdgeLengthMin()),
+                () -> assertEquals(20, constraints.cellEdgeLengthMax()),
+                () -> assertEquals(CellDisplayMode.values()[0], constraints.cellDisplayModeDefault()),
+                () -> assertEquals(List.of(CellDisplayMode.values()), constraints.cellDisplayModeValues()),
+                () -> assertEquals("seed", constraints.seedDefault()),
                 () -> assertThrows(UnsupportedOperationException.class,
-                        () -> settings.cellShapeValues().add(CellShape.TRIANGLE)),
+                        () -> constraints.cellShapeValues().add(CellShape.TRIANGLE)),
                 () -> assertThrows(UnsupportedOperationException.class,
-                        () -> settings.gridEdgeBehaviorValues().clear()),
+                        () -> constraints.gridEdgeBehaviorValues().clear()),
                 () -> assertThrows(UnsupportedOperationException.class,
-                        () -> settings.cellDisplayModeValues().clear())
+                        () -> constraints.cellDisplayModeValues().clear())
         );
     }
 

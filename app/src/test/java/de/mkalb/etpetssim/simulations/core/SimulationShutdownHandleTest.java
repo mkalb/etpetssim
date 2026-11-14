@@ -8,22 +8,22 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-final class SimulationTerminationHandleTest {
+final class SimulationShutdownHandleTest {
 
     @SuppressWarnings("EqualsWithItself")
     @Test
     void testCompletedReturnsSameInstance() {
-        assertSame(SimulationTerminationHandle.completed(), SimulationTerminationHandle.completed());
+        assertSame(SimulationShutdownHandle.completed(), SimulationShutdownHandle.completed());
     }
 
     @Test
     void testCompletedAwaitTerminationReturnsTrue() throws InterruptedException {
-        assertTrue(SimulationTerminationHandle.completed().awaitTermination(0L, TimeUnit.NANOSECONDS));
+        assertTrue(SimulationShutdownHandle.completed().awaitTermination(0L, TimeUnit.NANOSECONDS));
     }
 
     @Test
     void testCompletedShutdownNowDoesNothing() {
-        assertDoesNotThrow(() -> SimulationTerminationHandle.completed().shutdownNow());
+        assertDoesNotThrow(() -> SimulationShutdownHandle.completed().shutdownNow());
     }
 
 }

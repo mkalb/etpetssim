@@ -1,8 +1,8 @@
 package de.mkalb.etpetssim.simulations.snake.viewmodel;
 
 import de.mkalb.etpetssim.core.AppLocalization;
-import de.mkalb.etpetssim.simulations.core.shared.SimulationState;
 import de.mkalb.etpetssim.simulations.core.viewmodel.AbstractConfigViewModel;
+import de.mkalb.etpetssim.simulations.core.viewmodel.SimulationState;
 import de.mkalb.etpetssim.simulations.snake.model.SnakeConfig;
 import de.mkalb.etpetssim.simulations.snake.shared.SnakeDeathMode;
 import de.mkalb.etpetssim.ui.InputChoiceProperty;
@@ -69,7 +69,7 @@ public final class SnakeConfigViewModel extends AbstractConfigViewModel<SnakeCon
      */
     public static final int SEGMENT_LENGTH_MULTIPLIER_DECIMALS = 1;
 
-    private static final CommonConfigSettings COMMON_SETTINGS = new CommonConfigSettings(
+    private static final CommonConfigConstraints COMMON_CONSTRAINTS = new CommonConfigConstraints(
             CELL_SHAPE_DEFAULT,
             CELL_SHAPE_VALUES,
             GRID_EDGE_BEHAVIOR_DEFAULT,
@@ -133,7 +133,7 @@ public final class SnakeConfigViewModel extends AbstractConfigViewModel<SnakeCon
             SEGMENT_LENGTH_MULTIPLIER_MAX);
 
     public SnakeConfigViewModel(ReadOnlyObjectProperty<SimulationState> simulationState) {
-        super(simulationState, COMMON_SETTINGS);
+        super(simulationState, COMMON_CONSTRAINTS);
     }
 
     @Override

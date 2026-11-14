@@ -1,4 +1,4 @@
-package de.mkalb.etpetssim.simulations.core.shared;
+package de.mkalb.etpetssim.simulations.core.viewmodel;
 
 /**
  * Defines the possible states in the lifecycle of a simulation.

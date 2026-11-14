@@ -4,13 +4,13 @@ import de.mkalb.etpetssim.core.AppLocalization;
 import de.mkalb.etpetssim.core.AppLogger;
 import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptor;
 import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorRegistry;
-import de.mkalb.etpetssim.simulations.core.shared.SimulationUserActionScope;
 import de.mkalb.etpetssim.simulations.core.view.AbstractMainView;
 import de.mkalb.etpetssim.simulations.core.view.CanvasPainters;
 import de.mkalb.etpetssim.simulations.core.view.CellDrawer;
 import de.mkalb.etpetssim.simulations.core.view.ControlView;
 import de.mkalb.etpetssim.simulations.core.viewmodel.MainViewModel;
 import de.mkalb.etpetssim.simulations.core.viewmodel.SimulationUserActionDescriptor;
+import de.mkalb.etpetssim.simulations.core.viewmodel.SimulationUserActionScope;
 import de.mkalb.etpetssim.simulations.sugar.model.SugarCell;
 import de.mkalb.etpetssim.simulations.sugar.model.SugarConfig;
 import de.mkalb.etpetssim.simulations.sugar.model.SugarGridModel;
@@ -193,12 +193,12 @@ public final class SugarMainView
                 new SimulationUserActionDescriptor<>(
                         SUGAR_TOOL_ID_REMOVE_SUGAR,
                         SugarUserActionContext.FixedAction.REMOVE_SUGAR,
-                        SimulationUserActionScope.CELL_SELECTED,
+                        SimulationUserActionScope.SELECTED_CELL,
                         SUGAR_TOOLBAR_REMOVE_SUGAR,
                         SUGAR_TOOLBAR_REMOVE_SUGAR_TOOLTIP),
                 new SimulationUserActionDescriptor<>(
                         SUGAR_TOOL_ID_ADD_SUGAR,
-                        SimulationUserActionScope.CELL_SELECTED,
+                        SimulationUserActionScope.SELECTED_CELL,
                         SUGAR_TOOLBAR_ADD_SUGAR,
                         SUGAR_TOOLBAR_ADD_SUGAR_TOOLTIP,
                         () -> Optional.of(editToolBarViewModel.getSelectedAddSugarLevel())

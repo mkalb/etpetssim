@@ -3,8 +3,8 @@ package de.mkalb.etpetssim.simulations.conway.viewmodel;
 import de.mkalb.etpetssim.engine.neighborhood.CellNeighborhoods;
 import de.mkalb.etpetssim.simulations.conway.model.ConwayConfig;
 import de.mkalb.etpetssim.simulations.conway.shared.ConwayTransitionRules;
-import de.mkalb.etpetssim.simulations.core.shared.SimulationState;
 import de.mkalb.etpetssim.simulations.core.viewmodel.AbstractConfigViewModel;
+import de.mkalb.etpetssim.simulations.core.viewmodel.SimulationState;
 import de.mkalb.etpetssim.ui.InputDoubleProperty;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.IntegerProperty;
@@ -49,7 +49,7 @@ import static de.mkalb.etpetssim.simulations.conway.model.ConwayConstraints.TRAN
  */
 public final class ConwayConfigViewModel extends AbstractConfigViewModel<ConwayConfig> {
 
-    private static final CommonConfigSettings COMMON_SETTINGS = new CommonConfigSettings(
+    private static final CommonConfigConstraints COMMON_CONSTRAINTS = new CommonConfigConstraints(
             CELL_SHAPE_DEFAULT,
             CELL_SHAPE_VALUES,
             GRID_EDGE_BEHAVIOR_DEFAULT,
@@ -85,7 +85,7 @@ public final class ConwayConfigViewModel extends AbstractConfigViewModel<ConwayC
     private final IntegerProperty maxNeighborCount = new SimpleIntegerProperty(0);
 
     public ConwayConfigViewModel(ReadOnlyObjectProperty<SimulationState> simulationState) {
-        super(simulationState, COMMON_SETTINGS);
+        super(simulationState, COMMON_CONSTRAINTS);
 
         for (int i = ConwayTransitionRules.MIN_NEIGHBOR_COUNT; i <= ConwayTransitionRules.MAX_NEIGHBOR_COUNT; i++) {
             surviveProperties.add(new SimpleBooleanProperty(TRANSITION_RULES_DEFAULT.surviveCounts().contains(i)));

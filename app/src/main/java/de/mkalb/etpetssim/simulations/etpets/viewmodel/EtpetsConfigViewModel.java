@@ -1,8 +1,8 @@
 package de.mkalb.etpetssim.simulations.etpets.viewmodel;
 
 import de.mkalb.etpetssim.core.AppLocalization;
-import de.mkalb.etpetssim.simulations.core.shared.SimulationState;
 import de.mkalb.etpetssim.simulations.core.viewmodel.AbstractConfigViewModel;
+import de.mkalb.etpetssim.simulations.core.viewmodel.SimulationState;
 import de.mkalb.etpetssim.simulations.etpets.model.EtpetsConfig;
 import de.mkalb.etpetssim.ui.InputDoubleProperty;
 import de.mkalb.etpetssim.ui.InputIntegerProperty;
@@ -53,7 +53,7 @@ public final class EtpetsConfigViewModel extends AbstractConfigViewModel<EtpetsC
     private static final String ETPETS_CONFIG_VALIDATION_COMBINED_PERCENTS =
             "etpets.config.validation.combinedpercents";
 
-    private static final CommonConfigSettings COMMON_SETTINGS = new CommonConfigSettings(
+    private static final CommonConfigConstraints COMMON_CONSTRAINTS = new CommonConfigConstraints(
             CELL_SHAPE_DEFAULT,
             CELL_SHAPE_VALUES,
             GRID_EDGE_BEHAVIOR_DEFAULT,
@@ -98,7 +98,7 @@ public final class EtpetsConfigViewModel extends AbstractConfigViewModel<EtpetsC
             PET_COUNT_STEP);
 
     public EtpetsConfigViewModel(ReadOnlyObjectProperty<SimulationState> simulationState) {
-        super(simulationState, COMMON_SETTINGS);
+        super(simulationState, COMMON_CONSTRAINTS);
         registerConfigValidationRule(
                 rockPercent.property()
                         .add(waterPercent.property())

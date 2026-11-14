@@ -6,13 +6,13 @@ import de.mkalb.etpetssim.engine.model.WritableGridModel;
 import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorRegistry;
 import de.mkalb.etpetssim.simulations.core.shared.CellDisplayMode;
 import de.mkalb.etpetssim.simulations.core.shared.NoUserActionContext;
-import de.mkalb.etpetssim.simulations.core.shared.SimulationUserActionScope;
 import de.mkalb.etpetssim.simulations.core.view.AbstractMainView;
 import de.mkalb.etpetssim.simulations.core.view.CanvasPainters;
 import de.mkalb.etpetssim.simulations.core.view.CellDrawer;
 import de.mkalb.etpetssim.simulations.core.view.ControlView;
 import de.mkalb.etpetssim.simulations.core.viewmodel.MainViewModel;
 import de.mkalb.etpetssim.simulations.core.viewmodel.SimulationUserActionDescriptor;
+import de.mkalb.etpetssim.simulations.core.viewmodel.SimulationUserActionScope;
 import de.mkalb.etpetssim.simulations.forest.model.ForestConfig;
 import de.mkalb.etpetssim.simulations.forest.model.ForestSimulationManager;
 import de.mkalb.etpetssim.simulations.forest.model.ForestStatistics;
@@ -166,7 +166,7 @@ public final class ForestMainView
         return List.of(new SimulationUserActionDescriptor<>(
                 FOREST_TOOL_ID_CYCLE_STATE,
                 NoUserActionContext.NO_CONTEXT,
-                SimulationUserActionScope.CELL_SELECTED,
+                SimulationUserActionScope.SELECTED_CELL,
                 FOREST_TOOLBAR_CYCLE_STATE,
                 FOREST_TOOLBAR_CYCLE_STATE_TOOLTIP));
     }

@@ -5,12 +5,12 @@ import de.mkalb.etpetssim.engine.GridCoordinate;
 import de.mkalb.etpetssim.engine.model.GridCell;
 import de.mkalb.etpetssim.engine.model.WritableGridModel;
 import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorRegistry;
-import de.mkalb.etpetssim.simulations.core.shared.SimulationUserActionScope;
 import de.mkalb.etpetssim.simulations.core.view.AbstractMainView;
 import de.mkalb.etpetssim.simulations.core.view.CanvasPainters;
 import de.mkalb.etpetssim.simulations.core.view.ControlView;
 import de.mkalb.etpetssim.simulations.core.viewmodel.MainViewModel;
 import de.mkalb.etpetssim.simulations.core.viewmodel.SimulationUserActionDescriptor;
+import de.mkalb.etpetssim.simulations.core.viewmodel.SimulationUserActionScope;
 import de.mkalb.etpetssim.simulations.snake.model.SnakeConfig;
 import de.mkalb.etpetssim.simulations.snake.model.SnakeSimulationManager;
 import de.mkalb.etpetssim.simulations.snake.model.SnakeStatistics;
@@ -207,36 +207,36 @@ public final class SnakeMainView
                 new SimulationUserActionDescriptor<>(
                         SNAKE_TOOL_ID_ADD_WALL,
                         SnakeUserActionContext.FixedAction.ADD_WALL,
-                        SimulationUserActionScope.CELL_SELECTED,
+                        SimulationUserActionScope.SELECTED_CELL,
                         SNAKE_TOOLBAR_ADD_WALL,
                         SNAKE_TOOLBAR_ADD_WALL_TOOLTIP),
                 new SimulationUserActionDescriptor<>(
                         SNAKE_TOOL_ID_REMOVE_WALL,
                         SnakeUserActionContext.FixedAction.REMOVE_WALL,
-                        SimulationUserActionScope.CELL_SELECTED,
+                        SimulationUserActionScope.SELECTED_CELL,
                         SNAKE_TOOLBAR_REMOVE_WALL,
                         SNAKE_TOOLBAR_REMOVE_WALL_TOOLTIP),
                 new SimulationUserActionDescriptor<>(
                         SNAKE_TOOL_ID_ADD_FOOD,
                         SnakeUserActionContext.FixedAction.ADD_FOOD,
-                        SimulationUserActionScope.CELL_SELECTED,
+                        SimulationUserActionScope.SELECTED_CELL,
                         SNAKE_TOOLBAR_ADD_FOOD,
                         SNAKE_TOOLBAR_ADD_FOOD_TOOLTIP),
                 new SimulationUserActionDescriptor<>(
                         SNAKE_TOOL_ID_REMOVE_FOOD,
                         SnakeUserActionContext.FixedAction.REMOVE_FOOD,
-                        SimulationUserActionScope.CELL_SELECTED,
+                        SimulationUserActionScope.SELECTED_CELL,
                         SNAKE_TOOLBAR_REMOVE_FOOD,
                         SNAKE_TOOLBAR_REMOVE_FOOD_TOOLTIP),
                 new SimulationUserActionDescriptor<>(
                         SNAKE_TOOL_ID_REMOVE_SNAKE,
                         SnakeUserActionContext.FixedAction.REMOVE_SNAKE,
-                        SimulationUserActionScope.CELL_SELECTED,
+                        SimulationUserActionScope.SELECTED_CELL,
                         SNAKE_TOOLBAR_REMOVE_SNAKE,
                         SNAKE_TOOLBAR_REMOVE_SNAKE_TOOLTIP),
                 new SimulationUserActionDescriptor<>(
                         SNAKE_TOOL_ID_ADD_SNAKE,
-                        SimulationUserActionScope.CELL_SELECTED,
+                        SimulationUserActionScope.SELECTED_CELL,
                         SNAKE_TOOLBAR_ADD_SNAKE,
                         SNAKE_TOOLBAR_ADD_SNAKE_TOOLTIP,
                         () -> Optional.of(editToolBarViewModel.getSelectedStrategy())

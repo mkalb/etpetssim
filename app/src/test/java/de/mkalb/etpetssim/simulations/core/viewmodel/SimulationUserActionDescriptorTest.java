@@ -1,7 +1,6 @@
 package de.mkalb.etpetssim.simulations.core.viewmodel;
 
 import de.mkalb.etpetssim.simulations.core.shared.NoUserActionContext;
-import de.mkalb.etpetssim.simulations.core.shared.SimulationUserActionScope;
 import org.junit.jupiter.api.Test;
 
 import java.util.Optional;
@@ -38,14 +37,14 @@ final class SimulationUserActionDescriptorTest {
 
         SimulationUserActionDescriptor<NoUserActionContext> descriptor = new SimulationUserActionDescriptor<>(
                 TOOL_ID_SAMPLE,
-                SimulationUserActionScope.CELL_SELECTED,
+                SimulationUserActionScope.SELECTED_CELL,
                 LABEL_KEY_SAMPLE,
                 TOOLTIP_KEY_SAMPLE,
                 contextResolver);
 
         assertAll(
                 () -> assertEquals(TOOL_ID_SAMPLE, descriptor.toolId()),
-                () -> assertEquals(SimulationUserActionScope.CELL_SELECTED, descriptor.scope()),
+                () -> assertEquals(SimulationUserActionScope.SELECTED_CELL, descriptor.scope()),
                 () -> assertEquals(LABEL_KEY_SAMPLE, descriptor.labelKey()),
                 () -> assertEquals(TOOLTIP_KEY_SAMPLE, descriptor.tooltipKey()),
                 () -> assertSame(contextResolver, descriptor.contextResolver())
@@ -100,7 +99,7 @@ final class SimulationUserActionDescriptorTest {
         AtomicReference<Optional<NoUserActionContext>> currentContext = new AtomicReference<>(Optional.empty());
         SimulationUserActionDescriptor<NoUserActionContext> descriptor = new SimulationUserActionDescriptor<>(
                 TOOL_ID_SAMPLE,
-                SimulationUserActionScope.CELL_SELECTED,
+                SimulationUserActionScope.SELECTED_CELL,
                 LABEL_KEY_SAMPLE,
                 TOOLTIP_KEY_SAMPLE,
                 currentContext::get);

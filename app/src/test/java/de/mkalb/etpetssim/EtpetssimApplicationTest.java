@@ -1,8 +1,8 @@
 package de.mkalb.etpetssim;
 
 import de.mkalb.etpetssim.core.AppLogger;
-import de.mkalb.etpetssim.simulations.core.SimulationInstance;
-import de.mkalb.etpetssim.simulations.core.SimulationTerminationHandle;
+import de.mkalb.etpetssim.simulations.core.SimulationScreen;
+import de.mkalb.etpetssim.simulations.core.SimulationShutdownHandle;
 import de.mkalb.etpetssim.simulations.core.SimulationType;
 import de.mkalb.etpetssim.simulations.core.view.SimulationMainView;
 import de.mkalb.etpetssim.testsupport.FXTestSupport;
@@ -32,8 +32,8 @@ final class EtpetssimApplicationTest {
         FXTestSupport.ensureStarted();
     }
 
-    private static SimulationInstance createInstance(SimulationType simulationType, SimulationMainView view) {
-        return new SimulationInstance(simulationType, view, new Region());
+    private static SimulationScreen createScreen(SimulationType simulationType, SimulationMainView view) {
+        return new SimulationScreen(simulationType, view, new Region());
     }
 
     @BeforeEach
@@ -48,16 +48,16 @@ final class EtpetssimApplicationTest {
         EtpetssimApplication application = new EtpetssimApplication();
 
         FXTestSupport.runAndWait(() -> {
-            SimulationInstance instance = createInstance(SimulationType.WATOR, view);
-            application.setCurrentSimulationInstance(instance);
+            SimulationScreen screen = createScreen(SimulationType.WATOR, view);
+            application.setCurrentSimulationScreen(screen);
 
             application.stop();
             application.stop();
 
             assertAll(
                     () -> assertEquals(1, view.shutdownCount()),
-                    () -> assertEquals(1, view.terminationHandle().awaitCount()),
-                    () -> assertTrue(instance.region().isDisabled())
+                    () -> assertEquals(1, view.shutdownHandle().awaitCount()),
+                    () -> assertTrue(screen.region().isDisabled())
             );
         });
     }
@@ -68,7 +68,7 @@ final class EtpetssimApplicationTest {
         EtpetssimApplication application = new EtpetssimApplication();
 
         FXTestSupport.runAndWait(() -> {
-            application.setCurrentSimulationInstance(createInstance(SimulationType.SNAKE, view));
+            application.setCurrentSimulationScreen(createScreen(SimulationType.SNAKE, view));
 
             application.shutdownCurrentSimulation();
             application.stop();
@@ -79,34 +79,34 @@ final class EtpetssimApplicationTest {
 
     @Test
     void testStopEscalatesWhenTerminationDoesNotComplete() {
-        CountingTerminationHandle terminationHandle =
-                new CountingTerminationHandle(TerminationAwaitOutcome.INCOMPLETE);
+        CountingShutdownHandle shutdownHandle =
+                new CountingShutdownHandle(TerminationAwaitOutcome.INCOMPLETE);
         EtpetssimApplication application = new EtpetssimApplication();
 
         FXTestSupport.runAndWait(() -> {
-            application.setCurrentSimulationInstance(
-                    createInstance(SimulationType.FOREST_FIRE, new CountingMainView(terminationHandle)));
+            application.setCurrentSimulationScreen(
+                    createScreen(SimulationType.FOREST_FIRE, new CountingMainView(shutdownHandle)));
             application.stop();
         });
 
         assertAll(
-                () -> assertEquals(1, terminationHandle.awaitCount()),
-                () -> assertEquals(1, terminationHandle.shutdownNowCount())
+                () -> assertEquals(1, shutdownHandle.awaitCount()),
+                () -> assertEquals(1, shutdownHandle.shutdownNowCount())
         );
     }
 
     @SuppressWarnings("ResultOfMethodCallIgnored")
     @Test
     void testStopInterruptsTerminationWaitAndRestoresInterruptStatus() {
-        CountingTerminationHandle terminationHandle =
-                new CountingTerminationHandle(TerminationAwaitOutcome.INTERRUPTED);
+        CountingShutdownHandle shutdownHandle =
+                new CountingShutdownHandle(TerminationAwaitOutcome.INTERRUPTED);
         EtpetssimApplication application = new EtpetssimApplication();
         AtomicBoolean interrupted = new AtomicBoolean();
 
         FXTestSupport.runAndWait(() -> {
             try {
-                application.setCurrentSimulationInstance(
-                        createInstance(SimulationType.SUGARSCAPE, new CountingMainView(terminationHandle)));
+                application.setCurrentSimulationScreen(
+                        createScreen(SimulationType.SUGARSCAPE, new CountingMainView(shutdownHandle)));
                 application.stop();
                 interrupted.set(Thread.currentThread().isInterrupted());
             } finally {
@@ -115,8 +115,8 @@ final class EtpetssimApplicationTest {
         });
 
         assertAll(
-                () -> assertEquals(1, terminationHandle.awaitCount()),
-                () -> assertEquals(1, terminationHandle.shutdownNowCount()),
+                () -> assertEquals(1, shutdownHandle.awaitCount()),
+                () -> assertEquals(1, shutdownHandle.shutdownNowCount()),
                 () -> assertTrue(interrupted.get())
         );
     }
@@ -124,19 +124,19 @@ final class EtpetssimApplicationTest {
     @SuppressWarnings("ResultOfMethodCallIgnored")
     @Test
     void testStopEscalatesEveryPendingTerminationWhenInterrupted() {
-        CountingTerminationHandle interruptedTerminationHandle =
-                new CountingTerminationHandle(TerminationAwaitOutcome.INTERRUPTED);
-        CountingTerminationHandle pendingTerminationHandle =
-                new CountingTerminationHandle(TerminationAwaitOutcome.TERMINATED);
+        CountingShutdownHandle interruptedShutdownHandle =
+                new CountingShutdownHandle(TerminationAwaitOutcome.INTERRUPTED);
+        CountingShutdownHandle pendingShutdownHandle =
+                new CountingShutdownHandle(TerminationAwaitOutcome.TERMINATED);
         EtpetssimApplication application = new EtpetssimApplication();
 
         FXTestSupport.runAndWait(() -> {
             try {
-                application.setCurrentSimulationInstance(
-                        createInstance(SimulationType.SUGARSCAPE, new CountingMainView(interruptedTerminationHandle)));
+                application.setCurrentSimulationScreen(
+                        createScreen(SimulationType.SUGARSCAPE, new CountingMainView(interruptedShutdownHandle)));
                 application.shutdownCurrentSimulation();
-                application.setCurrentSimulationInstance(
-                        createInstance(SimulationType.WATOR, new CountingMainView(pendingTerminationHandle)));
+                application.setCurrentSimulationScreen(
+                        createScreen(SimulationType.WATOR, new CountingMainView(pendingShutdownHandle)));
                 application.stop();
             } finally {
                 Thread.interrupted();
@@ -144,35 +144,35 @@ final class EtpetssimApplicationTest {
         });
 
         assertAll(
-                () -> assertEquals(1, interruptedTerminationHandle.awaitCount()),
-                () -> assertEquals(1, interruptedTerminationHandle.shutdownNowCount()),
-                () -> assertEquals(0, pendingTerminationHandle.awaitCount()),
-                () -> assertEquals(1, pendingTerminationHandle.shutdownNowCount())
+                () -> assertEquals(1, interruptedShutdownHandle.awaitCount()),
+                () -> assertEquals(1, interruptedShutdownHandle.shutdownNowCount()),
+                () -> assertEquals(0, pendingShutdownHandle.awaitCount()),
+                () -> assertEquals(1, pendingShutdownHandle.shutdownNowCount())
         );
     }
 
     @Test
     void testStopSharesTerminationTimeoutBudgetAcrossPendingTerminations() {
-        CountingTerminationHandle firstTerminationHandle = new CountingTerminationHandle(
+        CountingShutdownHandle firstShutdownHandle = new CountingShutdownHandle(
                 TerminationAwaitOutcome.TERMINATED, TimeUnit.MILLISECONDS.toNanos(10));
-        CountingTerminationHandle secondTerminationHandle =
-                new CountingTerminationHandle(TerminationAwaitOutcome.TERMINATED);
+        CountingShutdownHandle secondShutdownHandle =
+                new CountingShutdownHandle(TerminationAwaitOutcome.TERMINATED);
         EtpetssimApplication application = new EtpetssimApplication();
 
         FXTestSupport.runAndWait(() -> {
-            application.setCurrentSimulationInstance(
-                    createInstance(SimulationType.CONWAYS_LIFE, new CountingMainView(firstTerminationHandle)));
+            application.setCurrentSimulationScreen(
+                    createScreen(SimulationType.CONWAYS_LIFE, new CountingMainView(firstShutdownHandle)));
             application.shutdownCurrentSimulation();
-            application.setCurrentSimulationInstance(
-                    createInstance(SimulationType.WATOR, new CountingMainView(secondTerminationHandle)));
+            application.setCurrentSimulationScreen(
+                    createScreen(SimulationType.WATOR, new CountingMainView(secondShutdownHandle)));
             application.stop();
         });
 
         assertAll(
-                () -> assertEquals(1, firstTerminationHandle.awaitCount()),
-                () -> assertEquals(1, secondTerminationHandle.awaitCount()),
+                () -> assertEquals(1, firstShutdownHandle.awaitCount()),
+                () -> assertEquals(1, secondShutdownHandle.awaitCount()),
                 () -> assertTrue(
-                        secondTerminationHandle.awaitedTimeoutNanos() < firstTerminationHandle.awaitedTimeoutNanos())
+                        secondShutdownHandle.awaitedTimeoutNanos() < firstShutdownHandle.awaitedTimeoutNanos())
         );
     }
 
@@ -185,14 +185,14 @@ final class EtpetssimApplicationTest {
     private static final class CountingMainView implements SimulationMainView {
 
         private final AtomicInteger shutdownCount = new AtomicInteger();
-        private final CountingTerminationHandle terminationHandle;
+        private final CountingShutdownHandle shutdownHandle;
 
         private CountingMainView() {
-            this(new CountingTerminationHandle(TerminationAwaitOutcome.TERMINATED));
+            this(new CountingShutdownHandle(TerminationAwaitOutcome.TERMINATED));
         }
 
-        private CountingMainView(CountingTerminationHandle terminationHandle) {
-            this.terminationHandle = terminationHandle;
+        private CountingMainView(CountingShutdownHandle shutdownHandle) {
+            this.shutdownHandle = shutdownHandle;
         }
 
         @NonNull
@@ -203,22 +203,22 @@ final class EtpetssimApplicationTest {
 
         @NonNull
         @Override
-        public SimulationTerminationHandle shutdownSimulation() {
+        public SimulationShutdownHandle shutdownSimulation() {
             shutdownCount.incrementAndGet();
-            return terminationHandle;
+            return shutdownHandle;
         }
 
         int shutdownCount() {
             return shutdownCount.get();
         }
 
-        CountingTerminationHandle terminationHandle() {
-            return terminationHandle;
+        CountingShutdownHandle shutdownHandle() {
+            return shutdownHandle;
         }
 
     }
 
-    private static final class CountingTerminationHandle implements SimulationTerminationHandle {
+    private static final class CountingShutdownHandle implements SimulationShutdownHandle {
 
         private final AtomicInteger awaitCount = new AtomicInteger();
         private final AtomicInteger shutdownNowCount = new AtomicInteger();
@@ -226,11 +226,11 @@ final class EtpetssimApplicationTest {
         private final TerminationAwaitOutcome awaitOutcome;
         private final long awaitDelayNanos;
 
-        private CountingTerminationHandle(TerminationAwaitOutcome awaitOutcome) {
+        private CountingShutdownHandle(TerminationAwaitOutcome awaitOutcome) {
             this(awaitOutcome, 0L);
         }
 
-        private CountingTerminationHandle(TerminationAwaitOutcome awaitOutcome, long awaitDelayNanos) {
+        private CountingShutdownHandle(TerminationAwaitOutcome awaitOutcome, long awaitDelayNanos) {
             this.awaitOutcome = awaitOutcome;
             this.awaitDelayNanos = awaitDelayNanos;
         }

@@ -18,16 +18,10 @@ import de.mkalb.etpetssim.simulations.conway.model.ConwayTerminationCondition;
 import de.mkalb.etpetssim.simulations.conway.model.entity.ConwayEntity;
 import de.mkalb.etpetssim.simulations.conway.shared.ConwayUserActionContext;
 import de.mkalb.etpetssim.simulations.conway.viewmodel.ConwayConfigViewModel;
-import de.mkalb.etpetssim.simulations.core.SimulationTerminationHandle;
+import de.mkalb.etpetssim.simulations.core.SimulationShutdownHandle;
 import de.mkalb.etpetssim.simulations.core.model.AbstractSimulationManager;
 import de.mkalb.etpetssim.simulations.core.model.SimulationInitializationCancellation;
 import de.mkalb.etpetssim.simulations.core.model.StatisticsExtrema;
-import de.mkalb.etpetssim.simulations.core.shared.SimulationMode;
-import de.mkalb.etpetssim.simulations.core.shared.SimulationNotificationType;
-import de.mkalb.etpetssim.simulations.core.shared.SimulationStartMode;
-import de.mkalb.etpetssim.simulations.core.shared.SimulationState;
-import de.mkalb.etpetssim.simulations.core.shared.SimulationStepEvent;
-import de.mkalb.etpetssim.simulations.core.shared.SimulationTerminationCheckMode;
 import de.mkalb.etpetssim.testsupport.FXTestSupport;
 import javafx.application.Platform;
 import javafx.beans.property.ObjectProperty;
@@ -118,7 +112,7 @@ final class MainViewModelTest {
 
     private static void configureBatch(Fixture fixture) {
         fixture.controlViewModel().startModeProperty().setValue(SimulationStartMode.START_IMMEDIATELY);
-        fixture.controlViewModel().simulationModeProperty().setValue(SimulationMode.BATCH_SINGLE);
+        fixture.controlViewModel().simulationExecutionModeProperty().setValue(SimulationExecutionMode.BATCH_SINGLE);
         fixture.controlViewModel().stepCountProperty().setValue(10);
         fixture.controlViewModel().terminationCheckModeProperty().setValue(SimulationTerminationCheckMode.UNCHECKED);
     }
@@ -150,7 +144,7 @@ final class MainViewModelTest {
     private static void startBatchAndRunOnFirstBatchStep(Fixture fixture, Runnable action) {
         AtomicBoolean actionRun = new AtomicBoolean();
         fixture.controlViewModel().startModeProperty().setValue(SimulationStartMode.START_IMMEDIATELY);
-        fixture.controlViewModel().simulationModeProperty().setValue(SimulationMode.BATCH_SINGLE);
+        fixture.controlViewModel().simulationExecutionModeProperty().setValue(SimulationExecutionMode.BATCH_SINGLE);
         fixture.controlViewModel().stepCountProperty().setValue(10_000);
         fixture.controlViewModel().terminationCheckModeProperty().setValue(SimulationTerminationCheckMode.UNCHECKED);
         fixture.mainViewModel().setSimulationStepListener(event -> {
@@ -220,10 +214,10 @@ final class MainViewModelTest {
         });
         assertTrue(constructionStarted.await(FXTestSupport.DEFAULT_TIMEOUT_SECONDS, TimeUnit.SECONDS));
 
-        SimulationTerminationHandle terminationHandle = FXTestSupport.supplyAndWaitNonNull(
+        SimulationShutdownHandle shutdownHandle = FXTestSupport.supplyAndWaitNonNull(
                 fixture.mainViewModel()::shutdownSimulation);
         releaseConstruction.countDown();
-        assertTrue(terminationHandle.awaitTermination(FXTestSupport.DEFAULT_TIMEOUT_SECONDS, TimeUnit.SECONDS));
+        assertTrue(shutdownHandle.awaitTermination(FXTestSupport.DEFAULT_TIMEOUT_SECONDS, TimeUnit.SECONDS));
 
         FXTestSupport.runAndWait(() -> assertAll(
                 () -> assertEquals(SimulationState.SHUTTING_DOWN, fixture.mainViewModel().getSimulationState()),
@@ -233,17 +227,17 @@ final class MainViewModelTest {
     }
 
     @Test
-    void testShutdownSimulationReturnsSameTerminationHandle() {
+    void testShutdownSimulationReturnsSameShutdownHandle() {
         Fixture fixture = FXTestSupport.supplyAndWaitNonNull(MainViewModelTest::createFixture);
 
-        SimulationTerminationHandle firstTerminationHandle = FXTestSupport.supplyAndWaitNonNull(
+        SimulationShutdownHandle firstShutdownHandle = FXTestSupport.supplyAndWaitNonNull(
                 fixture.mainViewModel()::shutdownSimulation);
-        SimulationTerminationHandle secondTerminationHandle = FXTestSupport.supplyAndWaitNonNull(
+        SimulationShutdownHandle secondShutdownHandle = FXTestSupport.supplyAndWaitNonNull(
                 fixture.mainViewModel()::shutdownSimulation);
 
         assertAll(
-                () -> assertSame(firstTerminationHandle, secondTerminationHandle),
-                () -> assertTrue(firstTerminationHandle.awaitTermination(FXTestSupport.DEFAULT_TIMEOUT_SECONDS,
+                () -> assertSame(firstShutdownHandle, secondShutdownHandle),
+                () -> assertTrue(firstShutdownHandle.awaitTermination(FXTestSupport.DEFAULT_TIMEOUT_SECONDS,
                         TimeUnit.SECONDS))
         );
     }
@@ -256,14 +250,14 @@ final class MainViewModelTest {
                 () -> {
                     throw new IllegalStateException("Test reset listener failure");
                 }));
-        SimulationTerminationHandle firstTerminationHandle = FXTestSupport.supplyAndWaitNonNull(
+        SimulationShutdownHandle firstShutdownHandle = FXTestSupport.supplyAndWaitNonNull(
                 fixture.mainViewModel()::shutdownSimulation);
-        SimulationTerminationHandle secondTerminationHandle = FXTestSupport.supplyAndWaitNonNull(
+        SimulationShutdownHandle secondShutdownHandle = FXTestSupport.supplyAndWaitNonNull(
                 fixture.mainViewModel()::shutdownSimulation);
 
         assertAll(
-                () -> assertSame(firstTerminationHandle, secondTerminationHandle),
-                () -> assertTrue(firstTerminationHandle.awaitTermination(FXTestSupport.DEFAULT_TIMEOUT_SECONDS,
+                () -> assertSame(firstShutdownHandle, secondShutdownHandle),
+                () -> assertTrue(firstShutdownHandle.awaitTermination(FXTestSupport.DEFAULT_TIMEOUT_SECONDS,
                         TimeUnit.SECONDS))
         );
     }
@@ -324,19 +318,19 @@ final class MainViewModelTest {
     void testShutdownSimulationKeepsShuttingDownWhenRunningBatchCompletes() throws InterruptedException {
         Fixture fixture = FXTestSupport.supplyAndWaitNonNull(MainViewModelTest::createFixture);
         List<SimulationState> states = new ArrayList<>();
-        AtomicReference<SimulationTerminationHandle> terminationHandle = new AtomicReference<>();
+        AtomicReference<SimulationShutdownHandle> shutdownHandle = new AtomicReference<>();
         CountDownLatch shutdownRequested = new CountDownLatch(1);
 
         FXTestSupport.runAndWait(() -> {
             recordStates(fixture, states);
             startBatchAndRunOnFirstBatchStep(fixture, () -> {
-                terminationHandle.set(fixture.mainViewModel().shutdownSimulation());
+                shutdownHandle.set(fixture.mainViewModel().shutdownSimulation());
                 shutdownRequested.countDown();
             });
         });
 
         assertTrue(shutdownRequested.await(FXTestSupport.DEFAULT_TIMEOUT_SECONDS, TimeUnit.SECONDS));
-        assertTrue(terminationHandle.get().awaitTermination(FXTestSupport.DEFAULT_TIMEOUT_SECONDS, TimeUnit.SECONDS));
+        assertTrue(shutdownHandle.get().awaitTermination(FXTestSupport.DEFAULT_TIMEOUT_SECONDS, TimeUnit.SECONDS));
         FXTestSupport.runAndWait(() -> assertEquals(
                 List.of(SimulationState.RUNNING_BATCH, SimulationState.SHUTTING_DOWN),
                 statesFrom(states, SimulationState.RUNNING_BATCH)));
@@ -387,7 +381,7 @@ final class MainViewModelTest {
         FXTestSupport.runAndWait(() -> {
             recordStates(fixture, states);
             fixture.controlViewModel().startModeProperty().setValue(SimulationStartMode.START_IMMEDIATELY);
-            fixture.controlViewModel().simulationModeProperty().setValue(SimulationMode.TIMED);
+            fixture.controlViewModel().simulationExecutionModeProperty().setValue(SimulationExecutionMode.TIMED);
             fixture.controlViewModel().stepDurationProperty().setValue(50);
             fixture.mainViewModel().setSimulationStepListener(event -> {
                 events.add(event);
@@ -473,7 +467,7 @@ final class MainViewModelTest {
 
         FXTestSupport.runAndWait(() -> {
             fixture.controlViewModel().startModeProperty().setValue(SimulationStartMode.START_IMMEDIATELY);
-            fixture.controlViewModel().simulationModeProperty().setValue(SimulationMode.TIMED);
+            fixture.controlViewModel().simulationExecutionModeProperty().setValue(SimulationExecutionMode.TIMED);
             fixture.controlViewModel().stepDurationProperty().setValue(2_000);
             fixture.mainViewModel().setSimulationInitializedListener(initializationCompleted::countDown);
             fixture.controlViewModel().requestActionButton();
@@ -481,7 +475,8 @@ final class MainViewModelTest {
         assertTrue(constructionStarted.await(FXTestSupport.DEFAULT_TIMEOUT_SECONDS, TimeUnit.SECONDS));
 
         FXTestSupport.runAndWait(() -> {
-            fixture.controlViewModel().simulationModeProperty().setValue(SimulationMode.BATCH_CONTINUOUS);
+            fixture.controlViewModel().simulationExecutionModeProperty()
+                    .setValue(SimulationExecutionMode.BATCH_CONTINUOUS);
             fixture.controlViewModel().stepDurationProperty().setValue(50);
         });
         releaseConstruction.countDown();
@@ -509,7 +504,7 @@ final class MainViewModelTest {
         FXTestSupport.runAndWait(() -> {
             fixture.configViewModel().alivePercentProperty().setValue(0.0d);
             fixture.controlViewModel().startModeProperty().setValue(SimulationStartMode.START_IMMEDIATELY);
-            fixture.controlViewModel().simulationModeProperty().setValue(SimulationMode.BATCH_SINGLE);
+            fixture.controlViewModel().simulationExecutionModeProperty().setValue(SimulationExecutionMode.BATCH_SINGLE);
             fixture.controlViewModel().stepCountProperty().setValue(4);
             fixture.controlViewModel().terminationCheckModeProperty()
                     .setValue(SimulationTerminationCheckMode.UNCHECKED);
@@ -523,7 +518,8 @@ final class MainViewModelTest {
         assertTrue(constructionStarted.await(FXTestSupport.DEFAULT_TIMEOUT_SECONDS, TimeUnit.SECONDS));
 
         FXTestSupport.runAndWait(() -> {
-            fixture.controlViewModel().simulationModeProperty().setValue(SimulationMode.BATCH_CONTINUOUS);
+            fixture.controlViewModel().simulationExecutionModeProperty()
+                    .setValue(SimulationExecutionMode.BATCH_CONTINUOUS);
             fixture.controlViewModel().stepCountProperty().setValue(1);
             fixture.controlViewModel().terminationCheckModeProperty().setValue(SimulationTerminationCheckMode.CHECKED);
         });
@@ -635,7 +631,7 @@ final class MainViewModelTest {
 
         FXTestSupport.runAndWait(() -> {
             fixture.controlViewModel().startModeProperty().setValue(SimulationStartMode.START_IMMEDIATELY);
-            fixture.controlViewModel().simulationModeProperty().setValue(SimulationMode.TIMED);
+            fixture.controlViewModel().simulationExecutionModeProperty().setValue(SimulationExecutionMode.TIMED);
             fixture.controlViewModel().stepDurationProperty().setValue(50);
             fixture.mainViewModel().setSimulationStepListener(events::add);
         });

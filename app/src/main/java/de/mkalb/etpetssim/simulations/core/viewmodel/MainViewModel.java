@@ -6,16 +6,13 @@ import de.mkalb.etpetssim.engine.GridStructure;
 import de.mkalb.etpetssim.engine.model.GridCellView;
 import de.mkalb.etpetssim.engine.model.GridModel;
 import de.mkalb.etpetssim.engine.model.entity.GridEntity;
-import de.mkalb.etpetssim.simulations.core.SimulationTerminationHandle;
+import de.mkalb.etpetssim.simulations.core.SimulationShutdownHandle;
 import de.mkalb.etpetssim.simulations.core.model.AbstractSimulationManager;
 import de.mkalb.etpetssim.simulations.core.model.SimulationConfig;
 import de.mkalb.etpetssim.simulations.core.model.SimulationInitializationCanceledException;
 import de.mkalb.etpetssim.simulations.core.model.SimulationInitializationCancellation;
 import de.mkalb.etpetssim.simulations.core.model.SimulationStatistics;
 import de.mkalb.etpetssim.simulations.core.model.SimulationUserAction;
-import de.mkalb.etpetssim.simulations.core.shared.SimulationNotificationType;
-import de.mkalb.etpetssim.simulations.core.shared.SimulationState;
-import de.mkalb.etpetssim.simulations.core.shared.SimulationStepEvent;
 import de.mkalb.etpetssim.simulations.core.shared.SimulationUserActionContext;
 import de.mkalb.etpetssim.ui.SimulationTimer;
 import javafx.application.Platform;
@@ -92,7 +89,7 @@ public final class MainViewModel<
     private volatile @Nullable Thread batchThread;
     private long lifecycleGeneration;
     private boolean disposed;
-    private @Nullable SimulationTerminationHandle terminationHandle;
+    private @Nullable SimulationShutdownHandle shutdownHandle;
     private long timeoutExecuteNanos = Long.MAX_VALUE;
     private long timeoutViewMillis = Long.MAX_VALUE;
     private long throttleDrawMillis = Long.MAX_VALUE;
@@ -302,11 +299,11 @@ public final class MainViewModel<
      *
      * <p>This operation is idempotent and must not wait for background work to terminate.
      *
-     * @return termination handle for application-exit bookkeeping
+     * @return shutdown handle for application-exit bookkeeping
      */
-    public SimulationTerminationHandle shutdownSimulation() {
+    public SimulationShutdownHandle shutdownSimulation() {
         if (disposed) {
-            return Objects.requireNonNull(terminationHandle);
+            return Objects.requireNonNull(shutdownHandle);
         }
         disposed = true;
         AppLogger.infof("%s: Shutting down simulation: state=%s", LOG_COMPONENT, getSimulationState());
@@ -327,7 +324,7 @@ public final class MainViewModel<
         shutdownLifecycleExecutor();
         simulationManager = null;
         observationViewModel.resetStatistics();
-        terminationHandle = new ExecutorSimulationTerminationHandle(lifecycleExecutor);
+        shutdownHandle = new ExecutorShutdownHandle(lifecycleExecutor);
         Runnable resetListener = simulationResetListener;
         simulationInitializedListener = NO_OP_SIMULATION_INITIALIZED_LISTENER;
         simulationStepListener = NO_OP_SIMULATION_STEP_LISTENER;
@@ -337,7 +334,7 @@ public final class MainViewModel<
         } catch (RuntimeException e) {
             AppLogger.error(e, LOG_COMPONENT + ": Failed to reset the simulation view during shutdown");
         }
-        return terminationHandle;
+        return shutdownHandle;
     }
 
     /**
@@ -981,14 +978,14 @@ public final class MainViewModel<
     }
 
     /**
-     * Termination handle for the lifecycle executor.
+     * Shutdown handle for the lifecycle executor.
      *
      * <p>The ViewModel shuts the executor down; this handle only waits for its termination or forces it.
      *
      * @param executor the lifecycle executor
      */
-    private record ExecutorSimulationTerminationHandle(ExecutorService executor)
-            implements SimulationTerminationHandle {
+    private record ExecutorShutdownHandle(ExecutorService executor)
+            implements SimulationShutdownHandle {
 
         @Override
         public boolean awaitTermination(long timeout, TimeUnit unit) throws InterruptedException {

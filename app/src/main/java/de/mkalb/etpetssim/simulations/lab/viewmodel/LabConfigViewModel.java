@@ -5,8 +5,8 @@ import de.mkalb.etpetssim.engine.GridSize;
 import de.mkalb.etpetssim.engine.GridStructure;
 import de.mkalb.etpetssim.engine.GridTopology;
 import de.mkalb.etpetssim.engine.neighborhood.NeighborhoodMode;
-import de.mkalb.etpetssim.simulations.core.shared.SimulationState;
 import de.mkalb.etpetssim.simulations.core.viewmodel.AbstractConfigViewModel;
+import de.mkalb.etpetssim.simulations.core.viewmodel.SimulationState;
 import de.mkalb.etpetssim.simulations.lab.model.LabConfig;
 import de.mkalb.etpetssim.simulations.lab.shared.LabColorMode;
 import de.mkalb.etpetssim.ui.InputChoiceProperty;
@@ -46,7 +46,7 @@ public final class LabConfigViewModel extends AbstractConfigViewModel<LabConfig>
 
     private static final String LAB_CONFIG_VALIDATION_GRID_STRUCTURE = "lab.config.validation.gridstructure";
 
-    private static final CommonConfigSettings COMMON_SETTINGS = new CommonConfigSettings(
+    private static final CommonConfigConstraints COMMON_CONSTRAINTS = new CommonConfigConstraints(
             CELL_SHAPE_DEFAULT,
             CELL_SHAPE_VALUES,
             GRID_EDGE_BEHAVIOR_DEFAULT,
@@ -85,7 +85,7 @@ public final class LabConfigViewModel extends AbstractConfigViewModel<LabConfig>
             e -> AppLocalization.getText(e.resourceKey()));
 
     public LabConfigViewModel(ReadOnlyObjectProperty<SimulationState> simulationState) {
-        super(simulationState, COMMON_SETTINGS);
+        super(simulationState, COMMON_CONSTRAINTS);
         registerConfigValidationRule(
                 Bindings.createBooleanBinding(
                         () -> !GridStructure.isValid(

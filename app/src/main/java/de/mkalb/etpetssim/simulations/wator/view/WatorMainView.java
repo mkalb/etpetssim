@@ -6,13 +6,13 @@ import de.mkalb.etpetssim.engine.model.WritableGridModel;
 import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptor;
 import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorRegistry;
 import de.mkalb.etpetssim.simulations.core.shared.CellDisplayMode;
-import de.mkalb.etpetssim.simulations.core.shared.SimulationUserActionScope;
 import de.mkalb.etpetssim.simulations.core.view.AbstractMainView;
 import de.mkalb.etpetssim.simulations.core.view.CanvasPainters;
 import de.mkalb.etpetssim.simulations.core.view.CellDrawer;
 import de.mkalb.etpetssim.simulations.core.view.ControlView;
 import de.mkalb.etpetssim.simulations.core.viewmodel.MainViewModel;
 import de.mkalb.etpetssim.simulations.core.viewmodel.SimulationUserActionDescriptor;
+import de.mkalb.etpetssim.simulations.core.viewmodel.SimulationUserActionScope;
 import de.mkalb.etpetssim.simulations.wator.model.WatorConfig;
 import de.mkalb.etpetssim.simulations.wator.model.WatorSimulationManager;
 import de.mkalb.etpetssim.simulations.wator.model.WatorStatistics;
@@ -191,19 +191,19 @@ public final class WatorMainView
                 new SimulationUserActionDescriptor<>(
                         WATOR_TOOL_ID_ADD_FISH,
                         WatorUserActionContext.ADD_FISH,
-                        SimulationUserActionScope.CELL_SELECTED,
+                        SimulationUserActionScope.SELECTED_CELL,
                         WATOR_TOOLBAR_ADD_FISH,
                         WATOR_TOOLBAR_ADD_FISH_TOOLTIP),
                 new SimulationUserActionDescriptor<>(
                         WATOR_TOOL_ID_ADD_SHARK,
                         WatorUserActionContext.ADD_SHARK,
-                        SimulationUserActionScope.CELL_SELECTED,
+                        SimulationUserActionScope.SELECTED_CELL,
                         WATOR_TOOLBAR_ADD_SHARK,
                         WATOR_TOOLBAR_ADD_SHARK_TOOLTIP),
                 new SimulationUserActionDescriptor<>(
                         WATOR_TOOL_ID_REMOVE_CREATURE,
                         WatorUserActionContext.REMOVE_CREATURE,
-                        SimulationUserActionScope.CELL_SELECTED,
+                        SimulationUserActionScope.SELECTED_CELL,
                         WATOR_TOOLBAR_REMOVE_CREATURE,
                         WATOR_TOOLBAR_REMOVE_CREATURE_TOOLTIP));
     }

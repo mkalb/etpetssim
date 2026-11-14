@@ -46,20 +46,20 @@ final class SimulationFactoryTest {
         FXTestSupport.ensureStarted();
     }
 
-    private static SimulationInstance createInstance(SimulationType type) {
-        return FXTestSupport.supplyAndWaitNonNull(() -> SimulationFactory.createInstance(type));
+    private static SimulationScreen createScreen(SimulationType type) {
+        return FXTestSupport.supplyAndWaitNonNull(() -> SimulationFactory.createScreen(type));
     }
 
     @Test
-    void testCreateInstance() {
+    void testCreateScreen() {
         assertEquals(EnumSet.allOf(SimulationType.class), EXPECTED_MAIN_VIEW_TYPES.keySet());
 
         for (SimulationType type : SimulationType.values()) {
-            SimulationInstance instance = createInstance(type);
+            SimulationScreen screen = createScreen(type);
             assertAll(
                     type.name(),
-                    () -> assertEquals(type, instance.simulationType()),
-                    () -> assertInstanceOf(EXPECTED_MAIN_VIEW_TYPES.get(type), instance.simulationMainView())
+                    () -> assertEquals(type, screen.simulationType()),
+                    () -> assertInstanceOf(EXPECTED_MAIN_VIEW_TYPES.get(type), screen.simulationMainView())
             );
         }
     }

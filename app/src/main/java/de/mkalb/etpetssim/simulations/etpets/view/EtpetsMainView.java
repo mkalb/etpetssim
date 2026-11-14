@@ -4,13 +4,13 @@ import de.mkalb.etpetssim.core.AppLocalization;
 import de.mkalb.etpetssim.core.AppLogger;
 import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptor;
 import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorRegistry;
-import de.mkalb.etpetssim.simulations.core.shared.SimulationUserActionScope;
 import de.mkalb.etpetssim.simulations.core.view.AbstractMainView;
 import de.mkalb.etpetssim.simulations.core.view.CanvasPainters;
 import de.mkalb.etpetssim.simulations.core.view.CellDrawer;
 import de.mkalb.etpetssim.simulations.core.view.ControlView;
 import de.mkalb.etpetssim.simulations.core.viewmodel.MainViewModel;
 import de.mkalb.etpetssim.simulations.core.viewmodel.SimulationUserActionDescriptor;
+import de.mkalb.etpetssim.simulations.core.viewmodel.SimulationUserActionScope;
 import de.mkalb.etpetssim.simulations.etpets.model.EtpetsBalance;
 import de.mkalb.etpetssim.simulations.etpets.model.EtpetsCell;
 import de.mkalb.etpetssim.simulations.etpets.model.EtpetsConfig;
@@ -286,7 +286,7 @@ public final class EtpetsMainView extends AbstractMainView<
         return List.of(
                 new SimulationUserActionDescriptor<>(
                         ETPETS_TOOL_ID_SET_TERRAIN,
-                        SimulationUserActionScope.CELL_SELECTED,
+                        SimulationUserActionScope.SELECTED_CELL,
                         ETPETS_TOOLBAR_SET_TERRAIN,
                         ETPETS_TOOLBAR_SET_TERRAIN_TOOLTIP,
                         () -> Optional.of(editToolBarViewModel.getSelectedTerrainChoice())
@@ -294,7 +294,7 @@ public final class EtpetsMainView extends AbstractMainView<
                                 .map(Function.identity())),
                 new SimulationUserActionDescriptor<>(
                         ETPETS_TOOL_ID_SET_RESOURCE,
-                        SimulationUserActionScope.CELL_SELECTED,
+                        SimulationUserActionScope.SELECTED_CELL,
                         ETPETS_TOOLBAR_SET_RESOURCE,
                         ETPETS_TOOLBAR_SET_RESOURCE_TOOLTIP,
                         () -> Optional.of(editToolBarViewModel.getSelectedResourceChoice())

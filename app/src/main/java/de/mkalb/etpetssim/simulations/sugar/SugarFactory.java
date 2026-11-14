@@ -1,12 +1,12 @@
 package de.mkalb.etpetssim.simulations.sugar;
 
 import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorRegistry;
-import de.mkalb.etpetssim.simulations.core.shared.SimulationState;
 import de.mkalb.etpetssim.simulations.core.view.ControlView;
 import de.mkalb.etpetssim.simulations.core.view.SimulationMainView;
 import de.mkalb.etpetssim.simulations.core.viewmodel.ControlViewModel;
 import de.mkalb.etpetssim.simulations.core.viewmodel.MainViewModel;
 import de.mkalb.etpetssim.simulations.core.viewmodel.ObservationViewModel;
+import de.mkalb.etpetssim.simulations.core.viewmodel.SimulationState;
 import de.mkalb.etpetssim.simulations.sugar.model.SugarCell;
 import de.mkalb.etpetssim.simulations.sugar.model.SugarSimulationManager;
 import de.mkalb.etpetssim.simulations.sugar.model.SugarStatistics;

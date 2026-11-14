@@ -1,7 +1,6 @@
 package de.mkalb.etpetssim.simulations.core.viewmodel;
 
 import de.mkalb.etpetssim.simulations.core.shared.SimulationUserActionContext;
-import de.mkalb.etpetssim.simulations.core.shared.SimulationUserActionScope;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -41,7 +40,7 @@ final class EditToolBarViewModel<CTX extends SimulationUserActionContext> {
     Optional<SimulationUserActionDescriptor<CTX>> findSelectedCellActionDescriptor(
             List<SimulationUserActionDescriptor<CTX>> descriptors) {
         return findSelectedUserActionDescriptor(descriptors)
-                .filter(descriptor -> descriptor.scope() == SimulationUserActionScope.CELL_SELECTED);
+                .filter(descriptor -> descriptor.scope() == SimulationUserActionScope.SELECTED_CELL);
     }
 
     private Optional<SimulationUserActionDescriptor<CTX>> findSelectedUserActionDescriptor(

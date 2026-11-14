@@ -1,9 +1,5 @@
 package de.mkalb.etpetssim.simulations.core.viewmodel;
 
-import de.mkalb.etpetssim.simulations.core.shared.SimulationMode;
-import de.mkalb.etpetssim.simulations.core.shared.SimulationStartMode;
-import de.mkalb.etpetssim.simulations.core.shared.SimulationState;
-import de.mkalb.etpetssim.simulations.core.shared.SimulationTerminationCheckMode;
 import de.mkalb.etpetssim.testsupport.FXTestSupport;
 import javafx.beans.property.SimpleObjectProperty;
 import org.junit.jupiter.api.BeforeAll;
@@ -33,7 +29,8 @@ final class ControlViewModelTest {
             var viewModel = new ControlViewModel(new SimpleObjectProperty<>(SimulationState.READY));
 
             assertAll(
-                    () -> assertEquals(SimulationMode.TIMED, viewModel.simulationModeProperty().getValue()),
+                    () -> assertEquals(SimulationExecutionMode.TIMED,
+                            viewModel.simulationExecutionModeProperty().getValue()),
                     () -> assertEquals(700.0d, viewModel.stepDurationProperty().getValue()),
                     () -> assertEquals(100, viewModel.stepCountProperty().getValue()),
                     () -> assertEquals(SimulationStartMode.START_IMMEDIATELY, viewModel.startModeProperty().getValue()),
@@ -132,9 +129,10 @@ final class ControlViewModelTest {
         FXTestSupport.runAndWait(() -> {
             var viewModel = new ControlViewModel(new SimpleObjectProperty<>(SimulationState.READY));
 
-            for (SimulationMode simulationMode : SimulationMode.values()) {
-                viewModel.simulationModeProperty().setValue(simulationMode);
-                assertEquals(simulationMode == SimulationMode.TIMED, viewModel.isModeTimed(), simulationMode.name());
+            for (SimulationExecutionMode executionMode : SimulationExecutionMode.values()) {
+                viewModel.simulationExecutionModeProperty().setValue(executionMode);
+                assertEquals(executionMode == SimulationExecutionMode.TIMED, viewModel.isModeTimed(),
+                        executionMode.name());
             }
         });
     }
@@ -144,9 +142,10 @@ final class ControlViewModelTest {
         FXTestSupport.runAndWait(() -> {
             var viewModel = new ControlViewModel(new SimpleObjectProperty<>(SimulationState.READY));
 
-            for (SimulationMode simulationMode : SimulationMode.values()) {
-                viewModel.simulationModeProperty().setValue(simulationMode);
-                assertEquals(simulationMode != SimulationMode.TIMED, viewModel.isModeBatch(), simulationMode.name());
+            for (SimulationExecutionMode executionMode : SimulationExecutionMode.values()) {
+                viewModel.simulationExecutionModeProperty().setValue(executionMode);
+                assertEquals(executionMode != SimulationExecutionMode.TIMED, viewModel.isModeBatch(),
+                        executionMode.name());
             }
         });
     }
@@ -156,10 +155,10 @@ final class ControlViewModelTest {
         FXTestSupport.runAndWait(() -> {
             var viewModel = new ControlViewModel(new SimpleObjectProperty<>(SimulationState.READY));
 
-            for (SimulationMode simulationMode : SimulationMode.values()) {
-                viewModel.simulationModeProperty().setValue(simulationMode);
-                assertEquals(simulationMode == SimulationMode.BATCH_SINGLE, viewModel.isModeBatchSingle(),
-                        simulationMode.name());
+            for (SimulationExecutionMode executionMode : SimulationExecutionMode.values()) {
+                viewModel.simulationExecutionModeProperty().setValue(executionMode);
+                assertEquals(executionMode == SimulationExecutionMode.BATCH_SINGLE, viewModel.isModeBatchSingle(),
+                        executionMode.name());
             }
         });
     }
@@ -169,10 +168,11 @@ final class ControlViewModelTest {
         FXTestSupport.runAndWait(() -> {
             var viewModel = new ControlViewModel(new SimpleObjectProperty<>(SimulationState.READY));
 
-            for (SimulationMode simulationMode : SimulationMode.values()) {
-                viewModel.simulationModeProperty().setValue(simulationMode);
-                assertEquals(simulationMode == SimulationMode.BATCH_CONTINUOUS, viewModel.isModeBatchContinuous(),
-                        simulationMode.name());
+            for (SimulationExecutionMode executionMode : SimulationExecutionMode.values()) {
+                viewModel.simulationExecutionModeProperty().setValue(executionMode);
+                assertEquals(executionMode == SimulationExecutionMode.BATCH_CONTINUOUS,
+                        viewModel.isModeBatchContinuous(),
+                        executionMode.name());
             }
         });
     }
