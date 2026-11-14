@@ -42,9 +42,8 @@ Always use this short package name, never a CLI alias or hyphenated variant
 (e.g. `etpets`, not `et-pets`). Do not infer the package name from the enum
 constant name or display title.
 
-Exclusions: `STARTSCREEN` (start screen) and `SIMULATION_LAB` (`lab`, a
-development showcase) are **not** documentable. If asked for those, say so and
-stop.
+Exclusion: `SIMULATION_LAB` (`lab`, a development showcase) is **not**
+documentable. If asked for it, say so and stop.
 
 ## 2. Gather the facts
 

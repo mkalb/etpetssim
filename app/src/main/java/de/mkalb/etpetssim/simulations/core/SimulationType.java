@@ -3,6 +3,7 @@ package de.mkalb.etpetssim.simulations.core;
 import de.mkalb.etpetssim.core.AppLocalization;
 import de.mkalb.etpetssim.core.AppLogger;
 import de.mkalb.etpetssim.core.AppResources;
+import org.jspecify.annotations.Nullable;
 
 import java.net.URI;
 import java.util.Arrays;
@@ -12,30 +13,18 @@ import java.util.Optional;
 /**
  * Available simulation types.
  *
- * <p>Each constant describes start-screen visibility, localization keys, an optional CSS resource, and accepted
- * command-line aliases.
+ * <p>Each constant describes its category, localization keys, an optional CSS resource, and accepted command-line
+ * aliases. A type appears on the start screen if and only if it has a category.
  *
- * <p>The declaration order defines the order of the simulations on the start screen.
+ * <p>The declaration order defines the order of the simulations within a category on the start screen.
  */
 public enum SimulationType {
-
-    /**
-     * Application start screen used as the default entry view.
-     */
-    STARTSCREEN(
-            false,
-            "simulation.start.title",
-            "simulation.start.subtitle",
-            "simulation.start.url",
-            "",
-            List.of("startscreen", "start")
-    ),
 
     /**
      * Custom extraterrestrial pets simulation.
      */
     ET_PETS(
-            true,
+            SimulationCategory.AGENT_BASED_MODEL,
             "simulation.etpets.title",
             "simulation.etpets.subtitle",
             "simulation.etpets.url",
@@ -47,7 +36,7 @@ public enum SimulationType {
      * <a href="https://en.wikipedia.org/wiki/Wa-Tor">Wa-Tor</a> predator-prey simulation.
      */
     WATOR(
-            true,
+            SimulationCategory.AGENT_BASED_MODEL,
             "simulation.wator.title",
             "simulation.wator.subtitle",
             "simulation.wator.url",
@@ -59,7 +48,7 @@ public enum SimulationType {
      * <a href="https://en.wikipedia.org/wiki/Sugarscape">Sugarscape</a>.
      */
     SUGARSCAPE(
-            true,
+            SimulationCategory.AGENT_BASED_MODEL,
             "simulation.sugar.title",
             "simulation.sugar.subtitle",
             "simulation.sugar.url",
@@ -72,7 +61,7 @@ public enum SimulationType {
      */
     @SuppressWarnings("SpellCheckingInspection")
     CONWAYS_LIFE(
-            true,
+            SimulationCategory.CELLULAR_AUTOMATON,
             "simulation.conway.title",
             "simulation.conway.subtitle",
             "simulation.conway.url",
@@ -85,7 +74,7 @@ public enum SimulationType {
      */
     @SuppressWarnings("SpellCheckingInspection")
     LANGTONS_ANT(
-            true,
+            SimulationCategory.CELLULAR_AUTOMATON,
             "simulation.langton.title",
             "simulation.langton.subtitle",
             "simulation.langton.url",
@@ -97,7 +86,7 @@ public enum SimulationType {
      * <a href="https://en.wikipedia.org/wiki/Forest-fire_model">Forest-fire model</a>.
      */
     FOREST_FIRE(
-            true,
+            SimulationCategory.CELLULAR_AUTOMATON,
             "simulation.forest.title",
             "simulation.forest.subtitle",
             "simulation.forest.url",
@@ -109,7 +98,7 @@ public enum SimulationType {
      * <a href="https://en.wikipedia.org/wiki/Snake_(video_game_genre)">Snake</a> simulation.
      */
     SNAKE(
-            true,
+            SimulationCategory.TOY_MODEL,
             "simulation.snake.title",
             "simulation.snake.subtitle",
             "simulation.snake.url",
@@ -121,7 +110,7 @@ public enum SimulationType {
      * Custom rebounding-entities simulation.
      */
     REBOUNDING_ENTITIES(
-            true,
+            SimulationCategory.TOY_MODEL,
             "simulation.rebounding.title",
             "simulation.rebounding.subtitle",
             "simulation.rebounding.url",
@@ -133,10 +122,10 @@ public enum SimulationType {
     /**
      * Development-oriented simulation laboratory.
      *
-     * <p>Hidden from the start screen; it is started only with a command-line alias.
+     * <p>Hidden from the start screen, because it has no category; it is started only with a command-line alias.
      */
     SIMULATION_LAB(
-            false,
+            null,
             "simulation.lab.title",
             "simulation.lab.subtitle",
             "simulation.lab.url",
@@ -144,20 +133,20 @@ public enum SimulationType {
             List.of("simulationlab", "lab")
     );
 
-    private final boolean showOnStartScreen;
+    private final @Nullable SimulationCategory category;
     private final String titleKey;
     private final String subtitleKey;
     private final String urlKey;
     private final String cssPath;
     private final List<String> cliArguments;
 
-    SimulationType(boolean showOnStartScreen,
+    SimulationType(@Nullable SimulationCategory category,
                    String titleKey,
                    String subtitleKey,
                    String urlKey,
                    String cssPath,
                    List<String> cliArguments) {
-        this.showOnStartScreen = showOnStartScreen;
+        this.category = category;
         this.titleKey = titleKey;
         this.subtitleKey = subtitleKey;
         this.urlKey = urlKey;
@@ -178,16 +167,12 @@ public enum SimulationType {
     }
 
     /**
-     * Returns the resource key of the label for this enum type as a whole.
+     * Returns the category of the simulation, which groups it on the start screen.
      *
-     * @return the resource key of the type label
+     * @return an {@link Optional} containing the category, or empty if the type is hidden from the start screen
      */
-    public static String labelResourceKey() {
-        return "simulationtype.label";
-    }
-
-    public boolean isShownOnStartScreen() {
-        return showOnStartScreen;
+    public Optional<SimulationCategory> category() {
+        return Optional.ofNullable(category);
     }
 
     /**

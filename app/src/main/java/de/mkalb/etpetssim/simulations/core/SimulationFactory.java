@@ -7,12 +7,8 @@ import de.mkalb.etpetssim.simulations.lab.LabFactory;
 import de.mkalb.etpetssim.simulations.langton.LangtonFactory;
 import de.mkalb.etpetssim.simulations.rebounding.ReboundingFactory;
 import de.mkalb.etpetssim.simulations.snake.SnakeFactory;
-import de.mkalb.etpetssim.simulations.start.StartFactory;
 import de.mkalb.etpetssim.simulations.sugar.SugarFactory;
 import de.mkalb.etpetssim.simulations.wator.WatorFactory;
-import javafx.stage.Stage;
-
-import java.util.function.BiConsumer;
 
 /**
  * Factory for creating simulation main views and wrapping them in {@link SimulationInstance} objects.
@@ -23,18 +19,13 @@ public final class SimulationFactory {
     }
 
     /**
-     * Creates a new instance of a simulation based on the provided type, stage, and stage updater.
+     * Creates a new instance of a simulation of the provided type.
      *
      * @param simulationType the type of simulation to create
-     * @param stage          the primary stage where the simulation will be displayed
-     * @param stageUpdater   a callback to switch the stage content to a different simulation type
      * @return a new {@link SimulationInstance} for the specified type
      */
-    public static SimulationInstance createInstance(SimulationType simulationType,
-                                                    Stage stage,
-                                                    BiConsumer<Stage, SimulationType> stageUpdater) {
+    public static SimulationInstance createInstance(SimulationType simulationType) {
         return SimulationInstance.of(simulationType, switch (simulationType) {
-            case STARTSCREEN -> StartFactory.createMainView(stage, stageUpdater);
             case ET_PETS -> EtpetsFactory.createMainView();
             case WATOR -> WatorFactory.createMainView();
             case CONWAYS_LIFE -> ConwayFactory.createMainView();
