@@ -3,6 +3,7 @@ package de.mkalb.etpetssim.simulations.core.model;
 import de.mkalb.etpetssim.core.AppLogger;
 import de.mkalb.etpetssim.engine.GridStructure;
 import de.mkalb.etpetssim.engine.executor.DefaultSimulationExecutor;
+import de.mkalb.etpetssim.engine.executor.StepTimingStatistics;
 import de.mkalb.etpetssim.engine.executor.SynchronousStepRunner;
 import de.mkalb.etpetssim.engine.executor.TimedSimulationExecutor;
 import de.mkalb.etpetssim.engine.model.SparseGridModel;
@@ -19,11 +20,17 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 @Execution(ExecutionMode.SAME_THREAD)
@@ -53,6 +60,14 @@ final class AbstractSimulationManagerTest {
 
     private static TestSimulationManager createManager() {
         return new TestSimulationManager(createConfig(), ConwayStatistics.metrics());
+    }
+
+    @Test
+    void testConfig() {
+        ConwayConfig config = createConfig();
+        TestSimulationManager manager = new TestSimulationManager(config, ConwayStatistics.metrics());
+
+        assertSame(config, manager.config());
     }
 
     @Test
@@ -100,6 +115,125 @@ final class AbstractSimulationManagerTest {
                 () -> assertFalse(result.isFinished()),
                 () -> assertFalse(result.isInterrupted()),
                 () -> assertEquals(historyBefore, manager.statisticsHistory())
+        );
+    }
+
+    @Test
+    void testExecuteStepsStopsWhenFinishedWithTerminationCheck() {
+        TestSimulationManager manager = createManager();
+        AtomicInteger callbackCount = new AtomicInteger();
+
+        var result = manager.executeSteps(5, true, callbackCount::incrementAndGet);
+
+        assertAll(
+                () -> assertEquals(1, result.stepCount()),
+                () -> assertEquals(1, result.executedSteps()),
+                () -> assertTrue(result.isFinished()),
+                () -> assertFalse(result.isInterrupted()),
+                () -> assertEquals(1, callbackCount.get()),
+                () -> assertEquals(2, manager.statisticsHistory().size())
+        );
+    }
+
+    @Test
+    void testExecuteStepsRunsCallbackAfterRecordingEachSample() {
+        TestSimulationManager manager = createManager();
+        List<Integer> sampledStepCounts = new ArrayList<>();
+
+        manager.executeSteps(3, false,
+                () -> sampledStepCounts.add(manager.statisticsHistory().getLast().stepCount()));
+
+        assertEquals(List.of(1, 2, 3), sampledStepCounts);
+    }
+
+    @Test
+    void testIsFinished() {
+        TestSimulationManager manager = createManager();
+
+        // The grid of the test manager has no alive cell, so the termination condition of Conway is met.
+        assertTrue(manager.isFinished());
+    }
+
+    @Test
+    void testIsExecutorFinished() {
+        TestSimulationManager manager = createManager();
+
+        manager.executeStep();
+
+        assertFalse(manager.isExecutorFinished());
+    }
+
+    @Test
+    void testStepCount() {
+        TestSimulationManager manager = createManager();
+        int initialStepCount = manager.stepCount();
+
+        manager.executeStep();
+        manager.executeStep();
+
+        assertAll(
+                () -> assertEquals(0, initialStepCount),
+                () -> assertEquals(2, manager.stepCount())
+        );
+    }
+
+    @Test
+    void testCurrentGridModel() {
+        TestSimulationManager manager = createManager();
+
+        manager.executeStep();
+
+        assertAll(
+                () -> assertSame(manager.executor().currentGridModel(), manager.currentGridModel()),
+                () -> assertSame(manager.structure(), manager.currentGridModel().structure())
+        );
+    }
+
+    @SuppressWarnings("DataFlowIssue")
+    @Test
+    void testStatisticsHistory() {
+        TestSimulationManager manager = createManager();
+
+        var history = manager.statisticsHistory();
+
+        assertAll(
+                () -> assertEquals(1, history.size()),
+                () -> assertEquals(0, history.getFirst().stepCount()),
+                () -> assertEquals(Set.copyOf(ConwayStatistics.metrics().stream().map(StatisticsMetric::key).toList()),
+                        history.getFirst().values().keySet()),
+                () -> assertThrows(UnsupportedOperationException.class, () -> history.add(history.getFirst()))
+        );
+    }
+
+    @Test
+    void testStatisticsExtrema() {
+        TestSimulationManager manager = createManager();
+
+        manager.executeStep();
+        var extrema = manager.statisticsExtrema();
+
+        assertAll(
+                () -> assertEquals(Set.of(ConwayStatistics.KEY_ALIVE_CELLS, ConwayStatistics.KEY_DEAD_CELLS),
+                        extrema.minimumValues().keySet()),
+                () -> assertEquals(Set.of(ConwayStatistics.KEY_ALIVE_CELLS, ConwayStatistics.KEY_DEAD_CELLS,
+                        ConwayStatistics.KEY_CHANGED_CELLS), extrema.maximumValues().keySet()),
+                () -> assertEquals(new StatisticsExtremum(0.0d, 0),
+                        extrema.minimumValues().get(ConwayStatistics.KEY_ALIVE_CELLS))
+        );
+    }
+
+    @Test
+    void testStepTimingStatistics() {
+        TestSimulationManager manager = createManager();
+        var initialTimingStatistics = manager.stepTimingStatistics();
+
+        manager.executeStep();
+
+        assertAll(
+                () -> assertEquals(StepTimingStatistics.empty(), initialTimingStatistics),
+                () -> assertEquals(manager.executor().stepTimingStatistics(), manager.stepTimingStatistics()),
+                () -> assertEquals(manager.stepTimingStatistics(),
+                        manager.statisticsHistory().getLast().stepTimingStatistics())
         );
     }
 
