@@ -33,6 +33,8 @@ import org.junit.jupiter.api.parallel.ExecutionMode;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -40,6 +42,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -47,6 +50,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 final class AbstractObservationViewTest {
 
     private static final GridCoordinate SELECTED_COORDINATE = new GridCoordinate(3, 4);
+    private static final GridEntityDescriptorRegistry ENTITY_DESCRIPTOR_REGISTRY =
+            GridEntityDescriptorRegistry.of(ConwayEntity.values());
     private static final String KEY_NOT_FINITE = "notFinite";
     private static final int GRID_WIDTH = 40;
     private static final int GRID_HEIGHT = 30;
@@ -60,7 +65,7 @@ final class AbstractObservationViewTest {
     }
 
     private static TestObservationView createView() {
-        return new TestObservationView(new ObservationViewModel<>());
+        return new TestObservationView(new ObservationViewModel<>(), ENTITY_DESCRIPTOR_REGISTRY);
     }
 
     private static ConwayStatistics createStatistics(int stepCount) {
@@ -87,20 +92,15 @@ final class AbstractObservationViewTest {
         return assertInstanceOf(GridPane.class, section.getChildren().get(1));
     }
 
-    private static Label cell(VBox section, int column, int row) {
-        for (Node node : grid(section).getChildren()) {
-            Integer nodeColumn = GridPane.getColumnIndex(node);
-            Integer nodeRow = GridPane.getRowIndex(node);
-            if ((nodeColumn != null) && (nodeColumn == column) && (nodeRow != null) && (nodeRow == row)) {
-                return assertInstanceOf(Label.class, node);
-            }
-        }
-        throw new AssertionError("No label found at column=" + column + ", row=" + row);
+    private static Optional<Node> findCell(VBox section, int column, int row) {
+        return grid(section).getChildren().stream()
+                .filter(node -> Objects.equals(column, GridPane.getColumnIndex(node))
+                        && Objects.equals(row, GridPane.getRowIndex(node)))
+                .findFirst();
     }
 
-    private static boolean hasCell(VBox section, int column, int row) {
-        return grid(section).getChildren().stream()
-                .anyMatch(node -> (GridPane.getColumnIndex(node) == column) && (GridPane.getRowIndex(node) == row));
+    private static Label cell(VBox section, int column, int row) {
+        return assertInstanceOf(Label.class, findCell(section, column, row).orElseThrow());
     }
 
     @Test
@@ -229,7 +229,7 @@ final class AbstractObservationViewTest {
                     () -> assertFalse(visibleWithoutSelection),
                     () -> assertTrue(visibleWithSelection),
                     () -> assertEquals(SELECTED_COORDINATE.toDisplayString(), coordinateText),
-                    () -> assertEquals(view.entityDescriptorRegistry()
+                    () -> assertEquals(ENTITY_DESCRIPTOR_REGISTRY
                             .requireByDescriptorId(ConwayEntity.ALIVE.descriptorId()).shortName(), cellTypeText),
                     () -> assertFalse(section.isVisible()),
                     () -> assertEquals(unknown(), cell(section, 1, 0).getText()),
@@ -271,7 +271,7 @@ final class AbstractObservationViewTest {
             assertAll(
                     () -> assertEquals(nameText(SimulationLocalizationKeys.OBSERVATION_STEP),
                             cell(section, 0, 2).getText()),
-                    () -> assertEquals(extraLabel, cell(section, 1, 2)),
+                    () -> assertSame(extraLabel, cell(section, 1, 2)),
                     () -> assertTrue(section.isVisible()),
                     () -> assertEquals(SELECTED_COORDINATE.toDisplayString(), cell(section, 1, 0).getText())
             );
@@ -304,7 +304,7 @@ final class AbstractObservationViewTest {
                             cell(section, 0, 1).getText()),
                     () -> assertEquals(unknown(), cell(section, 1, 1).getText()),
                     () -> assertEquals(unknown(), cell(section, 2, 1).getText()),
-                    () -> assertFalse(hasCell(section, 2, 3), "changed cells track no minimum"),
+                    () -> assertTrue(findCell(section, 2, 3).isEmpty(), "changed cells track no minimum"),
                     () -> assertEquals(unknown(), cell(section, 3, 3).getText())
             );
         });
@@ -421,15 +421,9 @@ final class AbstractObservationViewTest {
     private static final class TestObservationView
             extends AbstractObservationView<ConwayEntity, GridCell<ConwayEntity>, ConwayStatistics> {
 
-        private static final GridEntityDescriptorRegistry REGISTRY =
-                GridEntityDescriptorRegistry.of(ConwayEntity.values());
-
-        TestObservationView(ObservationViewModel<ConwayEntity, GridCell<ConwayEntity>, ConwayStatistics> viewModel) {
-            super(viewModel, REGISTRY);
-        }
-
-        GridEntityDescriptorRegistry entityDescriptorRegistry() {
-            return REGISTRY;
+        TestObservationView(ObservationViewModel<ConwayEntity, GridCell<ConwayEntity>, ConwayStatistics> viewModel,
+                            GridEntityDescriptorRegistry entityDescriptorRegistry) {
+            super(viewModel, entityDescriptorRegistry);
         }
 
         @NonNull
