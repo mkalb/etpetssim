@@ -117,16 +117,15 @@ final class MainViewModelTest {
     }
 
     private static SimulationUserActionDescriptor<ConwayUserActionContext> createDescriptor(
-            String toolId, SimulationUserActionScope scope, Optional<ConwayUserActionContext> context) {
-        return new SimulationUserActionDescriptor<>(toolId, scope, "test.toolbar.tool", "test.toolbar.tool.tooltip",
-                () -> context);
+            String toolId, SimulationUserActionScope scope) {
+        return new SimulationUserActionDescriptor<>(toolId, ConwayUserActionContext.FixedAction.CLEAR_GRID, scope,
+                "test.toolbar.tool", "test.toolbar.tool.tooltip");
     }
 
     private static List<SimulationUserActionDescriptor<ConwayUserActionContext>> createDescriptors() {
-        Optional<ConwayUserActionContext> context = Optional.of(ConwayUserActionContext.FixedAction.CLEAR_GRID);
         return List.of(
-                createDescriptor(TOOL_ID_GLOBAL, SimulationUserActionScope.GLOBAL, context),
-                createDescriptor(TOOL_ID_CELL, SimulationUserActionScope.SELECTED_CELL, context));
+                createDescriptor(TOOL_ID_GLOBAL, SimulationUserActionScope.GLOBAL),
+                createDescriptor(TOOL_ID_CELL, SimulationUserActionScope.SELECTED_CELL));
     }
 
     private static Fixture createFixtureWithFailingStep(Runnable stepFailure) {
@@ -575,7 +574,7 @@ final class MainViewModelTest {
 
             assertAll(
                     () -> assertTrue(applied),
-                    () -> assertEquals(1, fixture.userAction().callCount()),
+                    () -> assertEquals(1, fixture.userAction().contexts().size()),
                     () -> assertEquals(List.of(), fixture.userAction().selectedCells()),
                     () -> assertNull(fixture.mainViewModel().selectedGridCellProperty().get())
             );
@@ -592,7 +591,7 @@ final class MainViewModelTest {
 
             assertAll(
                     () -> assertFalse(applied),
-                    () -> assertEquals(0, fixture.userAction().callCount())
+                    () -> assertEquals(0, fixture.userAction().contexts().size())
             );
             fixture.mainViewModel().shutdownSimulation();
         });
@@ -610,7 +609,7 @@ final class MainViewModelTest {
             assertAll(
                     () -> assertEquals(SimulationState.CANCELED, fixture.mainViewModel().getSimulationState()),
                     () -> assertFalse(applied),
-                    () -> assertEquals(0, fixture.userAction().callCount())
+                    () -> assertEquals(0, fixture.userAction().contexts().size())
             );
             fixture.mainViewModel().shutdownSimulation();
         });
@@ -619,8 +618,7 @@ final class MainViewModelTest {
     @Test
     void testApplyUserActionWithDescriptor() throws InterruptedException {
         Fixture fixture = createPausedFixture();
-        var descriptor = createDescriptor(TOOL_ID_GLOBAL, SimulationUserActionScope.GLOBAL,
-                Optional.of(ConwayUserActionContext.FixedAction.CLEAR_GRID));
+        var descriptor = createDescriptor(TOOL_ID_GLOBAL, SimulationUserActionScope.GLOBAL);
 
         FXTestSupport.runAndWait(() -> {
             boolean applied = fixture.mainViewModel().applyUserAction(descriptor);
@@ -637,14 +635,15 @@ final class MainViewModelTest {
     @Test
     void testApplyUserActionWithDescriptorReturnsFalseForEmptyContext() throws InterruptedException {
         Fixture fixture = createPausedFixture();
-        var descriptor = createDescriptor(TOOL_ID_GLOBAL, SimulationUserActionScope.GLOBAL, Optional.empty());
+        var descriptor = new SimulationUserActionDescriptor<ConwayUserActionContext>(TOOL_ID_GLOBAL,
+                SimulationUserActionScope.GLOBAL, "test.toolbar.tool", "test.toolbar.tool.tooltip", Optional::empty);
 
         FXTestSupport.runAndWait(() -> {
             boolean applied = fixture.mainViewModel().applyUserAction(descriptor);
 
             assertAll(
                     () -> assertFalse(applied),
-                    () -> assertEquals(0, fixture.userAction().callCount())
+                    () -> assertEquals(0, fixture.userAction().contexts().size())
             );
             fixture.mainViewModel().shutdownSimulation();
         });
@@ -663,7 +662,7 @@ final class MainViewModelTest {
 
             assertAll(
                     () -> assertTrue(applied),
-                    () -> assertEquals(1, fixture.userAction().callCount()),
+                    () -> assertEquals(1, fixture.userAction().contexts().size()),
                     () -> assertEquals(SELECTED_COORDINATE,
                             fixture.userAction().selectedCells().getFirst().coordinate())
             );
@@ -694,7 +693,7 @@ final class MainViewModelTest {
                     () -> assertFalse(appliedWithoutEditMode),
                     () -> assertFalse(appliedWithGlobalTool),
                     () -> assertFalse(appliedWithoutSelectedCell),
-                    () -> assertEquals(0, fixture.userAction().callCount())
+                    () -> assertEquals(0, fixture.userAction().contexts().size())
             );
             mainViewModel.shutdownSimulation();
         });
@@ -1153,7 +1152,6 @@ final class MainViewModelTest {
 
         private final List<ConwayUserActionContext> contexts = new ArrayList<>();
         private final List<GridCellView<ConwayEntity>> selectedCells = new ArrayList<>();
-        private int callCount;
 
         @Override
         public void apply(
@@ -1161,16 +1159,11 @@ final class MainViewModelTest {
                         ConwayStatistics> manager,
                 @NonNull ConwayUserActionContext context,
                 GridCellView<ConwayEntity> selectedCell) {
-            callCount++;
             contexts.add(context);
             if (selectedCell != null) {
                 selectedCells.add(selectedCell);
                 manager.currentGridModel().setEntity(selectedCell.coordinate(), ConwayEntity.ALIVE);
             }
-        }
-
-        int callCount() {
-            return callCount;
         }
 
         List<ConwayUserActionContext> contexts() {
