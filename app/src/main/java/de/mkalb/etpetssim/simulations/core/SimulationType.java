@@ -20,18 +20,6 @@ import java.util.Optional;
 public enum SimulationType {
 
     /**
-     * Application start screen used as the default entry view.
-     */
-    STARTSCREEN(
-            false,
-            "simulation.start.title",
-            "simulation.start.subtitle",
-            "simulation.start.url",
-            "",
-            List.of("startscreen", "start")
-    ),
-
-    /**
      * Custom extraterrestrial pets simulation.
      */
     ET_PETS(

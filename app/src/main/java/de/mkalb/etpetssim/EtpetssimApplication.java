@@ -2,9 +2,11 @@ package de.mkalb.etpetssim;
 
 import de.mkalb.etpetssim.core.AppArgs;
 import de.mkalb.etpetssim.core.AppLocalization;
+import de.mkalb.etpetssim.core.AppLocalization.CountryLocale;
 import de.mkalb.etpetssim.core.AppLocalizationKeys;
 import de.mkalb.etpetssim.core.AppLogger;
 import de.mkalb.etpetssim.core.AppResources;
+import de.mkalb.etpetssim.core.AppSettings;
 import de.mkalb.etpetssim.simulations.core.SimulationFactory;
 import de.mkalb.etpetssim.simulations.core.SimulationInstance;
 import de.mkalb.etpetssim.simulations.core.SimulationTerminationHandle;
@@ -29,15 +31,17 @@ import javafx.stage.Screen;
 import javafx.stage.Stage;
 import org.jspecify.annotations.Nullable;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 /**
  * Main JavaFX {@link Application} implementation.
  *
- * <p>Creates the primary stage content, switches between simulations,
+ * <p>Creates the primary stage content, switches between the start screen and the simulations,
  * and coordinates startup and shutdown behavior. Command-line parsing, logging,
  * and localization are initialized by {@link EtpetssimLauncher} before launch.
  */
@@ -110,7 +114,8 @@ public final class EtpetssimApplication extends Application {
      *
      * <p>Loads the application icons, installs uncaught-exception handling that logs the exception and shows it in an
      * {@link UnexpectedErrorDialog}, resolves the requested simulation type, registers the shutdown of the current
-     * simulation on a close request, and shows the primary stage.
+     * simulation on a close request, and shows the primary stage with that simulation, or with the start screen if no
+     * valid simulation argument is given.
      *
      * @param primaryStage primary stage created by JavaFX
      */
@@ -124,11 +129,16 @@ public final class EtpetssimApplication extends Application {
         });
 
         AppArgs arguments = new AppArgs(getParameters().getRaw().toArray(String[]::new));
-        SimulationType type = resolveSimulationType(arguments).orElse(SimulationType.STARTSCREEN);
-        AppLogger.infof("EtpetssimApplication: Starting with simulation type: %s", type.name());
+        Optional<SimulationType> type = resolveSimulationType(arguments);
 
         primaryStage.setOnCloseRequest(_ -> shutdownCurrentSimulation());
-        switchToSimulation(primaryStage, type);
+        if (type.isPresent()) {
+            AppLogger.infof("EtpetssimApplication: Starting with simulation type: %s", type.get().name());
+            switchToSimulation(primaryStage, type.get());
+        } else {
+            AppLogger.info("EtpetssimApplication: Starting with start screen");
+            switchToStartScreen(primaryStage);
+        }
         primaryStage.show();
         AppLogger.info("EtpetssimApplication: Started and showed primary stage");
     }
@@ -197,11 +207,31 @@ public final class EtpetssimApplication extends Application {
     }
 
     /**
+     * Switches the primary stage to the start screen.
+     *
+     * <p>The current simulation is shut down and the stage content is replaced by the start screen; no simulation is
+     * active afterward.
+     *
+     * @param stage primary application stage
+     */
+    private void switchToStartScreen(Stage stage) {
+        AppLogger.info("EtpetssimApplication: Switching to start screen");
+        shutdownCurrentSimulation();
+
+        String title = AppLocalization.getText(AppLocalizationKeys.START_TITLE);
+        Node headerNode = createHeaderNode(stage, title,
+                AppLocalization.getOptionalText(AppLocalizationKeys.START_SUBTITLE).orElse(null), null, false);
+        Region mainRegion = StartScreen.createRegion(
+                simulationType -> switchToSimulation(stage, simulationType),
+                countryLocale -> handleLanguageSelection(stage, countryLocale));
+        setStageContent(stage, headerNode, mainRegion, null, title);
+    }
+
+    /**
      * Switches the primary stage to a simulation.
      *
-     * <p>The current simulation is shut down, a new simulation instance is created, the scene content is replaced, and
-     * the stage title, stylesheets, and layout are updated. The {@link SimulationFactory} receives
-     * this method as a callback, so that a simulation (e.g., the start screen) can switch to another one.
+     * <p>The current simulation is shut down, a new simulation instance is created and becomes the active one, and the
+     * stage content is replaced by the header and the region of the simulation.
      *
      * @param stage          primary application stage
      * @param simulationType simulation type to display
@@ -210,15 +240,44 @@ public final class EtpetssimApplication extends Application {
         AppLogger.infof("EtpetssimApplication: Switching to simulation: %s", simulationType);
         shutdownCurrentSimulation();
 
-        var simulationInstance = SimulationFactory.createInstance(simulationType, stage, this::switchToSimulation);
-        var simulationHeaderNode = createSimulationHeaderNode(stage, simulationInstance);
-        var simulationMainRegion = simulationInstance.region();
-
+        var simulationInstance = SimulationFactory.createInstance(simulationType);
         setCurrentSimulationInstance(simulationInstance);
 
-        VBox root = new VBox(simulationHeaderNode, simulationMainRegion);
+        String title = simulationType.title();
+        Node headerNode = createHeaderNode(stage, title, simulationType.subtitle().orElse(null),
+                simulationType.uri().orElse(null), true);
+        setStageContent(stage, headerNode, simulationInstance.region(), simulationType.cssUrl().orElse(null), title);
+    }
+
+    /**
+     * Activates the selected locale, saves it as application setting, and rebuilds the start screen in the new
+     * language.
+     *
+     * @param stage         primary application stage
+     * @param countryLocale the selected locale, which differs from the active one
+     */
+    private void handleLanguageSelection(Stage stage, CountryLocale countryLocale) {
+        AppLocalization.setLocale(countryLocale);
+        Locale.setDefault(AppLocalization.locale());
+        AppSettings.writeLocale(countryLocale);
+        switchToStartScreen(stage);
+    }
+
+    /**
+     * Replaces the scene root of the stage by the header and the main region, and updates the stylesheets, the window
+     * title, and the stage layout.
+     *
+     * @param stage      primary application stage
+     * @param headerNode header shown above the main region
+     * @param mainRegion main region, which grows vertically
+     * @param cssUrl     URL of the stylesheet added after the common one, or {@code null} for none
+     * @param title      title inserted into the window title pattern
+     */
+    private void setStageContent(Stage stage, Node headerNode, Region mainRegion, @Nullable String cssUrl,
+                                 String title) {
+        VBox root = new VBox(headerNode, mainRegion);
         root.getStyleClass().add(FXStyleClasses.APP_VBOX);
-        VBox.setVgrow(simulationMainRegion, Priority.ALWAYS);
+        VBox.setVgrow(mainRegion, Priority.ALWAYS);
         root.setDisable(true); // Disable first until fully initialized later
 
         Scene scene = stage.getScene();
@@ -229,13 +288,15 @@ public final class EtpetssimApplication extends Application {
             scene.setRoot(root);
         }
 
-        // Add the common stylesheet first and then the stylesheet of the simulation type
+        // Add the common stylesheet first and then the specific one
         List<String> styles = new ArrayList<>();
         AppResources.getCssUrl("scene.css").ifPresent(styles::add);
-        simulationType.cssUrl().ifPresent(styles::add);
+        if (cssUrl != null) {
+            styles.add(cssUrl);
+        }
         scene.getStylesheets().setAll(styles);
 
-        stage.setTitle(AppLocalization.getFormattedText(AppLocalizationKeys.WINDOW_TITLE, simulationType.title()));
+        stage.setTitle(AppLocalization.getFormattedText(AppLocalizationKeys.WINDOW_TITLE, title));
 
         // Adjust stage size and position to fit the screen. Run later to ensure layout is calculated.
         Platform.runLater(() -> adjustStageLayoutToScreen(stage, root));
@@ -381,36 +442,33 @@ public final class EtpetssimApplication extends Application {
     }
 
     /**
-     * Creates the simulation header shown above the main simulation region.
+     * Creates the header shown above the main region of the start screen or a simulation.
      *
-     * @param stage              primary stage
-     * @param simulationInstance active simulation instance
+     * @param stage                primary stage
+     * @param title                title of the header
+     * @param subtitle             subtitle below the title, or {@code null} for none
+     * @param uri                  URI of an external link, or {@code null} for none
+     * @param startScreenLinkShown whether the header shows a link that switches to the start screen
      * @return header node containing titles and navigation links
      */
-    private Node createSimulationHeaderNode(Stage stage, SimulationInstance simulationInstance) {
-        SimulationType simulationType = simulationInstance.simulationType();
-
-        VBox titleBox = new VBox(
-                FXComponentFactory.createLabel(simulationType.title(), FXStyleClasses.HEADER_TITLE_LABEL));
+    private Node createHeaderNode(Stage stage, String title, @Nullable String subtitle, @Nullable URI uri,
+                                  boolean startScreenLinkShown) {
+        VBox titleBox = new VBox(FXComponentFactory.createLabel(title, FXStyleClasses.HEADER_TITLE_LABEL));
         titleBox.getStyleClass().add(FXStyleClasses.HEADER_TITLE_VBOX);
 
-        simulationType.subtitle()
-                .ifPresent(subtitle -> titleBox.getChildren()
-                        .add(FXComponentFactory.createLabel(subtitle, FXStyleClasses.HEADER_SUBTITLE_LABEL)));
+        if (subtitle != null) {
+            titleBox.getChildren().add(FXComponentFactory.createLabel(subtitle, FXStyleClasses.HEADER_SUBTITLE_LABEL));
+        }
 
         VBox linkBox = new VBox();
         linkBox.setAlignment(Pos.TOP_RIGHT);
         linkBox.getStyleClass().add(FXStyleClasses.HEADER_LINK_VBOX);
 
-        if (simulationType != SimulationType.STARTSCREEN) {
+        if (startScreenLinkShown) {
             Hyperlink startScreenLink = new Hyperlink(
                     AppLocalization.getText(AppLocalizationKeys.HEADER_STARTSCREEN_LINK));
             startScreenLink.getStyleClass().add(FXStyleClasses.HEADER_URL_HYPERLINK);
-            startScreenLink.setOnAction(_ -> {
-                AppLogger.infof("EtpetssimApplication: Switching to start screen from simulation: %s",
-                        simulationType);
-                switchToSimulation(stage, SimulationType.STARTSCREEN);
-            });
+            startScreenLink.setOnAction(_ -> switchToStartScreen(stage));
             linkBox.getChildren().add(startScreenLink);
         }
 
@@ -419,20 +477,20 @@ public final class EtpetssimApplication extends Application {
         aboutLink.setOnAction(_ -> new AboutDialog(appIcons, getHostServices()).show());
         linkBox.getChildren().add(aboutLink);
 
-        simulationType.uri().ifPresent(uri -> {
+        if (uri != null) {
             Hyperlink urlLink = new Hyperlink(uri.toString());
             urlLink.getStyleClass().add(FXStyleClasses.HEADER_URL_HYPERLINK);
             urlLink.setOnAction(_ -> getHostServices().showDocument(uri.toString()));
             linkBox.getChildren().add(urlLink);
-        });
+        }
 
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
-        HBox simulationHeaderBox = new HBox(titleBox, spacer, linkBox);
-        simulationHeaderBox.getStyleClass().add(FXStyleClasses.HEADER_HBOX);
+        HBox headerBox = new HBox(titleBox, spacer, linkBox);
+        headerBox.getStyleClass().add(FXStyleClasses.HEADER_HBOX);
 
-        return simulationHeaderBox;
+        return headerBox;
     }
 
 }

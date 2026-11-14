@@ -36,7 +36,6 @@ final class SimulationTypeTest {
     void testDeclarationOrder() {
         assertArrayEquals(
                 new SimulationType[]{
-                        SimulationType.STARTSCREEN,
                         SimulationType.ET_PETS,
                         SimulationType.WATOR,
                         SimulationType.SUGARSCAPE,
@@ -73,20 +72,19 @@ final class SimulationTypeTest {
 
     @Test
     void testFromCliArgument() {
-        assertEquals(Optional.of(SimulationType.STARTSCREEN), SimulationType.fromCliArgument("start"));
-        assertEquals(Optional.of(SimulationType.STARTSCREEN), SimulationType.fromCliArgument("START"));
         assertEquals(Optional.of(SimulationType.ET_PETS), SimulationType.fromCliArgument("etpets"));
+        assertEquals(Optional.of(SimulationType.ET_PETS), SimulationType.fromCliArgument("ETPETS"));
         assertEquals(Optional.of(SimulationType.WATOR), SimulationType.fromCliArgument("wator"));
         assertEquals(Optional.of(SimulationType.WATOR), SimulationType.fromCliArgument("WA-TOR"));
         assertEquals(Optional.of(SimulationType.CONWAYS_LIFE), SimulationType.fromCliArgument("conway"));
         assertEquals(Optional.of(SimulationType.SIMULATION_LAB), SimulationType.fromCliArgument("lab"));
 
+        assertEquals(Optional.empty(), SimulationType.fromCliArgument("start"));
         assertEquals(Optional.empty(), SimulationType.fromCliArgument("notfound"));
     }
 
     @Test
     void testIsShownOnStartScreen() {
-        assertFalse(SimulationType.STARTSCREEN.isShownOnStartScreen());
         assertTrue(SimulationType.ET_PETS.isShownOnStartScreen());
         assertTrue(SimulationType.WATOR.isShownOnStartScreen());
         assertTrue(SimulationType.SUGARSCAPE.isShownOnStartScreen());
@@ -101,7 +99,6 @@ final class SimulationTypeTest {
     @SuppressWarnings("SpellCheckingInspection")
     @Test
     void testCliArguments() {
-        assertEquals(List.of("startscreen", "start"), SimulationType.STARTSCREEN.cliArguments());
         assertEquals(List.of("etpets"), SimulationType.ET_PETS.cliArguments());
         assertEquals(List.of("wator", "wa-tor"), SimulationType.WATOR.cliArguments());
         assertEquals(List.of("sugarscape", "sugar"), SimulationType.SUGARSCAPE.cliArguments());
@@ -119,7 +116,7 @@ final class SimulationTypeTest {
 
     @Test
     void testCliArgumentsReturnsUnmodifiableList() {
-        assertThrows(UnsupportedOperationException.class, () -> SimulationType.STARTSCREEN.cliArguments().add("other"));
+        assertThrows(UnsupportedOperationException.class, () -> SimulationType.ET_PETS.cliArguments().add("other"));
     }
 
     @Test
