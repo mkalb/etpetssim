@@ -41,12 +41,12 @@ Before creating or changing a simulation, review relevant existing implementatio
 
 Keep the cross-cutting files in sync, for example:
 
-| Change                                | Update                                                                  |
-|---------------------------------------|-------------------------------------------------------------------------|
-| Enum metadata (title, CSS, CLI alias) | `SimulationType.java`, `SimulationTypeTest.java`, localization          |
-| Entity/display changes                | `docs/simulations/<package>.md`, section "Entities"                     |
-| Localization keys                     | All `messages_*.properties` files (see `i18n.md`)                       |
-| Factory wiring                        | `simulations/core/SimulationFactory.java`, `SimulationFactoryTest.java` |
+| Change                                          | Update                                                                  |
+|-------------------------------------------------|-------------------------------------------------------------------------|
+| Enum metadata (category, title, CSS, CLI alias) | `SimulationType.java`, `SimulationTypeTest.java`, localization          |
+| Entity/display changes                          | `docs/simulations/<package>.md`, section "Entities"                     |
+| Localization keys                               | All `messages_*.properties` files (see `i18n.md`)                       |
+| Factory wiring                                  | `simulations/core/SimulationFactory.java`, `SimulationFactoryTest.java` |
 
 Lists of simulations (e.g., the README table and gallery and the simulation dropdowns of the issue forms in
 `.github/ISSUE_TEMPLATE`) follow the declaration order of `SimulationType`.
