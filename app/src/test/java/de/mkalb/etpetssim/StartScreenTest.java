@@ -1,11 +1,9 @@
 package de.mkalb.etpetssim;
 
 import de.mkalb.etpetssim.core.AppLocalization;
-import de.mkalb.etpetssim.core.AppLocalization.CountryLocale;
 import de.mkalb.etpetssim.simulations.core.SimulationType;
 import de.mkalb.etpetssim.testsupport.FXTestSupport;
 import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import org.junit.jupiter.api.BeforeAll;
@@ -18,10 +16,8 @@ import java.util.Locale;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Predicate;
 
-import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 @Execution(ExecutionMode.SAME_THREAD)
 final class StartScreenTest {
@@ -45,43 +41,18 @@ final class StartScreenTest {
     }
 
     @Test
-    void testCreateRegionReportsSimulationSelection() {
+    void testCreateRegion() {
         FXTestSupport.runAndWait(() -> {
             AtomicReference<SimulationType> selectedType = new AtomicReference<>();
-            AtomicReference<CountryLocale> selectedLocale = new AtomicReference<>();
             SimulationType expectedType = Arrays.stream(SimulationType.values())
                     .filter(type -> type.category().isPresent())
                     .findFirst()
                     .orElseThrow();
 
-            Region region = StartScreen.createRegion(selectedType::set, selectedLocale::set);
+            Region region = StartScreen.createRegion(selectedType::set);
             findChild(region, Button.class, button -> button.getText().equals(expectedType.title())).fire();
 
-            assertAll(
-                    () -> assertEquals(expectedType, selectedType.get()),
-                    () -> assertNull(selectedLocale.get())
-            );
-        });
-    }
-
-    @Test
-    void testCreateRegionReportsLanguageSelection() {
-        FXTestSupport.runAndWait(() -> {
-            AtomicReference<SimulationType> selectedType = new AtomicReference<>();
-            AtomicReference<CountryLocale> selectedLocale = new AtomicReference<>();
-            CountryLocale expectedLocale = AppLocalization.supportedLocales().stream()
-                    .filter(countryLocale -> !countryLocale.countryLocale().equals(AppLocalization.locale()))
-                    .findFirst()
-                    .orElseThrow();
-
-            Region region = StartScreen.createRegion(selectedType::set, selectedLocale::set);
-            ComboBox<?> comboBox = findChild(region, ComboBox.class, _ -> true);
-            comboBox.getSelectionModel().select(AppLocalization.supportedLocales().indexOf(expectedLocale));
-
-            assertAll(
-                    () -> assertEquals(expectedLocale, selectedLocale.get()),
-                    () -> assertNull(selectedType.get())
-            );
+            assertEquals(expectedType, selectedType.get());
         });
     }
 

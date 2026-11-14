@@ -40,6 +40,8 @@ public final class FXStyleClasses {
     public static final String CONTROL_OBSERVATION_VBOX = "control-observation-vbox";
     public static final String CONTROL_SCROLLPANE = "control-scrollpane";
     public static final String HEADER_HBOX = "header-hbox";
+    public static final String HEADER_LANGUAGE_COMBOBOX = "header-language-combobox";
+    public static final String HEADER_LANGUAGE_HBOX = "header-language-hbox";
     public static final String HEADER_LINK_VBOX = "header-link-vbox";
     public static final String HEADER_SUBTITLE_LABEL = "header-subtitle-label";
     public static final String HEADER_TITLE_LABEL = "header-title-label";

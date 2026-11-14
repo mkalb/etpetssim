@@ -158,6 +158,44 @@ ScrollPane .decrement-arrow {
     -fx-background-color: transparent;
 }
 
+.header-language-hbox {
+    -fx-alignment: center-right;
+    -fx-spacing: 6;
+    -fx-padding: 0 0 4 0;
+}
+
+.header-language-hbox .label {
+    -fx-font-size: 12;
+    -fx-text-fill: #aeefff;
+}
+
+.header-language-combobox {
+    -fx-background-color: #263a4d;
+    -fx-background-radius: 4;
+    -fx-border-color: #00eaff;
+    -fx-border-width: 1;
+    -fx-border-radius: 4;
+    -fx-font-size: 12;
+    -fx-padding: 0 4;
+}
+
+.header-language-combobox:focused {
+    -fx-border-color: #00ff99;
+}
+
+.header-language-combobox .arrow {
+    -fx-background-color: #00eaff;
+}
+
+.header-language-combobox .list-cell {
+    -fx-background-color: #263a4d;
+    -fx-text-fill: #7fffd4;
+}
+
+.header-language-combobox .list-cell:selected {
+    -fx-text-fill: #aeefff;
+}
+
 /* Dialogs (About dialog and alerts) */
 .app-dialog-pane {
     -fx-background-color: #263a4d;

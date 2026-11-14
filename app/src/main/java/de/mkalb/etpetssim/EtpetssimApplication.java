@@ -14,6 +14,7 @@ import de.mkalb.etpetssim.simulations.core.SimulationType;
 import de.mkalb.etpetssim.ui.AboutDialog;
 import de.mkalb.etpetssim.ui.FXComponentFactory;
 import de.mkalb.etpetssim.ui.FXStyleClasses;
+import de.mkalb.etpetssim.ui.InputChoiceProperty;
 import de.mkalb.etpetssim.ui.UnexpectedErrorDialog;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -31,7 +32,6 @@ import javafx.stage.Screen;
 import javafx.stage.Stage;
 import org.jspecify.annotations.Nullable;
 
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -107,6 +107,43 @@ public final class EtpetssimApplication extends Application {
             }
         }
         return Screen.getPrimary();
+    }
+
+    /**
+     * Creates the header shown above the main region of the start screen or a simulation.
+     *
+     * @param title     title of the header
+     * @param subtitle  subtitle below the title, or {@code null} for none
+     * @param linkNodes links and controls shown from top to bottom in the right column of the header
+     * @return header node containing the titles and the link column
+     */
+    private static Node createHeaderNode(String title, @Nullable String subtitle, List<Node> linkNodes) {
+        VBox titleBox = new VBox(FXComponentFactory.createLabel(title, FXStyleClasses.HEADER_TITLE_LABEL));
+        titleBox.getStyleClass().add(FXStyleClasses.HEADER_TITLE_VBOX);
+
+        if (subtitle != null) {
+            titleBox.getChildren().add(FXComponentFactory.createLabel(subtitle, FXStyleClasses.HEADER_SUBTITLE_LABEL));
+        }
+
+        VBox linkBox = new VBox();
+        linkBox.setAlignment(Pos.TOP_RIGHT);
+        linkBox.getStyleClass().add(FXStyleClasses.HEADER_LINK_VBOX);
+        linkBox.getChildren().addAll(linkNodes);
+
+        Region spacer = new Region();
+        HBox.setHgrow(spacer, Priority.ALWAYS);
+
+        HBox headerBox = new HBox(titleBox, spacer, linkBox);
+        headerBox.getStyleClass().add(FXStyleClasses.HEADER_HBOX);
+
+        return headerBox;
+    }
+
+    private static Hyperlink createHeaderLink(String text, Runnable action) {
+        Hyperlink link = new Hyperlink(text);
+        link.getStyleClass().add(FXStyleClasses.HEADER_URL_HYPERLINK);
+        link.setOnAction(_ -> action.run());
+        return link;
     }
 
     /**
@@ -219,11 +256,10 @@ public final class EtpetssimApplication extends Application {
         shutdownCurrentSimulation();
 
         String title = AppLocalization.getText(AppLocalizationKeys.START_TITLE);
-        Node headerNode = createHeaderNode(stage, title,
-                AppLocalization.getOptionalText(AppLocalizationKeys.START_SUBTITLE).orElse(null), null, false);
-        Region mainRegion = StartScreen.createRegion(
-                simulationType -> switchToSimulation(stage, simulationType),
-                countryLocale -> handleLanguageSelection(stage, countryLocale));
+        Node headerNode = createHeaderNode(title,
+                AppLocalization.getOptionalText(AppLocalizationKeys.START_SUBTITLE).orElse(null),
+                List.of(createLanguageSelectionNode(stage), createAboutLink()));
+        Region mainRegion = StartScreen.createRegion(simulationType -> switchToSimulation(stage, simulationType));
         setStageContent(stage, headerNode, mainRegion, null, title);
     }
 
@@ -243,9 +279,16 @@ public final class EtpetssimApplication extends Application {
         var simulationInstance = SimulationFactory.createInstance(simulationType);
         setCurrentSimulationInstance(simulationInstance);
 
+        List<Node> linkNodes = new ArrayList<>();
+        linkNodes.add(createHeaderLink(AppLocalization.getText(AppLocalizationKeys.HEADER_STARTSCREEN_LINK),
+                () -> switchToStartScreen(stage)));
+        linkNodes.add(createAboutLink());
+        simulationType.uri()
+                .ifPresent(uri -> linkNodes.add(
+                        createHeaderLink(uri.toString(), () -> getHostServices().showDocument(uri.toString()))));
+
         String title = simulationType.title();
-        Node headerNode = createHeaderNode(stage, title, simulationType.subtitle().orElse(null),
-                simulationType.uri().orElse(null), true);
+        Node headerNode = createHeaderNode(title, simulationType.subtitle().orElse(null), linkNodes);
         setStageContent(stage, headerNode, simulationInstance.region(), simulationType.cssUrl().orElse(null), title);
     }
 
@@ -441,56 +484,41 @@ public final class EtpetssimApplication extends Application {
         }
     }
 
+    private Hyperlink createAboutLink() {
+        return createHeaderLink(AppLocalization.getText(AppLocalizationKeys.HEADER_ABOUT_LINK),
+                () -> new AboutDialog(appIcons, getHostServices()).show());
+    }
+
     /**
-     * Creates the header shown above the main region of the start screen or a simulation.
+     * Creates the language selection of the start screen header.
      *
-     * @param stage                primary stage
-     * @param title                title of the header
-     * @param subtitle             subtitle below the title, or {@code null} for none
-     * @param uri                  URI of an external link, or {@code null} for none
-     * @param startScreenLinkShown whether the header shows a link that switches to the start screen
-     * @return header node containing titles and navigation links
+     * <p>Selecting another language than the active one activates and saves it and rebuilds the start screen.
+     *
+     * @param stage primary application stage
+     * @return node containing the label and the combo box of the language selection
      */
-    private Node createHeaderNode(Stage stage, String title, @Nullable String subtitle, @Nullable URI uri,
-                                  boolean startScreenLinkShown) {
-        VBox titleBox = new VBox(FXComponentFactory.createLabel(title, FXStyleClasses.HEADER_TITLE_LABEL));
-        titleBox.getStyleClass().add(FXStyleClasses.HEADER_TITLE_VBOX);
+    private Node createLanguageSelectionNode(Stage stage) {
+        var languageControl = FXComponentFactory.createLabeledChoiceComboBox(
+                createLanguageChoiceProperty(stage),
+                AppLocalization.getText(AppLocalizationKeys.START_LANGUAGE_LABEL),
+                AppLocalization.getText(AppLocalizationKeys.START_LANGUAGE_TOOLTIP),
+                FXStyleClasses.HEADER_LANGUAGE_COMBOBOX);
+        HBox languageBox = new HBox(languageControl.label(), languageControl.controlRegion());
+        languageBox.getStyleClass().add(FXStyleClasses.HEADER_LANGUAGE_HBOX);
+        return languageBox;
+    }
 
-        if (subtitle != null) {
-            titleBox.getChildren().add(FXComponentFactory.createLabel(subtitle, FXStyleClasses.HEADER_SUBTITLE_LABEL));
-        }
-
-        VBox linkBox = new VBox();
-        linkBox.setAlignment(Pos.TOP_RIGHT);
-        linkBox.getStyleClass().add(FXStyleClasses.HEADER_LINK_VBOX);
-
-        if (startScreenLinkShown) {
-            Hyperlink startScreenLink = new Hyperlink(
-                    AppLocalization.getText(AppLocalizationKeys.HEADER_STARTSCREEN_LINK));
-            startScreenLink.getStyleClass().add(FXStyleClasses.HEADER_URL_HYPERLINK);
-            startScreenLink.setOnAction(_ -> switchToStartScreen(stage));
-            linkBox.getChildren().add(startScreenLink);
-        }
-
-        Hyperlink aboutLink = new Hyperlink(AppLocalization.getText(AppLocalizationKeys.HEADER_ABOUT_LINK));
-        aboutLink.getStyleClass().add(FXStyleClasses.HEADER_URL_HYPERLINK);
-        aboutLink.setOnAction(_ -> new AboutDialog(appIcons, getHostServices()).show());
-        linkBox.getChildren().add(aboutLink);
-
-        if (uri != null) {
-            Hyperlink urlLink = new Hyperlink(uri.toString());
-            urlLink.getStyleClass().add(FXStyleClasses.HEADER_URL_HYPERLINK);
-            urlLink.setOnAction(_ -> getHostServices().showDocument(uri.toString()));
-            linkBox.getChildren().add(urlLink);
-        }
-
-        Region spacer = new Region();
-        HBox.setHgrow(spacer, Priority.ALWAYS);
-
-        HBox headerBox = new HBox(titleBox, spacer, linkBox);
-        headerBox.getStyleClass().add(FXStyleClasses.HEADER_HBOX);
-
-        return headerBox;
+    private InputChoiceProperty<CountryLocale> createLanguageChoiceProperty(Stage stage) {
+        Locale activeLocale = AppLocalization.locale();
+        CountryLocale activeCountryLocale = AppLocalization.supportedLocales().stream()
+                .filter(countryLocale -> countryLocale.countryLocale().equals(activeLocale))
+                .findFirst()
+                .orElseThrow();
+        InputChoiceProperty<CountryLocale> languageProperty = InputChoiceProperty.ofList(activeCountryLocale,
+                AppLocalization.supportedLocales(),
+                countryLocale -> countryLocale.displayName() + " [" + countryLocale.localeCode() + "]");
+        languageProperty.property().addListener((_, _, newLocale) -> handleLanguageSelection(stage, newLocale));
+        return languageProperty;
     }
 
 }
