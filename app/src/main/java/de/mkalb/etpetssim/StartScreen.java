@@ -19,8 +19,8 @@ import java.util.function.Consumer;
 /**
  * Content of the start screen, which {@link EtpetssimApplication} shows below its header.
  *
- * <p>The start screen shows one button per {@link SimulationType} that is shown on the start screen, followed by the
- * language selection. It only reports the selections to its callbacks and holds no state.
+ * <p>The start screen shows one button per {@link SimulationType} with a category, followed by the language
+ * selection. It only reports the selections to its callbacks and holds no state.
  */
 final class StartScreen {
 
@@ -44,7 +44,7 @@ final class StartScreen {
         vbox.getChildren().add(titleLabel);
 
         for (SimulationType type : SimulationType.values()) {
-            if (!type.isShownOnStartScreen()) {
+            if (type.category().isEmpty()) {
                 continue;
             }
 

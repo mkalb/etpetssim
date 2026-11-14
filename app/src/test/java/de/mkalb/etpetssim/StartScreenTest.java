@@ -50,7 +50,7 @@ final class StartScreenTest {
             AtomicReference<SimulationType> selectedType = new AtomicReference<>();
             AtomicReference<CountryLocale> selectedLocale = new AtomicReference<>();
             SimulationType expectedType = Arrays.stream(SimulationType.values())
-                    .filter(SimulationType::isShownOnStartScreen)
+                    .filter(type -> type.category().isPresent())
                     .findFirst()
                     .orElseThrow();
 

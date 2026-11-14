@@ -84,16 +84,23 @@ final class SimulationTypeTest {
     }
 
     @Test
-    void testIsShownOnStartScreen() {
-        assertTrue(SimulationType.ET_PETS.isShownOnStartScreen());
-        assertTrue(SimulationType.WATOR.isShownOnStartScreen());
-        assertTrue(SimulationType.SUGARSCAPE.isShownOnStartScreen());
-        assertTrue(SimulationType.CONWAYS_LIFE.isShownOnStartScreen());
-        assertTrue(SimulationType.LANGTONS_ANT.isShownOnStartScreen());
-        assertTrue(SimulationType.FOREST_FIRE.isShownOnStartScreen());
-        assertTrue(SimulationType.SNAKE.isShownOnStartScreen());
-        assertTrue(SimulationType.REBOUNDING_ENTITIES.isShownOnStartScreen());
-        assertFalse(SimulationType.SIMULATION_LAB.isShownOnStartScreen());
+    void testCategory() {
+        assertAll(
+                () -> assertEquals(Optional.of(SimulationCategory.AGENT_BASED_MODEL), SimulationType.ET_PETS.category()),
+                () -> assertEquals(Optional.of(SimulationCategory.AGENT_BASED_MODEL), SimulationType.WATOR.category()),
+                () -> assertEquals(Optional.of(SimulationCategory.AGENT_BASED_MODEL),
+                        SimulationType.SUGARSCAPE.category()),
+                () -> assertEquals(Optional.of(SimulationCategory.CELLULAR_AUTOMATON),
+                        SimulationType.CONWAYS_LIFE.category()),
+                () -> assertEquals(Optional.of(SimulationCategory.CELLULAR_AUTOMATON),
+                        SimulationType.LANGTONS_ANT.category()),
+                () -> assertEquals(Optional.of(SimulationCategory.CELLULAR_AUTOMATON),
+                        SimulationType.FOREST_FIRE.category()),
+                () -> assertEquals(Optional.of(SimulationCategory.TOY_MODEL), SimulationType.SNAKE.category()),
+                () -> assertEquals(Optional.of(SimulationCategory.TOY_MODEL),
+                        SimulationType.REBOUNDING_ENTITIES.category()),
+                () -> assertEquals(Optional.empty(), SimulationType.SIMULATION_LAB.category())
+        );
     }
 
     @SuppressWarnings("SpellCheckingInspection")
