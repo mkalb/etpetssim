@@ -361,26 +361,92 @@ ScrollPane .decrement-arrow {
 }
 
 /* Start screen styling */
-.start-title-label {
-    -fx-font-size: 36;
-    -fx-text-fill: #eaf6fb;
-    -fx-font-weight: bold;
-    -fx-padding: 18 0 22 0;
-}
-
-.start-control-vbox {
+.start-scrollpane {
+    -fx-background: #263a4d;
     -fx-background-color: #263a4d;
-    -fx-background-insets: 0;
-    -fx-background-radius: 0;
-    -fx-padding: 12 8 12 8;
-    -fx-spacing: 8;
-    -fx-alignment: center;
     -fx-border-width: 1;
     -fx-border-radius: 0;
     -fx-border-color: #00eaff;
-    -fx-effect: null;
     -fx-min-width: 500;
     -fx-pref-width: 1200;
+}
+
+.start-scrollpane > .viewport {
+    -fx-background-color: #263a4d;
+}
+
+.start-content-vbox {
+    -fx-padding: 4 16 16 16;
+    -fx-spacing: 8;
+    -fx-background-color: transparent;
+}
+
+.start-category-label {
+    -fx-font-size: 18;
+    -fx-font-weight: bold;
+    -fx-text-fill: #aeefff;
+    -fx-padding: 12 0 0 0;
+}
+
+.start-card-flowpane {
+    -fx-hgap: 12;
+    -fx-vgap: 12;
+    -fx-row-valignment: top;
+}
+
+.start-card-button {
+    -fx-background-color: linear-gradient(to bottom, #263a4d, #35516b);
+    -fx-background-radius: 6;
+    -fx-background-insets: 0;
+    -fx-border-color: #00eaff;
+    -fx-border-width: 1;
+    -fx-border-radius: 6;
+    -fx-padding: 10 14;
+    -fx-alignment: top-left;
+    -fx-cursor: hand;
+    -fx-min-width: 260;
+    -fx-pref-width: 260;
+    -fx-max-width: 260;
+}
+
+.start-card-button:hover {
+    -fx-background-color: linear-gradient(to bottom, #347ca3, #00bfff);
+}
+
+.start-card-button:pressed {
+    -fx-background-color: #00eaff;
+}
+
+.start-card-button:focused {
+    -fx-border-color: #00ff99;
+}
+
+/* Fixed label width (card width minus padding and border), so that the wrapped text height is computed */
+.start-card-title-label,
+.start-card-subtitle-label {
+    -fx-wrap-text: true;
+    -fx-min-width: 230;
+    -fx-pref-width: 230;
+    -fx-max-width: 230;
+}
+
+.start-card-title-label {
+    -fx-font-size: 16;
+    -fx-font-weight: bold;
+    -fx-text-fill: #00eaff;
+    -fx-padding: 0 0 4 0;
+}
+
+.start-card-subtitle-label {
+    -fx-font-size: 13;
+    -fx-text-fill: #aeefff;
+}
+
+.start-card-button:hover .start-card-title-label,
+.start-card-button:hover .start-card-subtitle-label,
+.start-card-button:pressed .start-card-title-label,
+.start-card-button:pressed .start-card-subtitle-label {
+    -fx-text-fill: #1a2233;
 }
 
 /* main region (contains: config, control, simulation, observation */

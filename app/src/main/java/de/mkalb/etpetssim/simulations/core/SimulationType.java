@@ -167,15 +167,6 @@ public enum SimulationType {
     }
 
     /**
-     * Returns the resource key of the label for this enum type as a whole.
-     *
-     * @return the resource key of the type label
-     */
-    public static String labelResourceKey() {
-        return "simulationtype.label";
-    }
-
-    /**
      * Returns the category of the simulation, which groups it on the start screen.
      *
      * @return an {@link Optional} containing the category, or empty if the type is hidden from the start screen

@@ -1,9 +1,14 @@
 package de.mkalb.etpetssim;
 
 import de.mkalb.etpetssim.core.AppLocalization;
+import de.mkalb.etpetssim.simulations.core.SimulationCategory;
 import de.mkalb.etpetssim.simulations.core.SimulationType;
 import de.mkalb.etpetssim.testsupport.FXTestSupport;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import org.junit.jupiter.api.BeforeAll;
@@ -11,10 +16,11 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Locale;
-import java.util.concurrent.atomic.AtomicReference;
-import java.util.function.Predicate;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
@@ -30,29 +36,46 @@ final class StartScreenTest {
         FXTestSupport.ensureStarted();
     }
 
-    private static <T> T findChild(Region region, Class<T> childType, Predicate<T> filter) {
-        return assertInstanceOf(VBox.class, region).getChildren()
-                .stream()
-                .filter(childType::isInstance)
-                .map(childType::cast)
-                .filter(filter)
-                .findFirst()
-                .orElseThrow();
+    private static List<Node> groupNodes(Region region) {
+        return assertInstanceOf(VBox.class, assertInstanceOf(ScrollPane.class, region).getContent()).getChildren();
     }
 
     @Test
     void testCreateRegion() {
         FXTestSupport.runAndWait(() -> {
-            AtomicReference<SimulationType> selectedType = new AtomicReference<>();
-            SimulationType expectedType = Arrays.stream(SimulationType.values())
+            List<SimulationType> selectedTypes = new ArrayList<>();
+            List<SimulationType> expectedTypes = Arrays.stream(SimulationType.values())
                     .filter(type -> type.category().isPresent())
-                    .findFirst()
-                    .orElseThrow();
+                    .sorted(Comparator.comparing((SimulationType type) -> type.category().orElseThrow()))
+                    .toList();
 
-            Region region = StartScreen.createRegion(selectedType::set);
-            findChild(region, Button.class, button -> button.getText().equals(expectedType.title())).fire();
+            Region region = StartScreen.createRegion(selectedTypes::add);
+            List<Button> cards = groupNodes(region).stream()
+                    .filter(FlowPane.class::isInstance)
+                    .flatMap(node -> ((FlowPane) node).getChildren().stream())
+                    .map(Button.class::cast)
+                    .toList();
+            for (Button card : cards) {
+                card.fire();
+            }
 
-            assertEquals(expectedType, selectedType.get());
+            assertEquals(expectedTypes, selectedTypes);
+        });
+    }
+
+    @Test
+    void testCreateRegionShowsCategoryHeadings() {
+        FXTestSupport.runAndWait(() -> {
+            List<String> expectedHeadings = Arrays.stream(SimulationCategory.values())
+                    .map(category -> AppLocalization.getText(category.resourceKey()))
+                    .toList();
+
+            List<String> headings = groupNodes(StartScreen.createRegion(_ -> {})).stream()
+                    .filter(Label.class::isInstance)
+                    .map(node -> ((Label) node).getText())
+                    .toList();
+
+            assertEquals(expectedHeadings, headings);
         });
     }
 

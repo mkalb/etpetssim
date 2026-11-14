@@ -51,11 +51,6 @@ final class SimulationTypeTest {
     }
 
     @Test
-    void testLabelResourceKey() {
-        assertKeysInAllBundles(List.of(SimulationType.labelResourceKey()));
-    }
-
-    @Test
     void testTitleKey() {
         assertKeysInAllBundles(Arrays.stream(SimulationType.values()).map(SimulationType::titleKey).toList());
     }
