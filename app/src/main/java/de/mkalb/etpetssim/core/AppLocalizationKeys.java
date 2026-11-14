@@ -47,6 +47,8 @@ public final class AppLocalizationKeys {
     public static final String ARGS_VERSION = "args.version";
     public static final String HEADER_ABOUT_LINK = "header.about.link";
     public static final String HEADER_STARTSCREEN_LINK = "header.startscreen.link";
+    public static final String START_LANGUAGE_LABEL = "start.language.label";
+    public static final String START_LANGUAGE_TOOLTIP = "start.language.tooltip";
     public static final String WINDOW_TITLE = "window.title";
 
     private AppLocalizationKeys() {
