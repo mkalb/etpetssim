@@ -22,7 +22,7 @@ import javafx.beans.property.SimpleIntegerProperty;
  * @param property the underlying {@link IntegerProperty}
  * @param min      the minimum allowed value (inclusive)
  * @param max      the maximum allowed value (inclusive)
- * @param step     the step size for valid values (must be positive)
+ * @param step     the step size for valid values
  */
 public record InputIntegerProperty(IntegerProperty property, int min, int max, int step) {
 

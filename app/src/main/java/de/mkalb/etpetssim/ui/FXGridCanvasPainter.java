@@ -423,7 +423,7 @@ public final class FXGridCanvasPainter {
      *
      * @param xPoints         an array of x-coordinates for the vertices of the polyline
      * @param yPoints         an array of y-coordinates for the vertices of the polyline
-     * @param strokeColor     the color used to draw the polyline's border
+     * @param strokeColor     the color used to draw the line segments
      * @param strokeLineWidth the width of the stroke line in pixels
      */
     public void drawPolyline(double[] xPoints, double[] yPoints,
@@ -573,7 +573,7 @@ public final class FXGridCanvasPainter {
      * @param textColor       the color of the text
      * @param font            the font used for rendering the text
      * @param backgroundColor the color used to fill the background rectangle
-     * @param padding         the padding added around the text inside the background rectangle
+     * @param padding         the total padding added to the text width and height in pixels; each side gets half of it
      */
     public void drawCenteredTextWithBackgroundAt(Point2D center, String text, Paint textColor, Font font,
                                                  Paint backgroundColor, double padding) {

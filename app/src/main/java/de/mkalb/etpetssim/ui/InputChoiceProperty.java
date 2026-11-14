@@ -25,7 +25,7 @@ import java.util.function.Function;
  *
  * @param <T>                 the value type
  * @param property            the underlying {@link ObjectProperty} for the selected value
- * @param validValues         the list of valid values (must not be empty, contain nulls, or contain duplicates)
+ * @param validValues         the list of valid values
  * @param displayNameProvider a function mapping values to their display names
  */
 public record InputChoiceProperty<T>(ObjectProperty<T> property,

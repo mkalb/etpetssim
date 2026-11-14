@@ -13,10 +13,10 @@ import org.jspecify.annotations.Nullable;
  * where a given {@link Runnable} is executed at a fixed interval on the JavaFX Application Thread.
  *
  * <p>Example usage:
- * <pre>
- *     SimulationTimer timer = new SimulationTimer(() -> doStep());
- *     timer.start(Duration.millis(500));
- * </pre>
+ * {@snippet :
+ * SimulationTimer timer = new SimulationTimer(() -> doStep());
+ * timer.start(Duration.millis(500));
+ * }
  */
 public final class SimulationTimer {
 
