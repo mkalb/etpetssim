@@ -247,7 +247,7 @@ public final class EtpetssimApplication extends Application {
      * Switches the primary stage to the start screen.
      *
      * <p>The current simulation is shut down and the stage content is replaced by the start screen; no simulation is
-     * active afterward.
+     * active afterward. The window title is the start screen title alone, because it already names the application.
      *
      * @param stage primary application stage
      */
@@ -289,7 +289,8 @@ public final class EtpetssimApplication extends Application {
 
         String title = simulationType.title();
         Node headerNode = createHeaderNode(title, simulationType.subtitle().orElse(null), linkNodes);
-        setStageContent(stage, headerNode, simulationInstance.region(), simulationType.cssUrl().orElse(null), title);
+        setStageContent(stage, headerNode, simulationInstance.region(), simulationType.cssUrl().orElse(null),
+                AppLocalization.getFormattedText(AppLocalizationKeys.WINDOW_TITLE, title));
     }
 
     /**
@@ -310,14 +311,14 @@ public final class EtpetssimApplication extends Application {
      * Replaces the scene root of the stage by the header and the main region, and updates the stylesheets, the window
      * title, and the stage layout.
      *
-     * @param stage      primary application stage
-     * @param headerNode header shown above the main region
-     * @param mainRegion main region, which grows vertically
-     * @param cssUrl     URL of the stylesheet added after the common one, or {@code null} for none
-     * @param title      title inserted into the window title pattern
+     * @param stage       primary application stage
+     * @param headerNode  header shown above the main region
+     * @param mainRegion  main region, which grows vertically
+     * @param cssUrl      URL of the stylesheet added after the common one, or {@code null} for none
+     * @param windowTitle title of the window
      */
     private void setStageContent(Stage stage, Node headerNode, Region mainRegion, @Nullable String cssUrl,
-                                 String title) {
+                                 String windowTitle) {
         VBox root = new VBox(headerNode, mainRegion);
         root.getStyleClass().add(FXStyleClasses.APP_VBOX);
         VBox.setVgrow(mainRegion, Priority.ALWAYS);
@@ -339,7 +340,7 @@ public final class EtpetssimApplication extends Application {
         }
         scene.getStylesheets().setAll(styles);
 
-        stage.setTitle(AppLocalization.getFormattedText(AppLocalizationKeys.WINDOW_TITLE, title));
+        stage.setTitle(windowTitle);
 
         // Adjust stage size and position to fit the screen. Run later to ensure layout is calculated.
         Platform.runLater(() -> adjustStageLayoutToScreen(stage, root));
