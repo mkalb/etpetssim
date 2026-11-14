@@ -50,22 +50,23 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 final class AbstractObservationViewTest {
 
     private static final GridCoordinate SELECTED_COORDINATE = new GridCoordinate(3, 4);
-    private static final GridEntityDescriptorRegistry ENTITY_DESCRIPTOR_REGISTRY =
-            GridEntityDescriptorRegistry.of(ConwayEntity.values());
     private static final String KEY_NOT_FINITE = "notFinite";
     private static final int GRID_WIDTH = 40;
     private static final int GRID_HEIGHT = 30;
+
+    private static GridEntityDescriptorRegistry entityDescriptorRegistry;
 
     @BeforeAll
     static void setUpBeforeAll() {
         if (!AppLocalization.isInitialized()) {
             AppLocalization.initialize("en_US", Locale.US);
         }
+        entityDescriptorRegistry = GridEntityDescriptorRegistry.of(ConwayEntity.values());
         FXTestSupport.ensureStarted();
     }
 
     private static TestObservationView createView() {
-        return new TestObservationView(new ObservationViewModel<>(), ENTITY_DESCRIPTOR_REGISTRY);
+        return new TestObservationView(new ObservationViewModel<>(), entityDescriptorRegistry);
     }
 
     private static ConwayStatistics createStatistics(int stepCount) {
@@ -229,7 +230,7 @@ final class AbstractObservationViewTest {
                     () -> assertFalse(visibleWithoutSelection),
                     () -> assertTrue(visibleWithSelection),
                     () -> assertEquals(SELECTED_COORDINATE.toDisplayString(), coordinateText),
-                    () -> assertEquals(ENTITY_DESCRIPTOR_REGISTRY
+                    () -> assertEquals(entityDescriptorRegistry
                             .requireByDescriptorId(ConwayEntity.ALIVE.descriptorId()).shortName(), cellTypeText),
                     () -> assertFalse(section.isVisible()),
                     () -> assertEquals(unknown(), cell(section, 1, 0).getText()),
@@ -313,7 +314,7 @@ final class AbstractObservationViewTest {
     @Test
     void testCreateGenericMetricSectionPlacesMaximumInMinimumColumnWithoutMinimum() {
         FXTestSupport.runAndWait(() -> {
-            var metric = new StatisticsMetric<ConwayStatistics>(ConwayStatistics.KEY_CHANGED_CELLS,
+            var metric = new StatisticsMetric<>(ConwayStatistics.KEY_CHANGED_CELLS,
                     "conway.observation.cells.changed", ConwayStatistics::changedCells, StatisticsExtremaMode.MAX);
 
             VBox section = createView().createGenericMetricSection(List.of(metric));
@@ -330,7 +331,7 @@ final class AbstractObservationViewTest {
     @Test
     void testCreateGenericMetricSectionOmitsHeaderWithoutExtrema() {
         FXTestSupport.runAndWait(() -> {
-            var metric = new StatisticsMetric<ConwayStatistics>(ConwayStatistics.KEY_CHANGED_CELLS,
+            var metric = new StatisticsMetric<>(ConwayStatistics.KEY_CHANGED_CELLS,
                     "conway.observation.cells.changed", ConwayStatistics::changedCells, StatisticsExtremaMode.NONE);
 
             VBox section = createView().createGenericMetricSection(List.of(metric));
