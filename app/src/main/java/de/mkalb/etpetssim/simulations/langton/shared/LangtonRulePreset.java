@@ -23,6 +23,8 @@ public sealed interface LangtonRulePreset
      * Returns the human-readable display name for this preset, suitable for use in a ComboBox.
      * Returns an empty string for the {@code EMPTY} preset (no selection).
      *
+     * <p>The name is the rule string, a technical identifier, and is not localized.
+     *
      * @return the display name
      */
     String displayName();

@@ -18,6 +18,8 @@ public sealed interface SnakeMoveStrategy permits AnonymousMoveStrategy, NamedMo
     /**
      * Returns the display name of this strategy.
      *
+     * <p>The name is a technical identifier of abbreviations (see {@link SnakeMoveStrategies}) and is not localized.
+     *
      * @return strategy display name
      */
     String displayName();

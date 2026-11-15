@@ -23,6 +23,8 @@ public sealed interface ConwayRulePreset
      * Returns the human-readable display name for this preset, suitable for use in a ComboBox.
      * Returns an empty string for the {@code EMPTY} preset (no selection).
      *
+     * <p>The name is a proper name from the literature (e.g., LifeWiki) and is not localized.
+     *
      * @return the display name
      */
     String displayName();
