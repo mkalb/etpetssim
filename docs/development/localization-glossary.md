@@ -123,8 +123,8 @@ the English name in German spelling; a descriptive title is translated (`Außeri
 
 ## English Terms in de_DE
 
-de_DE keeps these English terms (`.claude/rules/i18n.md`, "English terms in de_DE"); `Seed`, `Layout`, and `Respawn`
-are listed in their sections.
+de_DE keeps these English terms (`.claude/rules/i18n.md`, "English terms in de_DE"); `Seed`, `Layout`, `Respawn`, and
+`Highway` are listed in their sections.
 
 | en_US        | de_DE        | Source  | Notes                   |
 |--------------|--------------|---------|-------------------------|
@@ -205,6 +205,7 @@ are listed in their sections.
 | `no turn`   | `keine Drehung` | general            | letter N                                                 |
 | `terrain`   | `Gelände`       | project            | cell state that decides the turn; `color` in the sources |
 | `unvisited` | `unbesucht`     | project            |                                                          |
+| `highway`   | `Highway`       | [Ant-en]           | periodic pattern the ant builds after about 10,000 steps |
 
 ## Rebounding Entities
 
