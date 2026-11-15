@@ -38,19 +38,19 @@ The application name `Extraterrestrial Pets Simulation` is not translated.
 ## Simulation Names
 
 Proper names keep their capitalization in en_US. de_DE uses the established German name where one exists and otherwise
-the English name in German spelling; a descriptive title is translated (`Außerirdische Haustiere`).
+the English name; a descriptive title is translated (`Außerirdische Haustiere`).
 
-| en_US                   | de_DE                      | Source                 | Notes                                 |
-|-------------------------|----------------------------|------------------------|---------------------------------------|
-| `Conway's Game of Life` | `Conways Spiel des Lebens` | [GoL-en], [GoL-de]     |                                       |
-| `extraterrestrial pets` | `Außerirdische Haustiere`  | project                | descriptive title; replaces `ET Pets` |
-| `forest-fire model`     | `Waldbrandmodell`          | [Forest-en], [SOC-de]  | replaces `Forest Fire`                |
-| `Langton's ant`         | `Langton-Ameise`           | [Ant-en], [Ant-de]     | replaces `Langtons Ameise`            |
-| `rebounding entities`   | `Abprallende Entitäten`    | project                | provisional                           |
-| `simulation lab`        | `Simulationslabor`         | project                | development tool                      |
-| `Snake`                 | `Snake`                    | [Snake-en], [Snake-de] |                                       |
-| `Sugarscape`            | `Sugarscape`               | [Sugar-en]             |                                       |
-| `Wa-Tor`                | `Wator`                    | [WaTor-en], [WaTor-de] |                                       |
+| en_US                   | de_DE                      | Source                 | Notes             |
+|-------------------------|----------------------------|------------------------|-------------------|
+| `Conway's Game of Life` | `Conways Spiel des Lebens` | [GoL-en], [GoL-de]     |                   |
+| `extraterrestrial pets` | `Außerirdische Haustiere`  | project                | descriptive title |
+| `forest-fire model`     | `Waldbrandmodell`          | [Forest-en], [SOC-de]  |                   |
+| `Langton's ant`         | `Langton-Ameise`           | [Ant-en], [Ant-de]     |                   |
+| `rebounding entities`   | `Abprallende Entitäten`    | project                | provisional       |
+| `simulation lab`        | `Simulationslabor`         | project                | development tool  |
+| `Snake`                 | `Snake`                    | [Snake-en], [Snake-de] |                   |
+| `Sugarscape`            | `Sugarscape`               | [Sugar-en]             |                   |
+| `Wa-Tor`                | `Wator`                    | [WaTor-en], [WaTor-de] |                   |
 
 ## Simulation Categories
 
@@ -82,6 +82,7 @@ the English name in German spelling; a descriptive title is translated (`Außeri
 | `neighborhood mode`    | `Nachbarschaftsmodus` | project          | on squares: von Neumann or Moore neighborhood |
 | `cell connection type` | `Zellverbindungstyp`  | project          | edge or vertex                                |
 | `coordinate`           | `Koordinate`          | general          | position of a cell                            |
+| `direction`            | `Richtung`            | general          | compass direction of a moving entity          |
 | `pixel`                | `Pixel`               | general          |                                               |
 | `grid edge`            | `Gitterrand`          | project          | boundary of the grid                          |
 | `edge behavior`        | `Randverhalten`       | project          | behavior per axis                             |
@@ -103,6 +104,7 @@ the English name in German spelling; a descriptive title is translated (`Außeri
 | `layout`                | `Layout`                | project   | configuration section                        |
 | `initialization`        | `Initialisierung`       | project   | configuration section                        |
 | `rules`                 | `Regeln`                | project   | configuration section                        |
+| `percentage`            | `Prozentsatz`           | general   | initial share of a cell type                 |
 | `seed`                  | `Seed`                  | [Seed-en] | initial value of the random number generator |
 | `simulation run`        | `Simulationslauf`       | general   | from start to end or cancel                  |
 | `control panel`         | `Bedienfeld`            | general   |                                              |
@@ -154,35 +156,35 @@ de_DE keeps these English terms (`.claude/rules/i18n.md`, "English terms in de_D
 | `methuselah`                   | `Methusalem`          | [LifeWiki]           |                                                            |
 | `replicator`                   | `Replikator`          | [LifeWiki]           |                                                            |
 | `block`                        | `Block`               | [LifeWiki], [GoL-de] |                                                            |
-| `beehive`                      | `Bienenstock`         | [LifeWiki], [GoL-de] | replaces `Bienenkorb`                                      |
-| `loaf`                         | `Brotlaib`            | [LifeWiki], [GoL-de] | replaces `Laib`                                            |
+| `beehive`                      | `Bienenstock`         | [LifeWiki], [GoL-de] |                                                            |
+| `loaf`                         | `Brotlaib`            | [LifeWiki], [GoL-de] |                                                            |
 | `boat`                         | `Boot`                | [LifeWiki], [GoL-de] |                                                            |
-| `tub`                          | `Kübel`               | [LifeWiki], [GoL-de] | replaces `Wanne`                                           |
+| `tub`                          | `Kübel`               | [LifeWiki], [GoL-de] |                                                            |
 | `blinker`                      | `Blinker`             | [LifeWiki], [GoL-de] |                                                            |
 | `toad`                         | `Kröte`               | [LifeWiki], [GoL-de] |                                                            |
 | `beacon`                       | `Leuchtfeuer`         | [LifeWiki]           | no German source found                                     |
 | `pulsar`                       | `Pulsar`              | [LifeWiki]           |                                                            |
 | `pentadecathlon`               | `Pentadecathlon`      | [LifeWiki]           | de.wikipedia calls it `Pulsator`; kept apart from `Pulsar` |
 | `glider`                       | `Gleiter`             | [LifeWiki], [GoL-de] |                                                            |
-| `lightweight spaceship (LWSS)` | `Segler 1 (LWSS)`     | [LifeWiki], [GoL-de] | replaces `Leichtes Raumschiff`                             |
+| `lightweight spaceship (LWSS)` | `Segler 1 (LWSS)`     | [LifeWiki], [GoL-de] |                                                            |
 | `R-pentomino`                  | `R-Pentomino`         | [LifeWiki], [GoL-de] |                                                            |
 | `acorn`                        | `Eichel`              | [LifeWiki]           | no German source found                                     |
 | `HighLife replicator`          | `HighLife-Replikator` | [LifeWiki]           |                                                            |
 
 ## Extraterrestrial Pets
 
-| en_US      | de_DE       | Source  | Notes                                     |
-|------------|-------------|---------|-------------------------------------------|
-| `pet`      | `Haustier`  | project | replaces `ET pet`, `ET Pet`, and `ET-Pet` |
-| `egg`      | `Ei`        | project | hatches into a pet                        |
-| `resource` | `Ressource` | project | plant or insect                           |
-| `plant`    | `Pflanze`   | project |                                           |
-| `insect`   | `Insekt`    | project |                                           |
-| `terrain`  | `Gelände`   | project | ground, rock, water, or trail             |
-| `ground`   | `Boden`     | project |                                           |
-| `rock`     | `Fels`      | project |                                           |
-| `water`    | `Wasser`    | project |                                           |
-| `trail`    | `Spur`      | project |                                           |
+| en_US      | de_DE       | Source  | Notes                         |
+|------------|-------------|---------|-------------------------------|
+| `pet`      | `Haustier`  | project |                               |
+| `egg`      | `Ei`        | project | hatches into a pet            |
+| `resource` | `Ressource` | project | plant or insect               |
+| `plant`    | `Pflanze`   | project |                               |
+| `insect`   | `Insekt`    | project |                               |
+| `terrain`  | `Gelände`   | project | ground, rock, water, or trail |
+| `ground`   | `Boden`     | project |                               |
+| `rock`     | `Fels`      | project |                               |
+| `water`    | `Wasser`    | project |                               |
+| `trail`    | `Spur`      | project |                               |
 
 ## Forest-Fire Model
 
@@ -209,29 +211,29 @@ de_DE keeps these English terms (`.claude/rules/i18n.md`, "English terms in de_D
 
 ## Rebounding Entities
 
-| en_US       | de_DE       | Source  | Notes                                                       |
-|-------------|-------------|---------|-------------------------------------------------------------|
-| `rebounder` | `Abpraller` | project | provisional; replaces `moving entity`, `bewegliche Entität` |
-| `ground`    | `Boden`     | project |                                                             |
-| `wall`      | `Wand`      | project |                                                             |
-| `direction` | `Richtung`  | project | movement direction                                          |
+| en_US       | de_DE       | Source  | Notes       |
+|-------------|-------------|---------|-------------|
+| `rebounder` | `Abpraller` | project | provisional |
+| `ground`    | `Boden`     | project |             |
+| `wall`      | `Wand`      | project |             |
 
 ## Snake
 
-| en_US               | de_DE               | Source                 | Notes                                                                    |
-|---------------------|---------------------|------------------------|--------------------------------------------------------------------------|
-| `snake`             | `Schlange`          | [Snake-en], [Snake-de] |                                                                          |
-| `snake head`        | `Schlangenkopf`     | project                |                                                                          |
-| `segment`           | `Segment`           | project                | body part of a snake                                                     |
-| `food`              | `Futter`            | [Snake-de]             | the only food type; replaces `Nahrung`, `growth food`, `Wachstumsfutter` |
-| `growth`            | `Wachstum`          | project                | segments added after eating                                              |
-| `points`            | `Punkte`            | [Snake-de]             |                                                                          |
-| `bonus per segment` | `Bonus pro Segment` | project                | extra points per segment for eating food                                 |
-| `strategy`          | `Strategie`         | project                | movement strategy of a snake                                             |
-| `permadeath`        | `endgültiger Tod`   | project                | death mode; replaces `permanent death`, `permanenter Tod`                |
-| `respawn`           | `Respawn`           | project                | death mode; gaming term; replaces `Wiedergeburt`                         |
-| `ground`            | `Boden`             | project                |                                                                          |
-| `wall`              | `Wand`              | [Snake-de]             |                                                                          |
+| en_US               | de_DE               | Source                 | Notes                                    |
+|---------------------|---------------------|------------------------|------------------------------------------|
+| `snake`             | `Schlange`          | [Snake-en], [Snake-de] |                                          |
+| `snake head`        | `Schlangenkopf`     | project                |                                          |
+| `segment`           | `Segment`           | project                | body part of a snake                     |
+| `food`              | `Futter`            | [Snake-de]             | the only food type                       |
+| `growth`            | `Wachstum`          | project                | segments added after eating              |
+| `points`            | `Punkte`            | [Snake-de]             |                                          |
+| `bonus per segment` | `Bonus pro Segment` | project                | extra points per segment for eating food |
+| `strategy`          | `Strategie`         | project                | movement strategy of a snake             |
+| `death mode`        | `Todesmodus`        | project                | permadeath or respawn                    |
+| `permadeath`        | `endgültiger Tod`   | project                | death mode                               |
+| `respawn`           | `Respawn`           | project                | death mode; gaming term                  |
+| `ground`            | `Boden`             | project                |                                          |
+| `wall`              | `Wand`              | [Snake-de]             |                                          |
 
 ## Sugarscape
 
@@ -241,26 +243,27 @@ de_DE keeps these English terms (`.claude/rules/i18n.md`, "English terms in de_D
 | `sugar`             | `Zucker`             | [Sugar-en], [Sugar-book] | the resource of a cell                                     |
 | `sugar peak`        | `Zuckergipfel`       | project                  |                                                            |
 | `sugar peak radius` | `Zuckergipfelradius` | project                  | maximum spread radius of a sugar peak                      |
-| `sugar capacity`    | `Zuckerkapazität`    | [Sugar-book]             | maximum sugar of a cell; replaces `max sugar amount`       |
+| `sugar capacity`    | `Zuckerkapazität`    | [Sugar-book]             | maximum sugar of a cell                                    |
 | `metabolism`        | `Stoffwechsel`       | [Sugar-en], [Sugar-book] | energy an agent uses per step                              |
 | `vision`            | `Sichtweite`         | [Sugar-en], [Sugar-book] |                                                            |
 | `energy`            | `Energie`            | project                  |                                                            |
 | `regeneration`      | `Regeneration`       | project                  | sugar that grows back per step; `growback` in [Sugar-book] |
 | `terrain`           | `Gelände`            | project                  | ground under sugar and agents                              |
+| `sugar level`       | `Zuckerstufe`        | project                  | low, medium, or high; editing tool                         |
 
 ## Wa-Tor
 
-| en_US          | de_DE        | Source                 | Notes                                           |
-|----------------|--------------|------------------------|-------------------------------------------------|
-| `fish`         | `Fisch`      | [WaTor-en], [WaTor-de] | count label: `fish`/`Fische`, not `fish cells`  |
-| `shark`        | `Hai`        | [WaTor-en], [WaTor-de] | count label: `sharks`/`Haie`, not `shark cells` |
-| `predator`     | `Räuber`     | [WaTor-en], [WaTor-de] | the sharks                                      |
-| `prey`         | `Beute`      | [WaTor-en], [WaTor-de] | the fish                                        |
-| `creature`     | `Tier`       | project                | fish or shark; replaces `Kreatur`               |
-| `water`        | `Wasser`     | [WaTor-de]             | empty cell                                      |
-| `energy`       | `Energie`    | [WaTor-de]             |                                                 |
-| `reproduction` | `Vermehrung` | [WaTor-de]             | replaces `Fortpflanzung`                        |
-| `age`          | `Alter`      | [WaTor-de]             |                                                 |
+| en_US          | de_DE        | Source                 | Notes                        |
+|----------------|--------------|------------------------|------------------------------|
+| `fish`         | `Fisch`      | [WaTor-en], [WaTor-de] | count label: `fish`/`Fische` |
+| `shark`        | `Hai`        | [WaTor-en], [WaTor-de] | count label: `sharks`/`Haie` |
+| `predator`     | `Räuber`     | [WaTor-en], [WaTor-de] | the sharks                   |
+| `prey`         | `Beute`      | [WaTor-en], [WaTor-de] | the fish                     |
+| `creature`     | `Tier`       | project                | fish or shark                |
+| `water`        | `Wasser`     | [WaTor-de]             | empty cell                   |
+| `energy`       | `Energie`    | [WaTor-de]             |                              |
+| `reproduction` | `Vermehrung` | [WaTor-de]             |                              |
+| `age`          | `Alter`      | [WaTor-de]             |                              |
 
 ## Simulation Lab
 
@@ -269,31 +272,6 @@ de_DE keeps these English terms (`.claude/rules/i18n.md`, "English terms in de_D
 | `highlighted` | `hervorgehoben` | project |       |
 | `normal`      | `normal`        | project |       |
 | `color mode`  | `Farbmodus`     | project |       |
-
-## Replaced Terms
-
-Terms of the general sections that the bundles used before and that the glossary replaces; `settings` and
-`Einstellungen` only where they mean the configuration. The other sections note replaced terms in their notes.
-
-| Replaced term             | Locale | Term                    |
-|---------------------------|--------|-------------------------|
-| `game field`              | en_US  | `grid`                  |
-| `Spielfeld`               | de_DE  | `Gitter`                |
-| `Raster`                  | de_DE  | `Gitter`                |
-| `Simulationsraster`       | de_DE  | `Gitter`                |
-| `Zellenanzeige`           | de_DE  | `Zellanzeige`           |
-| `Verhalten am Gitterrand` | de_DE  | `Gitterrandverhalten`   |
-| `umbrechen`               | de_DE  | `umlaufend`             |
-| `settings`                | en_US  | `configuration`         |
-| `Einstellungen`           | de_DE  | `Konfiguration`         |
-| `timed`                   | en_US  | `step by step`          |
-| `zeitgesteuert`           | de_DE  | `Schritt für Schritt`   |
-| `batch`                   | en_US  | `jump ahead`            |
-| `Stapel`                  | de_DE  | `vorspringen`           |
-| `continuous batch`        | en_US  | `fast forward`          |
-| `kontinuierlicher Stapel` | de_DE  | `Schnellvorlauf`        |
-| `termination condition`   | en_US  | `end of the simulation` |
-| `Terminierungsbedingung`  | de_DE  | `Simulationsende`       |
 
 ## Sources
 
