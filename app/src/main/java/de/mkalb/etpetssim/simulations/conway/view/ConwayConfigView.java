@@ -84,7 +84,8 @@ public final class ConwayConfigView extends AbstractConfigView<ConwayConfig, Con
                         return "";
                     }
                     return AppLocalization.getFormattedText(CONWAY_CONFIG_ALIVE_PERCENT_HINT,
-                            preset.recommendedDensityPercent(), preset.displayName());
+                            AppLocalization.formatPercent(preset.recommendedDensityPercent() / 100.0d),
+                            preset.displayName());
                 },
                 squarePresetProperty, trianglePresetProperty, hexagonPresetProperty,
                 viewModel.cellShapeProperty().property()

@@ -33,8 +33,6 @@ import java.util.List;
  */
 public abstract class AbstractConfigView<CON extends SimulationConfig, VM extends AbstractConfigViewModel<CON>> {
 
-    private static final double PERCENT_SCALE = 100.0d;
-
     protected final VM viewModel;
 
     protected AbstractConfigView(VM viewModel) {
@@ -217,9 +215,32 @@ public abstract class AbstractConfigView<CON extends SimulationConfig, VM extend
         );
     }
 
+    /**
+     * Formats a range tooltip with the bounds of the property as whole percentages of the active locale.
+     *
+     * @param key      the resource key of the tooltip, which receives the bounds as {@code %1$s} and {@code %2$s}
+     * @param property the property whose bounds are formatted
+     * @return the formatted tooltip
+     */
     protected final String formatPercentRangeTooltip(String key, InputDoubleProperty property) {
+        return formatPercentRangeTooltip(key, property, 0);
+    }
+
+    /**
+     * Formats a range tooltip with the bounds of the property as percentages of the active locale with at most
+     * {@code decimalPlaces} decimal places (e.g., {@code 0.25%} with two decimal places, but {@code 2%} instead of
+     * {@code 2.00%}).
+     *
+     * @param key           the resource key of the tooltip, which receives the bounds as {@code %1$s} and
+     *                      {@code %2$s}
+     * @param property      the property whose bounds are formatted
+     * @param decimalPlaces the maximum number of decimal places of the percentages
+     * @return the formatted tooltip
+     */
+    protected final String formatPercentRangeTooltip(String key, InputDoubleProperty property, int decimalPlaces) {
         return AppLocalization.getFormattedText(key,
-                property.min() * PERCENT_SCALE, property.max() * PERCENT_SCALE
+                AppLocalization.formatPercent(property.min(), 0, decimalPlaces),
+                AppLocalization.formatPercent(property.max(), 0, decimalPlaces)
         );
     }
 

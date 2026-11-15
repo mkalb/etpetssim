@@ -204,6 +204,54 @@ final class AppLocalizationTest {
     }
 
     @Test
+    void testFormatPercent() {
+        assertThrows(IllegalStateException.class, () -> AppLocalization.formatPercent(0.5d));
+
+        AppLocalization.initializeForTesting(Locale.US, TEST_BUNDLE_BASE_NAME);
+        String englishHalf = AppLocalization.formatPercent(0.5d);
+        String englishRounded = AppLocalization.formatPercent(0.254d);
+
+        AppLocalization.resetForTesting();
+        AppLocalization.initializeForTesting(Locale.GERMANY, TEST_BUNDLE_BASE_NAME);
+
+        assertAll(
+                () -> assertEquals("50%", englishHalf),
+                () -> assertEquals("25%", englishRounded),
+                () -> assertEquals("50\u00A0%", AppLocalization.formatPercent(0.5d)),
+                () -> assertEquals("100\u00A0%", AppLocalization.formatPercent(1.0d))
+        );
+    }
+
+    @Test
+    void testFormatPercentWithDecimalPlaces() {
+        AppLocalization.initializeForTesting(Locale.US, TEST_BUNDLE_BASE_NAME);
+        String englishFixed = AppLocalization.formatPercent(0.002d, 1, 1);
+        String englishTrimmed = AppLocalization.formatPercent(0.02d, 0, 2);
+
+        AppLocalization.resetForTesting();
+        AppLocalization.initializeForTesting(Locale.GERMANY, TEST_BUNDLE_BASE_NAME);
+
+        assertAll(
+                () -> assertEquals("0.2%", englishFixed),
+                () -> assertEquals("2%", englishTrimmed),
+                () -> assertEquals("0,2\u00A0%", AppLocalization.formatPercent(0.002d, 1, 1)),
+                () -> assertEquals("0,10\u00A0%", AppLocalization.formatPercent(0.001d, 2, 2)),
+                () -> assertEquals("0,15\u00A0%", AppLocalization.formatPercent(0.001_5d, 0, 2)),
+                () -> assertEquals("0\u00A0%", AppLocalization.formatPercent(0.0d, 0, 2))
+        );
+    }
+
+    @Test
+    void testFormatPercentWithDecimalPlacesRejectsInvalidRange() {
+        AppLocalization.initializeForTesting(Locale.US, TEST_BUNDLE_BASE_NAME);
+
+        assertAll(
+                () -> assertThrows(IllegalArgumentException.class, () -> AppLocalization.formatPercent(0.5d, -1, 0)),
+                () -> assertThrows(IllegalArgumentException.class, () -> AppLocalization.formatPercent(0.5d, 2, 1))
+        );
+    }
+
+    @Test
     void testResolveLocaleFromArgument() {
         assertAll(
                 () -> assertEquals(Optional.of(Locale.US), AppLocalization.resolveLocaleFromArgument("en_US")),

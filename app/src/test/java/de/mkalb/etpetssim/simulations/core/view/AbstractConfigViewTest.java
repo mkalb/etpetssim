@@ -257,15 +257,32 @@ final class AbstractConfigViewTest {
         String tooltip = createView(true).formatPercentRangeTooltip("conway.config.alivepercent.tooltip",
                 InputDoubleProperty.of(0.1d, 0.0d, 0.5d));
 
-        assertEquals("Set the initial percentage of living cells (0% - 50%)", tooltip);
+        assertEquals("Set the initial percentage of living cells (0% – 50%)", tooltip);
+    }
+
+    @Test
+    void testFormatPercentRangeTooltipWithDecimalPlaces() {
+        TestConfigView view = createView(true);
+
+        String wholeBounds = view.formatPercentRangeTooltip("forest.config.lightningignitionprobability.tooltip",
+                InputDoubleProperty.of(0.001d, 0.0d, 0.02d), 2);
+        String fractionalBounds = view.formatPercentRangeTooltip("forest.config.treegrowthprobability.tooltip",
+                InputDoubleProperty.of(0.002d, 0.001d, 0.2d), 1);
+
+        assertAll(
+                () -> assertEquals("Set the probability that lightning sets a tree on fire (0% – 2%)",
+                        wholeBounds),
+                () -> assertEquals("Set the probability that a new tree grows on an empty cell (0.1% – 20%)",
+                        fractionalBounds)
+        );
     }
 
     @Test
     void testFormatDoubleRangeTooltip() {
-        String tooltip = createView(true).formatDoubleRangeTooltip("forest.config.treegrowthprobability.tooltip",
-                InputDoubleProperty.of(0.01d, 0.001d, 0.25d));
+        String tooltip = createView(true).formatDoubleRangeTooltip("snake.config.segmentlengthmultiplier.tooltip",
+                InputDoubleProperty.of(1.5d, 1.0d, 2.5d));
 
-        assertEquals("Set the probability that a new tree grows on an empty cell (0.001 - 0.250)", tooltip);
+        assertEquals("Set the bonus points per segment that a snake earns for eating food (1.0 – 2.5)", tooltip);
     }
 
     @Test
@@ -273,7 +290,7 @@ final class AbstractConfigViewTest {
         String tooltip = createView(true).formatIntRangeTooltip(SimulationLocalizationKeys.CONFIG_GRID_WIDTH_TOOLTIP,
                 InputIntegerProperty.of(40, 10, 1_000, 2));
 
-        assertEquals("Set the width of the grid (10 - 1,000 cells)", tooltip);
+        assertEquals("Set the width of the grid (10 – 1,000 cells)", tooltip);
     }
 
     @Test
@@ -281,7 +298,7 @@ final class AbstractConfigViewTest {
         String tooltip = createView(true).formatIntRangeTooltip(
                 SimulationLocalizationKeys.CONFIG_CELL_EDGE_LENGTH_TOOLTIP, InputDoubleIntRangeProperty.of(12, 4, 20));
 
-        assertEquals("Set the edge length of each cell (4 - 20 pixels)", tooltip);
+        assertEquals("Set the edge length of each cell (4 – 20 pixels)", tooltip);
     }
 
     private static final class TestConfigViewModel extends AbstractConfigViewModel<ConwayConfig> {

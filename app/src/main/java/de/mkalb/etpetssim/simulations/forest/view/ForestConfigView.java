@@ -53,20 +53,21 @@ public final class ForestConfigView extends AbstractConfigView<ForestConfig, For
 
         // Rules
         var neighborhoodModeControl = createNeighborhoodModeControl(viewModel.neighborhoodModeProperty());
-        var treeGrowthProbabilityControl = FXComponentFactory.createLabeledDoubleSlider(
+        var treeGrowthProbabilityControl = FXComponentFactory.createLabeledPercentSlider(
                 viewModel.treeGrowthProbabilityProperty(),
-                ForestConfigViewModel.TREE_GROWTH_DECIMALS,
+                ForestConfigViewModel.TREE_GROWTH_PERCENT_DECIMALS,
                 AppLocalization.getText(FOREST_CONFIG_TREE_GROWTH_PROBABILITY),
-                formatDoubleRangeTooltip(FOREST_CONFIG_TREE_GROWTH_PROBABILITY_TOOLTIP,
-                        viewModel.treeGrowthProbabilityProperty()),
+                formatPercentRangeTooltip(FOREST_CONFIG_TREE_GROWTH_PROBABILITY_TOOLTIP,
+                        viewModel.treeGrowthProbabilityProperty(), ForestConfigViewModel.TREE_GROWTH_PERCENT_DECIMALS),
                 FXStyleClasses.CONFIG_SLIDER
         );
-        var lightningIgnitionProbabilityControl = FXComponentFactory.createLabeledDoubleSlider(
+        var lightningIgnitionProbabilityControl = FXComponentFactory.createLabeledPercentSlider(
                 viewModel.lightningIgnitionProbabilityProperty(),
-                ForestConfigViewModel.LIGHTNING_IGNITION_DECIMALS,
+                ForestConfigViewModel.LIGHTNING_IGNITION_PERCENT_DECIMALS,
                 AppLocalization.getText(FOREST_CONFIG_LIGHTNING_IGNITION_PROBABILITY),
-                formatDoubleRangeTooltip(FOREST_CONFIG_LIGHTNING_IGNITION_PROBABILITY_TOOLTIP,
-                        viewModel.lightningIgnitionProbabilityProperty()),
+                formatPercentRangeTooltip(FOREST_CONFIG_LIGHTNING_IGNITION_PROBABILITY_TOOLTIP,
+                        viewModel.lightningIgnitionProbabilityProperty(),
+                        ForestConfigViewModel.LIGHTNING_IGNITION_PERCENT_DECIMALS),
                 FXStyleClasses.CONFIG_SLIDER
         );
 

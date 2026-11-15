@@ -2,6 +2,7 @@ package de.mkalb.etpetssim.core;
 
 import org.jspecify.annotations.Nullable;
 
+import java.text.NumberFormat;
 import java.util.Arrays;
 import java.util.IllegalFormatException;
 import java.util.List;
@@ -184,6 +185,47 @@ public final class AppLocalization {
                     + ", arguments: " + Arrays.toString(args));
             return PLACEHOLDER_FOR_EXCEPTIONS;
         }
+    }
+
+    /**
+     * Formats a fraction as a whole percentage in the conventions of the active locale.
+     *
+     * <p>For example, {@code 0.5} becomes {@code 50%} in {@code en_US} and {@code 50 %} with a no-break space in
+     * {@code de_DE}.
+     *
+     * @param fraction the value as fraction (e.g., {@code 0.5} for 50 percent)
+     * @return the formatted percentage
+     * @throws IllegalStateException if localization has not been initialized
+     * @see #formatPercent(double, int, int)
+     */
+    public static String formatPercent(double fraction) {
+        return formatPercent(fraction, 0, 0);
+    }
+
+    /**
+     * Formats a fraction as a percentage with a range of decimal places in the conventions of the active locale.
+     *
+     * <p>The percentage shows at least {@code minDecimalPlaces} and at most {@code maxDecimalPlaces} decimal places;
+     * equal values give a fixed number of decimal places. For example, {@code 0.002} with one decimal place becomes
+     * {@code 0.2%} in {@code en_US} and {@code 0,2 %} with a no-break space in {@code de_DE}.
+     *
+     * @param fraction         the value as fraction (e.g., {@code 0.002} for 0.2 percent)
+     * @param minDecimalPlaces the minimum number of decimal places of the percentage
+     * @param maxDecimalPlaces the maximum number of decimal places of the percentage
+     * @return the formatted percentage
+     * @throws IllegalArgumentException if {@code minDecimalPlaces} is negative or greater than
+     *                                  {@code maxDecimalPlaces}
+     * @throws IllegalStateException    if localization has not been initialized
+     */
+    public static String formatPercent(double fraction, int minDecimalPlaces, int maxDecimalPlaces) {
+        if ((minDecimalPlaces < 0) || (minDecimalPlaces > maxDecimalPlaces)) {
+            throw new IllegalArgumentException("minDecimalPlaces must be in [0, maxDecimalPlaces], but was: "
+                    + "minDecimalPlaces=" + minDecimalPlaces + ", maxDecimalPlaces=" + maxDecimalPlaces);
+        }
+        NumberFormat percentFormat = NumberFormat.getPercentInstance(locale());
+        percentFormat.setMinimumFractionDigits(minDecimalPlaces);
+        percentFormat.setMaximumFractionDigits(maxDecimalPlaces);
+        return percentFormat.format(fraction);
     }
 
     /**

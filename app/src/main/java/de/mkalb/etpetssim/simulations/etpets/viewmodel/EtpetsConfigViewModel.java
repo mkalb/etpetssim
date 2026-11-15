@@ -105,7 +105,8 @@ public final class EtpetsConfigViewModel extends AbstractConfigViewModel<EtpetsC
                         .add(plantPercent.property())
                         .add(insectPercent.property())
                         .greaterThan(COMBINED_PERCENT_MAX),
-                () -> AppLocalization.getText(ETPETS_CONFIG_VALIDATION_COMBINED_PERCENTS)
+                () -> AppLocalization.getFormattedText(ETPETS_CONFIG_VALIDATION_COMBINED_PERCENTS,
+                        AppLocalization.formatPercent(COMBINED_PERCENT_MAX))
         );
     }
 

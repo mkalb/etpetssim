@@ -175,7 +175,8 @@ public final class WatorConfigViewModel extends AbstractConfigViewModel<WatorCon
         super(simulationState, COMMON_CONSTRAINTS);
         registerConfigValidationRule(
                 fishPercent.property().add(sharkPercent.property()).greaterThan(COMBINED_PERCENT_MAX),
-                () -> AppLocalization.getText(WATOR_CONFIG_VALIDATION_POPULATION_SHARE)
+                () -> AppLocalization.getFormattedText(WATOR_CONFIG_VALIDATION_POPULATION_SHARE,
+                        AppLocalization.formatPercent(COMBINED_PERCENT_MAX))
         );
     }
 

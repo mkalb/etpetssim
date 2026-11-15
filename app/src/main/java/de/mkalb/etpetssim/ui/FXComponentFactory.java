@@ -1,6 +1,8 @@
 package de.mkalb.etpetssim.ui;
 
+import de.mkalb.etpetssim.core.AppLocalization;
 import javafx.beans.binding.Bindings;
+import javafx.beans.binding.StringBinding;
 import javafx.beans.property.ReadOnlyStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
@@ -44,6 +46,7 @@ public final class FXComponentFactory {
 
     private static final String BUTTON_TEXT_ADOPT = "↩";
     private static final String BUTTON_TEXT_CLEAR = "✕";
+    private static final int MAX_PERCENT_DECIMAL_PLACES = 7;
 
     private FXComponentFactory() {
     }
@@ -373,18 +376,15 @@ public final class FXComponentFactory {
     }
 
     /**
-     * Creates a labeled percent slider with a bound value, formatted label, tooltip, and custom style class.
+     * Creates a labeled percent slider for whole percent values with a bound value, formatted label, tooltip, and
+     * custom style class.
      *
-     * <p>The slider is configured for percent values in the range defined by the given InputDoubleProperty.
-     * The slider's value is bidirectionally bound to the property. The label displays the current value using
-     * the provided format string. Both the label and the slider share the same tooltip for improved accessibility.
-     *
-     * <p>This method is suitable for percent values between 0.0 and 1.0 (inclusive).
-     * The range is limited to 0.0..1.0 and rounded inward to whole percent, so that the slider stays within the range
-     * of the property. As a side effect, the current value of the property is rounded and clamped to this range.
+     * <p>Equivalent to {@link #createLabeledPercentSlider(InputDoubleProperty, int, String, String, String)} with
+     * {@code 0} decimal places.
      *
      * @param inputDoubleProperty the InputDoubleProperty defining range and value binding
-     * @param labelFormatString   the format string for the label (e.g., "%.2f %%")
+     * @param labelFormatString   the format string for the label, which receives the formatted percentage as
+     *                            {@code %1$s} (e.g., "Density: %1$s")
      * @param tooltip             the tooltip text for both the label and the slider
      * @param styleClass          the CSS style class to apply to the slider
      * @return a LabeledControl containing the label and the slider
@@ -396,20 +396,66 @@ public final class FXComponentFactory {
             String labelFormatString,
             String tooltip,
             String styleClass) {
-        long minPercent = Math.max(0L, roundInwardToPercent(inputDoubleProperty.min(), true));
-        long maxPercent = Math.min(100L, roundInwardToPercent(inputDoubleProperty.max(), false));
-        if (minPercent >= maxPercent) {
-            throw new IllegalArgumentException("minPercent must be < maxPercent, but was: minPercent=" + minPercent
-                    + ", maxPercent=" + maxPercent + ", min=" + inputDoubleProperty.min()
-                    + ", max=" + inputDoubleProperty.max());
+        return createLabeledPercentSlider(inputDoubleProperty, 0, labelFormatString, tooltip, styleClass);
+    }
+
+    /**
+     * Creates a labeled percent slider with a bound value, formatted label, tooltip, and custom style class.
+     *
+     * <p>The slider is configured for percent values in the range defined by the given InputDoubleProperty, with a
+     * step of {@code 10^-decimalPlaces} percent. The slider's value is bidirectionally bound to the property.
+     * The label displays the current value as percentage of the active locale
+     * ({@link AppLocalization#formatPercent(double, int, int)}, which requires initialized localization) with exactly
+     * {@code decimalPlaces} decimal places, so that its width does not change while sliding. Both the label and the
+     * slider share the same tooltip for improved accessibility.
+     *
+     * <p>This method is suitable for percent values between 0.0 and 1.0 (inclusive).
+     * The range is limited to 0.0..1.0 and rounded inward to the step, so that the slider stays within the range of
+     * the property. As a side effect, the current value of the property is rounded and clamped to this range.
+     *
+     * @param inputDoubleProperty the InputDoubleProperty defining range and value binding
+     * @param decimalPlaces       the number of decimal places of the percent value, in the range 0..7
+     * @param labelFormatString   the format string for the label, which receives the formatted percentage as
+     *                            {@code %1$s} (e.g., "Density: %1$s")
+     * @param tooltip             the tooltip text for both the label and the slider
+     * @param styleClass          the CSS style class to apply to the slider
+     * @return a LabeledControl containing the label and the slider
+     * @throws IllegalArgumentException if {@code decimalPlaces} is outside 0..7, or if the range of the property,
+     *                                  limited to 0.0..1.0 and rounded inward to the step, does not contain at least
+     *                                  two steps
+     */
+    public static LabeledControl<Slider> createLabeledPercentSlider(
+            InputDoubleProperty inputDoubleProperty,
+            int decimalPlaces,
+            String labelFormatString,
+            String tooltip,
+            String styleClass) {
+        if ((decimalPlaces < 0) || (decimalPlaces > MAX_PERCENT_DECIMAL_PLACES)) {
+            throw new IllegalArgumentException("decimalPlaces must be in [0, " + MAX_PERCENT_DECIMAL_PLACES
+                    + "], but was: " + decimalPlaces);
         }
-        int range = Math.toIntExact(maxPercent - minPercent);
+        long stepsPerPercent = Math.round(Math.pow(10.0d, decimalPlaces));
+        long stepsPerUnit = 100L * stepsPerPercent;
+        long minSteps = Math.max(0L, roundInwardToSteps(inputDoubleProperty.min(), stepsPerUnit, true));
+        long maxSteps = Math.min(stepsPerUnit, roundInwardToSteps(inputDoubleProperty.max(), stepsPerUnit, false));
+        if (minSteps >= maxSteps) {
+            throw new IllegalArgumentException("minSteps must be < maxSteps, but was: minSteps=" + minSteps
+                    + ", maxSteps=" + maxSteps + ", min=" + inputDoubleProperty.min()
+                    + ", max=" + inputDoubleProperty.max() + ", decimalPlaces=" + decimalPlaces);
+        }
+        long stepRange = maxSteps - minSteps;
+        int wholePercentRange = ((stepRange % stepsPerPercent) == 0)
+                ? Math.toIntExact(stepRange / stepsPerPercent) : 0;
 
-        Slider slider = createRoundingSlider(inputDoubleProperty, minPercent / 100.0d, maxPercent / 100.0d, 100.0d,
-                computeMinorTickCountForPercentSlider(range), styleClass);
+        Slider slider = createRoundingSlider(inputDoubleProperty,
+                minSteps / (double) stepsPerUnit, maxSteps / (double) stepsPerUnit, stepsPerUnit,
+                computeMinorTickCountForPercentSlider(wholePercentRange), styleClass);
 
-        Label label = createBoundLabel(inputDoubleProperty.property().multiply(100).asString(labelFormatString), slider,
-                tooltip, slider);
+        StringBinding labelTextBinding = Bindings.createStringBinding(
+                () -> labelFormatString.formatted(
+                        AppLocalization.formatPercent(inputDoubleProperty.getValue(), decimalPlaces, decimalPlaces)),
+                inputDoubleProperty.property());
+        Label label = createBoundLabel(labelTextBinding, slider, tooltip, slider);
         return new LabeledControl<>(label, slider);
     }
 
@@ -651,7 +697,8 @@ public final class FXComponentFactory {
      * <p>The range is expected to be between 2 and 100 (inclusive). If the range is outside this
      * interval, the method will return 0 without performing any calculations.
      *
-     * @param range the range of the slider (difference between max and min values multiplied by 100)
+     * @param range the range of the slider in whole percent (difference between max and min values multiplied by
+     *              100), or {@code 0} if the range is not a whole number of percent
      * @return the number of minor ticks (divisor - 1) if a matching divisor is found, or 0 otherwise
      */
     private static int computeMinorTickCountForPercentSlider(int range) {
@@ -704,21 +751,22 @@ public final class FXComponentFactory {
     }
 
     /**
-     * Rounds a fraction to whole percent toward the inside of a range, so that the result does not leave the range.
+     * Rounds a fraction to whole steps toward the inside of a range, so that the result does not leave the range.
      *
-     * @param fraction   the range bound as fraction (e.g., {@code 0.25} for 25 percent)
-     * @param lowerBound {@code true} to round a lower bound up, {@code false} to round an upper bound down
-     * @return the rounded bound in whole percent
+     * @param fraction     the range bound as fraction (e.g., {@code 0.25} for 25 percent)
+     * @param stepsPerUnit the number of steps per {@code 1.0} (e.g., {@code 100} for whole percent)
+     * @param lowerBound   {@code true} to round a lower bound up, {@code false} to round an upper bound down
+     * @return the rounded bound in steps
      */
-    private static long roundInwardToPercent(double fraction, boolean lowerBound) {
+    private static long roundInwardToSteps(double fraction, long stepsPerUnit, boolean lowerBound) {
         // Round first and correct afterward; ceil and floor would move exact bounds such as 0.07 (7.000000000000001).
-        long percent = Math.round(fraction * 100.0d);
-        if (lowerBound && ((percent / 100.0d) < fraction)) {
-            percent++;
-        } else if (!lowerBound && ((percent / 100.0d) > fraction)) {
-            percent--;
+        long steps = Math.round(fraction * stepsPerUnit);
+        if (lowerBound && ((steps / (double) stepsPerUnit) < fraction)) {
+            steps++;
+        } else if (!lowerBound && ((steps / (double) stepsPerUnit) > fraction)) {
+            steps--;
         }
-        return percent;
+        return steps;
     }
 
     private static Slider createIntSlider(InputDoubleIntRangeProperty inputDoubleIntRangeProperty, String styleClass) {

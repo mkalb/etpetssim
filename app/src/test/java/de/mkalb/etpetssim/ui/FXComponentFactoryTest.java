@@ -1,5 +1,6 @@
 package de.mkalb.etpetssim.ui;
 
+import de.mkalb.etpetssim.core.AppLocalization;
 import de.mkalb.etpetssim.core.AppLogger;
 import de.mkalb.etpetssim.testsupport.FXTestSupport;
 import javafx.beans.property.SimpleStringProperty;
@@ -25,6 +26,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -39,12 +41,16 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @Execution(ExecutionMode.SAME_THREAD)
 final class FXComponentFactoryTest {
 
+    private static final String PERCENT_LABEL_FORMAT = "Value: %1$s";
     private static final String STYLE_CLASS = "test-style";
     private static final String TOOLTIP = "tooltip";
 
     @BeforeAll
     static void setUpBeforeAll() {
         AppLogger.initializeForTesting();
+        if (!AppLocalization.isInitialized()) {
+            AppLocalization.initialize("en_US", Locale.US);
+        }
         FXTestSupport.ensureStarted();
     }
 
@@ -417,7 +423,7 @@ final class FXComponentFactoryTest {
 
             FXComponentFactory.LabeledControl<Slider> control = FXComponentFactory.createLabeledPercentSlider(
                     property,
-                    "%.0f %%",
+                    PERCENT_LABEL_FORMAT,
                     TOOLTIP,
                     STYLE_CLASS);
             Slider slider = control.controlRegion();
@@ -429,7 +435,7 @@ final class FXComponentFactoryTest {
                     () -> assertEquals(0.26d, initialRoundedValue, 0.000_001d),
                     () -> assertEquals(0.33d, slider.getValue(), 0.000_001d),
                     () -> assertEquals(0.33d, property.getValue(), 0.000_001d),
-                    () -> assertEquals("33 %", control.label().getText()),
+                    () -> assertEquals("Value: 33%", control.label().getText()),
                     () -> assertEquals(9, slider.getMinorTickCount()),
                     () -> assertEquals(0.01d, slider.getBlockIncrement(), 0.000_001d),
                     () -> assertSame(slider, control.label().getLabelFor())
@@ -441,9 +447,11 @@ final class FXComponentFactoryTest {
     void testCreateLabeledPercentSliderRoundsRangeInward() {
         FXTestSupport.runAndWait(() -> {
             Slider offGridSlider = FXComponentFactory.createLabeledPercentSlider(
-                    InputDoubleProperty.of(0.5d, 0.004d, 0.996d), "%.0f %%", TOOLTIP, STYLE_CLASS).controlRegion();
+                            InputDoubleProperty.of(0.5d, 0.004d, 0.996d), PERCENT_LABEL_FORMAT, TOOLTIP, STYLE_CLASS)
+                    .controlRegion();
             Slider onGridSlider = FXComponentFactory.createLabeledPercentSlider(
-                    InputDoubleProperty.of(0.5d, 0.07d, 0.57d), "%.0f %%", TOOLTIP, STYLE_CLASS).controlRegion();
+                            InputDoubleProperty.of(0.5d, 0.07d, 0.57d), PERCENT_LABEL_FORMAT, TOOLTIP, STYLE_CLASS)
+                    .controlRegion();
 
             assertAll(
                     () -> assertEquals(0.01d, offGridSlider.getMin(), 0.000_001d),
@@ -465,8 +473,70 @@ final class FXComponentFactoryTest {
         FXTestSupport.runAndWait(() -> {
             InputDoubleProperty property = InputDoubleProperty.of(value, min, max);
 
-            assertThrows(IllegalArgumentException.class,
-                    () -> FXComponentFactory.createLabeledPercentSlider(property, "%.0f %%", TOOLTIP, STYLE_CLASS));
+            assertThrows(IllegalArgumentException.class, () -> FXComponentFactory.createLabeledPercentSlider(
+                    property, PERCENT_LABEL_FORMAT, TOOLTIP, STYLE_CLASS));
+        });
+    }
+
+    @Test
+    void testCreateLabeledPercentSliderWithDecimalPlaces() {
+        FXTestSupport.runAndWait(() -> {
+            InputDoubleProperty property = InputDoubleProperty.of(0.001_04d, 0.0d, 0.02d);
+
+            FXComponentFactory.LabeledControl<Slider> control = FXComponentFactory.createLabeledPercentSlider(
+                    property,
+                    2,
+                    PERCENT_LABEL_FORMAT,
+                    TOOLTIP,
+                    STYLE_CLASS);
+            Slider slider = control.controlRegion();
+
+            double initialRoundedValue = property.getValue();
+            String initialLabelText = control.label().getText();
+            slider.setValue(0.012_345d);
+
+            assertAll(
+                    () -> assertEquals(0.001d, initialRoundedValue, 0.000_000_001d),
+                    () -> assertEquals("Value: 0.10%", initialLabelText),
+                    () -> assertEquals(0.012_3d, slider.getValue(), 0.000_000_001d),
+                    () -> assertEquals(0.012_3d, property.getValue(), 0.000_000_001d),
+                    () -> assertEquals("Value: 1.23%", control.label().getText()),
+                    () -> assertEquals(0.0d, slider.getMin(), 0.000_000_001d),
+                    () -> assertEquals(0.02d, slider.getMax(), 0.000_000_001d),
+                    () -> assertEquals(1, slider.getMinorTickCount()),
+                    () -> assertEquals(0.000_1d, slider.getBlockIncrement(), 0.000_000_001d)
+            );
+        });
+    }
+
+    @Test
+    void testCreateLabeledPercentSliderWithDecimalPlacesRoundsRangeInward() {
+        FXTestSupport.runAndWait(() -> {
+            InputDoubleProperty property = InputDoubleProperty.of(0.1d, 0.000_45d, 0.199_96d);
+            Slider slider = FXComponentFactory.createLabeledPercentSlider(
+                    property, 1, PERCENT_LABEL_FORMAT, TOOLTIP, STYLE_CLASS).controlRegion();
+
+            assertAll(
+                    () -> assertEquals(0.001d, slider.getMin(), 0.000_000_001d),
+                    () -> assertEquals(0.199d, slider.getMax(), 0.000_000_001d),
+                    () -> assertEquals(0, slider.getMinorTickCount())
+            );
+        });
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+            "0.5, 0.0, 1.0, -1",
+            "0.5, 0.0, 1.0, 8",
+            "0.00105, 0.00101, 0.00109, 2"
+    })
+    void testCreateLabeledPercentSliderWithDecimalPlacesRejectsInvalidArguments(double value, double min,
+                                                                                double max, int decimalPlaces) {
+        FXTestSupport.runAndWait(() -> {
+            InputDoubleProperty property = InputDoubleProperty.of(value, min, max);
+
+            assertThrows(IllegalArgumentException.class, () -> FXComponentFactory.createLabeledPercentSlider(
+                    property, decimalPlaces, PERCENT_LABEL_FORMAT, TOOLTIP, STYLE_CLASS));
         });
     }
 
