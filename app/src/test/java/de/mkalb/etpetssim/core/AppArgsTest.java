@@ -360,10 +360,10 @@ final class AppArgsTest {
         String lineSeparator = System.lineSeparator();
 
         assertAll(
-                () -> assertTrue(result.startsWith("List of available command-line arguments:" + lineSeparator)),
+                () -> assertTrue(result.startsWith("Command-line arguments:" + lineSeparator)),
                 () -> assertTrue(result.contains(
-                        "--help: Prints the list of arguments in English and exits (flag)" + lineSeparator)),
-                () -> assertTrue(result.contains("--version: Prints the application version and exits (flag)"
+                        "--help: Print this list of arguments in English and exit (flag)" + lineSeparator)),
+                () -> assertTrue(result.contains("--version: Print the application version and exit (flag)"
                         + lineSeparator)),
                 () -> assertTrue(result.contains(
                         "--log-level: " + bundle.getString(AppLocalizationKeys.ARGS_LOG_LEVEL) + lineSeparator)),

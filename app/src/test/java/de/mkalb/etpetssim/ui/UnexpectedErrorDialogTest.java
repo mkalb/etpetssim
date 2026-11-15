@@ -24,7 +24,7 @@ final class UnexpectedErrorDialogTest {
     void testFormatContent() {
         String content = UnexpectedErrorDialog.formatContent(new IllegalStateException("Boom"), 0);
 
-        assertEquals("Boom\n\nDetails are in the application log if logging is enabled (--log-file).", content);
+        assertEquals("Boom\n\nIf logging to a file is enabled (--log-file), the log contains the details.", content);
     }
 
     @Test
@@ -34,7 +34,7 @@ final class UnexpectedErrorDialogTest {
         assertEquals("""
                 IllegalStateException
 
-                Details are in the application log if logging is enabled (--log-file).""", content);
+                If logging to a file is enabled (--log-file), the log contains the details.""", content);
     }
 
     @Test
@@ -44,7 +44,7 @@ final class UnexpectedErrorDialogTest {
         assertEquals("""
                 IllegalArgumentException
 
-                Details are in the application log if logging is enabled (--log-file).""", content);
+                If logging to a file is enabled (--log-file), the log contains the details.""", content);
     }
 
     @Test
@@ -54,7 +54,7 @@ final class UnexpectedErrorDialogTest {
         assertEquals("""
                 Boom
 
-                Details are in the application log if logging is enabled (--log-file).
+                If logging to a file is enabled (--log-file), the log contains the details.
                 Further errors since this alert: 3""", content);
     }
 

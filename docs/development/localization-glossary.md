@@ -24,7 +24,7 @@ The application name `Extraterrestrial Pets Simulation` is not translated.
 | `header`                | `Kopfzeile`              | general | used in the help text                                      |
 | `language`              | `Sprache`                | general |                                                            |
 | `user interface`        | `Benutzeroberfläche`     | general |                                                            |
-| `command-line argument` | `Kommandozeilenargument` | general |                                                            |
+| `command-line argument` | `Kommandozeilenargument` | general | `argument`/`Argument` if the context names the full term   |
 | `log`                   | `Protokoll`              | general |                                                            |
 | `log file`              | `Protokolldatei`         | general |                                                            |
 | `logging`               | `Protokollierung`        | general |                                                            |
@@ -217,33 +217,35 @@ are listed in their sections.
 
 ## Snake
 
-| en_US        | de_DE             | Source                 | Notes                                                                    |
-|--------------|-------------------|------------------------|--------------------------------------------------------------------------|
-| `snake`      | `Schlange`        | [Snake-en], [Snake-de] |                                                                          |
-| `snake head` | `Schlangenkopf`   | project                |                                                                          |
-| `segment`    | `Segment`         | project                | body part of a snake                                                     |
-| `food`       | `Futter`          | [Snake-de]             | the only food type; replaces `Nahrung`, `growth food`, `Wachstumsfutter` |
-| `growth`     | `Wachstum`        | project                | segments added after eating                                              |
-| `points`     | `Punkte`          | [Snake-de]             |                                                                          |
-| `strategy`   | `Strategie`       | project                | movement strategy of a snake                                             |
-| `permadeath` | `endgültiger Tod` | project                | death mode; replaces `permanent death`, `permanenter Tod`                |
-| `respawn`    | `Respawn`         | project                | death mode; gaming term; replaces `Wiedergeburt`                         |
-| `ground`     | `Boden`           | project                |                                                                          |
-| `wall`       | `Wand`            | [Snake-de]             |                                                                          |
+| en_US               | de_DE               | Source                 | Notes                                                                    |
+|---------------------|---------------------|------------------------|--------------------------------------------------------------------------|
+| `snake`             | `Schlange`          | [Snake-en], [Snake-de] |                                                                          |
+| `snake head`        | `Schlangenkopf`     | project                |                                                                          |
+| `segment`           | `Segment`           | project                | body part of a snake                                                     |
+| `food`              | `Futter`            | [Snake-de]             | the only food type; replaces `Nahrung`, `growth food`, `Wachstumsfutter` |
+| `growth`            | `Wachstum`          | project                | segments added after eating                                              |
+| `points`            | `Punkte`            | [Snake-de]             |                                                                          |
+| `bonus per segment` | `Bonus pro Segment` | project                | extra points per segment for eating food                                 |
+| `strategy`          | `Strategie`         | project                | movement strategy of a snake                                             |
+| `permadeath`        | `endgültiger Tod`   | project                | death mode; replaces `permanent death`, `permanenter Tod`                |
+| `respawn`           | `Respawn`           | project                | death mode; gaming term; replaces `Wiedergeburt`                         |
+| `ground`            | `Boden`             | project                |                                                                          |
+| `wall`              | `Wand`              | [Snake-de]             |                                                                          |
 
 ## Sugarscape
 
-| en_US            | de_DE             | Source                   | Notes                                                      |
-|------------------|-------------------|--------------------------|------------------------------------------------------------|
-| `agent`          | `Agent`           | [Sugar-en], [ABM-de]     |                                                            |
-| `sugar`          | `Zucker`          | [Sugar-en], [Sugar-book] | the resource of a cell                                     |
-| `sugar peak`     | `Zuckergipfel`    | project                  |                                                            |
-| `sugar capacity` | `Zuckerkapazität` | [Sugar-book]             | maximum sugar of a cell; replaces `max sugar amount`       |
-| `metabolism`     | `Stoffwechsel`    | [Sugar-en], [Sugar-book] | energy an agent uses per step                              |
-| `vision`         | `Sichtweite`      | [Sugar-en], [Sugar-book] |                                                            |
-| `energy`         | `Energie`         | project                  |                                                            |
-| `regeneration`   | `Regeneration`    | project                  | sugar that grows back per step; `growback` in [Sugar-book] |
-| `terrain`        | `Gelände`         | project                  | ground under sugar and agents                              |
+| en_US               | de_DE                | Source                   | Notes                                                      |
+|---------------------|----------------------|--------------------------|------------------------------------------------------------|
+| `agent`             | `Agent`              | [Sugar-en], [ABM-de]     |                                                            |
+| `sugar`             | `Zucker`             | [Sugar-en], [Sugar-book] | the resource of a cell                                     |
+| `sugar peak`        | `Zuckergipfel`       | project                  |                                                            |
+| `sugar peak radius` | `Zuckergipfelradius` | project                  | maximum spread radius of a sugar peak                      |
+| `sugar capacity`    | `Zuckerkapazität`    | [Sugar-book]             | maximum sugar of a cell; replaces `max sugar amount`       |
+| `metabolism`        | `Stoffwechsel`       | [Sugar-en], [Sugar-book] | energy an agent uses per step                              |
+| `vision`            | `Sichtweite`         | [Sugar-en], [Sugar-book] |                                                            |
+| `energy`            | `Energie`            | project                  |                                                            |
+| `regeneration`      | `Regeneration`       | project                  | sugar that grows back per step; `growback` in [Sugar-book] |
+| `terrain`           | `Gelände`            | project                  | ground under sugar and agents                              |
 
 ## Wa-Tor
 
