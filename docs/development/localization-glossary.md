@@ -176,6 +176,7 @@ de_DE keeps these English terms (`.claude/rules/i18n.md`, "English terms in de_D
 | en_US      | de_DE       | Source  | Notes                         |
 |------------|-------------|---------|-------------------------------|
 | `pet`      | `Haustier`  | project |                               |
+| `living`   | `lebend`    | project | not dead                      |
 | `egg`      | `Ei`        | project | hatches into a pet            |
 | `resource` | `Ressource` | project | plant or insect               |
 | `plant`    | `Pflanze`   | project |                               |
@@ -207,6 +208,7 @@ de_DE keeps these English terms (`.claude/rules/i18n.md`, "English terms in de_D
 | `no turn`   | `keine Drehung` | general            | letter N                                                 |
 | `terrain`   | `Gelände`       | project            | cell state that decides the turn; `color` in the sources |
 | `unvisited` | `unbesucht`     | project            |                                                          |
+| `visited`   | `besucht`       | project            | counterpart of `unvisited`                               |
 | `highway`   | `Highway`       | [Ant-en]           | periodic pattern the ant builds after about 10,000 steps |
 
 ## Rebounding Entities
@@ -223,6 +225,7 @@ de_DE keeps these English terms (`.claude/rules/i18n.md`, "English terms in de_D
 |---------------------|---------------------|------------------------|------------------------------------------|
 | `snake`             | `Schlange`          | [Snake-en], [Snake-de] |                                          |
 | `snake head`        | `Schlangenkopf`     | project                |                                          |
+| `living`            | `lebend`            | project                | not dead; counterpart of `dead`          |
 | `segment`           | `Segment`           | project                | body part of a snake                     |
 | `food`              | `Futter`            | [Snake-de]             | the only food type                       |
 | `growth`            | `Wachstum`          | project                | segments added after eating              |
@@ -241,6 +244,7 @@ de_DE keeps these English terms (`.claude/rules/i18n.md`, "English terms in de_D
 |---------------------|----------------------|--------------------------|------------------------------------------------------------|
 | `agent`             | `Agent`              | [Sugar-en], [ABM-de]     |                                                            |
 | `sugar`             | `Zucker`             | [Sugar-en], [Sugar-book] | the resource of a cell                                     |
+| `sugar cell`        | `Zuckerzelle`        | project                  | cell with a sugar resource, also with 0 sugar              |
 | `sugar peak`        | `Zuckergipfel`       | project                  |                                                            |
 | `sugar peak radius` | `Zuckergipfelradius` | project                  | maximum spread radius of a sugar peak                      |
 | `sugar capacity`    | `Zuckerkapazität`    | [Sugar-book]             | maximum sugar of a cell                                    |
