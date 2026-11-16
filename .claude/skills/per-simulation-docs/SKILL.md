@@ -18,6 +18,9 @@ request. This language requirement applies only to the document. Write the
 completion report in the user's language unless the user requests another
 language.
 
+**Regenerate mode: before reading anything else, note that no file in
+`docs/simulations` and no earlier version of one may be read** (see "Modes").
+
 ## Modes
 
 The skill has two modes, selected by the optional second argument:
@@ -269,15 +272,19 @@ prose**:
   **Agents**), directly followed by all its values in parentheses, taken from
   `Constraints` or, where `Constraints` does not define them, from the option
   source traced from the control:
-    - numbers as `(min to max, default d)`, with the unit of the label or its
-      tooltip and with a step other than 1, e.g. **Cell edge length**
-      `(1 to 50 pixels, default 8)` or **Grid width**
-      `(8 to 1,000 cells in steps of 2, default 200)`,
-    - percentages as `(0% to 100%, default 20%)`,
+    - numbers as `(min to max, default d)`, with a step other than 1, e.g.
+      **Cell edge length** `(1 to 50 pixels, default 8)` or **Grid width**
+      `(8 to 1,000 cells in steps of 2, default 200)`; add a unit when the
+      value counts something the user can recognize (e.g. pixels, cells,
+      steps, segments), and omit it for abstract quantities (e.g. energy or
+      points),
+    - percentages as `(0% to 20%, default 0.2%)`, formatted as the
+      configuration displays them: the bounds as in the range tooltip and the
+      default as in the label, even where `Constraints` stores fractions,
     - choices with the default first and the other values in the order of
       `_VALUES` or of the option source, e.g. `(Square (default), Hexagon)`,
-      and an empty default entry as `none (default)`; the Structure choices
-      may instead refer to "Category and grid",
+      and an empty default entry as `none (default)`; name the Structure
+      controls without their values and refer to "Category and grid" for them,
     - a choice list with more than eight values without its values: say in
       one sentence what the list offers, and give its default; do not name
       individual values, examples, or counts,
@@ -324,20 +331,15 @@ prose**:
   offers and when values are available, without naming individual values,
   examples, or counts.
 - In "Entities", describe the appearance of each visible entity in plain
-  language: its color as a color name (e.g. "dark blue"), its emoji if any, its
-  shape (e.g. inner circle or full cell), and its dynamic visual cues (e.g.
-  "brighter with more energy", a border marking a state). For a named JavaFX
-  color (e.g. `Color.DEEPPINK`), use its name in lowercase words (e.g. "deep
-  pink"); name any other color by one of the basic hues red, orange, yellow,
-  green, blue, purple, pink, brown, gray, black, or white, with at most the
-  modifier "light" or "dark". Name border colors the same way and do not
-  mention their transparency (e.g. "a border in the same color"). Describe a
-  dynamic cue in the direction the user sees it over time (e.g. "becomes
-  darker as hatching approaches"), and describe a temporary state (e.g. a dead
-  agent shown for one more step) in the entry of its entity. If the shape
-  depends on the **Cell display** setting, name the shape of each display mode
-  briefly; if it depends on the drawn cell size, describe the variants
-  qualitatively (e.g. "on very small cells"), without pixel thresholds. An
+  language: its color by a common color name of your choice (e.g. "dark
+  blue"), its emoji if any, its shape (e.g. inner circle or full cell), and its
+  dynamic visual cues (e.g. "brighter with more energy", a border marking a
+  state). Describe a dynamic cue in the direction the user sees it over time
+  (e.g. "becomes darker as hatching approaches"), and describe a temporary
+  state (e.g. a dead agent shown for one more step) in the entry of its
+  entity. If the shape depends on the **Cell display** setting, name the shape
+  of each display mode briefly; do not describe variants for small cells
+  (e.g. a dropped border or a circle instead of an emoji). An
   entity that is only drawn as the grid background (e.g. terrain) is listed as
   an entity and described as the background. Combine a family of numbered
   entities that differ only in their number and color (e.g. terrain states)
