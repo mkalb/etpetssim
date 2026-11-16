@@ -107,7 +107,7 @@ many files in one shell command.
   | `model/<Name>Cell.java` (only for multi-grid simulations, e.g. Sugarscape, ET Pets, Langton's Ant) | Which layer entities one grid cell combines and which of them counts as the top-most entity of the cell (e.g. agent before resource). Use it for the layer paragraph of the Entities section (which entities can share a cell and which one is drawn on top); take their appearance from `MainView`, which may draw every layer | Entities |
   | `model/<Name>StepLogic.java` | Per-agent step logic (implements `AgentStepLogic`): what happens to a single agent each tick — movement, neighbor interactions, reproduction, death (e.g. Wa-Tor, Snake). Or synchronous, double-buffered cellular-automaton step logic (implements `SynchronousStepLogic`): rules applied to every cell from the current grid into a next grid in one pass (e.g. Conway survival/birth thresholds) | Rules and mechanics |
   | `model/<Name>StepRunner.java` | Whole-step orchestration (implements `SimulationStepRunner`): the ordered sub-phases executed per tick (e.g. agent logic, then resource regrowth, then terrain updates in ET Pets / Sugarscape) | Rules and mechanics |
-  | `model/<Name>TerminationCondition.java` | When the run ends on its own (e.g. when no agent is left). Always state it as the last rule bullet in plain language, including when a configuration value can trigger it at the start | Rules and mechanics |
+  | `model/<Name>TerminationCondition.java` | When the run ends on its own (e.g. when no agent is left). Always state it as the last rule bullet in plain language | Rules and mechanics |
   | `model/<Name>AgentLogic.java`, `<Name>ResourceLogic.java`, and any other `*Logic.java` used by the simulation | Starting from `StepRunner`, trace each logic class it actually invokes, directly or through another invoked phase. Document only these used classes; do not include a `*Logic.java` class solely because it exists in the package. | Rules and mechanics |
   | `model/<Name>SimulationManager.java` | **Starting conditions** and overall run flow. Trace the methods, helper types, and constants actually used by the manager to determine placement, seeding, resource generation, randomization, and phase orchestration. Describe the resulting user-visible behavior. Do not assume that fixed implementation values are configurable or that all relevant facts are declared directly in the manager. | Rules and mechanics, Configuration (Initialization) |
   | Helper types and constant holders reached from an authoritative code path | Use them as supporting evidence to understand behavior performed by the authoritative source. Do not enumerate internal tuning values or present fixed values as user-configurable. Mention an exact fixed value only when it is directly user-visible and necessary for an accurate explanation. | The section fed by the authoritative source |
@@ -258,23 +258,42 @@ prose**:
 - In "Configuration", name every exposed control in bold by its en_US label
   without format placeholders and trailing colon (e.g. `Agents: %1$s` becomes
   **Agents**), directly followed by all its values in parentheses, taken from
-  `Constraints`:
-    - numbers as `(min to max, default d)`, with the unit of the label if it
-      has one, e.g. **Cell edge length** `(1 to 50 pixels, default 8)`,
+  `Constraints` or, where `Constraints` does not define them, from the option
+  source traced from the control:
+    - numbers as `(min to max, default d)`, with the unit of the label or its
+      tooltip and with a step other than 1, e.g. **Cell edge length**
+      `(1 to 50 pixels, default 8)` or **Grid width**
+      `(8 to 1,000 cells in steps of 2, default 200)`,
     - percentages as `(0% to 100%, default 20%)`,
-    - choices with the default first, e.g. `(Square (default), Hexagon)`; the
-      Structure choices may instead refer to "Category and grid",
+    - choices with the default first, e.g. `(Square (default), Hexagon)`, and
+      an empty default entry as `none (default)`; the Structure choices may
+      instead refer to "Category and grid",
+    - a choice list with more than eight values (e.g. rule presets) without
+      its values: say in one sentence what the list offers, and give its
+      default,
+    - a composite control (e.g. a checkbox grid for a rule) with its default
+      in the displayed notation, e.g. `(default 23/3)`, and its selectable
+      range in one sentence,
     - a text field without a range (e.g. the seed) with what an empty value
       means.
 
-  Add at most one short sentence on the effect of a control, and only when its
-  label does not explain it. Format numbers as the en_US UI does (e.g. `1,000`).
+  Name the condition of a control that is visible only under a condition (e.g.
+  "for square cells"). Add at most one short sentence on the effect of a
+  control, and only when its label does not explain it. Do not describe
+  informational hints that are not controls (e.g. a recommended value shown
+  below a slider). Format numbers as the en_US UI does (e.g. `1,000`).
+- In "Interactive editing", name the values of a tool option by their en_US
+  labels, in the order of the option source. Do not enumerate an option list
+  with more than eight values (e.g. patterns); say in one sentence what it
+  offers and when values are available.
 - In "Entities", describe the appearance of each visible entity in plain
   language: its color as a color name (e.g. "dark blue"), its emoji if any, its
   shape (e.g. inner circle or full cell), and its dynamic visual cues (e.g.
   "brighter with more energy", a border marking a state). Name a color by its
   basic hue with at most one modifier (e.g. "light", "dark") to keep the wording
-  stable across runs. An entity that is only drawn as the grid background (e.g.
+  stable across runs, and name border colors the same way. If the shape
+  depends on the **Cell display** setting, name the shape of each display mode
+  briefly. An entity that is only drawn as the grid background (e.g.
   terrain) is listed as an entity and described as the background. Do not
   describe UI markers that are not entities, such as the selected-cell marker.
   Do not use hex color codes, descriptor IDs, localization keys, or Java type

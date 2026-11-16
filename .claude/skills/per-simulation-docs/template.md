@@ -94,7 +94,9 @@ cell and which one is drawn on top; otherwise delete this paragraph.>
 language (e.g. "Add sugar (with level selection)", "Remove sugar") and, if
 relevant, when it applies (e.g. "applied to the currently selected cell", or
 "applies globally" for tools with no cell selection). List the tools in the
-toolbar order, i.e. the declaration order in createUserActionDescriptors().>
+toolbar order, i.e. the declaration order in createUserActionDescriptors().
+Name tool option values as described under "Conventions" in SKILL.md; do not
+enumerate option lists with more than eight values.>
 
 ## Configuration
 
