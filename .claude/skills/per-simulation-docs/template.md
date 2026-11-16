@@ -15,7 +15,7 @@
     - Layer paragraph       — only for simulations with several grid layers.
 -->
 
-# <Display title, e.g. Wa-Tor>
+# <Display title: the en_US title verbatim, e.g. Wa-Tor>
 
 <One-line summary: the en_US subtitle verbatim, without an added period,
 e.g. "Simulate the Wa-Tor world">
@@ -33,16 +33,13 @@ idea, and what a user sees happening on the grid. Avoid implementation detail.>
 - **Neighborhood:** <e.g. Edges only (fixed)>
 
 <Optional category note: include it ONLY for a borderline case as described
-under "Category note" in SKILL.md (currently only Langton's Ant); otherwise
+under "Category note" in SKILL.md (currently only Langton's ant); otherwise
 delete this paragraph.>
 
 <!--
-  For any field that maps to a user-selectable configuration choice (cell shapes,
-  edge behavior, neighborhood), list the default value first and mark it with
-  "(default)", followed by the remaining options, e.g.
-  "Square (default), Triangle, Hexagon". Write a value that is fixed for this
-  simulation followed by "(fixed)", or omit its line if it does not affect
-  visible behavior.
+  Follow "Conventions" in SKILL.md: list the default value of a configuration
+  choice first and mark it "(default)"; write a value that is fixed for this
+  simulation followed by "(fixed)".
 -->
 
 ## Rules and mechanics
@@ -60,8 +57,9 @@ condition, but phrase it for a user, not a developer.>
 
 ## Entities
 
-<One entry per entity the user can see, described in plain language: what it
-represents, how it behaves, and how it looks on the grid.>
+<One entry per entity (or numbered entity family) the user can see, described
+in plain language: what it represents, how it behaves, and how it looks on the
+grid.>
 
 - **<Short entity name>:** <what it is and how it behaves; how it looks>
 - **<Short entity name>:** <what it is and how it behaves; how it looks>
@@ -72,11 +70,8 @@ cell and which one is drawn on top; otherwise delete this paragraph.>
 
 <!--
   Describe the appearance from the entity descriptors in model/entity and the
-  drawing code of the MainView: a color name (e.g. "dark blue"), the emoji if
-  any, the shape (e.g. inner circle or full cell), and dynamic visual cues
-  (e.g. "brighter with more energy", a border marking a state such as newly
-  spawned agents), one short sentence per cue. Do not use hex color codes,
-  descriptor IDs, localization keys, or Java type names.
+  drawing code of the MainView as described under "Conventions" in SKILL.md:
+  color, emoji, shape, and dynamic visual cues, one short sentence per cue.
 -->
 
 ## Interactive editing
@@ -100,16 +95,16 @@ enumerate option lists with more than eight values.>
 
 ## Configuration
 
-<A brief prose summary of what the user can adjust. Cover every control exposed
+<One sentence summarizing what the user can adjust. Cover every control exposed
 by the simulation's ConfigView, but group related UI panes into the semantic
 documentation categories below rather than mirroring every pane as a separate
 subsection. In particular, combine all rule-oriented panes under Rules while
-preserving their conceptual groups in prose. Omit empty categories. Add another
-subsection only for a genuinely distinct concern that would be misleading under
-every standard category. In each subsection, name every control with all its
-values as described under "Conventions" in SKILL.md, e.g. "**Sugar peaks**
-(1 to 5, default 4) sets the number of sugar hills."; write prose, not a
-table.>
+preserving their conceptual groups in prose. Omit a subsection without
+controls, without a note. Add another subsection only for a genuinely distinct
+concern that would be misleading under every standard category. In each
+subsection, name every control with all its values as described under
+"Conventions" in SKILL.md, e.g. "**Sugar peaks** (1 to 5, default 4) sets the
+number of sugar hills."; write prose, not a table.>
 
 ### Structure
 

@@ -27,9 +27,9 @@ The skill has two modes, selected by the optional second argument:
   hand-written prose whose facts are current, and report drift (step 3).
 - **Regenerate** (`/per-simulation-docs <simulation-name> regenerate`): write
   the document from scratch from the current sources and overwrite any existing
-  file completely. Select this mode only when the second argument is exactly
-  `regenerate` (case-insensitive); stop and ask if the second argument is
-  anything else.
+  file completely. Select this mode only when the second argument is
+  `regenerate`, ignoring case; stop and ask if the second argument is anything
+  else.
 
 In regenerate mode, do **not** read any file in `docs/simulations`, including
 the existing `docs/simulations/<package>.md` and the documents of other
@@ -157,8 +157,9 @@ many files in one shell command.
     - `<Name>Factory.java` — infrastructure.
     - `viewmodel/` — infrastructure, but a ViewModel or property class may be read
       narrowly as routing evidence when tracing an exposed configuration or
-      interactive-edit option to its actual source. Do not treat it as the
-      authority for option meaning or run-time behavior.
+      interactive-edit option to its actual source, or to find how one control
+      changes another (e.g. a preset that fills a rule field). Do not treat it
+      as the authority for option meaning or run-time behavior.
 - **Category:** use exactly one of the two fixed categories of
   `SimulationCategory`, written in sentence case and plural:
   **Agent- and movement-based models** (moving agents or entities are in the
@@ -174,7 +175,7 @@ many files in one shell command.
   after the "Category and grid" list that names the usual classification and
   why the simulation is listed in its category here. Currently this applies
   only to `langton`; keep its note in this wording:
-  "Langton's Ant is a borderline case: it is often described as a cellular
+  "Langton's ant is a borderline case: it is often described as a cellular
   automaton (a Turing machine on a grid), but it is listed here with the
   movement-based models because its ants move across the grid." Omit the
   paragraph for all other simulations.
@@ -257,8 +258,9 @@ prose**:
   edge behavior, neighborhood), list the default value first and mark it
   `(default)`, then the other options, e.g.
   `Square (default), Triangle, Hexagon`. A choice fixed to one value has no
-  control; write its value followed by `(fixed)`, without `(default)`, or omit
-  the line if the value does not affect visible behavior.
+  control; write its value followed by `(fixed)`, without `(default)`. Always
+  include the **Neighborhood** line; omit only the line of a field that the
+  simulation does not use at all.
 - In "Configuration", name every exposed control in bold by its en_US label
   without format placeholders and trailing colon (e.g. `Agents: %1$s` becomes
   **Agents**), directly followed by all its values in parentheses, taken from
@@ -282,6 +284,9 @@ prose**:
       plain text, not in bold,
     - a text field without a range with what an empty value means and, if
       visible to the user, what an invalid value does,
+    - a rule text field (e.g. a turn rule) as `(default RL)`, followed by one
+      sentence on its notation and allowed length; for invalid input, name
+      only the visible reaction (e.g. a validation message),
     - the seed always in this sentence: "**Seed** (empty by default) sets the
       start value of the random numbers: leave it empty for a random seed, or
       enter a number or any text to repeat a run."
@@ -294,23 +299,34 @@ prose**:
   "for square cells"). If a label is ambiguous on its own (e.g. a label equal
   to an option value), add a clarifying noun, e.g. "the **Square** preset
   list". Add at most one short sentence on the effect of a control, and only
-  when its label does not explain it. Do not describe informational hints that
-  are not controls (e.g. a recommended value shown below a slider). Format
-  numbers as the en_US UI does (e.g. `1,000`).
+  when its label does not explain it; this may include how it changes another
+  control (e.g. "Selecting a preset fills in the turn rule."). Do not describe
+  informational hints that are not controls (e.g. a recommended value shown
+  below a slider). Omit a standard subsection without controls (e.g.
+  Initialization without a seed) without a note. Format numbers as the en_US
+  UI does (e.g. `1,000`).
 - In "Interactive editing", name the values of a tool option by their en_US
-  labels, in the order of the option source. Do not enumerate an option list
-  with more than eight values (e.g. patterns); say in one sentence what it
+  labels, in the order of the option source. If the values depend on a
+  condition (e.g. the cell shape), name the values of each condition with that
+  condition, and say when the option is hidden. Do not enumerate an option
+  list with more than eight values (e.g. patterns); say in one sentence what it
   offers and when values are available, without naming individual values,
   examples, or counts.
 - In "Entities", describe the appearance of each visible entity in plain
   language: its color as a color name (e.g. "dark blue"), its emoji if any, its
   shape (e.g. inner circle or full cell), and its dynamic visual cues (e.g.
-  "brighter with more energy", a border marking a state). Name a color by its
-  basic hue with at most one modifier (e.g. "light", "dark") to keep the wording
-  stable across runs, and name border colors the same way. If the shape
+  "brighter with more energy", a border marking a state). For a named JavaFX
+  color (e.g. `Color.DEEPPINK`), use its name in lowercase words (e.g. "deep
+  pink"); name any other color by its basic hue with at most one modifier
+  (e.g. "light", "dark"). Name border colors the same way. If the shape
   depends on the **Cell display** setting, name the shape of each display mode
-  briefly. An entity that is only drawn as the grid background (e.g.
-  terrain) is listed as an entity and described as the background. Do not
+  briefly; if it depends on the drawn cell size, describe the variants
+  qualitatively (e.g. "on very small cells"), without pixel thresholds. An
+  entity that is only drawn as the grid background (e.g. terrain) is listed as
+  an entity and described as the background. Combine a family of numbered
+  entities that differ only in their number and color (e.g. terrain states)
+  into one entry named by its first and last `.short` value (e.g.
+  "**Terrain 0** to **Terrain 15**"), and list their colors in order. Do not
   describe UI markers that are not entities, such as the selected-cell marker.
   Do not use hex color codes, descriptor IDs, localization keys, or Java type
   names.
@@ -332,13 +348,13 @@ Before reporting completion, validate the finished document:
 - "Configuration" names every exposed control with its values in the form
   given under "Conventions", and the values match `Constraints`,
 - the interactive tools appear in toolbar order,
-- the Entities section names every visible entity by its `.short` value,
+- the Entities section names every visible entity (or entity family) by its
+  `.short` value,
   describes its appearance, does not reuse `.long` or `.description` values,
   and contains no hex color codes, descriptor IDs, localization keys, or Java
   type names,
 - conditional sections and paragraphs (category note, layer paragraph) match
-  the current sources, and every local image link
-  points to an existing file,
+  the current sources, and every local image link points to an existing file,
 - the `README.md` simulation table contains a row for the simulation whose Docs
   link targets `docs/simulations/<package>.md`; if the row or link is missing
   or incorrect, report it without modifying the README unless the user
