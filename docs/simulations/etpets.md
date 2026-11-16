@@ -1,85 +1,126 @@
-# ET Pets
+# Extraterrestrial pets
 
-Simulate extraterrestrial pets
+Watch extraterrestrial pets hatch, roam, and eat
 
 ## Overview
 
-ET Pets models a population of extraterrestrial pets searching for food,
-avoiding obstacles, leaving trails, and reproducing. The hexagonal world keeps
-terrain, renewable resources, and pets on separate layers, so a ground cell can
-hold a resource and a pet at the same time.
+This simulation follows a population of extraterrestrial pets on a landscape of
+ground, rock, and water. The pets roam in search of plants and insects, leave
+trails behind, and lay eggs when they meet a suitable partner. Each pet weighs
+its options every step and picks the most promising one, so the user sees pets
+wandering, gathering around food, wearing paths into the ground, and new
+generations hatching while old pets die.
 
 ## Category and grid
 
 - **Category:** Agent- and movement-based models
-- **Cell shapes:** Hexagon (default)
-- **Edge behavior:** Blocked on all sides (default)
-- **Neighborhood:** Edge-sharing cells only (default)
+- **Cell shapes:** Hexagon (fixed)
+- **Edge behavior:** Block X and Y (fixed)
+- **Neighborhood:** Edges only (fixed)
 
 ## Rules and mechanics
 
-- At the start, rocks and water are placed randomly, plants and insects are
-  added to traversable cells, and pets are placed on empty traversable cells.
-  Using the same seed and configuration reproduces the same starting world.
-- Each step processes eggs and pets first. Eggs count down until they hatch;
-  pets lose energy and may wait, move, eat a nearby resource, reproduce with a
-  nearby eligible pet, or die from depleted energy or old age.
-- Pets evaluate their surroundings when choosing an action. Resources, possible
-  partners, trails, obstacles, crowding, and recently visited cells can all
-  influence where they go.
-- Moving or waiting creates or strengthens a trail. Trails can attract pets,
-  fade while unoccupied, and eventually return to ordinary ground.
-- Reproduction places an egg in available nearby space. The new pet inherits
-  traits from both parents, with a chance of mutation.
-- After all agents act, plants and insects regenerate up to their local
-  capacity, then trails decay. A pet that dies remains visible in a darkened
-  state for one step before disappearing.
+- At the start, rock and water cells are scattered at random. Plants and
+  insects are then placed on random free ground cells, each fully grown and
+  with its own capacity and regrowth speed. Finally, the pets are placed on
+  random free ground cells with individual maximum energy, nearly full energy,
+  and different ages.
+- In every step, the eggs and pets act one after another in the order in which
+  they were created. An egg counts down its incubation time and then hatches
+  into a young pet that starts with only part of its maximum energy.
+- Every living pet loses a little energy per step. A pet dies when its energy
+  is used up, and an old pet may also die by chance, which becomes more likely
+  the older it gets. A dead pet stays visible for one more step.
+- A surviving pet rates its possible actions and performs the best one: wait,
+  move to a neighboring cell, eat from a neighboring plant or insect, or
+  reproduce with a neighboring pet. If several actions are rated equally, one
+  of them is chosen at random.
+- Eating is favored by hunger, by very low energy, by a richer food source, and
+  by a young age; it is discouraged when the food would exceed the maximum
+  energy of the pet, and a pet with full energy does not eat. Moving is favored
+  toward cells next to food (more so the hungrier the pet is), toward cells
+  next to a possible partner, onto well-used trails, and, for energetic pets
+  that move cheaply, onto untouched ground; it is discouraged for recently
+  visited cells, for cells with few free neighbors, and for crowded cells.
+  Waiting is mostly chosen by old pets or when nothing else is possible.
+- Pets move only onto ground or trail cells that hold no resource, pet, or egg;
+  rock, water, and the grid edges block them. Moving costs additional energy.
+  A pet eats from a neighboring cell without entering it: the plant or insect
+  loses part of its amount and the pet gains energy, more from an insect than
+  from a plant.
+- Two neighboring pets can reproduce when both are old enough, have enough
+  energy, are not resting after an earlier reproduction, and are not parent and
+  child or siblings. They lay an egg on a free ground cell next to both of
+  them. The egg inherits the average of the traits of its parents, sometimes
+  with a small mutation, and the choice is rated higher the better these traits
+  are.
+- A pet that waits, moves, eats, or hatches leaves a trail on its cell or
+  strengthens the existing one. After the pets have acted, every plant and
+  insect regrows a little up to its capacity, and every trail without a pet or
+  egg on it fades until it turns back into ground.
+- The simulation ends on its own when neither a living pet nor an egg is left.
 
 ## Entities
 
-- **Ground:** Traversable terrain on which resources, pets, and eggs can exist.
-- **Rock:** An impassable terrain obstacle.
-- **Water:** Impassable terrain that blocks pet movement.
-- **Trail:** A temporary trace left by pets; its brightness reflects its
-  strength as it is reinforced and fades.
-- **Plant:** A renewable food resource. Its brightness reflects the amount
-  currently available.
-- **Insect:** A renewable food resource. Its brightness reflects the amount
-  currently available.
-- **ET Pet:** A living agent that searches, eats, moves, and reproduces. Its
-  brightness reflects its energy, and a dead pet is shown darkened briefly.
-- **ET Pet Egg:** An inherited offspring waiting to hatch. Its appearance
-  changes as incubation progresses.
+- **Ground:** open terrain that pets can walk on and where resources and eggs
+  can be placed; it is the dark gray background of the grid.
+- **Rock:** an obstacle that pets cannot enter; a gray full cell.
+- **Water:** an obstacle that pets cannot enter; a blue full cell.
+- **Trail:** ground marked by pets that passed or stayed there, which attracts
+  other pets when it is strong; a dark brown full cell that becomes brighter
+  the more often pets use it and darker as it fades.
+- **Plant:** a food source that regrows quickly and gives little energy per
+  bite; a green inner circle with a faint border of the same color that becomes
+  darker as it is eaten and brighter as it regrows.
+- **Insect:** a food source that regrows slowly and gives much energy per bite;
+  a dark yellow inner circle with a faint border of the same color that becomes
+  darker as it is eaten and brighter as it regrows.
+- **Pet:** the creature that roams, eats, and reproduces; a purple inner circle
+  that becomes darker as it loses energy and brighter as it eats. A pet that
+  has just died is shown as a very dark circle for one more step.
+- **Egg:** a pet egg that stays in place until it hatches; a pale pink inner
+  circle with a dark purple border that becomes darker as hatching approaches.
+
+The grid has a terrain layer, a resource layer, and a layer for pets and eggs.
+A plant, an insect, a pet, or an egg is drawn on top of the terrain of its
+cell; a resource never shares a cell with a pet or an egg.
 
 ## Interactive editing
 
-Editing applies to the selected cell:
+Both tools are applied to the currently selected cell:
 
-- **Set Terrain:** Choose **Ground**, **Rock**, or **Water**. The terrain changes
-  only when the cell contains neither a resource nor an agent.
-- **Set Resource:** Choose **None**, **Plant**, or **Insect** to remove, add, or
-  replace a resource. The selected cell must be ground terrain without an
-  agent.
+- **Set terrain** replaces the terrain of the cell, including a trail, with the
+  value of the **Terrain** option (Ground, Rock, Water). It works only on cells
+  that hold no resource, pet, or egg.
+- **Set resource** sets the resource of the cell to the value of the
+  **Resource** option (None, Plant, Insect); None removes the resource. It
+  works only on ground cells without a trail that hold no pet or egg. A placed
+  plant or insect starts fully grown with the largest possible capacity.
 
 ## Configuration
 
-You can adjust the grid dimensions and display size, choose a random seed, and
-set the starting amounts of terrain, resources, and pets.
+The user can adjust the size of the grid, the size of the cells, and the
+starting landscape and population.
 
 ### Structure
 
-The grid is fixed to hexagonal cells with blocked edges. Width and height can
-each range from 20 to 200 cells; the defaults are 50 by 20 cells, and width is
-adjusted in steps of two.
+**Grid width** (20 to 200 cells in steps of 2, default 50) and **Grid height**
+(20 to 200 cells, default 20) set the size of the grid.
 
 ### Layout
 
-Cell edge length ranges from 5 to 50 pixels and defaults to 10 pixels. Cells
-are displayed as shapes; no alternative display mode is available.
+**Cell edge length** (5 to 50 pixels, default 10) sets the size of the drawn
+cells.
 
 ### Initialization
 
-The seed controls repeatable random placement and is empty by default. Rocks,
-water, plants, and insects each allow 0% to 50%, with defaults of 1%, 2%, 5%,
-and 1% respectively; their combined percentage cannot exceed 50%. The initial
-pet count ranges from 0 to 100 and defaults to 10.
+**Seed** (empty by default) sets the start value of the random numbers: leave it
+empty for a random seed, or enter a number or any text to repeat a run.
+
+**Rock** (0% to 50%, default 1%) and **Water** (0% to 50%, default 2%) set the
+share of all cells that start as rock and as water. **Plants** (0% to 50%,
+default 5%) and **Insects** (0% to 50%, default 1%) set the share of all cells
+that start with a plant and with an insect. The four shares may add up to at
+most 50%; otherwise a validation message is shown.
+
+**Pets** (0 to 100, default 10) sets the number of pets at the start.
