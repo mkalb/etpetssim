@@ -144,6 +144,9 @@ many files in one shell command.
   Condense the rules, including the starting conditions and the termination
   condition, into 5-10 plain-language bullets that do not repeat the
   configuration values, and describe entities briefly in plain language.
+  Summarize decision logic (e.g. how an agent rates its possible actions) as
+  the factors that favor or discourage a choice, without weights or
+  thresholds.
 
   Sources that are normally outside this document's scope:
 
@@ -302,9 +305,17 @@ prose**:
   when its label does not explain it; this may include how it changes another
   control (e.g. "Selecting a preset fills in the turn rule."). Do not describe
   informational hints that are not controls (e.g. a recommended value shown
-  below a slider). Omit a standard subsection without controls (e.g.
-  Initialization without a seed) without a note. Format numbers as the en_US
-  UI does (e.g. `1,000`).
+  below a slider). State a limit across several controls (e.g. a maximum for
+  the sum of several shares) in one sentence after those controls, naming only
+  the visible reaction. Do not mention choices fixed to one value in
+  "Configuration"; a fixed cell display mode is not mentioned at all. Omit a
+  standard subsection without controls (e.g. Initialization without a seed)
+  without a note. Format numbers as the en_US UI does (e.g. `1,000`).
+- In "Interactive editing", state the preconditions of each tool from
+  `UserAction` (e.g. "only on ground cells without a trail"), even where a
+  tooltip is less precise, and describe the initial state of placed entities
+  qualitatively (e.g. "starts full"). Do not mention that an option is
+  disabled while its tool is not selected.
 - In "Interactive editing", name the values of a tool option by their en_US
   labels, in the order of the option source. If the values depend on a
   condition (e.g. the cell shape), name the values of each condition with that
@@ -317,8 +328,13 @@ prose**:
   shape (e.g. inner circle or full cell), and its dynamic visual cues (e.g.
   "brighter with more energy", a border marking a state). For a named JavaFX
   color (e.g. `Color.DEEPPINK`), use its name in lowercase words (e.g. "deep
-  pink"); name any other color by its basic hue with at most one modifier
-  (e.g. "light", "dark"). Name border colors the same way. If the shape
+  pink"); name any other color by one of the basic hues red, orange, yellow,
+  green, blue, purple, pink, brown, gray, black, or white, with at most the
+  modifier "light" or "dark". Name border colors the same way and do not
+  mention their transparency (e.g. "a border in the same color"). Describe a
+  dynamic cue in the direction the user sees it over time (e.g. "becomes
+  darker as hatching approaches"), and describe a temporary state (e.g. a dead
+  agent shown for one more step) in the entry of its entity. If the shape
   depends on the **Cell display** setting, name the shape of each display mode
   briefly; if it depends on the drawn cell size, describe the variants
   qualitatively (e.g. "on very small cells"), without pixel thresholds. An
