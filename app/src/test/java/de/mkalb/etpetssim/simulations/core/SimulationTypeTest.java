@@ -39,11 +39,11 @@ final class SimulationTypeTest {
                         SimulationType.ET_PETS,
                         SimulationType.WATOR,
                         SimulationType.SUGARSCAPE,
-                        SimulationType.CONWAYS_LIFE,
                         SimulationType.LANGTONS_ANT,
-                        SimulationType.FOREST_FIRE,
                         SimulationType.SNAKE,
                         SimulationType.REBOUNDING_ENTITIES,
+                        SimulationType.CONWAYS_LIFE,
+                        SimulationType.FOREST_FIRE,
                         SimulationType.SIMULATION_LAB
                 },
                 SimulationType.values()
@@ -81,19 +81,22 @@ final class SimulationTypeTest {
     @Test
     void testCategory() {
         assertAll(
-                () -> assertEquals(Optional.of(SimulationCategory.AGENT_BASED_MODEL), SimulationType.ET_PETS.category()),
-                () -> assertEquals(Optional.of(SimulationCategory.AGENT_BASED_MODEL), SimulationType.WATOR.category()),
-                () -> assertEquals(Optional.of(SimulationCategory.AGENT_BASED_MODEL),
+                () -> assertEquals(Optional.of(SimulationCategory.AGENT_AND_MOVEMENT_BASED_MODEL),
+                        SimulationType.ET_PETS.category()),
+                () -> assertEquals(Optional.of(SimulationCategory.AGENT_AND_MOVEMENT_BASED_MODEL),
+                        SimulationType.WATOR.category()),
+                () -> assertEquals(Optional.of(SimulationCategory.AGENT_AND_MOVEMENT_BASED_MODEL),
                         SimulationType.SUGARSCAPE.category()),
+                () -> assertEquals(Optional.of(SimulationCategory.AGENT_AND_MOVEMENT_BASED_MODEL),
+                        SimulationType.LANGTONS_ANT.category()),
+                () -> assertEquals(Optional.of(SimulationCategory.AGENT_AND_MOVEMENT_BASED_MODEL),
+                        SimulationType.SNAKE.category()),
+                () -> assertEquals(Optional.of(SimulationCategory.AGENT_AND_MOVEMENT_BASED_MODEL),
+                        SimulationType.REBOUNDING_ENTITIES.category()),
                 () -> assertEquals(Optional.of(SimulationCategory.CELLULAR_AUTOMATON),
                         SimulationType.CONWAYS_LIFE.category()),
                 () -> assertEquals(Optional.of(SimulationCategory.CELLULAR_AUTOMATON),
-                        SimulationType.LANGTONS_ANT.category()),
-                () -> assertEquals(Optional.of(SimulationCategory.CELLULAR_AUTOMATON),
                         SimulationType.FOREST_FIRE.category()),
-                () -> assertEquals(Optional.of(SimulationCategory.TOY_MODEL), SimulationType.SNAKE.category()),
-                () -> assertEquals(Optional.of(SimulationCategory.TOY_MODEL),
-                        SimulationType.REBOUNDING_ENTITIES.category()),
                 () -> assertEquals(Optional.empty(), SimulationType.SIMULATION_LAB.category())
         );
     }

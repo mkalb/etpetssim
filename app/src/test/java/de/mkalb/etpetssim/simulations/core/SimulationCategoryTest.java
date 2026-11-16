@@ -14,9 +14,8 @@ final class SimulationCategoryTest {
     void testDeclarationOrder() {
         assertArrayEquals(
                 new SimulationCategory[]{
-                        SimulationCategory.AGENT_BASED_MODEL,
-                        SimulationCategory.CELLULAR_AUTOMATON,
-                        SimulationCategory.TOY_MODEL
+                        SimulationCategory.AGENT_AND_MOVEMENT_BASED_MODEL,
+                        SimulationCategory.CELLULAR_AUTOMATON
                 },
                 SimulationCategory.values()
         );

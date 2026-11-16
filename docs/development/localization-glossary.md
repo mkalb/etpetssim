@@ -54,11 +54,11 @@ the English name; a descriptive title is translated (`Außerirdische Haustiere`)
 
 ## Simulation Categories
 
-| en_US                | de_DE                     | Source             | Notes                  |
-|----------------------|---------------------------|--------------------|------------------------|
-| `agent-based model`  | `agentenbasiertes Modell` | [ABM-en], [ABM-de] |                        |
-| `cellular automaton` | `zellulärer Automat`      | [CA-en], [CA-de]   |                        |
-| `toy model`          | `Spielzeugmodell`         | [Toy-en], project  | no German source found |
+| en_US                             | de_DE                                    | Source             | Notes                 |
+|-----------------------------------|------------------------------------------|--------------------|-----------------------|
+| `agent- and movement-based model` | `agenten- und bewegungsbasiertes Modell` | project            | start screen category |
+| `agent-based model`               | `agentenbasiertes Modell`                | [ABM-en], [ABM-de] |                       |
+| `cellular automaton`              | `zellulärer Automat`                     | [CA-en], [CA-de]   | start screen category |
 
 ## Grid and Cells
 
@@ -297,7 +297,6 @@ de_DE keeps these English terms (`.claude/rules/i18n.md`, "English terms in de_D
 - [Sugar-book] Joshua M. Epstein, Robert Axtell: "Growing Artificial Societies: Social Science from the Bottom Up",
   Brookings Institution Press and MIT Press, 1996; the link leads to a summary of its rules in JASSS
 - [Sugar-en] English Wikipedia, "Sugarscape"
-- [Toy-en] English Wikipedia, "Toy model"
 - [WaTor-de] German Wikipedia, "Wator"
 - [WaTor-en] English Wikipedia, "Wa-Tor"
 
@@ -318,6 +317,5 @@ de_DE keeps these English terms (`.claude/rules/i18n.md`, "English terms in de_D
 [SOC-de]: https://de.wikipedia.org/wiki/Selbstorganisierte_Kritikalit%C3%A4t
 [Sugar-book]: https://jasss.soc.surrey.ac.uk/12/1/6/appendixB/EpsteinAxtell1996.html
 [Sugar-en]: https://en.wikipedia.org/wiki/Sugarscape
-[Toy-en]: https://en.wikipedia.org/wiki/Toy_model
 [WaTor-de]: https://de.wikipedia.org/wiki/Wator
 [WaTor-en]: https://en.wikipedia.org/wiki/Wa-Tor

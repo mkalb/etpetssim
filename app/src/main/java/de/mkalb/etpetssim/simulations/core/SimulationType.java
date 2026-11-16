@@ -24,7 +24,7 @@ public enum SimulationType {
      * Custom extraterrestrial pets simulation.
      */
     ET_PETS(
-            SimulationCategory.AGENT_BASED_MODEL,
+            SimulationCategory.AGENT_AND_MOVEMENT_BASED_MODEL,
             "simulation.etpets.title",
             "simulation.etpets.subtitle",
             "simulation.etpets.url",
@@ -36,7 +36,7 @@ public enum SimulationType {
      * <a href="https://en.wikipedia.org/wiki/Wa-Tor">Wa-Tor</a> predator-prey simulation.
      */
     WATOR(
-            SimulationCategory.AGENT_BASED_MODEL,
+            SimulationCategory.AGENT_AND_MOVEMENT_BASED_MODEL,
             "simulation.wator.title",
             "simulation.wator.subtitle",
             "simulation.wator.url",
@@ -48,12 +48,50 @@ public enum SimulationType {
      * <a href="https://en.wikipedia.org/wiki/Sugarscape">Sugarscape</a>.
      */
     SUGARSCAPE(
-            SimulationCategory.AGENT_BASED_MODEL,
+            SimulationCategory.AGENT_AND_MOVEMENT_BASED_MODEL,
             "simulation.sugar.title",
             "simulation.sugar.subtitle",
             "simulation.sugar.url",
             "",
             List.of("sugarscape", "sugar")
+    ),
+
+    /**
+     * <a href="https://en.wikipedia.org/wiki/Langton%27s_ant">Langton's ant</a>.
+     */
+    @SuppressWarnings("SpellCheckingInspection")
+    LANGTONS_ANT(
+            SimulationCategory.AGENT_AND_MOVEMENT_BASED_MODEL,
+            "simulation.langton.title",
+            "simulation.langton.subtitle",
+            "simulation.langton.url",
+            "",
+            List.of("langton", "langtonsant", "langtons-ant", "ant")
+    ),
+
+    /**
+     * <a href="https://en.wikipedia.org/wiki/Snake_(video_game_genre)">Snake</a> simulation.
+     */
+    SNAKE(
+            SimulationCategory.AGENT_AND_MOVEMENT_BASED_MODEL,
+            "simulation.snake.title",
+            "simulation.snake.subtitle",
+            "simulation.snake.url",
+            "",
+            List.of("snake", "snakes")
+    ),
+
+    /**
+     * Custom rebounding-entities simulation.
+     */
+    REBOUNDING_ENTITIES(
+            SimulationCategory.AGENT_AND_MOVEMENT_BASED_MODEL,
+            "simulation.rebounding.title",
+            "simulation.rebounding.subtitle",
+            "simulation.rebounding.url",
+            "",
+            List.of("reboundingentities", "rebounding-entities", "rebounding-entity", "rebounding", "rebound",
+                    "rebounders")
     ),
 
     /**
@@ -70,19 +108,6 @@ public enum SimulationType {
     ),
 
     /**
-     * <a href="https://en.wikipedia.org/wiki/Langton%27s_ant">Langton's ant</a>.
-     */
-    @SuppressWarnings("SpellCheckingInspection")
-    LANGTONS_ANT(
-            SimulationCategory.CELLULAR_AUTOMATON,
-            "simulation.langton.title",
-            "simulation.langton.subtitle",
-            "simulation.langton.url",
-            "",
-            List.of("langton", "langtonsant", "langtons-ant", "ant")
-    ),
-
-    /**
      * <a href="https://en.wikipedia.org/wiki/Forest-fire_model">Forest-fire model</a>.
      */
     FOREST_FIRE(
@@ -92,31 +117,6 @@ public enum SimulationType {
             "simulation.forest.url",
             "",
             List.of("forestfire", "forest-fire", "forest", "fire", "forestfiremodel")
-    ),
-
-    /**
-     * <a href="https://en.wikipedia.org/wiki/Snake_(video_game_genre)">Snake</a> simulation.
-     */
-    SNAKE(
-            SimulationCategory.TOY_MODEL,
-            "simulation.snake.title",
-            "simulation.snake.subtitle",
-            "simulation.snake.url",
-            "",
-            List.of("snake", "snakes")
-    ),
-
-    /**
-     * Custom rebounding-entities simulation.
-     */
-    REBOUNDING_ENTITIES(
-            SimulationCategory.TOY_MODEL,
-            "simulation.rebounding.title",
-            "simulation.rebounding.subtitle",
-            "simulation.rebounding.url",
-            "",
-            List.of("reboundingentities", "rebounding-entities", "rebounding-entity", "rebounding", "rebound",
-                    "rebounders")
     ),
 
     /**

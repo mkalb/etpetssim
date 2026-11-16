@@ -10,7 +10,7 @@ around walls, other snakes, and its own body.
 
 ## Category and grid
 
-- **Category:** Toy model
+- **Category:** Agent- and movement-based models
 - **Cell shapes:** Hexagon (default), Square
 - **Edge behavior:** Wrap X and Block Y (default), Block X and Y, Wrap X and Y,
   Block X and Wrap Y

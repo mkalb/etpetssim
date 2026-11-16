@@ -10,7 +10,7 @@ the grid, harvest resources, spend energy, and eventually die and are replaced.
 
 ## Category and grid
 
-- **Category:** Agent-based model
+- **Category:** Agent- and movement-based models
 - **Cell shapes:** Square (default), Hexagon
 - **Edge behavior:** Wrap X and Y (default), Block X and Y, Block X and Wrap Y,
   Wrap X and Block Y

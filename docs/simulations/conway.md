@@ -12,7 +12,7 @@ basic idea produce many different forms of growth, motion, and stability.
 
 ## Category and grid
 
-- **Category:** Cellular automaton
+- **Category:** Cellular automata
 - **Cell shapes:** Square (default), Triangle, Hexagon
 - **Edge behavior:** Wrap X and Y (default), Block X and Y
 - **Neighborhood:** Edges and vertices

@@ -11,7 +11,7 @@ when collisions occur.
 
 ## Category and grid
 
-- **Category:** Toy model
+- **Category:** Agent- and movement-based models
 - **Cell shapes:** Hexagon (default), Square
 - **Edge behavior:** Block X and Y (default)
 - **Neighborhood:** Edges and vertices (default), Edges only

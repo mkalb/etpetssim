@@ -38,11 +38,11 @@ body:
         - ET Pets
         - Wa-Tor
         - Sugarscape
-        - Conway's Game of Life
         - Langton's Ant
-        - Forest-fire model
         - Snake
         - Rebounding Entities
+        - Conway's Game of Life
+        - Forest-fire model
         - General / not simulation-specific
   - type: textarea
     id: steps

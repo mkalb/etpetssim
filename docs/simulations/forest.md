@@ -11,7 +11,7 @@ and fire across the grid.
 
 ## Category and grid
 
-- **Category:** Cellular automaton
+- **Category:** Cellular automata
 - **Cell shapes:** Hexagon (default), Triangle, Square
 - **Edge behavior:** Block X and Y (default), Wrap X and Y
 - **Neighborhood:** Edges only (default), Edges and vertices

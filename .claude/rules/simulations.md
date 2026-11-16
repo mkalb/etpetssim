@@ -36,8 +36,8 @@ Special case:
 
 Before creating or changing a simulation, review relevant existing implementations, for example:
 
-- Agent-based examples: `wator`, `etpets`, `snake`, `rebounding`
-- Cellular automata examples: `conway`, `forest`, `langton`
+- Agent- and movement-based examples: `etpets`, `wator`, `langton`, `snake`, `rebounding`
+- Cellular automata examples: `conway`, `forest`
 
 Keep the cross-cutting files in sync, for example:
 

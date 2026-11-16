@@ -11,7 +11,7 @@ the grid.
 
 ## Category and grid
 
-- **Category:** Agent-based model
+- **Category:** Agent- and movement-based models
 - **Cell shapes:** Square (default), Triangle, Hexagon
 - **Edge behavior:** Wrap X and Y (default), Block X and Y
 - **Neighborhood:** Edges only (default), Edges and vertices

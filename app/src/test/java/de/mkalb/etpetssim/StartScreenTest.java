@@ -17,8 +17,6 @@ import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 
@@ -44,10 +42,15 @@ final class StartScreenTest {
     void testCreateRegion() {
         FXTestSupport.runAndWait(() -> {
             List<SimulationType> selectedTypes = new ArrayList<>();
-            List<SimulationType> expectedTypes = Arrays.stream(SimulationType.values())
-                    .filter(type -> type.category().isPresent())
-                    .sorted(Comparator.comparing((SimulationType type) -> type.category().orElseThrow()))
-                    .toList();
+            List<SimulationType> expectedTypes = List.of(
+                    SimulationType.ET_PETS,
+                    SimulationType.WATOR,
+                    SimulationType.SUGARSCAPE,
+                    SimulationType.LANGTONS_ANT,
+                    SimulationType.SNAKE,
+                    SimulationType.REBOUNDING_ENTITIES,
+                    SimulationType.CONWAYS_LIFE,
+                    SimulationType.FOREST_FIRE);
 
             Region region = StartScreen.createRegion(selectedTypes::add);
             List<Button> cards = groupNodes(region).stream()
@@ -66,9 +69,9 @@ final class StartScreenTest {
     @Test
     void testCreateRegionShowsCategoryHeadings() {
         FXTestSupport.runAndWait(() -> {
-            List<String> expectedHeadings = Arrays.stream(SimulationCategory.values())
-                    .map(category -> AppLocalization.getText(category.resourceKey()))
-                    .toList();
+            List<String> expectedHeadings = List.of(
+                    AppLocalization.getText(SimulationCategory.AGENT_AND_MOVEMENT_BASED_MODEL.resourceKey()),
+                    AppLocalization.getText(SimulationCategory.CELLULAR_AUTOMATON.resourceKey()));
 
             List<String> headings = groupNodes(StartScreen.createRegion(_ -> {})).stream()
                     .filter(Label.class::isInstance)

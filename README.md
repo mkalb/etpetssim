@@ -5,7 +5,7 @@
 <h1 align="center">Extraterrestrial Pets Simulation</h1>
 
 <p align="center">
-  Simple 2D grid simulations (agent-based models, cellular automata, and toy models) built with Java and JavaFX.
+  Simple 2D grid simulations (agent- and movement-based models and cellular automata) built with Java and JavaFX.
   <br>
   <a href="#simulations">Simulations</a>
   ·
@@ -25,8 +25,8 @@
 ## Overview
 
 Welcome to the **Extraterrestrial Pets Simulation** project (_etpetssim_)!
-This open-source desktop application combines well-known models and new ideas in one place: agent-based models,
-cellular automata, and toy models, all shown from a top-down view.
+This open-source desktop application combines well-known models and new ideas in one place: agent- and movement-based
+models and cellular automata, all shown from a top-down view.
 The simulation engine organizes the grid into structured cells, each with coordinates and entities, enabling flexible
 modeling and efficient computation.
 Each cell is a regular polygon (triangle, square, or hexagon) with equal sides and angles, ensuring consistent geometry
@@ -40,16 +40,20 @@ neighbors, either by shared edges or by both edges and vertices.
 
 ## Simulations
 
-| Simulation                                                                     | Type               | Description                                                                                          | Docs                                            |
-|--------------------------------------------------------------------------------|--------------------|------------------------------------------------------------------------------------------------------|-------------------------------------------------|
-| ET Pets                                                                        | Agent-Based Model  | Agents search for plants and insects, avoid obstacles, create trails, and reproduce with inheritance | [etpets.md](docs/simulations/etpets.md)         |
-| [Wa-Tor](https://en.wikipedia.org/wiki/Wa-Tor)                                 | Agent-Based Model  | Agents (fish and sharks) interact in a predator–prey system                                          | [wator.md](docs/simulations/wator.md)           |
-| [Sugarscape](https://en.wikipedia.org/wiki/Sugarscape)                         | Agent-Based Model  | Agents collect and consume sugar resources                                                           | [sugar.md](docs/simulations/sugar.md)           |
-| [Conway's Game of Life](https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life) | Cellular Automaton | Cells evolve based on simple local birth and survival rules                                          | [conway.md](docs/simulations/conway.md)         |
-| [Langton's Ant](https://en.wikipedia.org/wiki/Langton%27s_ant)                 | Cellular Automaton | A moving ant updates cell states using simple rules                                                  | [langton.md](docs/simulations/langton.md)       |
-| [Forest-fire model](https://en.wikipedia.org/wiki/Forest-fire_model)           | Cellular Automaton | Cells model tree growth and fire spread through local rules                                          | [forest.md](docs/simulations/forest.md)         |
-| [Snake](https://en.wikipedia.org/wiki/Snake_(video_game_genre))                | Toy Model          | Snakes move, grow, and avoid collisions while consuming food                                         | [snake.md](docs/simulations/snake.md)           |
-| Rebounding Entities                                                            | Toy Model          | Entities move directionally, bounce off boundaries, and destroy obstacles and other agents           | [rebounding.md](docs/simulations/rebounding.md) |
+Simulations are grouped by their predominant mechanics: agent- and movement-based models focus on moving agents or
+entities; cellular automata update cell states by local rules. The categories are for navigation, not a strict
+scientific classification.
+
+| Simulation                                                                     | Category                         | Description                                                                                          | Docs                                            |
+|--------------------------------------------------------------------------------|----------------------------------|------------------------------------------------------------------------------------------------------|-------------------------------------------------|
+| ET Pets                                                                        | Agent- and Movement-Based Models | Agents search for plants and insects, avoid obstacles, create trails, and reproduce with inheritance | [etpets.md](docs/simulations/etpets.md)         |
+| [Wa-Tor](https://en.wikipedia.org/wiki/Wa-Tor)                                 | Agent- and Movement-Based Models | Agents (fish and sharks) interact in a predator–prey system                                          | [wator.md](docs/simulations/wator.md)           |
+| [Sugarscape](https://en.wikipedia.org/wiki/Sugarscape)                         | Agent- and Movement-Based Models | Agents collect and consume sugar resources                                                           | [sugar.md](docs/simulations/sugar.md)           |
+| [Langton's Ant](https://en.wikipedia.org/wiki/Langton%27s_ant)                 | Agent- and Movement-Based Models | A moving ant updates cell states using simple rules                                                  | [langton.md](docs/simulations/langton.md)       |
+| [Snake](https://en.wikipedia.org/wiki/Snake_(video_game_genre))                | Agent- and Movement-Based Models | Snakes move, grow, and avoid collisions while consuming food                                         | [snake.md](docs/simulations/snake.md)           |
+| Rebounding Entities                                                            | Agent- and Movement-Based Models | Entities move directionally, bounce off boundaries, and destroy obstacles and other agents           | [rebounding.md](docs/simulations/rebounding.md) |
+| [Conway's Game of Life](https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life) | Cellular Automata                | Cells evolve based on simple local birth and survival rules                                          | [conway.md](docs/simulations/conway.md)         |
+| [Forest-fire model](https://en.wikipedia.org/wiki/Forest-fire_model)           | Cellular Automata                | Cells model tree growth and fire spread through local rules                                          | [forest.md](docs/simulations/forest.md)         |
 
 ### Simulation Gallery
 
@@ -65,17 +69,9 @@ neighbors, either by shared edges or by both edges and vertices.
 
 ![Sugarscape](assets/screenshots/screenshot_sugar_01.png)
 
-#### Conway's Game of Life
-
-![Conway's Game of Life](assets/screenshots/screenshot_conway_01.png)
-
 #### Langton's Ant
 
 ![Langton's Ant](assets/screenshots/screenshot_langton_01.png)
-
-#### Forest-fire model
-
-![Forest-fire model](assets/screenshots/screenshot_forest_01.png)
 
 #### Snake
 
@@ -84,6 +80,14 @@ neighbors, either by shared edges or by both edges and vertices.
 #### Rebounding Entities
 
 ![Rebounding Entities](assets/screenshots/screenshot_rebounding_01.png)
+
+#### Conway's Game of Life
+
+![Conway's Game of Life](assets/screenshots/screenshot_conway_01.png)
+
+#### Forest-fire model
+
+![Forest-fire model](assets/screenshots/screenshot_forest_01.png)
 
 ## Run the App
 
@@ -138,7 +142,7 @@ Supported application arguments:
 | `--log-console`       | Enables logging to the console                                                                                             |
 | `--log-file`          | Enables logging to the file `ExtraterrestrialPetsSimulation.log` in the application's log directory                        |
 | `--log-level=<level>` | Sets the log level: `debug`, `info`, `warn`, or `error` (case-insensitive); default: `info`                                |
-| `--simulation=<name>` | Starts a simulation directly, e.g. `etpets`, `wator`, `sugar`, `conway`, `langton`, `forest`, `snake`, `rebounding`        |
+| `--simulation=<name>` | Starts a simulation directly, e.g. `etpets`, `wator`, `sugar`, `langton`, `snake`, `rebounding`, `conway`, `forest`        |
 
 Argument names are case-insensitive. Flags can also take a boolean value (`true`/`false`, `1`/`0`, `yes`/`no`, or
 `on`/`off`), e.g. `--log-console=false`; any other value enables the flag. Several arguments are passed to Gradle as

@@ -10,10 +10,14 @@ to the state they enter, and leave a trail as those states advance.
 
 ## Category and grid
 
-- **Category:** Cellular automaton
+- **Category:** Agent- and movement-based models
 - **Cell shapes:** Square (default), Triangle, Hexagon
 - **Edge behavior:** Wrap X and Y (default), Absorb X and Y
 - **Neighborhood:** Edges only
+
+Langton's Ant is a borderline case: it is often described as a cellular
+automaton (a Turing machine on a grid), but it is listed here with the
+movement-based models because its ants move across the grid.
 
 ## Rules and mechanics
 

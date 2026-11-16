@@ -130,15 +130,23 @@ many files in one shell command.
       narrowly as routing evidence when tracing an exposed configuration or
       interactive-edit option to its actual source. Do not treat it as the
       authority for option meaning or run-time behavior.
-- **Category:** classify from the simulation's actual model semantics. Common
-  categories include **Agent-based model** (e.g. `wator`, `etpets`, `sugar`),
-  **Cellular automaton** (e.g. `conway`, `forest`, `langton`), and
-  **Toy model** (simple custom models without a scientific reference model,
-  e.g. `snake`, `rebounding`). These examples are illustrative, not
-  exhaustive; use another accurate category when the model does not fit any
-  of them. Cross-check an existing classification in the `README.md`
-  simulation table and report a clear conflict instead of silently changing
-  categories.
+- **Category:** use exactly one of the two fixed categories of
+  `SimulationCategory`, written in sentence case and plural:
+  **Agent- and movement-based models** (moving agents or entities are in the
+  foreground: `etpets`, `wator`, `sugar`, `langton`, `snake`, `rebounding`) or
+  **Cellular automata** (cell states are updated by local rules: `conway`,
+  `forest`). Take the category from `SimulationType`; do not introduce other
+  categories. Cross-check the `README.md` simulation table and report a clear
+  conflict instead of silently changing categories.
+- **Category note:** when the reference model of a simulation is commonly
+  classified in the literature under the other category, add a short paragraph
+  after the "Category and grid" list that names the usual classification and
+  why the simulation is listed in its category here. Currently this applies
+  only to `langton`; keep its note in this wording:
+  "Langton's Ant is a borderline case: it is often described as a cellular
+  automaton (a Turing machine on a grid), but it is listed here with the
+  movement-based models because its ants move across the grid." Omit the
+  paragraph for all other simulations.
 - **Screenshot:** look for the file `assets/screenshots/screenshot_<package>_01.png`
   (always the `_01` variant, e.g. `screenshot_wator_01.png`). If it does not
   exist, omit the Screenshot section rather than linking a missing file. Do not

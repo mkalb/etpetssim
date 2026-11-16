@@ -10,6 +10,8 @@
     - "Interactive editing" — only if the MainView declares run-time edit tools.
     - "Screenshot"          — only if screenshot_<package>_01.png exists.
     - "References"          — only if simulation.<name>.url is set.
+  Conditionally included paragraphs:
+    - Category note         — only for a borderline category case (see SKILL.md).
 -->
 
 # <Display title, e.g. Wa-Tor>
@@ -23,10 +25,14 @@ idea, and what a user sees happening on the grid. Avoid implementation detail.>
 
 ## Category and grid
 
-- **Category:** <Accurate user-facing model category>
+- **Category:** <One of the two fixed categories, see "Category" in SKILL.md>
 - **Cell shapes:** <e.g. Square (default), Triangle, Hexagon>
 - **Edge behavior:** <plain-language note if relevant, otherwise omit this line>
 - **Neighborhood:** <plain-language note if relevant, otherwise omit this line>
+
+<Optional category note: include it ONLY for a borderline case as described
+under "Category note" in SKILL.md (currently only Langton's Ant); otherwise
+delete this paragraph.>
 
 <!--
   For any field that maps to a user-selectable configuration choice (cell shapes,

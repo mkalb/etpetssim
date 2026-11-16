@@ -11,7 +11,7 @@ hold a resource and a pet at the same time.
 
 ## Category and grid
 
-- **Category:** Agent-based model
+- **Category:** Agent- and movement-based models
 - **Cell shapes:** Hexagon (default)
 - **Edge behavior:** Blocked on all sides (default)
 - **Neighborhood:** Edge-sharing cells only (default)

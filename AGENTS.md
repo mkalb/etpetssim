@@ -1,7 +1,7 @@
 # etpetssim
 
-etpetssim is a Java 27 / JavaFX 27 MVVM application for 2D grid-based simulations (agent-based models, cellular
-automata, and toy models). The engine models grids of triangle, square, or hexagon cells with configurable edge behavior
+etpetssim is a Java 27 / JavaFX 27 MVVM application for 2D grid-based simulations (agent- and movement-based models
+and cellular automata). The engine models grids of triangle, square, or hexagon cells with configurable edge behavior
 and neighbor modes.
 
 ## Project Structure
