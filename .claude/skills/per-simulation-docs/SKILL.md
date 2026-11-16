@@ -248,6 +248,10 @@ prose**:
   existing file defines the width. Do not reflow unchanged prose during an
   update solely to enforce this limit. Long URLs, code spans, and Markdown
   tables may exceed it.
+- Never start a wrapped prose line with text that Markdown reads as block
+  syntax: `-`, `+`, or `*` followed by a space, `#`, `>`, `|`, `=`, a code
+  fence, or a number followed by `.` or `)` (e.g. `1.` or `200)`). Move the
+  line break so that such text follows a word on the same line.
 - In "Category and grid", keep **Edge behavior** and **Neighborhood** on
   separate lines. For any field backed by a configuration choice (cell shapes,
   edge behavior, neighborhood), list the default value first and mark it
@@ -265,27 +269,39 @@ prose**:
       `(1 to 50 pixels, default 8)` or **Grid width**
       `(8 to 1,000 cells in steps of 2, default 200)`,
     - percentages as `(0% to 100%, default 20%)`,
-    - choices with the default first, e.g. `(Square (default), Hexagon)`, and
-      an empty default entry as `none (default)`; the Structure choices may
-      instead refer to "Category and grid",
-    - a choice list with more than eight values (e.g. rule presets) without
-      its values: say in one sentence what the list offers, and give its
-      default,
+    - choices with the default first and the other values in the order of
+      `_VALUES` or of the option source, e.g. `(Square (default), Hexagon)`,
+      and an empty default entry as `none (default)`; the Structure choices
+      may instead refer to "Category and grid",
+    - a choice list with more than eight values without its values: say in
+      one sentence what the list offers, and give its default; do not name
+      individual values, examples, or counts,
     - a composite control (e.g. a checkbox grid for a rule) with its default
       in the displayed notation, e.g. `(default 23/3)`, and its selectable
-      range in one sentence,
-    - a text field without a range (e.g. the seed) with what an empty value
-      means.
+      range in one sentence; write the row and column labels inside it as
+      plain text, not in bold,
+    - a text field without a range with what an empty value means and, if
+      visible to the user, what an invalid value does,
+    - the seed always in this sentence: "**Seed** (empty by default) sets the
+      start value of the random numbers: leave it empty for a random seed, or
+      enter a number or any text to repeat a run."
 
-  Name the condition of a control that is visible only under a condition (e.g.
-  "for square cells"). Add at most one short sentence on the effect of a
-  control, and only when its label does not explain it. Do not describe
-  informational hints that are not controls (e.g. a recommended value shown
-  below a slider). Format numbers as the en_US UI does (e.g. `1,000`).
+  Describe variants of one control that are shown under different conditions
+  (e.g. one preset list per cell shape) together in one or two neutral
+  sentences: what they offer, which variant is shown when, and their common
+  default; do not enumerate their values or name individual entries. Name the
+  condition of any other control that is visible only under a condition (e.g.
+  "for square cells"). If a label is ambiguous on its own (e.g. a label equal
+  to an option value), add a clarifying noun, e.g. "the **Square** preset
+  list". Add at most one short sentence on the effect of a control, and only
+  when its label does not explain it. Do not describe informational hints that
+  are not controls (e.g. a recommended value shown below a slider). Format
+  numbers as the en_US UI does (e.g. `1,000`).
 - In "Interactive editing", name the values of a tool option by their en_US
   labels, in the order of the option source. Do not enumerate an option list
   with more than eight values (e.g. patterns); say in one sentence what it
-  offers and when values are available.
+  offers and when values are available, without naming individual values,
+  examples, or counts.
 - In "Entities", describe the appearance of each visible entity in plain
   language: its color as a color name (e.g. "dark blue"), its emoji if any, its
   shape (e.g. inner circle or full cell), and its dynamic visual cues (e.g.
@@ -306,6 +322,8 @@ prose**:
 Before reporting completion, validate the finished document:
 
 - no template placeholders (`<...>`) or authoring HTML comments remain,
+- no wrapped prose line starts with block syntax (see "Conventions"); check
+  every line start of the written file,
 - title, summary, interactive-tool names, and the reference URL when present
   match the resolved `en_US` values,
 - default-backed choices list the actual default first and mark it `(default)`,
