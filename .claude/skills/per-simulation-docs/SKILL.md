@@ -248,17 +248,15 @@ prose**:
 
 ## 4. Conventions
 
-- UTF-8, no BOM; standard GitHub Markdown; prefer ASCII unless a name needs
-  otherwise.
-- Wrap newly written or changed prose at approximately 80 characters where
-  practical; in regenerate mode, this applies to the whole document, because no
-  existing file defines the width. Do not reflow unchanged prose during an
-  update solely to enforce this limit. Long URLs, code spans, and Markdown
-  tables may exceed it.
-- Never start a wrapped prose line with text that Markdown reads as block
-  syntax: `-`, `+`, or `*` followed by a space, `#`, `>`, `|`, `=`, a code
-  fence, or a number followed by `.` or `)` (e.g. `1.` or `200)`). Move the
-  line break so that such text follows a word on the same line.
+- Follow the Markdown and encoding conventions in `AGENTS.md`, including its
+  line width. In regenerate mode, no existing file defines a narrower width, so
+  the whole document uses the full width of `AGENTS.md`.
+- The block-syntax rule of `AGENTS.md` applies to all of the following at the
+  start of a wrapped prose line: `-`, `+`, or `*` followed by a space, `#`,
+  `>`, `|`, `=`, a code fence, or a number followed by `.` or `)` (e.g. `1.`
+  or `200)`). Such text would start a list, heading, quote, or table, or turn
+  the previous line into a heading. Move the line break so that the text
+  follows a word on the same line.
 - In "Category and grid", keep **Edge behavior** and **Neighborhood** on
   separate lines. For any field backed by a configuration choice (cell shapes,
   edge behavior, neighborhood), list the default value first and mark it

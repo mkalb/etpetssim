@@ -78,12 +78,12 @@ below, and `.claude/rules/simulations.md` applies the same principle to the MVVM
 
 ## Encoding and File Conventions
 
-- Use UTF-8 for `.java`, `.md`, and `.properties` files.
+- Use UTF-8 without BOM for `.java`, `.md`, and `.properties` files.
 - Prefer ASCII unless existing content or domain needs justify non-ASCII.
 - Write repository Markdown in standard GitHub Markdown.
 - Format Markdown by hand: wrap prose at 120 characters, or at the narrower width an existing file uses; break lines
   only between words, not inside code spans, links, or emphasis that fits on one line, and rewrap only the paragraphs
-  you change.
+  you change. Never start a wrapped line with Markdown block syntax (e.g., `- `, `#`, `>`, `1.`); move the break.
 - Indent continuation lines of a list item to the start of its text and nested lists by 4 spaces; surround headings,
   lists, tables, and code blocks with one blank line.
 - Align table columns: pad every cell to the column width and make the separator row match it, unless a cell is
