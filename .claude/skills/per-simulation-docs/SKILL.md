@@ -1,7 +1,7 @@
 ---
 name: per-simulation-docs
-description: 'Generate or refresh the user-facing Markdown page for one named simulation in docs/simulations/<package>.md from its Java implementation and en_US localization bundle. Invoke explicitly to document a specific simulation, such as Wa-Tor, Conway, Forest-fire, Langton, Sugarscape, Snake, ET Pets, or Rebounding.'
-argument-hint: "<simulation-name>"
+description: 'Generate or refresh the user-facing Markdown page for one named simulation in docs/simulations/<package>.md from its Java implementation and en_US localization bundle. By default it updates an existing page in place; the optional second argument "regenerate" rewrites the page from scratch without reading the existing simulation docs. Invoke explicitly to document a specific simulation, such as Wa-Tor, Conway, Forest-fire, Langton, Sugarscape, Snake, ET Pets, or Rebounding.'
+argument-hint: "<simulation-name> [regenerate]"
 user-invocable: true
 disable-model-invocation: true
 ---
@@ -17,6 +17,28 @@ must be written in **English (en_US)**, regardless of the language of the
 request. This language requirement applies only to the document. Write the
 completion report in the user's language unless the user requests another
 language.
+
+## Modes
+
+The skill has two modes, selected by the optional second argument:
+
+- **Update** (default, `/per-simulation-docs <simulation-name>`): create the
+  document if it does not exist; otherwise update it in place, preserve
+  hand-written prose whose facts are current, and report drift (step 3).
+- **Regenerate** (`/per-simulation-docs <simulation-name> regenerate`): write
+  the document from scratch from the current sources and overwrite any existing
+  file completely. Select this mode only when the second argument is exactly
+  `regenerate` (case-insensitive); stop and ask if the second argument is
+  anything else.
+
+In regenerate mode, do **not** read any file in `docs/simulations`, including
+the existing `docs/simulations/<package>.md` and the documents of other
+simulations, and do not read their earlier versions through Git history (e.g.,
+`git show`, `git log -p`, `git diff`, or `git blame`). Searches must exclude
+`docs/simulations` as well. Use only [`template.md`](./template.md) of this
+skill as the structure. All other steps (name resolution, fact gathering,
+conventions, validation, and the README check) apply unchanged unless a step
+says otherwise.
 
 ## 1. Require and resolve the simulation name
 
@@ -65,7 +87,10 @@ many files in one shell command.
   controls, interactive-edit descriptors, and their option controls, including
   labels, tooltips, and localized option values. Use those values as the
   authoritative user-facing names and as supporting evidence for behavior; do
-  not derive UI text from Java identifiers or key names.
+  not derive UI text from Java identifiers or key names. The shared controls
+  use keys outside the simulation prefix, such as `cellshape.*`,
+  `gridedgebehavior.*`, `neighborhoodmode.*`, `celldisplaymode.*`, and
+  `config.*`.
 - **Package:** `app/src/main/java/de/mkalb/etpetssim/simulations/<package>/`.
   `<Name>` is the class prefix found in the simulation's actual file names. Its
   capitalization may differ from the display title (for example, `Etpets`, not
@@ -77,18 +102,21 @@ many files in one shell command.
   |---|---|---|
   | `model/<Name>Config.java` | Configurable parameters (record components + Javadoc), grouped by the pane comments (Structure, Layout, Initialization, Rules) | Configuration |
   | `model/<Name>Constraints.java` | Defaults, valid ranges, and allowed choices (e.g. `CELL_SHAPE_VALUES`, `*_DEFAULT`); used for default-first `(default)` marking | Category and grid, Configuration |
+  | `model/<Name>Balance.java` | Fixed tuning values of the simulation logic that are **not** part of the configuration (e.g. sugar noise and peak positions in Sugarscape). Read it only as supporting evidence when an authoritative code path uses a constant; never present these values as user-configurable, and mention one only under the helper-source rule below | The section fed by the using source |
   | `model/<Name>GridModel.java` | Whether the simulation uses one grid or multiple grids for distinct spatial components (e.g. resource and agent layers in Sugarscape / ET Pets). If there are multiple grids, name each conceptually. | Entities, Rules and mechanics |
+  | `model/<Name>Cell.java` (only for multi-grid simulations, e.g. Sugarscape, ET Pets, Langton's Ant) | Which layer entities one grid cell combines and which of them counts as the top-most entity of the cell (e.g. agent before resource). Use it for the layer paragraph of the Entities section (which entities can share a cell and which one is drawn on top); take their appearance from `MainView`, which may draw every layer | Entities |
   | `model/<Name>StepLogic.java` | Per-agent step logic (implements `AgentStepLogic`): what happens to a single agent each tick — movement, neighbor interactions, reproduction, death (e.g. Wa-Tor, Snake). Or synchronous, double-buffered cellular-automaton step logic (implements `SynchronousStepLogic`): rules applied to every cell from the current grid into a next grid in one pass (e.g. Conway survival/birth thresholds) | Rules and mechanics |
   | `model/<Name>StepRunner.java` | Whole-step orchestration (implements `SimulationStepRunner`): the ordered sub-phases executed per tick (e.g. agent logic, then resource regrowth, then terrain updates in ET Pets / Sugarscape) | Rules and mechanics |
+  | `model/<Name>TerminationCondition.java` | When the run ends on its own (e.g. when no agent is left). Always state it as the last rule bullet in plain language, including when a configuration value can trigger it at the start | Rules and mechanics |
   | `model/<Name>AgentLogic.java`, `<Name>ResourceLogic.java`, and any other `*Logic.java` used by the simulation | Starting from `StepRunner`, trace each logic class it actually invokes, directly or through another invoked phase. Document only these used classes; do not include a `*Logic.java` class solely because it exists in the package. | Rules and mechanics |
   | `model/<Name>SimulationManager.java` | **Starting conditions** and overall run flow. Trace the methods, helper types, and constants actually used by the manager to determine placement, seeding, resource generation, randomization, and phase orchestration. Describe the resulting user-visible behavior. Do not assume that fixed implementation values are configurable or that all relevant facts are declared directly in the manager. | Rules and mechanics, Configuration (Initialization) |
   | Helper types and constant holders reached from an authoritative code path | Use them as supporting evidence to understand behavior performed by the authoritative source. Do not enumerate internal tuning values or present fixed values as user-configurable. Mention an exact fixed value only when it is directly user-visible and necessary for an accurate explanation. | The section fed by the authoritative source |
-  | `model/entity/` | The entities the user can see and their appearance. The `EntityDescriptors` class, or the entity enum that provides the descriptors, defines each entity's color, emoji, and localized name; resolve the name in `messages_en_US.properties` and translate the color into a plain color name | Entities |
+  | `model/entity/` | The entities the user can see and their appearance. The `EntityDescriptors` class, or the entity enum that provides the descriptors, defines each entity's color, emoji, and localized names; resolve only the short name (the `.short` key) in `messages_en_US.properties` and use it as the entity name, and translate the color into a plain color name. Ignore the `.long` and `.description` values: do not use them as names or wording, and derive what an entity is and does from the code | Entities |
   | `model/<Name>UserAction.java` (implements `SimulationUserAction`) | What actually happens when an edit tool is applied to the selected cell (or globally): e.g. spawn/remove an agent, cycle a cell's state, set terrain or a resource. This is the precise, per-tool behavior behind the toolbar entries in `MainView`. | Interactive editing |
-  | `view/<Name>ConfigView.java` | **Authoritative source** for which configuration parameters are actually exposed in the UI and how its panes group them conceptually. Structure and Layout are usually built by the base class (`createStructurePane(...)`, `createLayoutPane(...)`); Initialization and Rules are simulation-specific. Inspect which controls those methods actually create. Trust `ConfigView` over the grouping comments in `Config.java` when they disagree. Treat the template subsections as documentation categories, not a one-to-one copy of UI panes: merge related simulation-specific panes into the closest category, including all rule-oriented panes under one **Rules** subsection, while preserving their conceptual groups in prose. Add another subsection only for a genuinely distinct concern that would be misleading under every standard category. | Configuration |
+  | `view/<Name>ConfigView.java` | **Authoritative source** for which configuration parameters are actually exposed in the UI and how its panes group them conceptually. Structure and Layout are usually built by the base class `simulations/core/view/AbstractConfigView.java` (`createStructurePane(...)`, `createLayoutPane(...)`); Initialization and Rules are simulation-specific. Inspect which controls those methods actually create: a choice whose `_VALUES` in `Constraints` has only one allowed value gets no control. Trust `ConfigView` over the grouping comments in `Config.java` when they disagree. Treat the template subsections as documentation categories, not a one-to-one copy of UI panes: merge related simulation-specific panes into the closest category, including all rule-oriented panes under one **Rules** subsection, while preserving their conceptual groups in prose. Add another subsection only for a genuinely distinct concern that would be misleading under every standard category. | Configuration |
   | Configuration choice and rule types used by controls confirmed in `ConfigView` (for example, `shared/<Name>*Preset*.java`, choice enums, and rule value objects) | Trace only exposed controls to their actual option source. Extract the available choices and their user-facing meaning, plus any user-visible rule notation, limits, or shape-specific validity. Take defaults and allowed selections from `Constraints` when defined there. Do not treat a similarly named type as a documentation source unless its connection to an exposed control is confirmed. | Configuration |
   | `view/<Name>MainView.java` | (a) Interactive edit tools available while the simulation runs, declared in `createUserActionDescriptors()` together with their localization keys (e.g. `sugar.toolbar.addsugar`) and their scope (`SimulationUserActionScope.SELECTED_CELL` vs. `GLOBAL`). (b) Option controls exposed by `createEditToolBarOptionPanel(...)`; trace each visible option from here to its actual data source. (c) How each entity is drawn (e.g. full cell or inner circle, emoji overlay, border) and dynamic visual cues the user perceives (e.g. brightness or color scaled by a value, markers for state transitions such as newly spawned agents). | Interactive editing, Entities |
-  | Interactive-edit option sources reached from a visible `MainView` control (for example, catalogs, enums, choice records, or direction/strategy providers in `shared/`, `model/`, or another package) | Extract the selectable values, localized label keys, and configuration-dependent availability. If `MainView` delegates option population through `<Name>EditToolBarViewModel`, read that ViewModel only to follow the data flow to the actual option source; treat it as routing evidence, not as the authority for option meaning or behavior. | Interactive editing |
+  | Interactive-edit option sources reached from a visible `MainView` control (for example, catalogs such as `ConwayPatterns` and `SnakeMoveStrategies`, enums such as `SugarAddSugarLevel`, choice records, or direction providers such as `LangtonDirectionOptions`, in `shared/`, `model/`, or another package) | Extract the selectable values, localized label keys, and configuration-dependent availability. If `MainView` delegates option population through `<Name>EditToolBarViewModel`, read that ViewModel only to follow the data flow to the actual option source; treat it as routing evidence, not as the authority for option meaning or behavior. | Interactive editing |
 
   Resolve conflicting evidence by subject ownership:
 
@@ -102,25 +130,26 @@ many files in one shell command.
        traced from the exposed control. Limit all such facts to controls
        confirmed by `ConfigView`.
     4. For visible names, labels, summaries, tooltips, and URLs, resolved values
-       from `messages_en_US.properties` are authoritative.
-    5. Javadoc and the existing `docs/simulations/<package>.md` document are
-       supporting context only; they must not override the current authoritative
-       source for the subject.
+       from `messages_en_US.properties` are authoritative. A tooltip that
+       describes behavior more loosely than the code is not a conflict;
+       describe the behavior from the code.
+    5. Javadoc and, in update mode, the existing `docs/simulations/<package>.md`
+       document are supporting context only; they must not override the current
+       authoritative source for the subject. In regenerate mode, the existing
+       document is not read at all (see "Modes").
 
   If authoritative sources for the same subject still conflict, stop and
   report the conflict instead of guessing or silently choosing one.
 
-  Do not list every parameter exhaustively; condense rules into 3-7
-  plain-language bullets, and describe entities briefly in plain language.
+  Condense the rules, including the starting conditions and the termination
+  condition, into 5-10 plain-language bullets that do not repeat the
+  configuration values, and describe entities briefly in plain language.
 
   Sources that are normally outside this document's scope:
 
     - Unreferenced tuning and constant-holder classes are not documentation
       sources. When an authoritative code path uses one, it may be read as
       supporting evidence under the helper-source rule above.
-    - `model/<Name>TerminationCondition.java` — usually a one-line "stop when
-      empty" check; mention only if it implies something genuinely surprising to
-      the user.
     - `model/<Name>Statistics.java` and `view/<Name>ObservationView.java` are
       intentionally outside this document's scope. Do not add an **Observation**
       or **Statistics** section or enumerate status metrics and selected-cell
@@ -135,9 +164,11 @@ many files in one shell command.
   **Agent- and movement-based models** (moving agents or entities are in the
   foreground: `etpets`, `wator`, `sugar`, `langton`, `snake`, `rebounding`) or
   **Cellular automata** (cell states are updated by local rules: `conway`,
-  `forest`). Take the category from `SimulationType`; do not introduce other
-  categories. Cross-check the `README.md` simulation table and report a clear
-  conflict instead of silently changing categories.
+  `forest`). Take the category from `SimulationType` and map its constant to
+  this wording (`AGENT_AND_MOVEMENT_BASED_MODEL` and `CELLULAR_AUTOMATON`); do
+  not introduce other categories. Cross-check the `README.md` simulation
+  table, ignoring capitalization, and report a clear conflict instead of
+  silently changing categories.
 - **Category note:** when the reference model of a simulation is commonly
   classified in the literature under the other category, add a short paragraph
   after the "Category and grid" list that names the usual classification and
@@ -165,19 +196,30 @@ headings and their order, subject to the template's conditional-section rules.
 Configuration subsections follow the semantic grouping rules above. Fill every
 placeholder from the gathered facts.
 
+### Regenerate mode
+
+Write the complete document from the template and the gathered facts, and
+overwrite the output file if it exists. Do not read, preserve, or compare with
+the existing content, and do not produce a drift report; the maintainer reviews
+the result as a Git diff. If the file exists, delete it first with a shell
+command that does not print its content (e.g.,
+`rm -f docs/simulations/<package>.md`), then create it. After writing, you may
+read the new file for validation; the read ban covers only the previous
+content and the other simulation documents. The rest of this step describes the
+update mode.
+
+### Update mode
+
 Determine whether the output file exists from the
 **current filesystem state only**. Do not use Git history, the Git index, diffs,
 deleted-file status, or any other repository metadata to find or restore an
 earlier version. A file that is currently absent is a new document, even if Git
 records a previous version.
 
-### If the file does not exist
+If the file does not exist, create it from the template, filling all sections.
 
-Create it from the template, filling all sections.
-
-### If the file already exists
-
-Update it **in place** and **preserve hand-written prose**:
+If the file already exists, update it **in place** and **preserve hand-written
+prose**:
 
 - Revalidate every factual section against the current sources: title, summary,
   overview, category and grid, rules and mechanics, entities, interactive
@@ -202,18 +244,41 @@ Update it **in place** and **preserve hand-written prose**:
 - UTF-8, no BOM; standard GitHub Markdown; prefer ASCII unless a name needs
   otherwise.
 - Wrap newly written or changed prose at approximately 80 characters where
-  practical. Do not reflow unchanged prose during an update solely to enforce
-  this limit. Long URLs, code spans, and Markdown tables may exceed it.
+  practical; in regenerate mode, this applies to the whole document, because no
+  existing file defines the width. Do not reflow unchanged prose during an
+  update solely to enforce this limit. Long URLs, code spans, and Markdown
+  tables may exceed it.
 - In "Category and grid", keep **Edge behavior** and **Neighborhood** on
   separate lines. For any field backed by a configuration choice (cell shapes,
   edge behavior, neighborhood), list the default value first and mark it
   `(default)`, then the other options, e.g.
-  `Square (default), Triangle, Hexagon`.
+  `Square (default), Triangle, Hexagon`. A choice fixed to one value has no
+  control; write its value followed by `(fixed)`, without `(default)`, or omit
+  the line if the value does not affect visible behavior.
+- In "Configuration", name every exposed control in bold by its en_US label
+  without format placeholders and trailing colon (e.g. `Agents: %1$s` becomes
+  **Agents**), directly followed by all its values in parentheses, taken from
+  `Constraints`:
+    - numbers as `(min to max, default d)`, with the unit of the label if it
+      has one, e.g. **Cell edge length** `(1 to 50 pixels, default 8)`,
+    - percentages as `(0% to 100%, default 20%)`,
+    - choices with the default first, e.g. `(Square (default), Hexagon)`; the
+      Structure choices may instead refer to "Category and grid",
+    - a text field without a range (e.g. the seed) with what an empty value
+      means.
+
+  Add at most one short sentence on the effect of a control, and only when its
+  label does not explain it. Format numbers as the en_US UI does (e.g. `1,000`).
 - In "Entities", describe the appearance of each visible entity in plain
   language: its color as a color name (e.g. "dark blue"), its emoji if any, its
   shape (e.g. inner circle or full cell), and its dynamic visual cues (e.g.
-  "brighter with more energy", a border marking a state). Do not use hex color
-  codes, descriptor IDs, localization keys, or Java type names.
+  "brighter with more energy", a border marking a state). Name a color by its
+  basic hue with at most one modifier (e.g. "light", "dark") to keep the wording
+  stable across runs. An entity that is only drawn as the grid background (e.g.
+  terrain) is listed as an entity and described as the background. Do not
+  describe UI markers that are not entities, such as the selected-cell marker.
+  Do not use hex color codes, descriptor IDs, localization keys, or Java type
+  names.
 - Use the screenshot path relative to `docs/simulations/`, i.e.
   `../../assets/screenshots/screenshot_<package>_01.png`.
 
@@ -225,24 +290,37 @@ Before reporting completion, validate the finished document:
 - title, summary, interactive-tool names, and the reference URL when present
   match the resolved `en_US` values,
 - default-backed choices list the actual default first and mark it `(default)`,
-- the Entities section describes the appearance of every visible entity and
-  contains no hex color codes, descriptor IDs, localization keys, or Java type
-  names,
-- conditional sections match the current sources, and every local image link
+- "Rules and mechanics" has 5-10 bullets, starting with the starting
+  conditions and ending with the termination condition,
+- "Configuration" names every exposed control with its values in the form
+  given under "Conventions", and the values match `Constraints`,
+- the interactive tools appear in toolbar order,
+- the Entities section names every visible entity by its `.short` value,
+  describes its appearance, does not reuse `.long` or `.description` values,
+  and contains no hex color codes, descriptor IDs, localization keys, or Java
+  type names,
+- conditional sections and paragraphs (category note, layer paragraph) match
+  the current sources, and every local image link
   points to an existing file,
 - the `README.md` simulation table contains a row for the simulation whose Docs
   link targets `docs/simulations/<package>.md`; if the row or link is missing
   or incorrect, report it without modifying the README unless the user
   requested that change,
-- all factual sections inspected during an update either remain supported by
-  the code or were corrected and included in the drift report.
+- in update mode, all factual sections inspected during the update either
+  remain supported by the code or were corrected and included in the drift
+  report,
+- in regenerate mode, no file in `docs/simulations` and no earlier version of
+  one was read, and every statement in the document is supported by the
+  gathered sources.
 
 ## 6. Report
 
 After validation, report completion:
 
-- State the output path and whether the file was created or updated.
-- List any drift you flagged and corrected.
+- State the output path and whether the file was created, updated, or
+  regenerated.
+- In update mode, list any drift you flagged and corrected. In regenerate mode,
+  do not report drift; point the maintainer to the Git diff instead.
 - Report a missing README simulation-table row or an incorrect or missing Docs
   link.
 - If a screenshot was missing, note that the Screenshot section was omitted.

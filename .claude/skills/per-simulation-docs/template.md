@@ -12,11 +12,13 @@
     - "References"          — only if simulation.<name>.url is set.
   Conditionally included paragraphs:
     - Category note         — only for a borderline category case (see SKILL.md).
+    - Layer paragraph       — only for simulations with several grid layers.
 -->
 
 # <Display title, e.g. Wa-Tor>
 
-<One-line summary, derived from the en_US subtitle, e.g. "Simulate the Wa-Tor world.">
+<One-line summary: the en_US subtitle verbatim, without an added period,
+e.g. "Simulate the Wa-Tor world">
 
 ## Overview
 
@@ -27,8 +29,8 @@ idea, and what a user sees happening on the grid. Avoid implementation detail.>
 
 - **Category:** <One of the two fixed categories, see "Category" in SKILL.md>
 - **Cell shapes:** <e.g. Square (default), Triangle, Hexagon>
-- **Edge behavior:** <plain-language note if relevant, otherwise omit this line>
-- **Neighborhood:** <plain-language note if relevant, otherwise omit this line>
+- **Edge behavior:** <e.g. Wrap X and Y (default), Block X and Y>
+- **Neighborhood:** <e.g. Edges only (fixed)>
 
 <Optional category note: include it ONLY for a borderline case as described
 under "Category note" in SKILL.md (currently only Langton's Ant); otherwise
@@ -38,16 +40,19 @@ delete this paragraph.>
   For any field that maps to a user-selectable configuration choice (cell shapes,
   edge behavior, neighborhood), list the default value first and mark it with
   "(default)", followed by the remaining options, e.g.
-  "Square (default), Triangle, Hexagon".
+  "Square (default), Triangle, Hexagon". Write a value that is fixed for this
+  simulation followed by "(fixed)", or omit its line if it does not affect
+  visible behavior.
 -->
 
 ## Rules and mechanics
 
-<Summarize the core per-step loop in plain language as a concise list of 3-7
-bullet points. Derive this from whichever step class the simulation provides
-(step-logic or step-runner), its per-phase `*Logic` classes,
-and the SimulationManager (starting conditions such as seeding and initial
-placement), but phrase it for a user, not a developer.>
+<Summarize the simulation in plain language as a concise list of 5-10 bullet
+points: the starting conditions first, then the per-step rules in their order,
+and the termination condition last. Derive this from the SimulationManager
+(starting conditions such as seeding and initial placement), the step logic or
+step runner with its per-phase `*Logic` classes, and the termination
+condition, but phrase it for a user, not a developer.>
 
 - <Rule 1>
 - <Rule 2>
@@ -58,8 +63,12 @@ placement), but phrase it for a user, not a developer.>
 <One entry per entity the user can see, described in plain language: what it
 represents, how it behaves, and how it looks on the grid.>
 
-- **<Entity name>:** <what it is and how it behaves; how it looks>
-- **<Entity name>:** <what it is and how it behaves; how it looks>
+- **<Short entity name>:** <what it is and how it behaves; how it looks>
+- **<Short entity name>:** <what it is and how it behaves; how it looks>
+
+<Layer paragraph: include it ONLY for a simulation with several grid layers
+(e.g. resources and agents). One or two sentences on which entities can share a
+cell and which one is drawn on top; otherwise delete this paragraph.>
 
 <!--
   Describe the appearance from the entity descriptors in model/entity and the
@@ -84,7 +93,8 @@ represents, how it behaves, and how it looks on the grid.>
 <One short paragraph or a bullet list naming each available tool in plain
 language (e.g. "Add sugar (with level selection)", "Remove sugar") and, if
 relevant, when it applies (e.g. "applied to the currently selected cell", or
-"applies globally" for tools with no cell selection).>
+"applies globally" for tools with no cell selection). List the tools in the
+toolbar order, i.e. the declaration order in createUserActionDescriptors().>
 
 ## Configuration
 
@@ -94,9 +104,10 @@ documentation categories below rather than mirroring every pane as a separate
 subsection. In particular, combine all rule-oriented panes under Rules while
 preserving their conceptual groups in prose. Omit empty categories. Add another
 subsection only for a genuinely distinct concern that would be misleading under
-every standard category. Keep each subsection to a short sentence or two;
-mention notable limits or defaults inline only where they help the user, and do
-not use a table.>
+every standard category. In each subsection, name every control with all its
+values as described under "Conventions" in SKILL.md, e.g. "**Sugar peaks**
+(1 to 5, default 4) sets the number of sugar hills."; write prose, not a
+table.>
 
 ### Structure
 
@@ -134,4 +145,5 @@ settings.>
   heading.
 -->
 
-- <External reference from the en_US `simulation.<name>.url` key>
+- <Bare URL from the en_US `simulation.<name>.url` key, e.g.
+  https://en.wikipedia.org/wiki/Wa-Tor>
