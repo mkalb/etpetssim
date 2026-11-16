@@ -1,5 +1,6 @@
 package de.mkalb.etpetssim.core;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -30,6 +31,11 @@ final class AppLocalizationTest {
 
     @BeforeEach
     void setUpBeforeEach() {
+        AppLocalization.resetForTesting();
+    }
+
+    @AfterEach
+    void tearDownAfterEach() {
         AppLocalization.resetForTesting();
     }
 
