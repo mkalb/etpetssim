@@ -38,10 +38,15 @@ Other locations:
 Separate concerns by layer (Separation of Concerns): the packages may depend on each other only in the directions
 below, and `.claude/rules/simulations.md` applies the same principle to the MVVM layers of each simulation.
 
+- The root package `de.mkalb.etpetssim` (`EtpetssimLauncher`, `EtpetssimApplication`, `StartScreen`) may depend on
+  all packages; no package depends on it.
 - `core` must not depend on `engine`, `ui`, or `simulations`.
 - `engine` may depend on `core`, but not on `ui` or `simulations`.
 - `ui` may depend on `core` and `engine`, but not on `simulations`.
 - `simulations` may depend on `core`, `engine`, and `ui`.
+
+[`docs/development/architecture.md`](docs/development/architecture.md) gives an overview of the package boundaries;
+update it when they change.
 
 ## Priority and Scope
 

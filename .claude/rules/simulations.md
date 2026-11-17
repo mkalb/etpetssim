@@ -59,12 +59,34 @@ termination condition. Javadoc names a simulation by its title; compound adjecti
 
 ## MVVM Dependencies
 
+### Allowed Dependencies
+
+The table lists the packages each part of a simulation may import; everything not listed is forbidden. `model` stands
+for the `model` package with its sub-packages `model.entity` and `model.strategy`, which form one layer and may depend
+on each other; "Factory" is the package-root `<SimulationName>Factory`. The content rules of the following
+subsections (e.g., the view accesses non-rendering domain data through ViewModel accessors) still apply.
+
+| Part        | Same simulation                        | `simulations.core`                     | Other packages         |
+|-------------|----------------------------------------|----------------------------------------|------------------------|
+| Factory     | `model`, `viewmodel`, `view`, `shared` | `model`, `shared`, `viewmodel`, `view` | `core`, `engine`, `ui` |
+| `model`     | `shared`                               | `model`, `shared`                      | `core`, `engine`       |
+| `shared`    | `model.entity`, `model.strategy`       | `shared`                               | `core`, `engine`       |
+| `viewmodel` | `model`, `shared`                      | `model`, `shared`, `viewmodel`         | `core`, `engine`, `ui` |
+| `view`      | `model`, `shared`, `viewmodel`         | `model`, `shared`, `viewmodel`, `view` | `core`, `engine`, `ui` |
+
+No part of a simulation depends on the package root of `simulations.core` (e.g., `SimulationFactory`,
+`SimulationType`), because `SimulationFactory` imports the simulation factories. The `lab` simulation follows the same
+table.
+
+[`docs/development/architecture.md`](../../docs/development/architecture.md) gives an overview of these dependencies;
+update it when these rules change.
+
 ### Model
 
 - Contains domain state and business rules only.
 - Must not import JavaFX scene graph, controls, properties, bindings, stages, or animation types.
 - May use neutral JavaFX value types (`Color`, `Image`, `Duration`) as plain value carriers.
-- May depend on same-simulation `shared`; must not depend on `view` or `viewmodel`.
+- May depend on same-simulation `shared`; must not depend on `view`, `viewmodel`, or `ui`.
 - Expose a catalog of predefined values (e.g., `ConwayPatterns`, `SnakeMoveStrategies`, or the metrics of a statistics
   class) through a noun-style accessor that returns a constant unmodifiable list (`choices()`, `strategies()`,
   `metrics()`); keep the constants and factories that only build the catalog private, also when tests used them, and
@@ -78,14 +100,12 @@ termination condition. Javadoc names a simulation by its title; compound adjecti
 - Must not contain domain/business logic or mutate model rules directly.
 - May read `model.entity` types directly for rendering colors, labels, or display strings.
 - Must access non-rendering domain data through ViewModel accessors.
-- May depend on same-simulation `shared`.
 
 ### ViewModel
 
 - Contains UI state, formatting, and interaction logic only; delegate domain computation to `model`.
 - Expose state as JavaFX `Property`/`ObservableValue` or repository input wrappers.
 - Expose plain values through `getX()` accessors; model and engine types use noun-style accessors.
-- May depend on same-simulation `shared`.
 
 ### Shared
 
