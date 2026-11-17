@@ -9,6 +9,7 @@ package de.mkalb.etpetssim.ui;
  */
 public final class FXStyleClasses {
 
+    public static final String ABOUT_AUTHOR_LABEL = "about-author-label";
     public static final String ABOUT_CONTENT_VBOX = "about-content-vbox";
     public static final String ABOUT_HEADER_HBOX = "about-header-hbox";
     public static final String ABOUT_HEADER_VBOX = "about-header-vbox";

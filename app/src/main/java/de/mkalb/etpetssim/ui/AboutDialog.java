@@ -36,9 +36,9 @@ import java.util.regex.Pattern;
 /**
  * Displays the application's About dialog.
  *
- * <p>The dialog shows the application icon, title, and version in its header, links to the GitHub repository and its
- * issues, and tabs with build metadata and the paths of the settings and log files, help, the README, the project
- * license, and third-party license information.
+ * <p>The dialog shows the application icon, title, author, and version in its header, links to the GitHub repository
+ * and its issues, and tabs with build metadata and the paths of the settings and log files, help, the README, the
+ * project license, and third-party license information.
  */
 public final class AboutDialog {
 
@@ -224,10 +224,12 @@ public final class AboutDialog {
 
     private Node createHeader(Map<String, String> manifestInfo) {
         String title = AppLocalization.getText(AppLocalizationKeys.ABOUT_HEADER_TITLE);
+        String author = AppLocalization.getText(AppLocalizationKeys.ABOUT_HEADER_AUTHOR);
         String version = AppLocalization.getFormattedText(AppLocalizationKeys.ABOUT_MANIFEST_VERSION,
                 resolveManifestValue(manifestInfo, AppManifest.IMPLEMENTATION_VERSION));
         VBox titleBox = new VBox(
                 FXComponentFactory.createLabel(title, FXStyleClasses.ABOUT_TITLE_LABEL),
+                FXComponentFactory.createLabel(author, FXStyleClasses.ABOUT_AUTHOR_LABEL),
                 FXComponentFactory.createLabel(version, FXStyleClasses.ABOUT_VERSION_LABEL));
         titleBox.getStyleClass().add(FXStyleClasses.ABOUT_HEADER_VBOX);
 

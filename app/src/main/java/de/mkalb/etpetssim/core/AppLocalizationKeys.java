@@ -8,6 +8,7 @@ package de.mkalb.etpetssim.core;
  */
 public final class AppLocalizationKeys {
 
+    public static final String ABOUT_HEADER_AUTHOR = "about.header.author";
     public static final String ABOUT_HEADER_TITLE = "about.header.title";
     public static final String ABOUT_HELP_ARGUMENTS_NOTES = "about.help.arguments.notes";
     public static final String ABOUT_HELP_ARGUMENTS_TITLE = "about.help.arguments.title";

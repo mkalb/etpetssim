@@ -327,6 +327,11 @@ ScrollPane .decrement-arrow {
     -fx-text-fill: #eaf6fb;
 }
 
+.app-dialog-pane .about-author-label {
+    -fx-font-size: 13;
+    -fx-text-fill: #aeefff;
+}
+
 .app-dialog-pane .about-version-label {
     -fx-font-size: 13;
     -fx-text-fill: #aeefff;
