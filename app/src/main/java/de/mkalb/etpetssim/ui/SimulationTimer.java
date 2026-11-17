@@ -16,7 +16,7 @@ import org.jspecify.annotations.Nullable;
  * {@snippet :
  * SimulationTimer timer = new SimulationTimer(() -> doStep());
  * timer.start(Duration.millis(500));
- * }
+ *}
  */
 public final class SimulationTimer {
 

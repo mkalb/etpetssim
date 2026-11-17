@@ -349,8 +349,8 @@ public final class FXComponentFactory {
         // The spinner commits the editor text with this converter, e.g., on focus loss and before each step.
         spinner.getValueFactory().setConverter(new IntegerStringConverter() {
             @Override
-            public Integer fromString(String text) {
-                return parseSpinnerValue(text, inputIntegerProperty);
+            public Integer fromString(String value) {
+                return parseSpinnerValue(value, inputIntegerProperty);
             }
         });
 

@@ -12,6 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 final class LangtonEntityTest {
 
+    @SuppressWarnings("DataFlowIssue")
     @Test
     void testAllEntityDescriptorProviders() {
         List<GridEntityDescriptorProvider> providers = LangtonEntity.allEntityDescriptorProviders();
