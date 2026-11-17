@@ -7,9 +7,11 @@ import de.mkalb.etpetssim.testsupport.FXTestSupport;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.Labeled;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
+import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -54,8 +56,8 @@ final class StartScreenTest {
 
             Region region = StartScreen.createRegion(selectedTypes::add);
             List<Button> cards = groupNodes(region).stream()
-                    .filter(FlowPane.class::isInstance)
-                    .flatMap(node -> ((FlowPane) node).getChildren().stream())
+                    .filter(TilePane.class::isInstance)
+                    .flatMap(node -> ((Pane) node).getChildren().stream())
                     .map(Button.class::cast)
                     .toList();
             for (Button card : cards) {
@@ -75,7 +77,7 @@ final class StartScreenTest {
 
             List<String> headings = groupNodes(StartScreen.createRegion(_ -> {})).stream()
                     .filter(Label.class::isInstance)
-                    .map(node -> ((Label) node).getText())
+                    .map(node -> ((Labeled) node).getText())
                     .toList();
 
             assertEquals(expectedHeadings, headings);

@@ -393,10 +393,10 @@ ScrollPane .decrement-arrow {
     -fx-padding: 12 0 0 0;
 }
 
-.start-card-flowpane {
+.start-card-tilepane {
     -fx-hgap: 12;
     -fx-vgap: 12;
-    -fx-row-valignment: top;
+    -fx-tile-alignment: top-left;
 }
 
 .start-card-button {

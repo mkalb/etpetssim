@@ -8,8 +8,8 @@ import de.mkalb.etpetssim.ui.FXStyleClasses;
 import javafx.scene.control.Button;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.Region;
+import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
 
 import java.util.Optional;
@@ -20,8 +20,9 @@ import java.util.function.Consumer;
  *
  * <p>The start screen shows one card per {@link SimulationType} with a category, grouped under a heading per
  * {@link SimulationCategory} in a vertically scrolling pane. The groups follow the declaration order of
- * {@code SimulationCategory}, the cards of a group the declaration order of {@code SimulationType}. The class only
- * reports the selected simulation type to its callback and holds no state.
+ * {@code SimulationCategory}, the cards of a group the declaration order of {@code SimulationType}. The cards of a
+ * group have the same height, that of the highest card. The class only reports the selected simulation type to its
+ * callback and holds no state.
  */
 final class StartScreen {
 
@@ -39,8 +40,8 @@ final class StartScreen {
         contentBox.getStyleClass().add(FXStyleClasses.START_CONTENT_VBOX);
 
         for (SimulationCategory category : SimulationCategory.values()) {
-            FlowPane cardPane = new FlowPane();
-            cardPane.getStyleClass().add(FXStyleClasses.START_CARD_FLOWPANE);
+            TilePane cardPane = new TilePane();
+            cardPane.getStyleClass().add(FXStyleClasses.START_CARD_TILEPANE);
             for (SimulationType type : SimulationType.values()) {
                 if (type.category().equals(Optional.of(category))) {
                     cardPane.getChildren().add(createCard(type, simulationSelection));
@@ -69,6 +70,7 @@ final class StartScreen {
         Button card = new Button();
         card.setGraphic(cardContent);
         card.setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
+        card.setMaxHeight(Double.MAX_VALUE);
         card.setAccessibleText(type.title());
         card.getStyleClass().add(FXStyleClasses.START_CARD_BUTTON);
         card.setOnAction(_ -> simulationSelection.accept(type));

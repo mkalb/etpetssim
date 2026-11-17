@@ -75,8 +75,8 @@ public final class FXStyleClasses {
     public static final String SIMULATION_STACKPANE = "simulation-stackpane";
     public static final String SIMULATION_TOP_BORDERPANE = "simulation-top-borderpane";
     public static final String START_CARD_BUTTON = "start-card-button";
-    public static final String START_CARD_FLOWPANE = "start-card-flowpane";
     public static final String START_CARD_SUBTITLE_LABEL = "start-card-subtitle-label";
+    public static final String START_CARD_TILEPANE = "start-card-tilepane";
     public static final String START_CARD_TITLE_LABEL = "start-card-title-label";
     public static final String START_CATEGORY_LABEL = "start-category-label";
     public static final String START_CONTENT_VBOX = "start-content-vbox";
