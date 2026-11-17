@@ -147,6 +147,7 @@ many files in one shell command.
   Condense the rules, including the starting conditions and the termination
   condition, into 5-10 plain-language bullets that do not repeat the
   configuration values, and describe entities briefly in plain language.
+  Start the termination bullet with "The run ends on its own when".
   Summarize decision logic (e.g. how an agent rates its possible actions) as
   the factors that favor or discourage a choice, without weights or
   thresholds.
@@ -262,9 +263,12 @@ prose**:
   edge behavior, neighborhood), list the default value first and mark it
   `(default)`, then the other options, e.g.
   `Square (default), Triangle, Hexagon`. A choice fixed to one value has no
-  control; write its value followed by `(fixed)`, without `(default)`. Always
-  include the **Neighborhood** line; omit only the line of a field that the
-  simulation does not use at all.
+  control; write its value followed by `(fixed)`, without `(default)`. If a
+  value of a list contains a comma, separate all values of that list with
+  semicolons, e.g. `Wrap X, block Y (default); Block X and Y`; this applies
+  to the lists of choices in "Configuration" as well. Always include the
+  **Neighborhood** line; omit only the line of a field that the simulation
+  does not use at all.
 - In "Configuration", name every exposed control in bold by its en_US label
   without format placeholders and trailing colon (e.g. `Agents: %1$s` becomes
   **Agents**), directly followed by all its values in parentheses, taken from
@@ -297,14 +301,31 @@ prose**:
       only the visible reaction (e.g. a validation message),
     - the seed always in this sentence: "**Seed** (empty by default) sets the
       start value of the random numbers: leave it empty for a random seed, or
-      enter a number or any text to repeat a run."
+      enter a number or any text to repeat a run.",
+    - the Structure subsection always in these sentences: "**Cell shape** and
+      **Grid edge behavior** offer the choices listed under "Category and
+      grid". **Grid width** (<values>) and **Grid height** (<values>) set the
+      size of the grid." Leave out a choice that is fixed to one value,
+    - the Layout subsection always in these sentences: "**Cell edge length**
+      (<values>) sets the size of each cell on the screen. **Cell display**
+      (<values>) sets how the cells are drawn." Leave out the second sentence
+      if the cell display is fixed.
 
-  Describe variants of one control that are shown under different conditions
-  (e.g. one preset list per cell shape) together in one or two neutral
-  sentences: what they offer, which variant is shown when, and their common
-  default; do not enumerate their values or name individual entries. Name the
-  condition of any other control that is visible only under a condition (e.g.
-  "for square cells"). If a label is ambiguous on its own (e.g. a label equal
+  Fill each `<values>` with the values of the simulation in the form given
+  above for numbers and choices; the fixed sentences prescribe only the
+  wording, not the values.
+
+  Write every control as part of a complete sentence, also where no sentence
+  on its effect is added. The seed sentence is always a paragraph of its own.
+  In a subsection with more than three controls, write one paragraph per
+  group of related controls. Describe variants of one control that are shown
+  under different conditions (e.g. one preset list per cell shape) together
+  in one or two neutral sentences: what they offer, which variant is shown
+  when, and their common default; write an empty default in words (e.g. "no
+  preset is selected by default"), not as `none (default)`; do not enumerate
+  their values or name individual entries. Name the condition of any other
+  control that is visible only under a condition (e.g. "for square cells").
+  If a label is ambiguous on its own (e.g. a label equal
   to an option value), add a clarifying noun, e.g. "the **Square** preset
   list". Add at most one short sentence on the effect of a control, and only
   when its label does not explain it; this may include how it changes another
@@ -316,18 +337,23 @@ prose**:
   "Configuration"; a fixed cell display mode is not mentioned at all. Omit a
   standard subsection without controls (e.g. Initialization without a seed)
   without a note. Format numbers as the en_US UI does (e.g. `1,000`).
+- In "Interactive editing", write one bullet per tool in the form
+  `- **<Tool name>:** <description>`, directly below the heading and without
+  an introductory sentence.
 - In "Interactive editing", state the preconditions of each tool from
   `UserAction` (e.g. "only on ground cells without a trail"), even where a
   tooltip is less precise, and describe the initial state of placed entities
   qualitatively (e.g. "starts full"). Do not mention that an option is
-  disabled while its tool is not selected.
+  disabled while its tool is not selected, and do not state in the document
+  that the tools follow the toolbar order.
 - In "Interactive editing", name the values of a tool option by their en_US
-  labels, in the order of the option source. If the values depend on a
-  condition (e.g. the cell shape), name the values of each condition with that
-  condition, and say when the option is hidden. Do not enumerate an option
-  list with more than eight values (e.g. patterns); say in one sentence what it
-  offers and when values are available, without naming individual values,
-  examples, or counts.
+  labels, in the order of the option source, as plain text; only the name of
+  the option is bold. If the values depend on a condition (e.g. the cell
+  shape), name the values of each condition with that condition, and say when
+  the option is hidden. Do not name the value that an option preselects. Do
+  not enumerate an option list with more than eight values (e.g. patterns);
+  say in one sentence what it offers and when values are available, without
+  naming individual values, examples, or counts.
 - In "Entities", describe the appearance of each visible entity in plain
   language: its color by a common color name of your choice (e.g. "dark
   blue"), its emoji if any, its shape (e.g. inner circle or full cell), and its
@@ -336,8 +362,10 @@ prose**:
   (e.g. "becomes darker as hatching approaches"), and describe a temporary
   state (e.g. a dead agent shown for one more step) in the entry of its
   entity. If the shape depends on the **Cell display** setting, name the shape
-  of each display mode briefly; do not describe variants for small cells
-  (e.g. a dropped border or a circle instead of an emoji). An
+  of each display mode briefly: in the entry of the entity if this applies to
+  one entity, or in one shared sentence after the list (the display paragraph
+  of the template) if it applies to several; do not describe variants for
+  small cells (e.g. a dropped border or a circle instead of an emoji). An
   entity that is only drawn as the grid background (e.g. terrain) is listed as
   an entity and described as the background. Combine a family of numbered
   entities that differ only in their number and color (e.g. terrain states)
@@ -356,6 +384,8 @@ Before reporting completion, validate the finished document:
 - no template placeholders (`<...>`) or authoring HTML comments remain,
 - no wrapped prose line starts with block syntax (see "Conventions"); check
   every line start of the written file,
+- no line break falls inside bold text, a code span, or a link that fits on
+  one line (e.g. a control label such as **Growth per food**),
 - title, summary, interactive-tool names, and the reference URL when present
   match the resolved `en_US` values,
 - default-backed choices list the actual default first and mark it `(default)`,
@@ -369,7 +399,8 @@ Before reporting completion, validate the finished document:
   describes its appearance, does not reuse `.long` or `.description` values,
   and contains no hex color codes, descriptor IDs, localization keys, or Java
   type names,
-- conditional sections and paragraphs (category note, layer paragraph) match
+- conditional sections and paragraphs (category note, display paragraph,
+  layer paragraph) match
   the current sources, and every local image link points to an existing file,
 - the `README.md` simulation table contains a row for the simulation whose Docs
   link targets `docs/simulations/<package>.md`; if the row or link is missing

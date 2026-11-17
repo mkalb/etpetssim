@@ -1,88 +1,88 @@
-# Langton's Ant
+# Langton's ant
 
-Simulate Langton's Ant
+Watch an ant turn simple rules into a highway
 
 ## Overview
 
-Langton's Ant explores how a simple set of movement rules can produce complex
-patterns. Ants travel across a grid of changing terrain states, turn according
-to the state they enter, and leave a trail as those states advance.
+Langton's ant models one or more ants that walk across a grid and recolor every cell they enter. Each ant turns
+according to the color of the cell it steps on and then advances that cell to the next color of a configurable turn
+rule. Complex patterns grow from these simple rules; with the default rule, the ant eventually builds a regular
+"highway" that leads away from its start.
 
 ## Category and grid
 
 - **Category:** Agent- and movement-based models
 - **Cell shapes:** Square (default), Triangle, Hexagon
 - **Edge behavior:** Wrap X and Y (default), Absorb X and Y
-- **Neighborhood:** Edges only
+- **Neighborhood:** Edges only (fixed)
 
-Langton's Ant is a borderline case: it is often described as a cellular
-automaton (a Turing machine on a grid), but it is listed here with the
-movement-based models because its ants move across the grid.
+Langton's ant is a borderline case: it is often described as a cellular automaton (a Turing machine on a grid), but it
+is listed here with the movement-based models because its ants move across the grid.
 
 ## Rules and mechanics
 
-- A run starts with one north-facing ant near the center of the grid, on terrain
-  state 1.
-- On each step, an ant moves to the adjacent cell in its current direction.
-- The ant turns according to the rule assigned to the terrain state it enters,
-  then that terrain advances to the next state in the rule cycle.
-- A previously unvisited destination begins at state 0 before its rule is
-  applied.
-- With wrapping edges, ants crossing a boundary reappear on the opposite side.
-  With absorbing edges, they leave the simulation instead.
-- If an ant tries to enter a cell already occupied by another ant, the moving
-  ant is removed.
-- The simulation ends automatically when no ants remain or when every cell of
-  the grid has been visited.
+- The run starts with a single ant in the middle of the grid, facing north, on a black cell; all other cells are
+  unvisited.
+- In each step, the ants move one after another, row by row from top to bottom and from left to right within a row.
+- An ant moves one cell forward in its current direction. With wrapping edges, it reappears on the opposite side of
+  the grid; with absorbing edges, an ant that would leave the grid is removed.
+- If the target cell is already occupied by another ant, the moving ant is removed.
+- On the cell it enters, the ant turns as the turn rule specifies for that cell's color; an unvisited cell counts as
+  the first color of the rule. One turn step is 90 degrees on square cells and 60 degrees on hexagon and triangle
+  cells.
+- The ant then advances the cell to the next color of the rule; after the last color, the cell returns to the first
+  one. The rule has one color per turn.
+- The run ends on its own when no ant is left or when every cell of the grid has been visited.
 
 ## Entities
 
-- **Langton's Ant:** A moving agent whose direction changes according to the
-  terrain state it enters. At larger cell sizes, an arrow shows its direction.
-- **Terrain cells:** Initially unvisited cells that cycle through one state per
-  configured turn. The visible trail records where ants have traveled.
+- **Ant:** an ant that walks across the grid, turns on each cell it enters, and recolors it; drawn as a red inner
+  circle with a black border and a black arrow that points in its current direction.
+- **Unvisited terrain:** a cell that no ant has entered yet; drawn as the white background of the grid.
+- **Terrain 0** to **Terrain 15:** visited cells, numbered by their position in the turn rule; only as many colors
+  appear as the rule has turns. With **Shape**, they fill the whole cell; with **Bordered shape**, the cell also has a
+  white border. Their colors in order are light gray, black, orange, yellow, green, dark green, blue, dark blue,
+  purple, violet, pink, brown, cyan, magenta, deep pink, and gold.
+
+An ant and a terrain color can share a cell; the ant is drawn on top of the terrain.
 
 ## Interactive editing
 
-- **Add Ant:** Adds an ant to the selected unvisited, unoccupied cell and sets
-  that cell to terrain state 1. For square cells, choose North, East, South, or
-  West; for hexagon cells, choose North, Northeast, Southeast, South,
-  Southwest, or Northwest. Triangle cells choose North or South automatically
-  from the selected triangle's orientation.
-- **Remove Ant:** Removes an ant from the selected cell without changing its
-  terrain state.
+- **Remove ant:** removes the ant from the selected cell, if there is one.
+- **Add ant:** adds an ant to the selected cell, only if the cell is unvisited and holds no ant. The cell becomes
+  black, like the start cell of the first ant. Its **Direction** option sets the direction of the new ant: North,
+  East, South, and West for square cells, and North, Northeast, Southeast, South, Southwest, and Northwest for hexagon
+  cells. For triangle cells, the option is hidden and the direction follows from the selected cell: north for a cell
+  pointing down and south for a cell pointing up.
 
 ## Configuration
 
-You can choose the grid geometry and rendering, then select a preset or enter a
-custom turn rule suited to that geometry.
+You can adjust the grid, its appearance, and the turn rule that drives the ants.
 
 ### Structure
 
-Choose Square (default), Triangle, or Hexagon cells; Wrap X and Y (default) or
-Absorb X and Y edges; and a grid width and height from 100 to 2,000 cells. Both
-dimensions default to 200 cells.
+**Cell shape** and **Grid edge behavior** offer the choices listed under "Category and grid". **Grid width** (100 to
+2,000 cells in steps of 2, default 200) and **Grid height** (100 to 2,000 cells in steps of 2, default 200) set the
+size of the grid.
 
 ### Layout
 
-Set the cell edge length from 1 to 50 pixels (4 by default), and display cells
-as Shape (default) or Bordered shape.
+**Cell edge length** (1 to 50 pixels, default 4) sets the size of each cell on the screen. **Cell display** (Shape
+(default), Bordered shape) sets how the cells are drawn.
 
 ### Rules
 
-The turn rule defaults to `RL` and contains 2 to 16 turns. Use `L` and `R` for
-left and right, `L2` and `R2` for double turns, `N` for no turn, and `U` for a
-U-turn; triangle cells accept only `L`, `R`, and `U`.
+One preset list is shown for each cell shape, labeled **Triangle**, **Square**, or **Hexagon**; only the list for the
+selected cell shape is visible, and each offers well-known turn rules that suit that shape. No preset is selected by
+default. Selecting a preset fills in the turn rule.
 
-Shape-specific presets are available: triangle offers `RL`, `RLL`, and `URR`;
-square offers `RL`, `RLR`, `RLLR`, `RNNU`, `RRLL`, `RLLLLLRRL`, and
-`RRLLLRLLLRRR`; hexagon offers `NR`, `RL`, `NR2`, `R2N`, `RL2`, `R2RR`,
-`R2NNRR2R`, and `RR2NUR2RL2`. Each preset menu also has a blank selection for
-entering a custom rule.
+**Turn rule** (default RL) sets one turn per terrain color with L (left), R (right), L2 (left twice), R2 (right twice),
+N (no turn), and U (U-turn), with 2 to 16 turns in total; triangle cells allow only L, R, and U. An empty rule or one
+that is invalid for the selected cell shape shows a validation message.
 
 ## Screenshot
 
-![Langton's Ant screenshot](../../assets/screenshots/screenshot_langton_01.png)
+![Langton's ant screenshot](../../assets/screenshots/screenshot_langton_01.png)
 
 ## References
 

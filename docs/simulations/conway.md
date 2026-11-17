@@ -1,97 +1,87 @@
 # Conway's Game of Life
 
-Simulate Conway's Game of Life
+Watch cells live and die by simple rules
 
 ## Overview
 
-Conway's Game of Life models a population of living and dead cells whose next
-generation depends only on their neighbors. Starting from a random population
-or a pattern placed by the user, cells are born, survive, or die together in
-discrete generations. Alternative cell shapes and rule presets let the same
-basic idea produce many different forms of growth, motion, and stability.
+Conway's Game of Life is a grid of cells that are either alive or dead. In every step, each cell looks at how many of
+its neighbors are alive and, following a survival and birth rule, stays alive, dies, or comes to life. From these
+simple local rules, the grid shows stable shapes, blinking oscillators, moving gliders, and long chaotic phases until
+the population settles down or dies out.
 
 ## Category and grid
 
 - **Category:** Cellular automata
 - **Cell shapes:** Square (default), Triangle, Hexagon
 - **Edge behavior:** Wrap X and Y (default), Block X and Y
-- **Neighborhood:** Edges and vertices
+- **Neighborhood:** Edges and vertices (fixed)
 
 ## Rules and mechanics
 
-- At startup, the configured percentage of grid cells is selected randomly and
-  made alive; the seed controls whether that starting population is repeatable.
-- Each generation counts the living neighbors around every relevant cell,
-  including cells that touch by an edge or a vertex.
-- A living cell stays alive only when its neighbor count is selected in the
-  survival rule; otherwise it becomes dead.
-- A dead cell becomes alive only when its neighbor count is selected in the
-  birth rule. Birth without a living neighbor is not available.
-- All cells are evaluated from the same current generation, and their results
-  appear together in the next generation.
-- Wrapping edges connect opposite sides of the grid; blocked edges do not.
+- At the start, randomly chosen cells are alive according to the share of living cells; all other cells are dead.
+- In every step, all cells are updated at the same time from the state of the previous step.
+- The neighbors of a cell are all cells that share an edge or a corner with it; hexagon cells have only edge
+  neighbors. With wrapping edges, the grid continues on the opposite side; with blocked edges, cells beyond the edge
+  do not count.
+- A living cell survives if its number of living neighbors is one of the survival counts of the transition rule;
+  otherwise it dies.
+- A dead cell comes to life if its number of living neighbors is one of the birth counts of the transition rule;
+  otherwise it stays dead.
+- The run ends on its own when no cell is alive anymore or when a step changes no cell.
 
 ## Entities
 
-- **Living Cell:** An active cell that may survive or die in the next
-  generation according to the transition rules.
-- **Dead Cell:** An inactive cell that may become alive when its neighboring
-  population matches a birth rule.
+- **Dead:** a cell without life; it forms the light yellow background of the grid.
+- **Alive:** a living cell, drawn in dark red. Depending on the **Cell display** setting, it fills the whole cell or
+  an inner circle, either plain or with a light red border.
 
 ## Interactive editing
 
-- **Clear Grid:** Sets every cell to dead and applies globally.
-- **Toggle Cell:** Changes the selected cell from dead to alive or from alive
-  to dead.
-- **Place Pattern:** Places the selected predefined pattern with its top-left
-  corner at the selected cell. The complete pattern must fit on the grid.
+- **Clear grid:** applies globally and makes all cells dead.
+- **Toggle cell:** switches the selected cell between dead and alive.
+- **Place pattern:** places the pattern chosen in the **Pattern** option at the selected cell, which becomes the
+  top-left corner of the pattern. The pattern includes a border of dead cells and overwrites the cells it covers; it
+  is placed only if it fits completely inside the grid.
 
-The **Pattern** selector offers Still Life: Beehive, Still Life: Block, Still
-Life: Boat, Still Life: Loaf, Still Life: Tub, Oscillator: Beacon, Oscillator:
-Blinker, Oscillator: Pentadecathlon, Oscillator: Pulsar, Oscillator: Toad,
-Methuselah: Acorn, Methuselah: R-pentomino, Spaceship: Glider, and Spaceship:
-Lightweight Spaceship (LWSS) for square cells using Conway's Life rules.
-Replicator: HighLife Replicator is available for square cells using HighLife
-rules. Other shapes and custom rule sets do not provide predefined patterns.
+The **Pattern** option offers classic still lifes, oscillators, methuselahs, a replicator, and spaceships. Patterns
+are available only for square cells and only for the rules they are made for: the replicator for the HighLife rule
+23/36, all other patterns for Conway's rule 23/3. For other cell shapes or rules, the list is empty.
 
 ## Configuration
 
-You can configure the grid and its appearance, choose the initial population,
-and select or create the transition rules used for every generation.
+You can adjust the grid, the display, the starting population, and the transition rule.
 
 ### Structure
 
-Choose Square (default), Triangle, or Hexagon cells; Wrap X and Y (default) or
-Block X and Y edges; and a grid width and height from 8 to 1,000 cells. The
-default grid is 200 cells wide and 100 cells high.
+**Cell shape** and **Grid edge behavior** offer the choices listed under "Category and grid". **Grid width** (8 to
+1,000 cells in steps of 2, default 200) and **Grid height** (8 to 1,000 cells in steps of 2, default 100) set the
+size of the grid.
 
 ### Layout
 
-Set the cell edge length from 1 to 50 pixels (4 by default). Cells can appear
-as Shape, Bordered shape (default), Inner circle, or Bordered inner circle.
+**Cell edge length** (1 to 50 pixels, default 4) sets the size of each cell on the screen. **Cell display**
+(Bordered shape (default), Shape, Inner circle, Bordered inner circle) sets how the cells are drawn.
 
 ### Initialization
 
-Set a seed to reproduce the same random starting grid, or leave it blank for a
-random seed. **Alive Cells** controls the initial proportion from 0% to 100%,
-with 30% as the default; selecting a preset also shows its recommended starting
-density.
+**Seed** (empty by default) sets the start value of the random numbers: leave it empty for a random seed, or enter a
+number or any text to repeat a run.
+
+**Living cells** (0% to 100%, default 30%) sets the share of cells that are alive at the start.
 
 ### Rules
 
-The default transition rule is Conway's Life, `23/3`: living cells survive with
-two or three living neighbors, and dead cells become alive with three. Rules use
-S/B notation, with survival counts before the slash and birth counts after; you
-can enter the notation directly or select the **Stays Alive** and
-**Becomes Alive** neighbor counts.
+Depending on the cell shape, one preset list is shown: the **Triangle**, **Square**, or **Hexagon** preset list. Each
+offers well-known rules for its cell shape; no preset is selected by default. Selecting a preset fills in the
+transition rule.
 
-Each cell shape also has named presets. Square presets are Conway's Life
-(default), 2x2, 34 Life, Amoeba, Anneal, Coagulations, Coral, Day & Night,
-Diamoeba, Gnarl, HighLife, Life Without Death, Maze, Mazectric, Move,
-Replicator, and Seeds. Triangle presets are Sierpinski, Tri 25/3, Tri 45/456,
-Tri Life, and Tri Majority. Hexagon presets are Hex 34 Life, Hex Gliders, Hex
-HighLife, Hex Life, Snowflake, and Sugar. Available neighbor counts adjust to
-the selected cell shape.
+**S/B notation** (empty by default) takes a rule as single-digit survival counts, a slash, and single-digit birth
+counts, e.g. 23/3. A valid entry updates the checkboxes of the transition rule; invalid input leaves them unchanged.
+
+**Transition rule** (default 23/3) is a grid of checkboxes with a Survival row and a Birth row for 0 to 9 living
+neighbors. Counts above the number of neighbors of the cell shape are disabled (above 8 for square cells and above 6
+for hexagon cells), and birth with 0 neighbors is not possible. Triangle cells have up to 12 neighbors, but because
+the S/B notation uses single digits, their rule is limited to 9.
 
 ## Screenshot
 

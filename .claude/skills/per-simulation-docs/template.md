@@ -12,6 +12,8 @@
     - "References"          — only if simulation.<name>.url is set.
   Conditionally included paragraphs:
     - Category note         — only for a borderline category case (see SKILL.md).
+    - Display paragraph     — only if the shapes of several entities depend on
+                              the Cell display setting.
     - Layer paragraph       — only for simulations with several grid layers.
 -->
 
@@ -64,6 +66,10 @@ grid.>
 - **<Short entity name>:** <what it is and how it behaves; how it looks>
 - **<Short entity name>:** <what it is and how it behaves; how it looks>
 
+<Display paragraph: include it ONLY if the shapes of several entities depend
+on the **Cell display** setting. One sentence on the shape of each display
+mode, shared by these entities; otherwise delete this paragraph.>
+
 <Layer paragraph: include it ONLY for a simulation with several grid layers
 (e.g. resources and agents). One or two sentences on which entities can share a
 cell and which one is drawn on top; otherwise delete this paragraph.>
@@ -85,18 +91,21 @@ cell and which one is drawn on top; otherwise delete this paragraph.>
   provider regardless of package.
 -->
 
-<One short paragraph or a bullet list naming each available tool in plain
-language (e.g. "Add sugar (with level selection)", "Remove sugar") and, if
-relevant, when it applies (e.g. "applied to the currently selected cell", or
-"applies globally" for tools with no cell selection). List the tools in the
-toolbar order, i.e. the declaration order in createUserActionDescriptors().
-Name tool option values as described under "Conventions" in SKILL.md; do not
-enumerate option lists with more than eight values.>
+<A bullet list directly below the heading, without an introductory sentence,
+with one entry per tool in the form "**<Tool name>:** <description>": what the
+tool does in plain language and, if relevant, when it applies (e.g. "applies
+globally" for tools with no cell selection). List the tools in the toolbar
+order, i.e. the declaration order in createUserActionDescriptors(). Name tool
+option values as described under "Conventions" in SKILL.md; do not enumerate
+option lists with more than eight values.>
+
+- **<Tool name>:** <what it does, when it applies, and its options>
 
 ## Configuration
 
-<One sentence summarizing what the user can adjust. Cover every control exposed
-by the simulation's ConfigView, but group related UI panes into the semantic
+<One sentence, starting with "You can adjust", summarizing what the user can
+adjust. Cover every control exposed by the simulation's ConfigView, but group
+related UI panes into the semantic
 documentation categories below rather than mirroring every pane as a separate
 subsection. In particular, combine all rule-oriented panes under Rules while
 preserving their conceptual groups in prose. Omit a subsection without

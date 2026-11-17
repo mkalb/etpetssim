@@ -1,84 +1,87 @@
-# Rebounding Entities
+# Rebounding entities
 
-Simulate rebounding entities
+Watch rebounders bounce off and break walls
 
 ## Overview
 
-Rebounding Entities models directionally moving agents in a grid containing
-ground and walls. Moving entities travel from cell to cell, rebound from blocked
-boundaries and walls, and gradually clear obstacles or eliminate one another
-when collisions occur.
+Rebounders move in straight lines across a bounded grid. They bounce off the grid edges and off walls, and every
+wall they bounce off breaks. When a rebounder runs into another one, it knocks it out and takes its place, so the
+number of rebounders shrinks over time until at most one is left.
 
 ## Category and grid
 
 - **Category:** Agent- and movement-based models
 - **Cell shapes:** Hexagon (default), Square
-- **Edge behavior:** Block X and Y (default)
+- **Edge behavior:** Block X and Y (fixed)
 - **Neighborhood:** Edges and vertices (default), Edges only
 
 ## Rules and mechanics
 
-- A new grid starts with evenly spaced, full-height vertical walls and a
-  configurable percentage of moving entities placed randomly on free ground.
-- Each moving entity starts in a random direction supported by the selected
-  cell shape and neighborhood mode.
-- Entities act one at a time in grid-position order and move one neighboring
-  cell in their current direction when that cell is ground.
-- At a blocked grid boundary, an entity stays in place and changes direction as
-  if it had bounced from the edge.
-- On hitting a wall, an entity stays in place, rebounds, and removes that wall.
-- On hitting another moving entity, the active entity moves into the occupied
-  cell and removes the other entity.
-- The simulation ends automatically once at most one moving entity remains.
+- At the start, the vertical walls are placed as full-height columns, evenly spaced and centered across the grid. No
+  walls are placed if the grid is narrower than the number of walls or if walls and rebounders together would not
+  fit on the grid.
+- The rebounders are then placed on random free cells, each with a random direction from the directions that the
+  cell shape and neighborhood mode offer.
+- In each step, the rebounders act one after another, row by row from the top left. Each one looks at the
+  neighboring cell in its direction and moves there if the cell is free ground.
+- If that cell is a wall, the rebounder bounces off it and stays in place, and the wall breaks and turns into ground.
+- At the grid edge, the rebounder bounces and stays in place as well. A rebounder moving straight north, east, south,
+  or west reverses its direction; a diagonal one is mirrored at the edge, like a ball off a cushion. At walls and in
+  the grid corners, a diagonal rebounder reverses its direction.
+- If that cell holds another rebounder, the moving rebounder knocks it out and takes its cell without changing its
+  direction. A rebounder that was knocked out earlier in the step no longer moves.
+- The run ends on its own when at most one rebounder is left.
 
 ## Entities
 
-- **Ground Cell:** An empty cell that moving entities can enter and that can be
-  replaced with a wall or a new rebounder while editing.
-- **Wall Cell:** A stationary obstacle that is removed when a moving entity
-  rebounds from it.
-- **Moving Entity:** A direction-bearing agent that crosses ground, rebounds
-  from boundaries and walls, and removes another moving entity on collision.
+- **Ground:** the free space in which the rebounders move; it is drawn as the dark navy blue background of the grid.
+- **Wall:** an obstacle that breaks as soon as a rebounder bounces off it; it fills its cell in dark gray.
+- **Rebounder:** a moving entity that keeps its direction until it bounces and knocks out other rebounders in its
+  way; it fills its cell in golden yellow.
+
+With **Cell display** set to **Bordered shape**, walls and rebounders get a thin border in the background color; with
+**Shape**, they fill their cells without a border.
 
 ## Interactive editing
 
-- **Add Wall:** Replaces the selected ground cell with a wall.
-- **Remove Wall:** Replaces a wall in the selected cell with ground.
-- **Remove Rebounder:** Removes a moving entity from the selected cell.
-- **Fill Walls:** Replaces every free ground cell with a wall across the grid.
-- **Add Rebounder:** Adds a rebounder to the selected ground cell in the chosen
-  **Direction**. Hexagon grids offer North, Northeast, Southeast, South,
-  Southwest, and Northwest. Square grids also offer East and West when the
-  neighborhood includes vertices; with edges only, they offer North, East,
-  South, and West.
+- **Add wall:** places a wall on the selected cell, but only on a free ground cell.
+- **Remove wall:** turns the selected cell back into ground, but only if it holds a wall.
+- **Remove rebounder:** removes the rebounder from the selected cell, but only if it holds a rebounder.
+- **Fill with walls:** applies globally and turns every free ground cell into a wall.
+- **Add rebounder:** places a new rebounder on the selected cell, but only on a free ground cell. Its **Direction**
+  option sets the direction of the new rebounder: North, Northeast, East, Southeast, South, Southwest, West, and
+  Northwest for square cells with the neighborhood mode Edges and vertices; North, East, South, and West for square
+  cells with Edges only; and North, Northeast, Southeast, South, Southwest, and Northwest for hexagon cells.
 
 ## Configuration
 
-The configuration controls the grid geometry and appearance, its randomized
-starting state, and which neighboring cells moving entities can enter.
+You can adjust the grid, its display, the initial walls and rebounders, and the directions in which the rebounders
+move.
 
 ### Structure
 
-Choose Hexagon (default) or Square cells and set the grid width and height, up
-to 1,000 cells in each dimension. Grid boundaries always block movement on both
-axes.
+**Cell shape** offers the choices listed under "Category and grid". **Grid width** (8 to 1,000 cells in steps of 2,
+default 70) and **Grid height** (8 to 1,000 cells in steps of 2, default 30) set the size of the grid.
 
 ### Layout
 
-Set the cell edge length from 1 to 50 pixels (8 by default) and display cells as
-Shape (default) or Bordered shape.
+**Cell edge length** (1 to 50 pixels, default 8) sets the size of each cell on the screen. **Cell display** (Shape
+(default), Bordered shape) sets how the cells are drawn.
 
 ### Initialization
 
-Set a repeatable random seed or leave it blank for a random run. Choose 0 to 100
-Vertical Walls (2 by default) and an initial Moving Entities percentage from 0%
-to 10% (2% by default).
+**Seed** (empty by default) sets the start value of the random numbers: leave it empty for a random seed, or enter a
+number or any text to repeat a run.
+
+**Vertical walls** (0 to 100 walls, default 2) sets the number of wall columns placed at the start. **Rebounders**
+(0% to 10%, default 2%) sets the initial share of all cells that hold a rebounder.
 
 ### Rules
 
-Choose Edges and vertices (default) or Edges only as the Neighborhood Mode used
-for movement and collision directions.
+**Neighborhood mode** (Edges and vertices (default), Edges only) sets the directions in which rebounders can move:
+for square cells, Edges only limits them to the four straight directions, while hexagon cells offer the same six
+directions in both modes.
 
 ## Screenshot
 
-![Rebounding Entities screenshot](../../assets/screenshots/screenshot_rebounding_01.png)
+![Rebounding entities screenshot](../../assets/screenshots/screenshot_rebounding_01.png)

@@ -49,9 +49,9 @@ scientific classification.
 | ET Pets                                                                        | Agent- and Movement-Based Models | Agents search for plants and insects, avoid obstacles, create trails, and reproduce with inheritance | [etpets.md](docs/simulations/etpets.md)         |
 | [Wa-Tor](https://en.wikipedia.org/wiki/Wa-Tor)                                 | Agent- and Movement-Based Models | Agents (fish and sharks) interact in a predator–prey system                                          | [wator.md](docs/simulations/wator.md)           |
 | [Sugarscape](https://en.wikipedia.org/wiki/Sugarscape)                         | Agent- and Movement-Based Models | Agents collect and consume sugar resources                                                           | [sugar.md](docs/simulations/sugar.md)           |
-| [Langton's Ant](https://en.wikipedia.org/wiki/Langton%27s_ant)                 | Agent- and Movement-Based Models | A moving ant updates cell states using simple rules                                                  | [langton.md](docs/simulations/langton.md)       |
+| [Langton's ant](https://en.wikipedia.org/wiki/Langton%27s_ant)                 | Agent- and Movement-Based Models | A moving ant updates cell states using simple rules                                                  | [langton.md](docs/simulations/langton.md)       |
 | [Snake](https://en.wikipedia.org/wiki/Snake_(video_game_genre))                | Agent- and Movement-Based Models | Snakes move, grow, and avoid collisions while consuming food                                         | [snake.md](docs/simulations/snake.md)           |
-| Rebounding Entities                                                            | Agent- and Movement-Based Models | Entities move directionally, bounce off boundaries, and destroy obstacles and other agents           | [rebounding.md](docs/simulations/rebounding.md) |
+| Rebounding entities                                                            | Agent- and Movement-Based Models | Entities move directionally, bounce off boundaries, and destroy obstacles and other agents           | [rebounding.md](docs/simulations/rebounding.md) |
 | [Conway's Game of Life](https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life) | Cellular Automata                | Cells evolve based on simple local birth and survival rules                                          | [conway.md](docs/simulations/conway.md)         |
 | [Forest-fire model](https://en.wikipedia.org/wiki/Forest-fire_model)           | Cellular Automata                | Cells model tree growth and fire spread through local rules                                          | [forest.md](docs/simulations/forest.md)         |
 
@@ -69,17 +69,17 @@ scientific classification.
 
 ![Sugarscape](assets/screenshots/screenshot_sugar_01.png)
 
-#### Langton's Ant
+#### Langton's ant
 
-![Langton's Ant](assets/screenshots/screenshot_langton_01.png)
+![Langton's ant](assets/screenshots/screenshot_langton_01.png)
 
 #### Snake
 
 ![Snake](assets/screenshots/screenshot_snake_01.png)
 
-#### Rebounding Entities
+#### Rebounding entities
 
-![Rebounding Entities](assets/screenshots/screenshot_rebounding_01.png)
+![Rebounding entities](assets/screenshots/screenshot_rebounding_01.png)
 
 #### Conway's Game of Life
 
