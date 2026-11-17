@@ -32,14 +32,6 @@ public final class AppManifest {
      */
     public static final String IMPLEMENTATION_TITLE = "Implementation-Title";
     /**
-     * Name of the manifest attribute with the project URL.
-     */
-    public static final String IMPLEMENTATION_URL = "Implementation-URL";
-    /**
-     * Name of the manifest attribute with the vendor.
-     */
-    public static final String IMPLEMENTATION_VENDOR = "Implementation-Vendor";
-    /**
      * Name of the manifest attribute with the application version.
      */
     public static final String IMPLEMENTATION_VERSION = "Implementation-Version";

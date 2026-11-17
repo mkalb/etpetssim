@@ -20,8 +20,6 @@ public final class AppLocalizationKeys {
     public static final String ABOUT_MANIFEST_REVISION = "about.manifest.revision";
     public static final String ABOUT_MANIFEST_TITLE = "about.manifest.title";
     public static final String ABOUT_MANIFEST_UNKNOWN = "about.manifest.unknown";
-    public static final String ABOUT_MANIFEST_URL = "about.manifest.url";
-    public static final String ABOUT_MANIFEST_VENDOR = "about.manifest.vendor";
     public static final String ABOUT_MANIFEST_VERSION = "about.manifest.version";
     public static final String ABOUT_PATH_LOG_FILE = "about.path.logfile";
     public static final String ABOUT_PATH_SETTINGS_FILE = "about.path.settingsfile";

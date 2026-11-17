@@ -54,9 +54,7 @@ public final class AboutDialog {
             new ManifestLine(AppManifest.IMPLEMENTATION_VERSION, AppLocalizationKeys.ABOUT_MANIFEST_VERSION),
             new ManifestLine(AppManifest.BUILD_REVISION, AppLocalizationKeys.ABOUT_MANIFEST_REVISION),
             new ManifestLine(AppManifest.BUILD_COMMIT_DATE, AppLocalizationKeys.ABOUT_MANIFEST_COMMIT_DATE),
-            new ManifestLine(AppManifest.BUILD_JDK_SPEC, AppLocalizationKeys.ABOUT_MANIFEST_BUILD_JDK),
-            new ManifestLine(AppManifest.IMPLEMENTATION_VENDOR, AppLocalizationKeys.ABOUT_MANIFEST_VENDOR),
-            new ManifestLine(AppManifest.IMPLEMENTATION_URL, AppLocalizationKeys.ABOUT_MANIFEST_URL));
+            new ManifestLine(AppManifest.BUILD_JDK_SPEC, AppLocalizationKeys.ABOUT_MANIFEST_BUILD_JDK));
     private static final Pattern README_FIRST_SECTION_PATTERN = Pattern.compile("^## ", Pattern.MULTILINE);
 
     private final List<Image> icons;

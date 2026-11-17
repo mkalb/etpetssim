@@ -295,12 +295,13 @@ tasks.jar {
             "Implementation-Version" to archiveVersion,
             "Implementation-Vendor" to "Mathias Kalb",
             "Implementation-URL" to "https://github.com/mkalb/etpetssim",
-            "Main-Class" to application.mainClass,
             "Created-By" to "Gradle ${gradle.gradleVersion}",
             "Build-Jdk-Spec" to java.toolchain.languageVersion.map { it.toString() },
-            "Build-Revision" to gitOutput("rev-parse", "--short", "HEAD"),
+            "Build-Revision" to gitOutput("rev-parse", "--short=12", "HEAD"),
             "Build-Commit-Date" to gitOutput("log", "-1", "--format=%cI")
-            // Note: Class-Path is intentionally omitted; the distribution start scripts use the module path
+            // Note: Main-Class and Class-Path are intentionally omitted; the module descriptor names the main
+            // class (ModuleMainClass, set by Gradle from application.mainClass), and the distribution start
+            // scripts launch the module on the module path, so java -jar cannot work
         )
     }
 }

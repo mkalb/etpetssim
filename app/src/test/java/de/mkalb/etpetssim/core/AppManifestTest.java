@@ -85,7 +85,7 @@ final class AppManifestTest {
                         "Manifest-Version", "1.0",
                         AppManifest.IMPLEMENTATION_TITLE, "Extraterrestrial Pets Simulation",
                         AppManifest.IMPLEMENTATION_VERSION, "1.0.0",
-                        AppManifest.IMPLEMENTATION_URL, "https://github.com/mkalb/etpetssim"), attributes),
+                        "Implementation-URL", "https://github.com/mkalb/etpetssim"), attributes),
                 () -> assertThrows(UnsupportedOperationException.class, () -> attributes.put("Key", "value"))
         );
     }
