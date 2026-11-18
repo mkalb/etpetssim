@@ -14,6 +14,7 @@ import de.mkalb.etpetssim.ui.InputDoubleIntRangeProperty;
 import de.mkalb.etpetssim.ui.InputDoubleProperty;
 import de.mkalb.etpetssim.ui.InputIntegerProperty;
 import javafx.beans.binding.Bindings;
+import javafx.beans.value.ObservableBooleanValue;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TitledPane;
@@ -115,6 +116,27 @@ public abstract class AbstractConfigView<CON extends SimulationConfig, VM extend
         label.managedProperty().bind(label.visibleProperty());
         controlRegion.visibleProperty().bind(viewModel.cellShapeProperty().property().isEqualTo(cellShape));
         controlRegion.managedProperty().bind(controlRegion.visibleProperty());
+    }
+
+    /**
+     * Disables the label and the control region of a labeled control while the given condition is {@code true},
+     * e.g., while the selection of another control does not use it.
+     *
+     * <p>The control region also stays disabled while the simulation state is not startable. This replaces the
+     * binding that {@link #createConfigTitledPane(String, FXComponentFactory.LabeledControl[])} creates, so call this
+     * method after the control has been added to its pane.
+     *
+     * @param labeledControl the labeled control to disable
+     * @param unused         the condition under which the control is not used
+     */
+    protected final void bindDisabledWhileUnused(FXComponentFactory.LabeledControl<? extends Region> labeledControl,
+                                                 ObservableBooleanValue unused) {
+        labeledControl.label().disableProperty().bind(unused);
+        labeledControl.controlRegion().disableProperty().bind(Bindings.createBooleanBinding(
+                () -> !viewModel.getSimulationState().isStartable() || unused.get(),
+                viewModel.simulationStateProperty(),
+                unused
+        ));
     }
 
     protected final TitledPane createStructurePane() {

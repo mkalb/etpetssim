@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.OptionalInt;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -129,6 +130,28 @@ final class LabNeighborhoodHighlightsTest {
                         new GridCoordinate(2, 0), new GridCoordinate(1, 1)))),
                 () -> assertEquals(Set.of(east, south), highlights.validNeighborsWithEdgeBehavior().keySet()),
                 () -> assertEquals(4, highlights.neighborEdgeBehaviorResults().size())
+        );
+    }
+
+    @Test
+    void testFindRingRadius() {
+        GridStructure structure = new GridStructure(new GridTopology(CellShape.SQUARE, GridEdgeBehavior.WRAP_XY),
+                new GridSize(16, 16));
+        var model = new SparseGridModel<>(structure, LabEntity.NORMAL);
+        GridCoordinate center = new GridCoordinate(0, 0);
+
+        LabNeighborhoodHighlights highlights = LabNeighborhoodHighlights.from(center, NeighborhoodMode.EDGES_ONLY,
+                structure, model);
+
+        assertAll(
+                () -> assertEquals(OptionalInt.of(0), highlights.findRingRadius(center)),
+                () -> assertEquals(OptionalInt.of(2), highlights.findRingRadius(new GridCoordinate(1, 1))),
+                // The ring wraps around the grid edge.
+                () -> assertEquals(OptionalInt.of(1), highlights.findRingRadius(new GridCoordinate(15, 0))),
+                () -> assertEquals(OptionalInt.of(LabNeighborhoodHighlights.RING_MAX_RADIUS),
+                        highlights.findRingRadius(new GridCoordinate(3, 2))),
+                () -> assertEquals(OptionalInt.empty(), highlights.findRingRadius(new GridCoordinate(3, 3))),
+                () -> assertEquals(OptionalInt.empty(), highlights.findRingRadius(new GridCoordinate(8, 8)))
         );
     }
 

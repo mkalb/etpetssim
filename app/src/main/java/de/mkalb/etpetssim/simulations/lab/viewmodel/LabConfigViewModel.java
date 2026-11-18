@@ -8,12 +8,17 @@ import de.mkalb.etpetssim.engine.neighborhood.NeighborhoodMode;
 import de.mkalb.etpetssim.simulations.core.viewmodel.AbstractConfigViewModel;
 import de.mkalb.etpetssim.simulations.core.viewmodel.SimulationState;
 import de.mkalb.etpetssim.simulations.lab.model.LabConfig;
+import de.mkalb.etpetssim.simulations.lab.shared.LabBaseLayer;
 import de.mkalb.etpetssim.simulations.lab.shared.LabColorMode;
+import de.mkalb.etpetssim.simulations.lab.shared.LabDistribution;
+import de.mkalb.etpetssim.simulations.lab.shared.LabPattern;
 import de.mkalb.etpetssim.ui.InputChoiceProperty;
 import de.mkalb.etpetssim.ui.InputDoubleProperty;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.ReadOnlyObjectProperty;
 
+import static de.mkalb.etpetssim.simulations.lab.model.LabConstraints.BASE_LAYER_DEFAULT;
+import static de.mkalb.etpetssim.simulations.lab.model.LabConstraints.BASE_LAYER_VALUES;
 import static de.mkalb.etpetssim.simulations.lab.model.LabConstraints.CELL_DISPLAY_MODE_DEFAULT;
 import static de.mkalb.etpetssim.simulations.lab.model.LabConstraints.CELL_DISPLAY_MODE_VALUES;
 import static de.mkalb.etpetssim.simulations.lab.model.LabConstraints.CELL_EDGE_LENGTH_DEFAULT;
@@ -23,6 +28,8 @@ import static de.mkalb.etpetssim.simulations.lab.model.LabConstraints.CELL_SHAPE
 import static de.mkalb.etpetssim.simulations.lab.model.LabConstraints.CELL_SHAPE_VALUES;
 import static de.mkalb.etpetssim.simulations.lab.model.LabConstraints.COLOR_MODE_DEFAULT;
 import static de.mkalb.etpetssim.simulations.lab.model.LabConstraints.COLOR_MODE_VALUES;
+import static de.mkalb.etpetssim.simulations.lab.model.LabConstraints.DISTRIBUTION_DEFAULT;
+import static de.mkalb.etpetssim.simulations.lab.model.LabConstraints.DISTRIBUTION_VALUES;
 import static de.mkalb.etpetssim.simulations.lab.model.LabConstraints.GRID_EDGE_BEHAVIOR_DEFAULT;
 import static de.mkalb.etpetssim.simulations.lab.model.LabConstraints.GRID_EDGE_BEHAVIOR_VALUES;
 import static de.mkalb.etpetssim.simulations.lab.model.LabConstraints.GRID_HEIGHT_DEFAULT;
@@ -37,6 +44,8 @@ import static de.mkalb.etpetssim.simulations.lab.model.LabConstraints.HIGHLIGHTE
 import static de.mkalb.etpetssim.simulations.lab.model.LabConstraints.HIGHLIGHTED_PERCENT_MAX;
 import static de.mkalb.etpetssim.simulations.lab.model.LabConstraints.HIGHLIGHTED_PERCENT_MIN;
 import static de.mkalb.etpetssim.simulations.lab.model.LabConstraints.NEIGHBORHOOD_MODE_DEFAULT;
+import static de.mkalb.etpetssim.simulations.lab.model.LabConstraints.PATTERN_DEFAULT;
+import static de.mkalb.etpetssim.simulations.lab.model.LabConstraints.PATTERN_VALUES;
 import static de.mkalb.etpetssim.simulations.lab.model.LabConstraints.SEED_DEFAULT;
 
 /**
@@ -71,12 +80,22 @@ public final class LabConfigViewModel extends AbstractConfigViewModel<LabConfig>
     private final InputChoiceProperty<LabColorMode> colorMode = InputChoiceProperty.ofList(COLOR_MODE_DEFAULT,
             COLOR_MODE_VALUES,
             e -> AppLocalization.getText(e.resourceKey()));
+    private final InputChoiceProperty<LabBaseLayer> baseLayer = InputChoiceProperty.ofList(BASE_LAYER_DEFAULT,
+            BASE_LAYER_VALUES,
+            e -> AppLocalization.getText(e.resourceKey()));
 
     // Initialization
+    private final InputChoiceProperty<LabDistribution> distribution = InputChoiceProperty.ofList(
+            DISTRIBUTION_DEFAULT,
+            DISTRIBUTION_VALUES,
+            e -> AppLocalization.getText(e.resourceKey()));
     private final InputDoubleProperty highlightedPercent = InputDoubleProperty.of(
             HIGHLIGHTED_PERCENT_DEFAULT,
             HIGHLIGHTED_PERCENT_MIN,
             HIGHLIGHTED_PERCENT_MAX);
+    private final InputChoiceProperty<LabPattern> pattern = InputChoiceProperty.ofList(PATTERN_DEFAULT,
+            PATTERN_VALUES,
+            e -> AppLocalization.getText(e.resourceKey()));
 
     // Rules
     private final InputChoiceProperty<NeighborhoodMode> neighborhoodMode = InputChoiceProperty.ofEnum(
@@ -111,8 +130,11 @@ public final class LabConfigViewModel extends AbstractConfigViewModel<LabConfig>
                 cellEdgeLengthProperty().property().getValue(),
                 cellDisplayModeProperty().property().getValue(),
                 colorMode.getValue(),
+                baseLayer.getValue(),
                 seedProperty().computeSeedAndUpdateLabel(),
+                distribution.getValue(),
                 highlightedPercent.getValue(),
+                pattern.getValue(),
                 neighborhoodMode.getValue()
         );
     }
@@ -121,8 +143,20 @@ public final class LabConfigViewModel extends AbstractConfigViewModel<LabConfig>
         return colorMode;
     }
 
+    public InputChoiceProperty<LabBaseLayer> baseLayerProperty() {
+        return baseLayer;
+    }
+
+    public InputChoiceProperty<LabDistribution> distributionProperty() {
+        return distribution;
+    }
+
     public InputDoubleProperty highlightedPercentProperty() {
         return highlightedPercent;
+    }
+
+    public InputChoiceProperty<LabPattern> patternProperty() {
+        return pattern;
     }
 
     public InputChoiceProperty<NeighborhoodMode> neighborhoodModeProperty() {

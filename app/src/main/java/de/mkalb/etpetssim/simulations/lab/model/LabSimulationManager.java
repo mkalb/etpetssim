@@ -1,5 +1,6 @@
 package de.mkalb.etpetssim.simulations.lab.model;
 
+import de.mkalb.etpetssim.engine.GridSize;
 import de.mkalb.etpetssim.engine.GridStructure;
 import de.mkalb.etpetssim.engine.executor.DefaultSimulationExecutor;
 import de.mkalb.etpetssim.engine.executor.SynchronousStepRunner;
@@ -7,7 +8,9 @@ import de.mkalb.etpetssim.engine.executor.TimedSimulationExecutor;
 import de.mkalb.etpetssim.engine.model.ReadableGridModel;
 import de.mkalb.etpetssim.engine.model.SparseGridModel;
 import de.mkalb.etpetssim.engine.model.WritableGridModel;
+import de.mkalb.etpetssim.engine.support.GridInitializer;
 import de.mkalb.etpetssim.engine.support.GridInitializers;
+import de.mkalb.etpetssim.engine.support.GridPattern;
 import de.mkalb.etpetssim.simulations.core.model.AbstractSimulationManager;
 import de.mkalb.etpetssim.simulations.core.model.SimulationInitializationCancellation;
 import de.mkalb.etpetssim.simulations.lab.model.entity.LabEntity;
@@ -71,13 +74,42 @@ public final class LabSimulationManager
     private void initializeGrid(WritableGridModel<LabEntity> model,
                                 Random random,
                                 SimulationInitializationCancellation cancellation) {
-        var gridInitializer = GridInitializers.fillRandomPercent(
-                config().highlightedPercent(),
-                () -> LabEntity.HIGHLIGHTED,
-                LabEntity.NORMAL,
-                random,
-                cancellation::checkCanceled);
-        gridInitializer.initialize(model);
+        createGridInitializer(model.structure().size(), random, cancellation).initialize(model);
+    }
+
+    private GridInitializer<LabEntity> createGridInitializer(GridSize size,
+                                                             Random random,
+                                                             SimulationInitializationCancellation cancellation) {
+        double highlightedPercent = config().highlightedPercent();
+        return switch (config().distribution()) {
+            case RANDOM_PERCENT -> GridInitializers.fillRandomPercent(
+                    highlightedPercent,
+                    () -> LabEntity.HIGHLIGHTED,
+                    LabEntity.NORMAL,
+                    random,
+                    cancellation::checkCanceled);
+            // Rule deviation (simulations.md): no cancellation check; the lab exposes initializers without one.
+            case RANDOM_PROBABILITY -> GridInitializers.fillWithProbability(
+                    highlightedPercent,
+                    LabEntity.HIGHLIGHTED,
+                    LabEntity.NORMAL,
+                    random);
+            case RANDOM_COUNT -> GridInitializers.placeShuffledCount(
+                    Math.toIntExact(Math.round(highlightedPercent * size.area())),
+                    () -> LabEntity.HIGHLIGHTED,
+                    LabEntity.NORMAL::equals,
+                    random,
+                    cancellation::checkCanceled);
+            // Rule deviation (simulations.md): no cancellation check; the lab exposes initializers without one.
+            case BORDER -> GridInitializers.placeBorder(LabEntity.HIGHLIGHTED);
+            case PATTERN -> createPatternInitializer(size);
+        };
+    }
+
+    private GridInitializer<LabEntity> createPatternInitializer(GridSize size) {
+        GridPattern<LabEntity> pattern = LabPatterns.createPattern(config().pattern(), size);
+        // Rule deviation (simulations.md): no cancellation check; the lab exposes initializers without one.
+        return GridInitializers.placePattern(pattern, LabPatterns.computeAnchor(pattern, size));
     }
 
     private void initializeStatistics(ReadableGridModel<LabEntity> model) {

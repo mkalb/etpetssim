@@ -4,22 +4,32 @@ import de.mkalb.etpetssim.engine.CellShape;
 import de.mkalb.etpetssim.engine.GridEdgeBehavior;
 import de.mkalb.etpetssim.engine.neighborhood.NeighborhoodMode;
 import de.mkalb.etpetssim.simulations.core.shared.CellDisplayMode;
+import de.mkalb.etpetssim.simulations.lab.shared.LabBaseLayer;
 import de.mkalb.etpetssim.simulations.lab.shared.LabColorMode;
+import de.mkalb.etpetssim.simulations.lab.shared.LabDistribution;
+import de.mkalb.etpetssim.simulations.lab.shared.LabPattern;
 import org.junit.jupiter.api.Test;
 
 import java.util.function.Consumer;
 
+import static de.mkalb.etpetssim.simulations.lab.model.LabConstraints.BASE_LAYER_DEFAULT;
 import static de.mkalb.etpetssim.simulations.lab.model.LabConstraints.CELL_DISPLAY_MODE_DEFAULT;
 import static de.mkalb.etpetssim.simulations.lab.model.LabConstraints.CELL_EDGE_LENGTH_DEFAULT;
 import static de.mkalb.etpetssim.simulations.lab.model.LabConstraints.CELL_SHAPE_DEFAULT;
 import static de.mkalb.etpetssim.simulations.lab.model.LabConstraints.COLOR_MODE_DEFAULT;
+import static de.mkalb.etpetssim.simulations.lab.model.LabConstraints.DISTRIBUTION_DEFAULT;
 import static de.mkalb.etpetssim.simulations.lab.model.LabConstraints.GRID_EDGE_BEHAVIOR_DEFAULT;
 import static de.mkalb.etpetssim.simulations.lab.model.LabConstraints.GRID_HEIGHT_DEFAULT;
+import static de.mkalb.etpetssim.simulations.lab.model.LabConstraints.GRID_HEIGHT_MAX;
+import static de.mkalb.etpetssim.simulations.lab.model.LabConstraints.GRID_HEIGHT_MIN;
 import static de.mkalb.etpetssim.simulations.lab.model.LabConstraints.GRID_WIDTH_DEFAULT;
+import static de.mkalb.etpetssim.simulations.lab.model.LabConstraints.GRID_WIDTH_MAX;
+import static de.mkalb.etpetssim.simulations.lab.model.LabConstraints.GRID_WIDTH_MIN;
 import static de.mkalb.etpetssim.simulations.lab.model.LabConstraints.HIGHLIGHTED_PERCENT_DEFAULT;
 import static de.mkalb.etpetssim.simulations.lab.model.LabConstraints.HIGHLIGHTED_PERCENT_MAX;
 import static de.mkalb.etpetssim.simulations.lab.model.LabConstraints.HIGHLIGHTED_PERCENT_MIN;
 import static de.mkalb.etpetssim.simulations.lab.model.LabConstraints.NEIGHBORHOOD_MODE_DEFAULT;
+import static de.mkalb.etpetssim.simulations.lab.model.LabConstraints.PATTERN_DEFAULT;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -44,6 +54,9 @@ final class LabConfigTest {
             v.gridEdgeBehavior = GridEdgeBehavior.BLOCK_X_WRAP_Y;
             v.cellDisplayMode = CellDisplayMode.CIRCLE;
             v.colorMode = LabColorMode.GRAYSCALE;
+            v.baseLayer = LabBaseLayer.PAINTER_TEST;
+            v.distribution = LabDistribution.PATTERN;
+            v.pattern = LabPattern.MIRRORS;
             v.neighborhoodMode = NeighborhoodMode.EDGES_ONLY;
         }));
     }
@@ -52,13 +65,31 @@ final class LabConfigTest {
     void testIsValidAcceptsBoundaryValues() {
         assertAll(
                 () -> assertTrue(isValidWith(v -> v.highlightedPercent = HIGHLIGHTED_PERCENT_MIN)),
-                () -> assertTrue(isValidWith(v -> v.highlightedPercent = HIGHLIGHTED_PERCENT_MAX))
+                () -> assertTrue(isValidWith(v -> v.highlightedPercent = HIGHLIGHTED_PERCENT_MAX)),
+                () -> assertTrue(isValidWith(v -> {
+                    v.gridWidth = GRID_WIDTH_MIN;
+                    v.gridHeight = GRID_HEIGHT_MIN;
+                })),
+                () -> assertTrue(isValidWith(v -> {
+                    v.gridWidth = GRID_WIDTH_MAX;
+                    v.gridHeight = GRID_HEIGHT_MAX;
+                }))
         );
     }
 
     @Test
     void testIsValidRejectsUnsupportedCellDisplayMode() {
         assertFalse(isValidWith(v -> v.cellDisplayMode = CellDisplayMode.EMOJI));
+    }
+
+    @Test
+    void testIsValidRejectsGridSizeOutsideRange() {
+        assertAll(
+                () -> assertFalse(isValidWith(v -> v.gridWidth = GRID_WIDTH_MIN - 1)),
+                () -> assertFalse(isValidWith(v -> v.gridHeight = GRID_HEIGHT_MIN - 1)),
+                () -> assertFalse(isValidWith(v -> v.gridWidth = GRID_WIDTH_MAX + 1)),
+                () -> assertFalse(isValidWith(v -> v.gridHeight = GRID_HEIGHT_MAX + 1))
+        );
     }
 
     @Test
@@ -73,14 +104,20 @@ final class LabConfigTest {
 
         CellShape cellShape = CELL_SHAPE_DEFAULT;
         GridEdgeBehavior gridEdgeBehavior = GRID_EDGE_BEHAVIOR_DEFAULT;
+        int gridWidth = GRID_WIDTH_DEFAULT;
+        int gridHeight = GRID_HEIGHT_DEFAULT;
         CellDisplayMode cellDisplayMode = CELL_DISPLAY_MODE_DEFAULT;
         LabColorMode colorMode = COLOR_MODE_DEFAULT;
+        LabBaseLayer baseLayer = BASE_LAYER_DEFAULT;
+        LabDistribution distribution = DISTRIBUTION_DEFAULT;
         double highlightedPercent = HIGHLIGHTED_PERCENT_DEFAULT;
+        LabPattern pattern = PATTERN_DEFAULT;
         NeighborhoodMode neighborhoodMode = NEIGHBORHOOD_MODE_DEFAULT;
 
         LabConfig toConfig() {
-            return new LabConfig(cellShape, gridEdgeBehavior, GRID_WIDTH_DEFAULT, GRID_HEIGHT_DEFAULT,
-                    CELL_EDGE_LENGTH_DEFAULT, cellDisplayMode, colorMode, 1L, highlightedPercent, neighborhoodMode);
+            return new LabConfig(cellShape, gridEdgeBehavior, gridWidth, gridHeight, CELL_EDGE_LENGTH_DEFAULT,
+                    cellDisplayMode, colorMode, baseLayer, 1L, distribution, highlightedPercent, pattern,
+                    neighborhoodMode);
         }
 
     }

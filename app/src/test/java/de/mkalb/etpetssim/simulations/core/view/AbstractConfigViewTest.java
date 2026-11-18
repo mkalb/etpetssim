@@ -172,6 +172,35 @@ final class AbstractConfigViewTest {
     }
 
     @Test
+    void testBindDisabledWhileUnused() {
+        FXTestSupport.runAndWait(() -> {
+            TestConfigView view = createView(true);
+            var labeledControl = createLabeledTextField();
+            var unused = new SimpleBooleanProperty(false);
+            view.createConfigTitledPane(TITLE, labeledControl);
+            view.bindDisabledWhileUnused(labeledControl, unused);
+            boolean disabledWhileUsed = labeledControl.label().isDisabled()
+                    || labeledControl.controlRegion().isDisabled();
+
+            unused.set(true);
+            boolean labelDisabledWhileUnused = labeledControl.label().isDisabled();
+            boolean controlDisabledWhileUnused = labeledControl.controlRegion().isDisabled();
+
+            unused.set(false);
+            view.viewModel.simulationState().set(SimulationState.PAUSED);
+
+            assertAll(
+                    () -> assertFalse(disabledWhileUsed),
+                    () -> assertTrue(labelDisabledWhileUnused),
+                    () -> assertTrue(controlDisabledWhileUnused),
+                    // The control stays disabled while the simulation state is not startable.
+                    () -> assertTrue(labeledControl.controlRegion().isDisabled()),
+                    () -> assertFalse(labeledControl.label().isDisabled())
+            );
+        });
+    }
+
+    @Test
     void testCreateStructurePane() {
         FXTestSupport.runAndWait(() -> {
             TestConfigView view = createView(true);

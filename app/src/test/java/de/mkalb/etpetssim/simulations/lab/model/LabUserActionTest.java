@@ -21,8 +21,11 @@ final class LabUserActionTest {
                 LabConstraints.CELL_EDGE_LENGTH_DEFAULT,
                 LabConstraints.CELL_DISPLAY_MODE_DEFAULT,
                 LabConstraints.COLOR_MODE_DEFAULT,
+                LabConstraints.BASE_LAYER_DEFAULT,
                 1L,
+                LabConstraints.DISTRIBUTION_DEFAULT,
                 0.0d,
+                LabConstraints.PATTERN_DEFAULT,
                 LabConstraints.NEIGHBORHOOD_MODE_DEFAULT
         );
     }

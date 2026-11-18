@@ -271,11 +271,16 @@ de_DE keeps these English terms (`.claude/rules/i18n.md`, "English terms in de_D
 
 ## Simulation Lab
 
-| en_US         | de_DE           | Source  | Notes |
-|---------------|-----------------|---------|-------|
-| `highlighted` | `hervorgehoben` | project |       |
-| `normal`      | `normal`        | project |       |
-| `color mode`  | `Farbmodus`     | project |       |
+| en_US          | de_DE           | Source  | Notes                                                 |
+|----------------|-----------------|---------|-------------------------------------------------------|
+| `highlighted`  | `hervorgehoben` | project |                                                       |
+| `normal`       | `normal`        | project |                                                       |
+| `color mode`   | `Farbmodus`     | project |                                                       |
+| `base layer`   | `Grundebene`    | project | canvas layer drawn once at the start                  |
+| `checkerboard` | `Schachbrett`   | general | base layer                                            |
+| `painter test` | `Zeichentest`   | project | base layer with the drawing variants                  |
+| `distribution` | `Verteilung`    | general | how the highlighted cells are placed at the start     |
+| `ring`         | `Ring`          | project | cells at the same neighborhood distance from a cell   |
 
 ## Sources
 

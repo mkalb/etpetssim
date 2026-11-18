@@ -229,8 +229,11 @@ final class SimulationManagerTest {
                 LabConstraints.CELL_EDGE_LENGTH_DEFAULT,
                 LabConstraints.CELL_DISPLAY_MODE_DEFAULT,
                 LabConstraints.COLOR_MODE_DEFAULT,
+                LabConstraints.BASE_LAYER_DEFAULT,
                 1L,
+                LabConstraints.DISTRIBUTION_DEFAULT,
                 LabConstraints.HIGHLIGHTED_PERCENT_DEFAULT,
+                LabConstraints.PATTERN_DEFAULT,
                 LabConstraints.NEIGHBORHOOD_MODE_DEFAULT
         );
     }

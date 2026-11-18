@@ -15,6 +15,7 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.OptionalInt;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -101,6 +102,24 @@ public record LabNeighborhoodHighlights(
                 validNeighborCoordinates,
                 validNeighborsWithEdgeBehavior,
                 neighborEdgeBehaviorResults);
+    }
+
+    /**
+     * Finds the radius of the ring that contains the given coordinate, which is its ring distance from the selected
+     * cell.
+     *
+     * @param coordinate the coordinate to look up
+     * @return the smallest radius whose ring contains the coordinate, or an empty result if no ring up to
+     * {@value #RING_MAX_RADIUS} contains it
+     */
+    public OptionalInt findRingRadius(GridCoordinate coordinate) {
+        for (Map.Entry<Integer, SortedMap<GridCoordinate, RadiusRingCell<GridCell<LabEntity>>>> entry
+                : ringCellsByRadius.entrySet()) {
+            if (entry.getValue().containsKey(coordinate)) {
+                return OptionalInt.of(entry.getKey());
+            }
+        }
+        return OptionalInt.empty();
     }
 
 }
