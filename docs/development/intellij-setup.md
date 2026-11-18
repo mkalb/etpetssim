@@ -52,8 +52,9 @@ These settings are not committed and must be set once per working copy:
   "System-Dependent". Keep the line separator of existing files. `git ls-files --eol` shows the line endings of the
   working copy in the column `w/` (`w/lf`, `w/crlf`, or `w/mixed`).
 - Existing clones with CRLF files: commit or stash all changes so that the working tree is clean, then run
-  `git checkout-index --force --all` once. It rewrites all tracked files from the index with the line endings of
-  `.gitattributes` and leaves the index and untracked files unchanged.
+  `git rm --cached -r --quiet .` and `git reset --hard` once. They rebuild the index from `HEAD` and rewrite all
+  tracked files with the line endings of `.gitattributes`; untracked and ignored files stay unchanged.
+  (`git checkout-index --force --all` is not enough: it skips files whose stat data in the index is unchanged.)
 
 ## Deliberate Choices
 
