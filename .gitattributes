@@ -2,11 +2,8 @@
 # https://help.github.com/articles/dealing-with-line-endings/
 #
 
-# Normalize text files in the repository by default.
-*               text=auto
-
-# Linux start script should use lf
-/gradlew        text eol=lf
+# Normalize text files and check them out with lf, regardless of core.autocrlf
+*               text=auto eol=lf
 
 # These are Windows script files and should use crlf
 *.bat           text eol=crlf

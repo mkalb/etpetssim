@@ -12,7 +12,7 @@ public final class JavaCodeInventory {
     private static final Path TEST_SOURCE_ROOT = Path.of("app", "src", "test", "java");
     private static final Path MEMBER_OUTPUT_PATH = Path.of("docs", "generated", "JavaMethodInventory.csv");
     private static final Path TYPE_OUTPUT_PATH = Path.of("docs", "generated", "JavaTypeInventory.csv");
-    private static final String LINE_SEPARATOR = System.lineSeparator();
+    private static final String LINE_SEPARATOR = "\n";
     private static final List<String> MEMBER_CSV_COLUMNS = List.of(
             "source_set",
             "source_path",

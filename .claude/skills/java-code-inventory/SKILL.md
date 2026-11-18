@@ -59,7 +59,7 @@ types visible, which the Method Inventory alone does not guarantee.
 
 ## Inventory Schema
 
-Both CSVs are UTF-8 without BOM, use the runtime-native line separator, follow RFC 4180 escaping, and have one row per
+Both CSVs are UTF-8 without BOM, use LF line endings on every platform, follow RFC 4180 escaping, and have one row per
 declaration. Rows are sorted by source set, repository-relative source path, and declaration line. The first three
 columns share the same name and meaning in both CSVs. Method rows can be joined to their declaring type on
 `(source_set, source_path, declaring_type)` = `(source_set, source_path, type_name)`.

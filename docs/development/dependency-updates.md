@@ -33,8 +33,7 @@ project uses the latest stable versions whenever possible. Dependency updates ar
    `docs/development/intellij-setup.md` (Terminal).
 
 The `wrapper` task updates `gradle/wrapper/gradle-wrapper.properties` and `gradle/wrapper/gradle-wrapper.jar`, and
-`gradlew` and `gradlew.bat` if their templates changed. It writes the properties file with LF line endings; Git warns
-about it and converts it to CRLF on the next checkout.
+`gradlew` and `gradlew.bat` if their templates changed.
 
 ## Java and JavaFX
 

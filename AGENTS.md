@@ -84,6 +84,9 @@ update it when they change.
 ## Encoding and File Conventions
 
 - Use UTF-8 without BOM for `.java`, `.md`, and `.properties` files.
+- Use LF line endings in the working copy for all text files except Windows scripts (`*.bat`, CRLF); `.gitattributes`
+  and `.editorconfig` define them, independent of the local `core.autocrlf` setting. Keep the line ending of existing
+  files.
 - Prefer ASCII unless existing content or domain needs justify non-ASCII.
 - Write repository Markdown in standard GitHub Markdown.
 - Format Markdown by hand: wrap prose at 120 characters, or at the narrower width an existing file uses; break lines

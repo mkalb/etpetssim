@@ -7,12 +7,12 @@ run configurations as tasks.
 
 ## Shared Files
 
-| File or directory                              | Content                                                      |
-|------------------------------------------------|--------------------------------------------------------------|
-| `.editorconfig`                                | Code style: indentation, line length, Java and `.properties` |
-| `.idea/inspectionProfiles/Project_Default.xml` | Inspection profile "Project Default"                         |
-| `.idea/dictionaries/project.xml`               | Project dictionary of the spell checker                      |
-| `.run/`                                        | Shared run configurations                                    |
+| File or directory                              | Content                                                        |
+|------------------------------------------------|----------------------------------------------------------------|
+| `.editorconfig`                                | Line endings, indentation, line length, Java and `.properties` |
+| `.idea/inspectionProfiles/Project_Default.xml` | Inspection profile "Project Default"                           |
+| `.idea/dictionaries/project.xml`               | Project dictionary of the spell checker                        |
+| `.run/`                                        | Shared run configurations                                      |
 
 `.gitignore` ignores the `.idea` directory except for `dictionaries` and `inspectionProfiles`. The `.run` directory
 lies outside `.idea` and is not ignored.
@@ -47,8 +47,13 @@ These settings are not committed and must be set once per working copy:
   `PATH`. Only if neither provides one, set the environment variable `JAVA_HOME` to such a Java installation (e.g.,
   `JAVA_HOME=<path to jdk-27>`); the build provisions its Java 27 toolchain itself.
 - File encodings: UTF-8 for project files and for `.properties` files.
-- Line endings: Git converts the working copy to CRLF (`core.autocrlf=true`); keep the line separator of existing
-  files.
+- Line endings: the working copy uses LF for all text files except Windows scripts (`*.bat`, CRLF). `.gitattributes`
+  overrides the local Git setting `core.autocrlf`, and `.editorconfig` overrides the IntelliJ line separator
+  "System-Dependent". Keep the line separator of existing files. `git ls-files --eol` shows the line endings of the
+  working copy in the column `w/` (`w/lf`, `w/crlf`, or `w/mixed`).
+- Existing clones with CRLF files: commit or stash all changes so that the working tree is clean, then run
+  `git checkout-index --force --all` once. It rewrites all tracked files from the index with the line endings of
+  `.gitattributes` and leaves the index and untracked files unchanged.
 
 ## Deliberate Choices
 

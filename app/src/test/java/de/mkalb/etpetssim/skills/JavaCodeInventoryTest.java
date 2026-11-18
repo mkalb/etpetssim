@@ -61,14 +61,14 @@ final class JavaCodeInventoryTest {
         List<String> lines = new ArrayList<>(rows.length + 1);
         lines.add(MEMBER_CSV_HEADER);
         lines.addAll(List.of(rows));
-        return String.join(System.lineSeparator(), lines) + System.lineSeparator();
+        return String.join("\n", lines) + "\n";
     }
 
     private static String createExpectedTypeInventory(String... rows) {
         List<String> lines = new ArrayList<>(rows.length + 1);
         lines.add(TYPE_CSV_HEADER);
         lines.addAll(List.of(rows));
-        return String.join(System.lineSeparator(), lines) + System.lineSeparator();
+        return String.join("\n", lines) + "\n";
     }
 
     private static String createGeneratedMessage(int memberDeclarationCount, int typeDeclarationCount) {
