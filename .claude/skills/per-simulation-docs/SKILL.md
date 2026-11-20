@@ -1,9 +1,11 @@
 ---
 name: per-simulation-docs
-description: 'Generate or refresh the user-facing Markdown page for one named simulation in docs/simulations/<package>.md from its Java implementation and en_US localization bundle. By default it updates an existing page in place; the optional second argument "regenerate" rewrites the page from scratch without reading the existing simulation docs. Invoke explicitly to document a specific simulation, such as Wa-Tor, Conway, Forest-fire, Langton, Sugarscape, Snake, ET Pets, or Rebounding.'
+description: 'Generate or refresh the user-facing Markdown page for one named simulation in docs/simulations from its Java implementation and en_US localization bundle. By default it updates an existing page in place; the optional second argument "regenerate" rewrites the page from scratch without reading the existing simulation docs. Invoke explicitly to document a specific simulation, such as Wa-Tor, Conway, Forest-fire, Langton, Sugarscape, Snake, ET Pets, or Rebounding.'
 argument-hint: "<simulation-name> [regenerate]"
-user-invocable: true
 disable-model-invocation: true
+context: fork
+effort: high
+background: false
 ---
 
 # Per-simulation documentation

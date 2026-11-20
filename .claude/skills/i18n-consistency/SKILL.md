@@ -1,8 +1,7 @@
 ---
 name: i18n-consistency
-description: 'Check the production en_US and de_DE localization bundles for encoding, Java properties syntax, structural consistency, and formatting. Starts in read-only report mode; run its guided auto-fix only after the user confirms. Invoke after changing a bundle, or to review or clean up localization/i18n.'
+description: 'Check the production en_US and de_DE localization bundles (messages_*.properties) for encoding, Java properties syntax, structural consistency, and formatting. Starts in read-only report mode; runs its guided auto-fix only after the user confirms. Use after changing a bundle, or to check, review, or clean up localization/i18n.'
 argument-hint: "[report|fix]"
-user-invocable: true
 ---
 
 # i18n Consistency

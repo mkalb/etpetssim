@@ -1,8 +1,10 @@
 ---
 name: java-code-inventory
-description: 'Create deterministic CSV inventories of Java type and method/constructor declarations, including implicit constructors, record accessors, and marker interfaces.'
-user-invocable: true
+description: 'Create deterministic CSV inventories of Java type and method/constructor declarations, including implicit constructors, record accessors, and marker interfaces, in docs/generated/JavaTypeInventory.csv and docs/generated/JavaMethodInventory.csv. Run only when explicitly asked to generate or update the Java code inventory.'
 disable-model-invocation: true
+context: fork
+model: haiku
+background: false
 ---
 
 # Java Code Inventory
