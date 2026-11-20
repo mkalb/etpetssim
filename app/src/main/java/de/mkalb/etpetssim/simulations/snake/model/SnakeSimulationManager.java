@@ -20,6 +20,7 @@ import de.mkalb.etpetssim.simulations.snake.model.strategy.SnakeMoveStrategies;
 import de.mkalb.etpetssim.simulations.snake.model.strategy.SnakeMoveStrategy;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
@@ -157,7 +158,7 @@ public final class SnakeSimulationManager
                     cells.add(new GridCell<>(new GridCoordinate(x, y), TerrainConstant.WALL));
                 }
             }
-            return GridInitializers.fromList(cells, cancellation::checkCanceled);
+            return GridInitializers.placeCells(cells, cancellation::checkCanceled);
         }
         return GridInitializers.identity();
     }
@@ -172,7 +173,7 @@ public final class SnakeSimulationManager
                 SnakeMoveStrategy strategy = strategies.get(i % strategies.size());
                 snakeHeads.add(new SnakeHead(i, strategy, config().initialPendingGrowth(), -1));
             }
-            return GridInitializers.placeAllAtRandomPositions(
+            return GridInitializers.placeAtRandomCells(
                     snakeHeads,
                     SnakeEntity::isGround,
                     random,
@@ -187,9 +188,8 @@ public final class SnakeSimulationManager
         if (config().foodCells() > 0) {
             int freeGroundCells = Math.toIntExact(model.countEntities(SnakeEntity::isGround));
             int foodCells = Math.min(config().foodCells(), freeGroundCells);
-            return GridInitializers.placeShuffledCount(
-                    foodCells,
-                    () -> TerrainConstant.GROWTH_FOOD,
+            return GridInitializers.placeAtRandomCells(
+                    Collections.nCopies(foodCells, TerrainConstant.GROWTH_FOOD),
                     SnakeEntity::isGround,
                     random,
                     cancellation::checkCanceled);

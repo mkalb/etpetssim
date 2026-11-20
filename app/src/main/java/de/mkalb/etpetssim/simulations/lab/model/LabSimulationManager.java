@@ -82,22 +82,16 @@ public final class LabSimulationManager
                                                              SimulationInitializationCancellation cancellation) {
         double highlightedPercent = config().highlightedPercent();
         return switch (config().distribution()) {
-            case RANDOM_PERCENT -> GridInitializers.fillRandomPercent(
+            case RANDOM_PERCENT -> GridInitializers.fillWithPercent(
                     highlightedPercent,
                     () -> LabEntity.HIGHLIGHTED,
                     LabEntity.NORMAL,
                     random,
                     cancellation::checkCanceled);
-            // Rule deviation (simulations.md): no cancellation check; the lab exposes initializers without one.
             case RANDOM_PROBABILITY -> GridInitializers.fillWithProbability(
                     highlightedPercent,
-                    LabEntity.HIGHLIGHTED,
-                    LabEntity.NORMAL,
-                    random);
-            case RANDOM_COUNT -> GridInitializers.placeShuffledCount(
-                    Math.toIntExact(Math.round(highlightedPercent * size.area())),
                     () -> LabEntity.HIGHLIGHTED,
-                    LabEntity.NORMAL::equals,
+                    LabEntity.NORMAL,
                     random,
                     cancellation::checkCanceled);
             // Rule deviation (simulations.md): no cancellation check; the lab exposes initializers without one.

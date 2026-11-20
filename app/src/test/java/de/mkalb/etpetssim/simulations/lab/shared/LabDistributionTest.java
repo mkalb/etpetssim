@@ -26,7 +26,7 @@ final class LabDistributionTest {
     @EnumSource(LabDistribution.class)
     void testUsesHighlightedPercent(LabDistribution distribution) {
         boolean expected = switch (distribution) {
-            case RANDOM_PERCENT, RANDOM_PROBABILITY, RANDOM_COUNT -> true;
+            case RANDOM_PERCENT, RANDOM_PROBABILITY -> true;
             case BORDER, PATTERN -> false;
         };
 

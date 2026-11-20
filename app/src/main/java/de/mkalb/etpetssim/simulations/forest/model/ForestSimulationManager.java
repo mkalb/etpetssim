@@ -72,7 +72,7 @@ public final class ForestSimulationManager
     private void initializeGrid(WritableGridModel<ForestEntity> model,
                                 Random random,
                                 SimulationInitializationCancellation cancellation) {
-        var gridInitializer = GridInitializers.fillRandomPercent(
+        var gridInitializer = GridInitializers.fillWithPercent(
                 config().treeDensity(),
                 () -> ForestEntity.TREE,
                 ForestEntity.EMPTY,

@@ -113,9 +113,9 @@ public final class WatorSimulationManager
             sharks.add(createInitialShark(random));
         }
 
-        GridInitializers.placeAllAtRandomPositions(fish, WatorEntity::isWater, random, cancellation::checkCanceled)
+        GridInitializers.placeAtRandomCells(fish, WatorEntity::isWater, random, cancellation::checkCanceled)
                 .initialize(model);
-        GridInitializers.placeAllAtRandomPositions(sharks, WatorEntity::isWater, random, cancellation::checkCanceled)
+        GridInitializers.placeAtRandomCells(sharks, WatorEntity::isWater, random, cancellation::checkCanceled)
                 .initialize(model);
     }
 

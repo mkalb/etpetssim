@@ -62,25 +62,18 @@ final class GridInitializersTest {
         return expected;
     }
 
-    private static long countFilledAfterFillRandomPercent(double percent) {
-        SparseGridModel<TestEntity> model = createModel();
-        GridInitializers.fillRandomPercent(percent, () -> TestEntity.FILLED, TestEntity.EMPTY, new Random(42L),
-                () -> {}).initialize(model);
-        return count(model, TestEntity.FILLED);
-    }
-
     private static List<TestEntity> entitiesAfterFillWithProbability(double probability) {
         SparseGridModel<TestEntity> model = createSmallModel();
-        GridInitializers.fillWithProbability(probability, TestEntity.FILLED, TestEntity.EMPTY, new Random(42L))
-                .initialize(model);
+        GridInitializers.fillWithProbability(probability, () -> TestEntity.FILLED, TestEntity.EMPTY, new Random(42L),
+                () -> {}).initialize(model);
         return entities(model);
     }
 
-    private static List<TestEntity> entitiesAfterPlaceWithProbability(double probability) {
-        SparseGridModel<TestEntity> model = createSmallModel();
-        model.setEntity(new GridCoordinate(0, 0), TestEntity.OTHER);
-        GridInitializers.placeWithProbability(probability, () -> TestEntity.FILLED, new Random(42L)).initialize(model);
-        return entities(model);
+    private static long countFilledAfterFillWithPercent(double percent) {
+        SparseGridModel<TestEntity> model = createModel();
+        GridInitializers.fillWithPercent(percent, () -> TestEntity.FILLED, TestEntity.EMPTY, new Random(42L),
+                () -> {}).initialize(model);
+        return count(model, TestEntity.FILLED);
     }
 
     @Test
@@ -94,33 +87,6 @@ final class GridInitializersTest {
                 () -> assertEquals(TestEntity.FILLED, model.getEntity(new GridCoordinate(1, 1))),
                 () -> assertEquals(1, count(model, TestEntity.FILLED))
         );
-    }
-
-    @Test
-    void testFromList() {
-        SparseGridModel<TestEntity> model = createModel();
-        AtomicInteger checks = new AtomicInteger();
-        List<GridCell<TestEntity>> cells = List.of(
-                new GridCell<>(new GridCoordinate(0, 0), TestEntity.FILLED),
-                new GridCell<>(new GridCoordinate(3, 2), TestEntity.OTHER));
-
-        GridInitializers.fromList(cells, checks::incrementAndGet).initialize(model);
-
-        assertAll(
-                () -> assertEquals(TestEntity.FILLED, model.getEntity(new GridCoordinate(0, 0))),
-                () -> assertEquals(TestEntity.OTHER, model.getEntity(new GridCoordinate(3, 2))),
-                () -> assertEquals(4_094, count(model, TestEntity.EMPTY)),
-                () -> assertEquals(1, checks.get())
-        );
-    }
-
-    @Test
-    void testFromListRejectsCoordinateOutsideGrid() {
-        SparseGridModel<TestEntity> model = createSmallModel();
-        List<GridCell<TestEntity>> cells = List.of(new GridCell<>(new GridCoordinate(8, 0), TestEntity.FILLED));
-
-        assertThrows(IndexOutOfBoundsException.class,
-                () -> GridInitializers.fromList(cells, () -> {}).initialize(model));
     }
 
     @Test
@@ -150,16 +116,6 @@ final class GridInitializersTest {
     }
 
     @Test
-    void testFillRandomly() {
-        SparseGridModel<TestEntity> model = createSmallModel();
-
-        GridInitializers.fillRandomly(random -> (random.nextDouble() < 0.5d) ? TestEntity.FILLED : TestEntity.EMPTY,
-                new Random(42L)).initialize(model);
-
-        assertEquals(expectedEntities(64, 0.5d, TestEntity.FILLED), entities(model));
-    }
-
-    @Test
     void testFillWithProbability() {
         assertAll(
                 () -> assertEquals(expectedEntities(64, 0.3d, TestEntity.FILLED),
@@ -173,49 +129,18 @@ final class GridInitializersTest {
     void testFillWithProbabilityRejectsProbabilityOutOfRange() {
         assertAll(
                 () -> assertThrows(IllegalArgumentException.class, () -> GridInitializers.fillWithProbability(
-                        -0.1d, TestEntity.FILLED, TestEntity.EMPTY, new Random(42L))),
-                () -> assertThrows(IllegalArgumentException.class, () -> GridInitializers.fillWithProbability(
-                        1.1d, TestEntity.FILLED, TestEntity.EMPTY, new Random(42L)))
-        );
-    }
-
-    @Test
-    void testFillRandomPercent() {
-        assertAll(
-                () -> assertEquals(0, countFilledAfterFillRandomPercent(0.0d)),
-                () -> assertEquals(1_024, countFilledAfterFillRandomPercent(0.25d)),
-                () -> assertEquals(3_686, countFilledAfterFillRandomPercent(0.9d)),
-                () -> assertEquals(4_096, countFilledAfterFillRandomPercent(1.0d))
-        );
-    }
-
-    @Test
-    void testFillRandomPercentRoundsEntityCountAboveThreshold() {
-        SparseGridModel<TestEntity> model = createModel(10, 11);
-
-        GridInitializers.fillRandomPercent(0.95d, () -> TestEntity.FILLED, TestEntity.EMPTY, new Random(42L), () -> {})
-                .initialize(model);
-
-        // round(0.95 * 110) = 105 as below the threshold, not 110 - round((1.0 - 0.95) * 110) = 110 - 6
-        assertEquals(105, count(model, TestEntity.FILLED));
-    }
-
-    @Test
-    void testFillRandomPercentRejectsPercentOutOfRange() {
-        assertAll(
-                () -> assertThrows(IllegalArgumentException.class, () -> GridInitializers.fillRandomPercent(
                         -0.1d, () -> TestEntity.FILLED, TestEntity.EMPTY, new Random(42L), () -> {})),
-                () -> assertThrows(IllegalArgumentException.class, () -> GridInitializers.fillRandomPercent(
+                () -> assertThrows(IllegalArgumentException.class, () -> GridInitializers.fillWithProbability(
                         1.1d, () -> TestEntity.FILLED, TestEntity.EMPTY, new Random(42L), () -> {}))
         );
     }
 
     @Test
-    void testFillRandomPercentRunsCheckBeforeFirstCell() {
+    void testFillWithProbabilityRunsCheckBeforeFirstCell() {
         SparseGridModel<TestEntity> model = createSmallModel();
         model.setEntity(new GridCoordinate(1, 1), TestEntity.OTHER);
 
-        assertThrows(CancellationException.class, () -> GridInitializers.fillRandomPercent(0.5d,
+        assertThrows(CancellationException.class, () -> GridInitializers.fillWithProbability(0.5d,
                 () -> TestEntity.FILLED, TestEntity.EMPTY, new Random(42L), () -> {
                     throw new CancellationException();
                 }).initialize(model));
@@ -223,6 +148,94 @@ final class GridInitializersTest {
                 () -> assertEquals(TestEntity.OTHER, model.getEntity(new GridCoordinate(1, 1))),
                 () -> assertEquals(63, count(model, TestEntity.EMPTY))
         );
+    }
+
+    @Test
+    void testFillWithPercent() {
+        assertAll(
+                () -> assertEquals(0, countFilledAfterFillWithPercent(0.0d)),
+                () -> assertEquals(1_024, countFilledAfterFillWithPercent(0.25d)),
+                () -> assertEquals(3_686, countFilledAfterFillWithPercent(0.9d)),
+                () -> assertEquals(4_096, countFilledAfterFillWithPercent(1.0d))
+        );
+    }
+
+    @Test
+    void testFillWithPercentRoundsEntityCount() {
+        SparseGridModel<TestEntity> model = createModel(10, 11);
+
+        GridInitializers.fillWithPercent(0.95d, () -> TestEntity.FILLED, TestEntity.EMPTY, new Random(42L), () -> {})
+                .initialize(model);
+
+        assertEquals(105, count(model, TestEntity.FILLED));
+    }
+
+    @Test
+    void testFillWithPercentCallsSupplierOncePerEntity() {
+        SparseGridModel<TestEntity> model = createSmallModel();
+        AtomicInteger calls = new AtomicInteger();
+
+        GridInitializers.fillWithPercent(0.9d, () -> {
+            calls.incrementAndGet();
+            return TestEntity.FILLED;
+        }, TestEntity.EMPTY, new Random(42L), () -> {}).initialize(model);
+
+        assertAll(
+                () -> assertEquals(58, count(model, TestEntity.FILLED)),
+                () -> assertEquals(58, calls.get())
+        );
+    }
+
+    @Test
+    void testFillWithPercentRejectsPercentOutOfRange() {
+        assertAll(
+                () -> assertThrows(IllegalArgumentException.class, () -> GridInitializers.fillWithPercent(
+                        -0.1d, () -> TestEntity.FILLED, TestEntity.EMPTY, new Random(42L), () -> {})),
+                () -> assertThrows(IllegalArgumentException.class, () -> GridInitializers.fillWithPercent(
+                        1.1d, () -> TestEntity.FILLED, TestEntity.EMPTY, new Random(42L), () -> {}))
+        );
+    }
+
+    @Test
+    void testFillWithPercentRunsCheckBeforeFirstCell() {
+        SparseGridModel<TestEntity> model = createSmallModel();
+        model.setEntity(new GridCoordinate(1, 1), TestEntity.OTHER);
+
+        assertThrows(CancellationException.class, () -> GridInitializers.fillWithPercent(0.5d,
+                () -> TestEntity.FILLED, TestEntity.EMPTY, new Random(42L), () -> {
+                    throw new CancellationException();
+                }).initialize(model));
+        assertAll(
+                () -> assertEquals(TestEntity.OTHER, model.getEntity(new GridCoordinate(1, 1))),
+                () -> assertEquals(63, count(model, TestEntity.EMPTY))
+        );
+    }
+
+    @Test
+    void testPlaceCells() {
+        SparseGridModel<TestEntity> model = createModel();
+        AtomicInteger checks = new AtomicInteger();
+        List<GridCell<TestEntity>> cells = List.of(
+                new GridCell<>(new GridCoordinate(0, 0), TestEntity.FILLED),
+                new GridCell<>(new GridCoordinate(3, 2), TestEntity.OTHER));
+
+        GridInitializers.placeCells(cells, checks::incrementAndGet).initialize(model);
+
+        assertAll(
+                () -> assertEquals(TestEntity.FILLED, model.getEntity(new GridCoordinate(0, 0))),
+                () -> assertEquals(TestEntity.OTHER, model.getEntity(new GridCoordinate(3, 2))),
+                () -> assertEquals(4_094, count(model, TestEntity.EMPTY)),
+                () -> assertEquals(1, checks.get())
+        );
+    }
+
+    @Test
+    void testPlaceCellsRejectsCoordinateOutsideGrid() {
+        SparseGridModel<TestEntity> model = createSmallModel();
+        List<GridCell<TestEntity>> cells = List.of(new GridCell<>(new GridCoordinate(8, 0), TestEntity.FILLED));
+
+        assertThrows(IndexOutOfBoundsException.class,
+                () -> GridInitializers.placeCells(cells, () -> {}).initialize(model));
     }
 
     @Test
@@ -293,130 +306,12 @@ final class GridInitializersTest {
     }
 
     @Test
-    void testPlaceWithProbability() {
-        List<TestEntity> expected = new ArrayList<>(expectedEntities(64, 0.3d, TestEntity.FILLED));
-        if (expected.getFirst() == TestEntity.EMPTY) {
-            expected.set(0, TestEntity.OTHER);
-        }
-        List<TestEntity> unchanged = new ArrayList<>(Collections.nCopies(64, TestEntity.EMPTY));
-        unchanged.set(0, TestEntity.OTHER);
-
-        assertAll(
-                () -> assertEquals(expected, entitiesAfterPlaceWithProbability(0.3d)),
-                () -> assertEquals(unchanged, entitiesAfterPlaceWithProbability(0.0d)),
-                () -> assertEquals(Collections.nCopies(64, TestEntity.FILLED), entitiesAfterPlaceWithProbability(1.0d))
-        );
-    }
-
-    @Test
-    void testPlaceWithProbabilityRejectsProbabilityOutOfRange() {
-        assertAll(
-                () -> assertThrows(IllegalArgumentException.class, () -> GridInitializers.placeWithProbability(
-                        -0.1d, () -> TestEntity.FILLED, new Random(42L))),
-                () -> assertThrows(IllegalArgumentException.class, () -> GridInitializers.placeWithProbability(
-                        1.1d, () -> TestEntity.FILLED, new Random(42L)))
-        );
-    }
-
-    @Test
-    void testPlaceRandomCount() {
-        SparseGridModel<TestEntity> model = createModel();
-        model.setEntity(new GridCoordinate(0, 0), TestEntity.OTHER);
-
-        GridInitializers.placeRandomCount(10, () -> TestEntity.FILLED, TestEntity.EMPTY::equals, new Random(42L))
-                .initialize(model);
-
-        assertAll(
-                () -> assertEquals(10, count(model, TestEntity.FILLED)),
-                () -> assertEquals(TestEntity.OTHER, model.getEntity(new GridCoordinate(0, 0)))
-        );
-    }
-
-    @Test
-    void testPlaceRandomCountRejectsGridWithoutReplaceableCells() {
-        SparseGridModel<TestEntity> model = createSmallModel();
-
-        assertThrows(IllegalStateException.class, () -> GridInitializers.placeRandomCount(
-                1, () -> TestEntity.FILLED, TestEntity.OTHER::equals, new Random(42L)).initialize(model));
-    }
-
-    @Test
-    void testPlaceRandomCountRejectsNegativeCount() {
-        assertThrows(IllegalArgumentException.class, () -> GridInitializers.placeRandomCount(
-                -1, () -> TestEntity.FILLED, TestEntity.EMPTY::equals, new Random(42L)));
-    }
-
-    @Test
-    void testPlaceRandomPercent() {
-        SparseGridModel<TestEntity> model = createSmallModel();
-        model.setEntity(new GridCoordinate(0, 0), TestEntity.OTHER);
-
-        GridInitializers.placeRandomPercent(0.25d, () -> TestEntity.FILLED, TestEntity.EMPTY::equals, new Random(42L))
-                .initialize(model);
-
-        assertAll(
-                () -> assertEquals(16, count(model, TestEntity.FILLED)),
-                () -> assertEquals(TestEntity.OTHER, model.getEntity(new GridCoordinate(0, 0)))
-        );
-    }
-
-    @Test
-    void testPlaceRandomPercentRejectsPercentOutOfRange() {
-        assertAll(
-                () -> assertThrows(IllegalArgumentException.class, () -> GridInitializers.placeRandomPercent(
-                        -0.1d, () -> TestEntity.FILLED, TestEntity.EMPTY::equals, new Random(42L))),
-                () -> assertThrows(IllegalArgumentException.class, () -> GridInitializers.placeRandomPercent(
-                        1.1d, () -> TestEntity.FILLED, TestEntity.EMPTY::equals, new Random(42L)))
-        );
-    }
-
-    @Test
-    void testPlaceShuffledCount() {
-        SparseGridModel<TestEntity> model = createSmallModel();
-        model.setEntity(new GridCoordinate(1, 1), TestEntity.OTHER);
-
-        GridInitializers.placeShuffledCount(63, () -> TestEntity.FILLED, TestEntity.EMPTY::equals, new Random(42L),
-                () -> {}).initialize(model);
-
-        assertAll(
-                () -> assertEquals(63, count(model, TestEntity.FILLED)),
-                () -> assertEquals(TestEntity.OTHER, model.getEntity(new GridCoordinate(1, 1)))
-        );
-    }
-
-    @Test
-    void testPlaceShuffledCountRejectsTooFewCells() {
-        SparseGridModel<TestEntity> model = createSmallModel();
-        model.setEntity(new GridCoordinate(1, 1), TestEntity.OTHER);
-
-        assertThrows(IllegalStateException.class, () -> GridInitializers.placeShuffledCount(
-                64, () -> TestEntity.FILLED, TestEntity.EMPTY::equals, new Random(42L), () -> {}).initialize(model));
-    }
-
-    @Test
-    void testPlaceShuffledCountRejectsNegativeCount() {
-        assertThrows(IllegalArgumentException.class, () -> GridInitializers.placeShuffledCount(
-                -1, () -> TestEntity.FILLED, TestEntity.EMPTY::equals, new Random(42L), () -> {}));
-    }
-
-    @Test
-    void testPlaceShuffledCountRunsCheckBeforeFirstCell() {
-        SparseGridModel<TestEntity> model = createSmallModel();
-
-        assertThrows(CancellationException.class, () -> GridInitializers.placeShuffledCount(
-                10, () -> TestEntity.FILLED, TestEntity.EMPTY::equals, new Random(42L), () -> {
-                    throw new CancellationException();
-                }).initialize(model));
-        assertEquals(64, count(model, TestEntity.EMPTY));
-    }
-
-    @Test
-    void testPlaceAllAtRandomPositions() {
+    void testPlaceAtRandomCells() {
         SparseGridModel<TestEntity> model = createSmallModel();
         model.setEntity(new GridCoordinate(2, 2), TestEntity.OTHER);
         List<TestEntity> entities = Collections.nCopies(63, TestEntity.FILLED);
 
-        GridInitializers.placeAllAtRandomPositions(entities, TestEntity.EMPTY::equals, new Random(42L), () -> {})
+        GridInitializers.placeAtRandomCells(entities, TestEntity.EMPTY::equals, new Random(42L), () -> {})
                 .initialize(model);
 
         assertAll(
@@ -426,21 +321,21 @@ final class GridInitializersTest {
     }
 
     @Test
-    void testPlaceAllAtRandomPositionsRejectsTooFewCells() {
+    void testPlaceAtRandomCellsRejectsTooFewCells() {
         SparseGridModel<TestEntity> model = createSmallModel();
         List<TestEntity> entities = Collections.nCopies(65, TestEntity.FILLED);
 
-        assertThrows(IllegalStateException.class, () -> GridInitializers.placeAllAtRandomPositions(
+        assertThrows(IllegalStateException.class, () -> GridInitializers.placeAtRandomCells(
                 entities, TestEntity.EMPTY::equals, new Random(42L), () -> {}).initialize(model));
         assertEquals(64, count(model, TestEntity.EMPTY));
     }
 
     @Test
-    void testPlaceAllAtRandomPositionsRunsCheckBeforeFirstCell() {
+    void testPlaceAtRandomCellsRunsCheckBeforeFirstCell() {
         SparseGridModel<TestEntity> model = createSmallModel();
         List<TestEntity> entities = Collections.nCopies(10, TestEntity.FILLED);
 
-        assertThrows(CancellationException.class, () -> GridInitializers.placeAllAtRandomPositions(
+        assertThrows(CancellationException.class, () -> GridInitializers.placeAtRandomCells(
                 entities, TestEntity.EMPTY::equals, new Random(42L), () -> {
                     throw new CancellationException();
                 }).initialize(model));

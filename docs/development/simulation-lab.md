@@ -29,17 +29,16 @@ disabled while the distribution is not random, the pattern while the distributio
 
 The distribution decides which cells are highlighted at the start (`LabEntity.HIGHLIGHTED` on `NORMAL`):
 
-| Distribution        | `GridInitializers` method | Amount                                               |
-|---------------------|---------------------------|------------------------------------------------------|
-| Random, exact share | `fillRandomPercent`       | exactly the percentage of all cells, rounded         |
-| Random per cell     | `fillWithProbability`     | each cell independently, with the percentage         |
-| Random, fixed count | `placeShuffledCount`      | the percentage of all cells, rounded, shuffled cells |
-| Grid edge           | `placeBorder`             | the outermost rows and columns                       |
-| Pattern             | `placePattern`            | the selected pattern at the center of the grid       |
+| Distribution        | `GridInitializers` method | Amount                                         |
+|---------------------|---------------------------|------------------------------------------------|
+| Random, exact share | `fillWithPercent`         | exactly the percentage of all cells, rounded   |
+| Random per cell     | `fillWithProbability`     | each cell independently, with the percentage   |
+| Grid edge           | `placeBorder`             | the outermost rows and columns                 |
+| Pattern             | `placePattern`            | the selected pattern at the center of the grid |
 
-The same seed gives the same cells. `fillWithProbability`, `placeBorder`, and `placePattern` have no cancellation
-check; the lab uses them deliberately without one (`// Rule deviation (simulations.md)` in `LabSimulationManager`), so
-that it shows their behavior on large grids before a simulation uses them.
+The same seed gives the same cells. `placeBorder` and `placePattern` have no cancellation check; the lab uses them
+deliberately without one (`// Rule deviation (simulations.md)` in `LabSimulationManager`), so that it shows their
+behavior on large grids before a simulation uses them.
 
 ## Patterns
 
@@ -164,8 +163,6 @@ corresponding lab feature.
   `drawPolygon`, `drawPolyline`, `drawPixelDirect`, `drawPixelRect`, and `drawCircle`
 - `FXPaintFactory.createHorizontalGradient`, `createVerticalGradient`, and `createRadialGradient`
 - `FXComponentFactory.createHBox`
-
-`GridInitializers.placeWithProbability` and `placeRandomCount` are used by no simulation and not by the lab either.
 
 ## Screenshots
 

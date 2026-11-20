@@ -227,7 +227,7 @@ public final class SugarSimulationManager
         int stepIndexOfSpawn = -1;
         int agentInitialEnergy = config().agentInitialEnergy();
         GridInitializer<AgentEntity> agentGridInitializer =
-                GridInitializers.fillRandomPercent(
+                GridInitializers.fillWithPercent(
                         config().agentPercent(),
                         () -> new Agent(agentInitialEnergy, stepIndexOfSpawn),
                         NoAgent.NO_AGENT,

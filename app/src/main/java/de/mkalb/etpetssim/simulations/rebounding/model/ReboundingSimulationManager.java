@@ -117,7 +117,7 @@ public final class ReboundingSimulationManager
                     cells.add(new GridCell<>(new GridCoordinate(x, y), TerrainConstant.WALL));
                 }
             }
-            return GridInitializers.fromList(cells, cancellation::checkCanceled);
+            return GridInitializers.placeCells(cells, cancellation::checkCanceled);
         }
         return GridInitializers.identity();
     }
@@ -150,7 +150,7 @@ public final class ReboundingSimulationManager
             }
             rebounders.add(new Rebounder(directionRing.get(random.nextInt(directionRing.size()))));
         }
-        return GridInitializers.placeAllAtRandomPositions(
+        return GridInitializers.placeAtRandomCells(
                 rebounders,
                 ReboundingEntity::isGround,
                 random,

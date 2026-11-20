@@ -72,7 +72,7 @@ public final class ConwaySimulationManager
     private void initializeGrid(WritableGridModel<ConwayEntity> model,
                                 Random random,
                                 SimulationInitializationCancellation cancellation) {
-        var gridInitializer = GridInitializers.fillRandomPercent(
+        var gridInitializer = GridInitializers.fillWithPercent(
                 config().alivePercent(),
                 () -> ConwayEntity.ALIVE,
                 ConwayEntity.DEAD,

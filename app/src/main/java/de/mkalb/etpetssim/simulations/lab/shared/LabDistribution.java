@@ -3,7 +3,7 @@ package de.mkalb.etpetssim.simulations.lab.shared;
 /**
  * Distributions of the highlighted cells at the start of the Simulation Lab.
  *
- * <p>Each distribution uses one or two grid initializers of the engine; the random distributions take their amount
+ * <p>Each distribution uses one grid initializer of the engine; the random distributions take their amount
  * from the configured percentage of highlighted cells, the pattern distribution places the configured pattern.
  */
 public enum LabDistribution {
@@ -17,11 +17,6 @@ public enum LabDistribution {
      * Each cell is highlighted independently with the configured percentage as probability.
      */
     RANDOM_PROBABILITY("labdistribution.randomprobability"),
-
-    /**
-     * The number of cells that corresponds to the configured percentage is highlighted at shuffled cells.
-     */
-    RANDOM_COUNT("labdistribution.randomcount"),
 
     /**
      * The outermost rows and columns of the grid are highlighted.
@@ -64,7 +59,7 @@ public enum LabDistribution {
      */
     public boolean usesHighlightedPercent() {
         return switch (this) {
-            case RANDOM_PERCENT, RANDOM_PROBABILITY, RANDOM_COUNT -> true;
+            case RANDOM_PERCENT, RANDOM_PROBABILITY -> true;
             case BORDER, PATTERN -> false;
         };
     }
