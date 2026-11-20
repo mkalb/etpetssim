@@ -8,6 +8,9 @@ import de.mkalb.etpetssim.engine.support.GridPatterns;
 import de.mkalb.etpetssim.simulations.lab.model.entity.LabEntity;
 import de.mkalb.etpetssim.simulations.lab.shared.LabPattern;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Patterns of highlighted cells of the Simulation Lab, built with {@link GridPatterns} and the transformations of
  * {@link GridPattern} and scaled to the grid size.
@@ -40,11 +43,13 @@ final class LabPatterns {
         int minSide = Math.min(size.width(), size.height());
         return switch (pattern) {
             case CROSS -> createCross(minSide);
+            case DIAGONALS -> createDiagonals(minSide);
             case RECTANGLE_OUTLINE -> GridPatterns.rectangleOutline(LabEntity.HIGHLIGHTED,
                     size.width() / 2, size.height() / 2);
             case NESTED_RECTANGLES -> createNestedRectangles(size);
             case ROTATIONS -> createRotations(minSide);
             case MIRRORS -> createMirrors(minSide);
+            case PARITY -> createParity(minSide);
         };
     }
 
@@ -69,14 +74,26 @@ final class LabPatterns {
     }
 
     private static GridPattern<LabEntity> createCross(int minSide) {
-        int length = Math.max(CROSS_LENGTH_MIN, minSide / 2);
-        if ((length % 2) == 0) {
-            length--;
-        }
+        int length = computeCrossLength(minSide);
         int center = length / 2;
         return GridPatterns.combine(
-                GridPatterns.horizontalLine(LabEntity.HIGHLIGHTED, length).shifted(new GridOffset(0, center)),
-                GridPatterns.verticalLine(LabEntity.HIGHLIGHTED, length).shifted(new GridOffset(center, 0)));
+                GridPatterns.horizontalLine(LabEntity.HIGHLIGHTED, length).shift(new GridOffset(0, center)),
+                GridPatterns.verticalLine(LabEntity.HIGHLIGHTED, length).shift(new GridOffset(center, 0)));
+    }
+
+    private static GridPattern<LabEntity> createDiagonals(int minSide) {
+        int halfLength = computeCrossLength(minSide) / 2;
+        List<GridOffset> offsets = new ArrayList<>();
+        for (int i = -halfLength; i <= halfLength; i++) {
+            offsets.add(new GridOffset(i, i));
+            offsets.add(new GridOffset(i, -i));
+        }
+        return GridPatterns.of(LabEntity.HIGHLIGHTED, offsets).normalize();
+    }
+
+    private static int computeCrossLength(int minSide) {
+        int length = Math.max(CROSS_LENGTH_MIN, minSide / 2);
+        return ((length % 2) == 0) ? (length - 1) : length;
     }
 
     private static GridPattern<LabEntity> createNestedRectangles(GridSize size) {
@@ -92,7 +109,7 @@ final class LabPatterns {
             }
             combined = GridPatterns.combine(combined,
                     GridPatterns.rectangleOutline(LabEntity.HIGHLIGHTED, width, height)
-                            .shifted(new GridOffset(inset, inset)));
+                            .shift(new GridOffset(inset, inset)));
         }
         return combined;
     }
@@ -102,9 +119,9 @@ final class LabPatterns {
         int step = computeQuadrantStep(minSide);
         return GridPatterns.combine(
                 shape,
-                shape.rotate90().shifted(new GridOffset(step, 0)),
-                shape.rotate180().shifted(new GridOffset(step, step)),
-                shape.rotate270().shifted(new GridOffset(0, step)));
+                shape.rotate90().shift(new GridOffset(step, 0)),
+                shape.rotate180().shift(new GridOffset(step, step)),
+                shape.rotate270().shift(new GridOffset(0, step)));
     }
 
     private static GridPattern<LabEntity> createMirrors(int minSide) {
@@ -112,9 +129,19 @@ final class LabPatterns {
         int step = computeQuadrantStep(minSide);
         return GridPatterns.combine(
                 shape,
-                shape.flipX().shifted(new GridOffset(step, 0)),
-                shape.flipY().shifted(new GridOffset(0, step)),
-                shape.flipX().flipY().shifted(new GridOffset(step, step)));
+                shape.flipX().shift(new GridOffset(step, 0)),
+                shape.flipY().shift(new GridOffset(0, step)),
+                shape.flipX().flipY().shift(new GridOffset(step, step)));
+    }
+
+    private static GridPattern<LabEntity> createParity(int minSide) {
+        GridPattern<LabEntity> shape = createLShape(minSide);
+        int oddStep = computeQuadrantStep(minSide) + 1;
+        return GridPatterns.combine(
+                shape,
+                shape.shift(new GridOffset(oddStep, 0)),
+                shape.shift(new GridOffset(0, oddStep)),
+                shape.shift(new GridOffset(oddStep, oddStep)));
     }
 
     private static GridPattern<LabEntity> createLShape(int minSide) {
@@ -122,7 +149,7 @@ final class LabPatterns {
         return GridPatterns.combine(
                 GridPatterns.verticalLine(LabEntity.HIGHLIGHTED, armLength),
                 GridPatterns.horizontalLine(LabEntity.HIGHLIGHTED, (armLength / 2) + 1)
-                        .shifted(new GridOffset(0, armLength - 1)));
+                        .shift(new GridOffset(0, armLength - 1)));
     }
 
     private static int computeQuadrantArmLength(int minSide) {

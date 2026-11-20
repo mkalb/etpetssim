@@ -45,8 +45,10 @@ behavior on large grids before a simulation uses them.
 `LabPatterns` builds the patterns with `GridPatterns` and the transformations of `GridPattern` and scales them to the
 grid; `minSide` is the smaller of grid width and height.
 
-- Cross: a `horizontalLine` and a `verticalLine` of the odd length `max(3, minSide / 2)`, `shifted` to cross at their
-  centers and joined with `combine`.
+- Cross: a `horizontalLine` and a `verticalLine` of the odd length `max(3, minSide / 2)`, moved with `shift` to cross
+  at their centers and joined with `combine`.
+- Diagonals: an X of two diagonal lines with the same length as the cross, created with `of` from an entity and the
+  offsets (i, i) and (i, -i) around the origin and moved to the origin with `normalize`.
 - Rectangle outline: a `rectangleOutline` of half the grid width and height.
 - Nested rectangles: up to four `rectangleOutline`s, the outer one three quarters of the grid width and height, each
   further one 2 cells inside the previous one.
@@ -54,11 +56,16 @@ grid; `minSide` is the smaller of grid width and height.
   (top left), `rotate90` (top right), `rotate180` (bottom right), and `rotate270` (bottom left).
 - Mirrors: the same L, unchanged (top left), `flipX` (top right), `flipY` (bottom left), and `flipX` with `flipY`
   (bottom right).
+- Parity: the same L, unchanged in all four quadrants and moved with `shift` by the step of the rotations plus one,
+  an odd number: not moved (top left), by columns (top right), by rows (bottom left), and by both (bottom right).
 
 The anchor places a pattern at the center of the grid, rounded down to an even column and row, so that the pattern
 keeps the parity it is designed for (see the Javadoc of `GridInitializers.placePattern`); cells outside the grid are
 skipped. Offsets, rotations, and mirrors work on coordinates, so the shapes look distorted on triangle and hexagon
-grids; the lab shows this and does not correct it.
+grids; the lab shows this and does not correct it. The pattern "Parity" shows the effect of the parity: on squares,
+all four copies look the same. On triangles, the orientation of a cell depends on the parity of column plus row, so the
+copies top right and bottom left differ, while the copy bottom right looks like the one top left. On hexagons, only
+the column parity matters, so the copies on the right differ from those on the left.
 
 ## Base Layers
 
@@ -142,8 +149,7 @@ before a simulation meets them. Expected limits are findings, not bugs:
 
 - Memory: the step runner keeps two grid models of up to about 268 million cells.
 - Drawing time: the base layer draws all cells, also those outside the canvas limit of `AbstractMainView`.
-- Initialization time: the initializers without a cancellation check cannot be canceled; `rectangleOutline` visits
-  all cells of its bounding box.
+- Initialization time: the initializers without a cancellation check cannot be canceled.
 
 ## Methods Used Only by the Lab
 
@@ -155,8 +161,9 @@ corresponding lab feature.
 - `CellNeighborWithEdgeBehavior.isEdgeConnection` and `isVertexConnection`
 - `CellNeighborhoods.neighborCoordinatesWithinRadius`
 - `GridInitializers.fillWithProbability` and `placeBorder`
-- `GridPatterns.empty`, `combine`, `horizontalLine`, `verticalLine`, and `rectangleOutline`
-- `GridPattern.shifted`, `rotate90`, `rotate180`, `rotate270`, `flipX`, and `flipY`
+- `GridPatterns.empty`, `of` with an entity and offsets, `combine`, `horizontalLine`, `verticalLine`, and
+  `rectangleOutline`
+- `GridPattern.shift`, `rotate90`, `rotate180`, `rotate270`, `flipX`, and `flipY`
 - `GridGeometry.estimateGridCoordinate`
 - `FXGridCanvasPainter`: `fillGridBackground`, `drawCellBoundingBox`, `drawScaledCell`,
   `drawTriangleMatchingCellWidth`, `drawHexagonMatchingCellWidth`, `drawCellFrameSegment`, `drawCenteredTextAt`,

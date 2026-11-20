@@ -73,7 +73,7 @@ final class ConwayPatternsTest {
         long deadCount = offsetMap.values().stream().filter(ConwayEntity.DEAD::equals).count();
 
         assertAll(expectation.choiceId(),
-                () -> assertTrue(pattern.isTopLeftAtOrigin(), "Pattern should be normalized to the origin"),
+                () -> assertTrue(pattern.isNormalized(), "Pattern should be normalized to the origin"),
                 () -> assertEquals(expectation.width(), pattern.width(), "Unexpected pattern width"),
                 () -> assertEquals(expectation.height(), pattern.height(), "Unexpected pattern height"),
                 () -> assertEquals(expectedCellCount, pattern.size(), "Pattern should fill the entire rectangle"),

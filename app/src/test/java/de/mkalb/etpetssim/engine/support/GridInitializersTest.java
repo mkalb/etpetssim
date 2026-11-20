@@ -290,7 +290,7 @@ final class GridInitializersTest {
         GridCoordinate target = new GridCoordinate(10, 10);
         model.setEntity(target, TestEntity.OTHER);
 
-        GridInitializers.placePattern(GridPatterns.singleton(TestEntity.FILLED, new GridOffset(0, 0)), target)
+        GridInitializers.placePattern(GridPatterns.of(TestEntity.FILLED, List.of(new GridOffset(0, 0))), target)
                 .initialize(model);
 
         assertEquals(TestEntity.FILLED, model.getEntity(target));

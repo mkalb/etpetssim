@@ -47,7 +47,7 @@ public record ConwayPatternChoice(
      * @return normalized pattern; each call asks the supplier again
      */
     public GridPattern<ConwayEntity> pattern() {
-        return patternSupplier.get().normalized();
+        return patternSupplier.get().normalize();
     }
 
     public boolean isAvailableFor(CellShape cellShape, ConwayTransitionRules transitionRules) {

@@ -40,7 +40,7 @@ final class LabPatternsTest {
 
         assertAll(
                 () -> assertFalse(pattern.isEmpty()),
-                () -> assertTrue(pattern.isTopLeftAtOrigin()),
+                () -> assertTrue(pattern.isNormalized()),
                 () -> assertTrue(pattern.width() <= size.width()),
                 () -> assertTrue(pattern.height() <= size.height()),
                 () -> assertTrue(pattern.offsetMap().values().stream().allMatch(e -> e == LabEntity.HIGHLIGHTED))
@@ -50,10 +50,13 @@ final class LabPatternsTest {
     @ParameterizedTest
     @CsvSource({
             "CROSS,             16, 16, 13, 7, 7",
+            "DIAGONALS,         16, 16, 13, 7, 7",
+            "DIAGONALS,         16,  8,  5, 3, 3",
             "RECTANGLE_OUTLINE, 16,  8, 20, 8, 4",
             "NESTED_RECTANGLES, 16, 16, 84, 12, 12",
             "ROTATIONS,          8,  8, 12, 6, 6",
-            "MIRRORS,            8,  8, 12, 6, 6"
+            "MIRRORS,            8,  8, 12, 6, 6",
+            "PARITY,             8,  8, 12, 7, 7"
     })
     void testCreatePatternScalesToGridSize(LabPattern labPattern, int gridWidth, int gridHeight,
                                            int expectedSize, int expectedWidth, int expectedHeight) {

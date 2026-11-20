@@ -14,6 +14,11 @@ public enum LabPattern {
     CROSS("labpattern.cross"),
 
     /**
+     * Two diagonal lines that cross at their centers.
+     */
+    DIAGONALS("labpattern.diagonals"),
+
+    /**
      * The outline of a rectangle.
      */
     RECTANGLE_OUTLINE("labpattern.rectangleoutline"),
@@ -31,7 +36,13 @@ public enum LabPattern {
     /**
      * An asymmetric shape in four quadrants: unchanged, mirrored horizontally, vertically, and both.
      */
-    MIRRORS("labpattern.mirrors");
+    MIRRORS("labpattern.mirrors"),
+
+    /**
+     * An asymmetric shape in four quadrants: shifted by an even or odd number of columns and rows, in all four
+     * combinations.
+     */
+    PARITY("labpattern.parity");
 
     private final String resourceKey;
 

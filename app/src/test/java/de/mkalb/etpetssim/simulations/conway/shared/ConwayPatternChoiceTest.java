@@ -92,7 +92,7 @@ final class ConwayPatternChoiceTest {
         Map<GridOffset, ConwayEntity> offsetMap = pattern.offsetMap();
 
         assertAll(
-                () -> assertTrue(pattern.isTopLeftAtOrigin(), "Pattern should be normalized to the origin"),
+                () -> assertTrue(pattern.isNormalized(), "Pattern should be normalized to the origin"),
                 () -> assertEquals(2, pattern.width()),
                 () -> assertEquals(2, pattern.height()),
                 () -> assertEquals(2, pattern.size()),

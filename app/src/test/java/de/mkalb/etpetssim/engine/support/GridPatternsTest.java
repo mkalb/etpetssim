@@ -21,12 +21,12 @@ final class GridPatternsTest {
     private static final GridOffset ORIGIN = new GridOffset(0, 0);
     private static final GridOffset OFFSET = new GridOffset(2, -1);
 
-    private static Map<GridOffset, TestEntity> firstAt(int... coordinates) {
-        Map<GridOffset, TestEntity> map = new HashMap<>();
-        for (int index = 0; index < coordinates.length; index += 2) {
-            map.put(new GridOffset(coordinates[index], coordinates[index + 1]), TestEntity.FIRST);
+    private static Map<GridOffset, TestEntity> createOffsetMap(int... xy) {
+        Map<GridOffset, TestEntity> offsetMap = new HashMap<>();
+        for (int index = 0; index < xy.length; index += 2) {
+            offsetMap.put(new GridOffset(xy[index], xy[index + 1]), TestEntity.FIRST);
         }
-        return map;
+        return offsetMap;
     }
 
     @Test
@@ -35,11 +35,12 @@ final class GridPatternsTest {
     }
 
     @Test
-    void testOfWithMap() {
-        Map<GridOffset, TestEntity> map = new HashMap<>(Map.of(ORIGIN, TestEntity.FIRST, OFFSET, TestEntity.SECOND));
+    void testOfWithOffsetMap() {
+        Map<GridOffset, TestEntity> offsetMap = new HashMap<>(
+                Map.of(ORIGIN, TestEntity.FIRST, OFFSET, TestEntity.SECOND));
 
-        GridPattern<TestEntity> pattern = GridPatterns.of(map);
-        map.clear();
+        GridPattern<TestEntity> pattern = GridPatterns.of(offsetMap);
+        offsetMap.clear();
 
         assertAll(
                 () -> assertEquals(Map.of(ORIGIN, TestEntity.FIRST, OFFSET, TestEntity.SECOND), pattern.offsetMap()),
@@ -61,22 +62,22 @@ final class GridPatternsTest {
     }
 
     @Test
-    void testSingleton() {
-        assertEquals(Map.of(OFFSET, TestEntity.FIRST), GridPatterns.singleton(TestEntity.FIRST, OFFSET).offsetMap());
-    }
-
-    @Test
     void testCombine() {
         GridPattern<TestEntity> pattern = GridPatterns.combine(
                 GridPatterns.of(TestEntity.FIRST, List.of(ORIGIN, OFFSET)),
-                GridPatterns.singleton(TestEntity.SECOND, OFFSET));
+                GridPatterns.of(TestEntity.SECOND, List.of(OFFSET)));
 
         assertEquals(Map.of(ORIGIN, TestEntity.FIRST, OFFSET, TestEntity.SECOND), pattern.offsetMap());
     }
 
     @Test
+    void testCombineWithoutPatternsReturnsEmptyPattern() {
+        assertTrue(GridPatterns.<TestEntity>combine().isEmpty());
+    }
+
+    @Test
     void testHorizontalLine() {
-        assertEquals(firstAt(0, 0, 1, 0, 2, 0), GridPatterns.horizontalLine(TestEntity.FIRST, 3).offsetMap());
+        assertEquals(createOffsetMap(0, 0, 1, 0, 2, 0), GridPatterns.horizontalLine(TestEntity.FIRST, 3).offsetMap());
     }
 
     @Test
@@ -86,7 +87,7 @@ final class GridPatternsTest {
 
     @Test
     void testVerticalLine() {
-        assertEquals(firstAt(0, 0, 0, 1, 0, 2), GridPatterns.verticalLine(TestEntity.FIRST, 3).offsetMap());
+        assertEquals(createOffsetMap(0, 0, 0, 1, 0, 2), GridPatterns.verticalLine(TestEntity.FIRST, 3).offsetMap());
     }
 
     @Test
@@ -97,10 +98,14 @@ final class GridPatternsTest {
     @Test
     void testRectangleOutline() {
         assertAll(
-                () -> assertEquals(firstAt(0, 0, 1, 0, 2, 0, 3, 0, 0, 1, 3, 1, 0, 2, 1, 2, 2, 2, 3, 2),
+                () -> assertEquals(createOffsetMap(0, 0, 1, 0, 2, 0, 3, 0, 0, 1, 3, 1, 0, 2, 1, 2, 2, 2, 3, 2),
                         GridPatterns.rectangleOutline(TestEntity.FIRST, 4, 3).offsetMap()),
-                () -> assertEquals(firstAt(0, 0, 0, 1),
-                        GridPatterns.rectangleOutline(TestEntity.FIRST, 1, 2).offsetMap())
+                () -> assertEquals(createOffsetMap(0, 0, 1, 0, 2, 0),
+                        GridPatterns.rectangleOutline(TestEntity.FIRST, 3, 1).offsetMap()),
+                () -> assertEquals(createOffsetMap(0, 0, 0, 1),
+                        GridPatterns.rectangleOutline(TestEntity.FIRST, 1, 2).offsetMap()),
+                () -> assertEquals(createOffsetMap(0, 0),
+                        GridPatterns.rectangleOutline(TestEntity.FIRST, 1, 1).offsetMap())
         );
     }
 

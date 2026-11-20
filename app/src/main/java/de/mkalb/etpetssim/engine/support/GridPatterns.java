@@ -11,12 +11,11 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Static factories for {@link GridPattern} instances: basic patterns from given offsets, the combination of
- * patterns, and simple shapes.
+ * Static factories for {@link GridPattern}: patterns from given offsets, the combination of patterns, and simple
+ * shapes.
  *
- * <p>All returned patterns are unmodifiable and independent of the arguments. The shape factories return
- * normalized patterns (top-left corner of the bounding box at offset (0, 0)); {@code of}, {@code singleton}, and
- * {@code combine} keep the given offsets.
+ * <p>All returned patterns are unmodifiable and independent of the arguments. The shape factories return normalized
+ * patterns; {@code of} and {@code combine} keep the given offsets.
  */
 public final class GridPatterns {
 
@@ -24,10 +23,10 @@ public final class GridPatterns {
     }
 
     /**
-     * Returns an empty pattern.
+     * Returns a pattern without entities.
      *
      * @param <ENT> the type of grid entity
-     * @return a pattern without entities
+     * @return an empty pattern
      */
     public static <ENT extends GridEntity> GridPattern<ENT> empty() {
         return Collections::emptyMap;
@@ -36,17 +35,17 @@ public final class GridPatterns {
     /**
      * Returns a pattern with the entities of the given map at their offsets.
      *
-     * @param map   the entities by offset
-     * @param <ENT> the type of grid entity
-     * @return a pattern with a copy of the map
+     * @param offsetMap the entities by offset
+     * @param <ENT>     the type of grid entity
+     * @return a pattern with the entries of the map
      */
-    public static <ENT extends GridEntity> GridPattern<ENT> of(Map<GridOffset, ENT> map) {
-        Map<GridOffset, ENT> mapCopy = Map.copyOf(map);
-        return () -> mapCopy;
+    public static <ENT extends GridEntity> GridPattern<ENT> of(Map<GridOffset, ENT> offsetMap) {
+        Map<GridOffset, ENT> copy = Map.copyOf(offsetMap);
+        return () -> copy;
     }
 
     /**
-     * Returns a pattern with the given entity at each of the given offsets; duplicate offsets count once.
+     * Returns a pattern with the given entity at each of the given offsets; a repeated offset counts once.
      *
      * @param entity  the entity at each offset
      * @param offsets the offsets of the entity
@@ -54,40 +53,28 @@ public final class GridPatterns {
      * @return a pattern with the entity at the offsets
      */
     public static <ENT extends GridEntity> GridPattern<ENT> of(ENT entity, Collection<GridOffset> offsets) {
-        Map<GridOffset, ENT> map = new HashMap<>();
+        Map<GridOffset, ENT> offsetMap = new HashMap<>();
         for (GridOffset offset : offsets) {
-            map.put(offset, entity);
+            offsetMap.put(offset, entity);
         }
-        return of(map);
+        return of(offsetMap);
     }
 
     /**
-     * Returns a pattern with the given entity at a single offset.
-     *
-     * @param entity the entity
-     * @param offset the offset of the entity
-     * @param <ENT>  the type of grid entity
-     * @return a pattern with one entity
-     */
-    public static <ENT extends GridEntity> GridPattern<ENT> singleton(ENT entity, GridOffset offset) {
-        return () -> Map.of(offset, entity);
-    }
-
-    /**
-     * Returns a pattern with the entries of all given patterns; for an offset in several patterns, the entity of the
+     * Returns a pattern with the entries of all given patterns; at an offset of several patterns, the entity of the
      * last of them wins.
      *
      * @param patterns the patterns to combine, in increasing priority
      * @param <ENT>    the type of grid entity
-     * @return a pattern with the combined entries
+     * @return a pattern with the combined entries; an empty pattern if no pattern is given
      */
     @SafeVarargs
     public static <ENT extends GridEntity> GridPattern<ENT> combine(GridPattern<ENT>... patterns) {
-        Map<GridOffset, ENT> combined = new HashMap<>();
+        Map<GridOffset, ENT> offsetMap = new HashMap<>();
         for (GridPattern<ENT> pattern : patterns) {
-            combined.putAll(pattern.offsetMap());
+            offsetMap.putAll(pattern.offsetMap());
         }
-        return of(combined);
+        return of(offsetMap);
     }
 
     /**
@@ -127,8 +114,8 @@ public final class GridPatterns {
     }
 
     /**
-     * Returns the outline of a rectangle of the given entity: the first and last row and column of a bounding box
-     * with the given size.
+     * Returns the outline of a rectangle of the given entity: the first and last row and column of a bounding box of
+     * the given size.
      *
      * @param entity the entity of the outline
      * @param width  the number of columns, at least 1
@@ -140,13 +127,14 @@ public final class GridPatterns {
     public static <ENT extends GridEntity> GridPattern<ENT> rectangleOutline(ENT entity, int width, int height) {
         checkPositive(width, "width");
         checkPositive(height, "height");
-        List<GridOffset> offsets = new ArrayList<>();
-        for (int y = 0; y < height; y++) {
-            for (int x = 0; x < width; x++) {
-                if ((y == 0) || (y == (height - 1)) || (x == 0) || (x == (width - 1))) {
-                    offsets.add(new GridOffset(x, y));
-                }
-            }
+        List<GridOffset> offsets = new ArrayList<>(2 * (width + height));
+        for (int x = 0; x < width; x++) {
+            offsets.add(new GridOffset(x, 0));
+            offsets.add(new GridOffset(x, height - 1));
+        }
+        for (int y = 1; y < (height - 1); y++) {
+            offsets.add(new GridOffset(0, y));
+            offsets.add(new GridOffset(width - 1, y));
         }
         return of(entity, offsets);
     }

@@ -68,7 +68,7 @@ final class GridPatternTest {
     void testWidth() {
         assertAll(
                 () -> assertEquals(2, createPattern().width()),
-                () -> assertEquals(2, createPattern().shifted(new GridOffset(5, 7)).width()),
+                () -> assertEquals(2, createPattern().shift(new GridOffset(5, 7)).width()),
                 () -> assertEquals(0, createEmptyPattern().width())
         );
     }
@@ -77,41 +77,41 @@ final class GridPatternTest {
     void testHeight() {
         assertAll(
                 () -> assertEquals(3, createPattern().height()),
-                () -> assertEquals(3, createPattern().shifted(new GridOffset(5, 7)).height()),
+                () -> assertEquals(3, createPattern().shift(new GridOffset(5, 7)).height()),
                 () -> assertEquals(0, createEmptyPattern().height())
         );
     }
 
     @Test
-    void testShifted() {
+    void testIsNormalized() {
+        assertAll(
+                () -> assertTrue(createPattern().isNormalized()),
+                () -> assertFalse(createPattern().shift(new GridOffset(1, 0)).isNormalized()),
+                () -> assertFalse(createPattern().shift(new GridOffset(0, -1)).isNormalized()),
+                () -> assertTrue(createEmptyPattern().isNormalized())
+        );
+    }
+
+    @Test
+    void testShift() {
         assertUnmodifiableOffsetMap(createOffsetMap(3, -1, 3, 0, 3, 1, 4, 1),
-                createPattern().shifted(new GridOffset(3, -1)));
+                createPattern().shift(new GridOffset(3, -1)));
     }
 
     @Test
-    void testIsTopLeftAtOrigin() {
+    void testNormalize() {
+        GridPattern<TestEntity> shifted = createPattern().shift(new GridOffset(5, -7));
+
         assertAll(
-                () -> assertTrue(createPattern().isTopLeftAtOrigin()),
-                () -> assertFalse(createPattern().shifted(new GridOffset(1, 0)).isTopLeftAtOrigin()),
-                () -> assertFalse(createPattern().shifted(new GridOffset(0, -1)).isTopLeftAtOrigin()),
-                () -> assertTrue(createEmptyPattern().isTopLeftAtOrigin())
+                () -> assertEquals(createPattern().offsetMap(), shifted.normalize().offsetMap()),
+                () -> assertTrue(shifted.normalize().isNormalized())
         );
     }
 
     @Test
-    void testNormalized() {
-        GridPattern<TestEntity> shifted = createPattern().shifted(new GridOffset(5, -7));
-
-        assertAll(
-                () -> assertEquals(createPattern().offsetMap(), shifted.normalized().offsetMap()),
-                () -> assertTrue(shifted.normalized().isTopLeftAtOrigin())
-        );
-    }
-
-    @Test
-    void testNormalizedReturnsSameInstanceWhenAlreadyNormalized() {
+    void testNormalizeReturnsSameInstanceWhenNormalized() {
         GridPattern<TestEntity> pattern = createPattern();
-        assertSame(pattern, pattern.normalized());
+        assertSame(pattern, pattern.normalize());
     }
 
     @Test
@@ -120,8 +120,20 @@ final class GridPatternTest {
     }
 
     @Test
+    void testFlipXKeepsBoundingBox() {
+        GridPattern<TestEntity> shifted = createPattern().shift(new GridOffset(4, 9));
+        assertEquals(createPattern().flipX().shift(new GridOffset(4, 9)).offsetMap(), shifted.flipX().offsetMap());
+    }
+
+    @Test
     void testFlipY() {
         assertUnmodifiableOffsetMap(createOffsetMap(0, 2, 0, 1, 0, 0, 1, 0), createPattern().flipY());
+    }
+
+    @Test
+    void testFlipYKeepsBoundingBox() {
+        GridPattern<TestEntity> shifted = createPattern().shift(new GridOffset(4, 9));
+        assertEquals(createPattern().flipY().shift(new GridOffset(4, 9)).offsetMap(), shifted.flipY().offsetMap());
     }
 
     @Test
@@ -137,7 +149,7 @@ final class GridPatternTest {
 
     @Test
     void testRotate90NormalizesShiftedPattern() {
-        GridPattern<TestEntity> shifted = createPattern().shifted(new GridOffset(4, 9));
+        GridPattern<TestEntity> shifted = createPattern().shift(new GridOffset(4, 9));
         assertEquals(createPattern().rotate90().offsetMap(), shifted.rotate90().offsetMap());
     }
 
@@ -148,7 +160,7 @@ final class GridPatternTest {
 
     @Test
     void testRotate180NormalizesShiftedPattern() {
-        GridPattern<TestEntity> shifted = createPattern().shifted(new GridOffset(4, 9));
+        GridPattern<TestEntity> shifted = createPattern().shift(new GridOffset(4, 9));
         assertEquals(createPattern().rotate180().offsetMap(), shifted.rotate180().offsetMap());
     }
 
@@ -159,13 +171,13 @@ final class GridPatternTest {
 
     @Test
     void testRotate270NormalizesShiftedPattern() {
-        GridPattern<TestEntity> shifted = createPattern().shifted(new GridOffset(4, 9));
+        GridPattern<TestEntity> shifted = createPattern().shift(new GridOffset(4, 9));
         assertEquals(createPattern().rotate270().offsetMap(), shifted.rotate270().offsetMap());
     }
 
     @Test
-    void testMapValues() {
-        GridPattern<TestEntity> mapped = createPattern().mapValues(
+    void testMapEntities() {
+        GridPattern<TestEntity> mapped = createPattern().mapEntities(
                 entity -> (entity == TestEntity.FILLED) ? TestEntity.EMPTY : entity);
 
         assertUnmodifiableOffsetMap(Map.of(
