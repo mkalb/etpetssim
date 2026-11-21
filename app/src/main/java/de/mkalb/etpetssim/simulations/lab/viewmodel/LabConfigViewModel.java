@@ -11,6 +11,7 @@ import de.mkalb.etpetssim.simulations.lab.model.LabConfig;
 import de.mkalb.etpetssim.simulations.lab.shared.LabBaseLayer;
 import de.mkalb.etpetssim.simulations.lab.shared.LabColorMode;
 import de.mkalb.etpetssim.simulations.lab.shared.LabDistribution;
+import de.mkalb.etpetssim.simulations.lab.shared.LabGridModelType;
 import de.mkalb.etpetssim.simulations.lab.shared.LabPattern;
 import de.mkalb.etpetssim.ui.InputChoiceProperty;
 import de.mkalb.etpetssim.ui.InputDoubleProperty;
@@ -36,6 +37,8 @@ import static de.mkalb.etpetssim.simulations.lab.model.LabConstraints.GRID_HEIGH
 import static de.mkalb.etpetssim.simulations.lab.model.LabConstraints.GRID_HEIGHT_MAX;
 import static de.mkalb.etpetssim.simulations.lab.model.LabConstraints.GRID_HEIGHT_MIN;
 import static de.mkalb.etpetssim.simulations.lab.model.LabConstraints.GRID_HEIGHT_STEP;
+import static de.mkalb.etpetssim.simulations.lab.model.LabConstraints.GRID_MODEL_TYPE_DEFAULT;
+import static de.mkalb.etpetssim.simulations.lab.model.LabConstraints.GRID_MODEL_TYPE_VALUES;
 import static de.mkalb.etpetssim.simulations.lab.model.LabConstraints.GRID_WIDTH_DEFAULT;
 import static de.mkalb.etpetssim.simulations.lab.model.LabConstraints.GRID_WIDTH_MAX;
 import static de.mkalb.etpetssim.simulations.lab.model.LabConstraints.GRID_WIDTH_MIN;
@@ -75,6 +78,12 @@ public final class LabConfigViewModel extends AbstractConfigViewModel<LabConfig>
             CELL_DISPLAY_MODE_VALUES,
             SEED_DEFAULT
     );
+
+    // Structure
+    private final InputChoiceProperty<LabGridModelType> gridModelType = InputChoiceProperty.ofList(
+            GRID_MODEL_TYPE_DEFAULT,
+            GRID_MODEL_TYPE_VALUES,
+            e -> AppLocalization.getText(e.resourceKey()));
 
     // Layout
     private final InputChoiceProperty<LabColorMode> colorMode = InputChoiceProperty.ofList(COLOR_MODE_DEFAULT,
@@ -127,6 +136,7 @@ public final class LabConfigViewModel extends AbstractConfigViewModel<LabConfig>
                 gridEdgeBehaviorProperty().property().getValue(),
                 gridWidthProperty().property().getValue(),
                 gridHeightProperty().property().getValue(),
+                gridModelType.getValue(),
                 cellEdgeLengthProperty().property().getValue(),
                 cellDisplayModeProperty().property().getValue(),
                 colorMode.getValue(),
@@ -137,6 +147,10 @@ public final class LabConfigViewModel extends AbstractConfigViewModel<LabConfig>
                 pattern.getValue(),
                 neighborhoodMode.getValue()
         );
+    }
+
+    public InputChoiceProperty<LabGridModelType> gridModelTypeProperty() {
+        return gridModelType;
     }
 
     public InputChoiceProperty<LabColorMode> colorModeProperty() {

@@ -8,6 +8,7 @@ import de.mkalb.etpetssim.simulations.core.shared.CellDisplayMode;
 import de.mkalb.etpetssim.simulations.lab.shared.LabBaseLayer;
 import de.mkalb.etpetssim.simulations.lab.shared.LabColorMode;
 import de.mkalb.etpetssim.simulations.lab.shared.LabDistribution;
+import de.mkalb.etpetssim.simulations.lab.shared.LabGridModelType;
 import de.mkalb.etpetssim.simulations.lab.shared.LabPattern;
 
 import static de.mkalb.etpetssim.simulations.lab.model.LabConstraints.BASE_LAYER_VALUES;
@@ -16,6 +17,7 @@ import static de.mkalb.etpetssim.simulations.lab.model.LabConstraints.CELL_SHAPE
 import static de.mkalb.etpetssim.simulations.lab.model.LabConstraints.COLOR_MODE_VALUES;
 import static de.mkalb.etpetssim.simulations.lab.model.LabConstraints.DISTRIBUTION_VALUES;
 import static de.mkalb.etpetssim.simulations.lab.model.LabConstraints.GRID_EDGE_BEHAVIOR_VALUES;
+import static de.mkalb.etpetssim.simulations.lab.model.LabConstraints.GRID_MODEL_TYPE_VALUES;
 import static de.mkalb.etpetssim.simulations.lab.model.LabConstraints.HIGHLIGHTED_PERCENT_MAX;
 import static de.mkalb.etpetssim.simulations.lab.model.LabConstraints.HIGHLIGHTED_PERCENT_MIN;
 import static de.mkalb.etpetssim.simulations.lab.model.LabConstraints.PATTERN_VALUES;
@@ -30,6 +32,7 @@ import static de.mkalb.etpetssim.simulations.lab.model.LabConstraints.PATTERN_VA
  * @param gridEdgeBehavior   the configured grid edge behavior
  * @param gridWidth          the grid width in cells
  * @param gridHeight         the grid height in cells
+ * @param gridModelType      the implementation of the grid model
  * @param cellEdgeLength     the rendered cell edge length in pixels
  * @param cellDisplayMode    the cell display mode used by the UI
  * @param colorMode          the color rendering mode
@@ -47,6 +50,7 @@ public record LabConfig(
         GridEdgeBehavior gridEdgeBehavior,
         int gridWidth,
         int gridHeight,
+        LabGridModelType gridModelType,
         // Layout
         double cellEdgeLength,
         CellDisplayMode cellDisplayMode,
@@ -70,6 +74,7 @@ public record LabConfig(
     public boolean isValid() {
         return isBaseValid()
                 && hasAllowedCoreSelections(CELL_SHAPE_VALUES, GRID_EDGE_BEHAVIOR_VALUES, CELL_DISPLAY_MODE_VALUES)
+                && isAllowedSelection(gridModelType, GRID_MODEL_TYPE_VALUES)
                 && isAllowedSelection(colorMode, COLOR_MODE_VALUES)
                 && isAllowedSelection(baseLayer, BASE_LAYER_VALUES)
                 && isAllowedSelection(distribution, DISTRIBUTION_VALUES)

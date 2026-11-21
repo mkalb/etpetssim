@@ -248,10 +248,11 @@ Use `CellDrawer` from `simulations.core.view`:
 - `*Config` records are created from unvalidated input and have no validating constructor; check them with `isValid()`
   (which calls `isBaseValid()` first) before passing them to the Model layer.
 - Order `*Config` components in four groups, each introduced by a line comment: `// Structure` (cell shape, edge
-  behavior, width, height), `// Layout` (cell edge length, display mode, other rendering options),
-  `// Initialization` (`seed` first, then the initial values), and `// Rules` (`neighborhoodMode` first, then the
-  rule parameters). Config ViewModels and config views introduce the sections of their properties and controls with
-  the same four line comments, without sub-sections such as `// Rules - NeighborhoodMode`.
+  behavior, width, height, then optional choices of how the grid is stored, e.g., the grid model type of the lab),
+  `// Layout` (cell edge length, display mode, other rendering options), `// Initialization` (`seed` first, then the
+  initial values), and `// Rules` (`neighborhoodMode` first, then the rule parameters). Config ViewModels and config
+  views introduce the sections of their properties and controls with the same four line comments, without sub-sections
+  such as `// Rules - NeighborhoodMode`.
 - In `isValid()`, check in this order: `isBaseValid()`, `hasAllowedCoreSelections(..)`, fixed values
   (`hasExpectedSelection(..)`), selection lists (`isAllowedSelection(..)`), the private `hasValidRanges()` and
   `hasValidCombinedRanges()`, then rule objects (e.g., `hasValidTransitionRules()`).

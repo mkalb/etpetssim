@@ -139,8 +139,11 @@ public abstract class AbstractConfigView<CON extends SimulationConfig, VM extend
         ));
     }
 
-    protected final TitledPane createStructurePane() {
-        List<FXComponentFactory.LabeledControl<? extends Region>> content = new ArrayList<>(4);
+    @SafeVarargs
+    protected final TitledPane createStructurePane(
+            FXComponentFactory.LabeledControl<? extends Region>... additionalContent) {
+        List<FXComponentFactory.LabeledControl<? extends Region>> content =
+                new ArrayList<>(4 + additionalContent.length);
 
         if (viewModel.cellShapeProperty().hasMultipleValidValues()) {
             content.add(FXComponentFactory.createLabeledChoiceComboBox(
@@ -175,6 +178,8 @@ public abstract class AbstractConfigView<CON extends SimulationConfig, VM extend
                         viewModel.gridHeightProperty()),
                 FXStyleClasses.CONFIG_SPINNER
         ));
+
+        Collections.addAll(content, additionalContent);
 
         return createConfigTitledPane(
                 AppLocalization.getText(SimulationLocalizationKeys.CONFIG_TITLE_STRUCTURE),

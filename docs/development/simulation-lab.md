@@ -15,7 +15,8 @@ The alias `simulationlab` works as well.
 
 ## Configuration
 
-- Structure: cell shape, edge behavior, grid width and height (8 to 16 384 each, `GridSize.MAX_SIZE`).
+- Structure: cell shape, edge behavior, grid width and height (8 to 16 384 each, `GridSize.MAX_SIZE`), and grid model
+  (see "Grid Models").
 - Layout: cell edge length (1 to 1000), cell display mode (shape or circle, each with or without border; used by the
   checkerboard), color mode (color or grayscale), and base layer (see "Base Layers").
 - Initialization: seed, distribution of the highlighted cells (see "Distributions"), the percentage of highlighted
@@ -24,6 +25,17 @@ The alias `simulationlab` works as well.
 
 As in the other simulations, the config controls are disabled while the simulation cannot start. The percentage is
 disabled while the distribution is not random, the pattern while the distribution is not "Pattern".
+
+## Grid Models
+
+The grid model selection (`LabGridModelType`) chooses the `WritableGridModel` implementation, so that both can be
+compared for every distribution and grid size; the highlighted cells are the same for the same seed. "Sparse" is the
+default.
+
+| Grid model | Class             | Storage                             | Used by                                  |
+|------------|-------------------|-------------------------------------|------------------------------------------|
+| Sparse     | `SparseGridModel` | `HashMap` of the non-`NORMAL` cells | Conway, ETPets, Rebounding, Snake, Sugar |
+| Array      | `ArrayGridModel`  | one entity reference per cell       | Forest, Wa-Tor, Langton's terrain        |
 
 ## Distributions
 
@@ -150,7 +162,10 @@ mode and edge behavior. A second click on the same cell keeps the selection; the
 The grid size reaches `GridSize.MAX_SIZE` so that the lab exposes the limits of the engine and the drawing toolkit
 before a simulation meets them. Expected limits are findings, not bugs:
 
-- Memory: the step runner keeps two grid models of up to about 268 million cells.
+- Memory: the step runner keeps two grid models of up to about 268 million cells, because `SynchronousStepRunner`
+  creates the second one with `copyWithDefaultEntity()`. With "Array", each model holds one reference per cell, i.e.,
+  about 1 GiB with compressed references at 16 384 x 16 384, independent of the distribution; with "Sparse", the
+  memory grows with the number of highlighted cells.
 - Drawing time: the base layer draws all cells, also those outside the canvas limit of `AbstractMainView`.
 - Initialization time: the initializers without a cancellation check cannot be canceled.
 

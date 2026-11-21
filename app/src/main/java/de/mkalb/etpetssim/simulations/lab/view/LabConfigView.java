@@ -7,6 +7,7 @@ import de.mkalb.etpetssim.simulations.lab.model.LabConfig;
 import de.mkalb.etpetssim.simulations.lab.shared.LabBaseLayer;
 import de.mkalb.etpetssim.simulations.lab.shared.LabColorMode;
 import de.mkalb.etpetssim.simulations.lab.shared.LabDistribution;
+import de.mkalb.etpetssim.simulations.lab.shared.LabGridModelType;
 import de.mkalb.etpetssim.simulations.lab.shared.LabPattern;
 import de.mkalb.etpetssim.simulations.lab.viewmodel.LabConfigViewModel;
 import de.mkalb.etpetssim.ui.FXComponentFactory;
@@ -21,6 +22,9 @@ import java.util.function.Predicate;
  * Config view of the Simulation Lab.
  */
 public final class LabConfigView extends AbstractConfigView<LabConfig, LabConfigViewModel> {
+
+    // Structure
+    private static final String LAB_CONFIG_GRID_MODEL_TYPE_TOOLTIP = "lab.config.gridmodeltype.tooltip";
 
     // Layout
     private static final String LAB_CONFIG_BASE_LAYER_TOOLTIP = "lab.config.baselayer.tooltip";
@@ -39,7 +43,14 @@ public final class LabConfigView extends AbstractConfigView<LabConfig, LabConfig
     @Override
     public Region buildConfigRegion() {
         // Structure
-        var structurePane = createStructurePane();
+        var gridModelTypeControl = FXComponentFactory.createLabeledChoiceComboBox(
+                viewModel.gridModelTypeProperty(),
+                AppLocalization.getText(LabGridModelType.labelResourceKey()),
+                AppLocalization.getText(LAB_CONFIG_GRID_MODEL_TYPE_TOOLTIP),
+                FXStyleClasses.CONFIG_COMBOBOX
+        );
+
+        var structurePane = createStructurePane(gridModelTypeControl);
 
         // Layout
         var colorModeControl = FXComponentFactory.createLabeledChoiceRadioButtons(viewModel.colorModeProperty(),

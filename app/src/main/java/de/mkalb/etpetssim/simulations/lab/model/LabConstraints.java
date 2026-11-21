@@ -8,6 +8,7 @@ import de.mkalb.etpetssim.simulations.core.shared.CellDisplayMode;
 import de.mkalb.etpetssim.simulations.lab.shared.LabBaseLayer;
 import de.mkalb.etpetssim.simulations.lab.shared.LabColorMode;
 import de.mkalb.etpetssim.simulations.lab.shared.LabDistribution;
+import de.mkalb.etpetssim.simulations.lab.shared.LabGridModelType;
 import de.mkalb.etpetssim.simulations.lab.shared.LabPattern;
 
 import java.util.List;
@@ -30,6 +31,8 @@ public final class LabConstraints {
     public static final int GRID_HEIGHT_MIN = GridSize.MIN_SIZE;
     public static final int GRID_HEIGHT_MAX = GridSize.MAX_SIZE;
     public static final int GRID_HEIGHT_STEP = 1;
+    public static final LabGridModelType GRID_MODEL_TYPE_DEFAULT = LabGridModelType.SPARSE;
+    public static final List<LabGridModelType> GRID_MODEL_TYPE_VALUES = List.of(LabGridModelType.values());
 
     // Layout
     public static final int CELL_EDGE_LENGTH_DEFAULT = 40;

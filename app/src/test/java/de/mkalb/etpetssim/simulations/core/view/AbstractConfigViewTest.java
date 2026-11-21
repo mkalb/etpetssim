@@ -204,14 +204,16 @@ final class AbstractConfigViewTest {
     void testCreateStructurePane() {
         FXTestSupport.runAndWait(() -> {
             TestConfigView view = createView(true);
+            var additional = createLabeledTextField();
 
-            TitledPane pane = view.createStructurePane();
+            TitledPane pane = view.createStructurePane(additional);
 
             Label gridWidthLabel = assertInstanceOf(Label.class, paneContent(pane).get(4));
             assertAll(
                     () -> assertEquals(AppLocalization.getText(SimulationLocalizationKeys.CONFIG_TITLE_STRUCTURE),
                             pane.getText()),
-                    () -> assertEquals(8, paneContent(pane).size()),
+                    () -> assertEquals(10, paneContent(pane).size()),
+                    () -> assertSame(additional.controlRegion(), paneContent(pane).getLast()),
                     () -> assertEquals(AppLocalization.getFormattedText(
                                     SimulationLocalizationKeys.CONFIG_GRID_WIDTH_TOOLTIP, 10, 1_000),
                             gridWidthLabel.getTooltip().getText())

@@ -3,9 +3,12 @@ package de.mkalb.etpetssim.simulations.lab.model;
 import de.mkalb.etpetssim.engine.CellShape;
 import de.mkalb.etpetssim.engine.GridEdgeBehavior;
 import de.mkalb.etpetssim.engine.GridSize;
+import de.mkalb.etpetssim.engine.model.ArrayGridModel;
 import de.mkalb.etpetssim.engine.model.GridCell;
+import de.mkalb.etpetssim.engine.model.SparseGridModel;
 import de.mkalb.etpetssim.simulations.lab.model.entity.LabEntity;
 import de.mkalb.etpetssim.simulations.lab.shared.LabDistribution;
+import de.mkalb.etpetssim.simulations.lab.shared.LabGridModelType;
 import de.mkalb.etpetssim.simulations.lab.shared.LabPattern;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -15,6 +18,7 @@ import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 final class LabSimulationManagerTest {
@@ -25,12 +29,14 @@ final class LabSimulationManagerTest {
     private static final double HIGHLIGHTED_PERCENT = 0.25d;
     private static final int HIGHLIGHTED_COUNT = 32;
 
-    private static LabConfig createConfig(LabDistribution distribution, LabPattern pattern, long seed) {
+    private static LabConfig createConfig(LabGridModelType gridModelType, LabDistribution distribution,
+                                          LabPattern pattern, long seed) {
         return new LabConfig(
                 CellShape.SQUARE,
                 GridEdgeBehavior.BLOCK_XY,
                 GRID_WIDTH,
                 GRID_HEIGHT,
+                gridModelType,
                 LabConstraints.CELL_EDGE_LENGTH_DEFAULT,
                 LabConstraints.CELL_DISPLAY_MODE_DEFAULT,
                 LabConstraints.COLOR_MODE_DEFAULT,
@@ -43,8 +49,14 @@ final class LabSimulationManagerTest {
         );
     }
 
+    private static LabSimulationManager createManager(LabGridModelType gridModelType,
+                                                      LabDistribution distribution) {
+        return new LabSimulationManager(createConfig(gridModelType, distribution, LabConstraints.PATTERN_DEFAULT,
+                1L));
+    }
+
     private static LabSimulationManager createManager(LabDistribution distribution) {
-        return new LabSimulationManager(createConfig(distribution, LabConstraints.PATTERN_DEFAULT, 1L));
+        return createManager(LabConstraints.GRID_MODEL_TYPE_DEFAULT, distribution);
     }
 
     private static Set<GridCell<LabEntity>> highlightedCells(LabSimulationManager manager) {
@@ -100,10 +112,33 @@ final class LabSimulationManagerTest {
     @ParameterizedTest
     @EnumSource(LabPattern.class)
     void testConstructorPlacesPatternForPattern(LabPattern pattern) {
-        LabSimulationManager manager = new LabSimulationManager(createConfig(LabDistribution.PATTERN, pattern, 1L));
+        LabSimulationManager manager = new LabSimulationManager(
+                createConfig(LabConstraints.GRID_MODEL_TYPE_DEFAULT, LabDistribution.PATTERN, pattern, 1L));
 
         assertHighlightedCount(LabPatterns.createPattern(pattern, new GridSize(GRID_WIDTH, GRID_HEIGHT)).size(),
                 manager);
+    }
+
+    @Test
+    void testConstructorCreatesGridModelOfSelectedType() {
+        assertAll(
+                () -> assertInstanceOf(SparseGridModel.class,
+                        createManager(LabGridModelType.SPARSE, LabDistribution.BORDER).currentGridModel()),
+                () -> assertInstanceOf(ArrayGridModel.class,
+                        createManager(LabGridModelType.ARRAY, LabDistribution.BORDER).currentGridModel())
+        );
+    }
+
+    @ParameterizedTest
+    @EnumSource(LabDistribution.class)
+    void testConstructorPlacesSameCellsForEachGridModelType(LabDistribution distribution) {
+        LabSimulationManager sparse = createManager(LabGridModelType.SPARSE, distribution);
+        LabSimulationManager array = createManager(LabGridModelType.ARRAY, distribution);
+
+        assertAll(
+                () -> assertEquals(highlightedCells(sparse), highlightedCells(array)),
+                () -> assertEquals(sparse.statistics().highlightedCells(), array.statistics().highlightedCells())
+        );
     }
 
 }

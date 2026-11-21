@@ -226,6 +226,7 @@ final class SimulationManagerTest {
                 LabConstraints.GRID_EDGE_BEHAVIOR_DEFAULT,
                 gridWidth,
                 gridHeight,
+                LabConstraints.GRID_MODEL_TYPE_DEFAULT,
                 LabConstraints.CELL_EDGE_LENGTH_DEFAULT,
                 LabConstraints.CELL_DISPLAY_MODE_DEFAULT,
                 LabConstraints.COLOR_MODE_DEFAULT,

@@ -281,6 +281,9 @@ de_DE keeps these English terms (`.claude/rules/i18n.md`, "English terms in de_D
 | `painter test` | `Zeichentest`   | project | base layer with the drawing variants                  |
 | `distribution` | `Verteilung`    | general | how the highlighted cells are placed at the start     |
 | `ring`         | `Ring`          | project | cells at the same neighborhood distance from a cell   |
+| `grid model`   | `Gittermodell`  | project | how the cells of a grid are stored                    |
+| `sparse`       | `dünn besetzt`  | general | grid model that stores only the non-default cells     |
+| `array`        | `Array`         | general | grid model with one entry per cell                    |
 
 ## Sources
 

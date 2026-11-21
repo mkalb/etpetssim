@@ -7,6 +7,7 @@ import de.mkalb.etpetssim.simulations.core.shared.CellDisplayMode;
 import de.mkalb.etpetssim.simulations.lab.shared.LabBaseLayer;
 import de.mkalb.etpetssim.simulations.lab.shared.LabColorMode;
 import de.mkalb.etpetssim.simulations.lab.shared.LabDistribution;
+import de.mkalb.etpetssim.simulations.lab.shared.LabGridModelType;
 import de.mkalb.etpetssim.simulations.lab.shared.LabPattern;
 import org.junit.jupiter.api.Test;
 
@@ -22,6 +23,7 @@ import static de.mkalb.etpetssim.simulations.lab.model.LabConstraints.GRID_EDGE_
 import static de.mkalb.etpetssim.simulations.lab.model.LabConstraints.GRID_HEIGHT_DEFAULT;
 import static de.mkalb.etpetssim.simulations.lab.model.LabConstraints.GRID_HEIGHT_MAX;
 import static de.mkalb.etpetssim.simulations.lab.model.LabConstraints.GRID_HEIGHT_MIN;
+import static de.mkalb.etpetssim.simulations.lab.model.LabConstraints.GRID_MODEL_TYPE_DEFAULT;
 import static de.mkalb.etpetssim.simulations.lab.model.LabConstraints.GRID_WIDTH_DEFAULT;
 import static de.mkalb.etpetssim.simulations.lab.model.LabConstraints.GRID_WIDTH_MAX;
 import static de.mkalb.etpetssim.simulations.lab.model.LabConstraints.GRID_WIDTH_MIN;
@@ -52,6 +54,7 @@ final class LabConfigTest {
         assertTrue(isValidWith(v -> {
             v.cellShape = CellShape.SQUARE;
             v.gridEdgeBehavior = GridEdgeBehavior.BLOCK_X_WRAP_Y;
+            v.gridModelType = LabGridModelType.ARRAY;
             v.cellDisplayMode = CellDisplayMode.CIRCLE;
             v.colorMode = LabColorMode.GRAYSCALE;
             v.baseLayer = LabBaseLayer.PAINTER_TEST;
@@ -106,6 +109,7 @@ final class LabConfigTest {
         GridEdgeBehavior gridEdgeBehavior = GRID_EDGE_BEHAVIOR_DEFAULT;
         int gridWidth = GRID_WIDTH_DEFAULT;
         int gridHeight = GRID_HEIGHT_DEFAULT;
+        LabGridModelType gridModelType = GRID_MODEL_TYPE_DEFAULT;
         CellDisplayMode cellDisplayMode = CELL_DISPLAY_MODE_DEFAULT;
         LabColorMode colorMode = COLOR_MODE_DEFAULT;
         LabBaseLayer baseLayer = BASE_LAYER_DEFAULT;
@@ -115,9 +119,9 @@ final class LabConfigTest {
         NeighborhoodMode neighborhoodMode = NEIGHBORHOOD_MODE_DEFAULT;
 
         LabConfig toConfig() {
-            return new LabConfig(cellShape, gridEdgeBehavior, gridWidth, gridHeight, CELL_EDGE_LENGTH_DEFAULT,
-                    cellDisplayMode, colorMode, baseLayer, 1L, distribution, highlightedPercent, pattern,
-                    neighborhoodMode);
+            return new LabConfig(cellShape, gridEdgeBehavior, gridWidth, gridHeight, gridModelType,
+                    CELL_EDGE_LENGTH_DEFAULT, cellDisplayMode, colorMode, baseLayer, 1L, distribution,
+                    highlightedPercent, pattern, neighborhoodMode);
         }
 
     }

@@ -5,6 +5,7 @@ import de.mkalb.etpetssim.engine.GridStructure;
 import de.mkalb.etpetssim.engine.executor.DefaultSimulationExecutor;
 import de.mkalb.etpetssim.engine.executor.SynchronousStepRunner;
 import de.mkalb.etpetssim.engine.executor.TimedSimulationExecutor;
+import de.mkalb.etpetssim.engine.model.ArrayGridModel;
 import de.mkalb.etpetssim.engine.model.ReadableGridModel;
 import de.mkalb.etpetssim.engine.model.SparseGridModel;
 import de.mkalb.etpetssim.engine.model.WritableGridModel;
@@ -38,7 +39,7 @@ public final class LabSimulationManager
         structure = config.createGridStructure();
         statistics = new LabStatistics(structure);
         var random = new Random(config.seed());
-        var model = new SparseGridModel<>(structure, LabEntity.NORMAL);
+        WritableGridModel<LabEntity> model = createGridModel();
 
         var runner = new SynchronousStepRunner<>(model, new LabStepLogic());
         var terminationCondition = new LabTerminationCondition();
@@ -69,6 +70,13 @@ public final class LabSimulationManager
     @Override
     protected TimedSimulationExecutor<LabEntity, WritableGridModel<LabEntity>> executor() {
         return executor;
+    }
+
+    private WritableGridModel<LabEntity> createGridModel() {
+        return switch (config().gridModelType()) {
+            case SPARSE -> new SparseGridModel<>(structure, LabEntity.NORMAL);
+            case ARRAY -> new ArrayGridModel<>(structure, LabEntity.NORMAL);
+        };
     }
 
     private void initializeGrid(WritableGridModel<LabEntity> model,
