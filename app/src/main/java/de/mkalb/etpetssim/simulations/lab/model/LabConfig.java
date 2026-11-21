@@ -6,6 +6,7 @@ import de.mkalb.etpetssim.engine.neighborhood.NeighborhoodMode;
 import de.mkalb.etpetssim.simulations.core.model.SimulationConfig;
 import de.mkalb.etpetssim.simulations.core.shared.CellDisplayMode;
 import de.mkalb.etpetssim.simulations.lab.shared.LabBaseLayer;
+import de.mkalb.etpetssim.simulations.lab.shared.LabCellText;
 import de.mkalb.etpetssim.simulations.lab.shared.LabColorMode;
 import de.mkalb.etpetssim.simulations.lab.shared.LabDistribution;
 import de.mkalb.etpetssim.simulations.lab.shared.LabGridModelType;
@@ -14,6 +15,7 @@ import de.mkalb.etpetssim.simulations.lab.shared.LabPattern;
 import static de.mkalb.etpetssim.simulations.lab.model.LabConstraints.BASE_LAYER_VALUES;
 import static de.mkalb.etpetssim.simulations.lab.model.LabConstraints.CELL_DISPLAY_MODE_VALUES;
 import static de.mkalb.etpetssim.simulations.lab.model.LabConstraints.CELL_SHAPE_VALUES;
+import static de.mkalb.etpetssim.simulations.lab.model.LabConstraints.CELL_TEXT_VALUES;
 import static de.mkalb.etpetssim.simulations.lab.model.LabConstraints.COLOR_MODE_VALUES;
 import static de.mkalb.etpetssim.simulations.lab.model.LabConstraints.DISTRIBUTION_VALUES;
 import static de.mkalb.etpetssim.simulations.lab.model.LabConstraints.GRID_EDGE_BEHAVIOR_VALUES;
@@ -37,6 +39,7 @@ import static de.mkalb.etpetssim.simulations.lab.model.LabConstraints.PATTERN_VA
  * @param cellDisplayMode    the cell display mode used by the UI
  * @param colorMode          the color rendering mode
  * @param baseLayer          the content of the base layer, independent of the model
+ * @param cellText           the visibility of the texts of the base layer
  * @param seed               the random seed used for initialization
  * @param distribution       the distribution of the highlighted cells at the start
  * @param highlightedPercent the share of highlighted cells as a fraction of all cells, used by the random
@@ -56,6 +59,7 @@ public record LabConfig(
         CellDisplayMode cellDisplayMode,
         LabColorMode colorMode,
         LabBaseLayer baseLayer,
+        LabCellText cellText,
         // Initialization
         long seed,
         LabDistribution distribution,
@@ -77,6 +81,7 @@ public record LabConfig(
                 && isAllowedSelection(gridModelType, GRID_MODEL_TYPE_VALUES)
                 && isAllowedSelection(colorMode, COLOR_MODE_VALUES)
                 && isAllowedSelection(baseLayer, BASE_LAYER_VALUES)
+                && isAllowedSelection(cellText, CELL_TEXT_VALUES)
                 && isAllowedSelection(distribution, DISTRIBUTION_VALUES)
                 && isAllowedSelection(pattern, PATTERN_VALUES)
                 && hasValidRanges();

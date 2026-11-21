@@ -6,6 +6,7 @@ import de.mkalb.etpetssim.engine.GridSize;
 import de.mkalb.etpetssim.engine.neighborhood.NeighborhoodMode;
 import de.mkalb.etpetssim.simulations.core.shared.CellDisplayMode;
 import de.mkalb.etpetssim.simulations.lab.shared.LabBaseLayer;
+import de.mkalb.etpetssim.simulations.lab.shared.LabCellText;
 import de.mkalb.etpetssim.simulations.lab.shared.LabColorMode;
 import de.mkalb.etpetssim.simulations.lab.shared.LabDistribution;
 import de.mkalb.etpetssim.simulations.lab.shared.LabGridModelType;
@@ -48,6 +49,8 @@ public final class LabConstraints {
     public static final List<LabColorMode> COLOR_MODE_VALUES = List.of(LabColorMode.values());
     public static final LabBaseLayer BASE_LAYER_DEFAULT = LabBaseLayer.CHECKERBOARD;
     public static final List<LabBaseLayer> BASE_LAYER_VALUES = List.of(LabBaseLayer.values());
+    public static final LabCellText CELL_TEXT_DEFAULT = LabCellText.SHOWN;
+    public static final List<LabCellText> CELL_TEXT_VALUES = List.of(LabCellText.values());
 
     // Initialization
     public static final String SEED_DEFAULT = "";

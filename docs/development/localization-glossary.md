@@ -279,6 +279,7 @@ de_DE keeps these English terms (`.claude/rules/i18n.md`, "English terms in de_D
 | `base layer`   | `Grundebene`    | project | canvas layer drawn once at the start                  |
 | `checkerboard` | `Schachbrett`   | general | base layer                                            |
 | `painter test` | `Zeichentest`   | project | base layer with the drawing variants                  |
+| `cell text`    | `Zelltext`      | project | coordinates and variant numbers of the base layer     |
 | `distribution` | `Verteilung`    | general | how the highlighted cells are placed at the start     |
 | `ring`         | `Ring`          | project | cells at the same neighborhood distance from a cell   |
 | `shuffle`      | `gemischt`      | general | distribution: the first cells of a shuffled list      |

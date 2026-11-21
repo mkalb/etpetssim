@@ -41,6 +41,7 @@ final class LabSimulationManagerTest {
                 LabConstraints.CELL_DISPLAY_MODE_DEFAULT,
                 LabConstraints.COLOR_MODE_DEFAULT,
                 LabConstraints.BASE_LAYER_DEFAULT,
+                LabConstraints.CELL_TEXT_DEFAULT,
                 seed,
                 distribution,
                 HIGHLIGHTED_PERCENT,

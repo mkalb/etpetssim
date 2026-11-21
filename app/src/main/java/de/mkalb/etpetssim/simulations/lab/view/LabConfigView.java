@@ -5,6 +5,7 @@ import de.mkalb.etpetssim.simulations.core.view.AbstractConfigView;
 import de.mkalb.etpetssim.simulations.core.view.SimulationLocalizationKeys;
 import de.mkalb.etpetssim.simulations.lab.model.LabConfig;
 import de.mkalb.etpetssim.simulations.lab.shared.LabBaseLayer;
+import de.mkalb.etpetssim.simulations.lab.shared.LabCellText;
 import de.mkalb.etpetssim.simulations.lab.shared.LabColorMode;
 import de.mkalb.etpetssim.simulations.lab.shared.LabDistribution;
 import de.mkalb.etpetssim.simulations.lab.shared.LabGridModelType;
@@ -28,6 +29,7 @@ public final class LabConfigView extends AbstractConfigView<LabConfig, LabConfig
 
     // Layout
     private static final String LAB_CONFIG_BASE_LAYER_TOOLTIP = "lab.config.baselayer.tooltip";
+    private static final String LAB_CONFIG_CELL_TEXT_TOOLTIP = "lab.config.celltext.tooltip";
     private static final String LAB_CONFIG_COLOR_TOOLTIP = "lab.config.color.tooltip";
 
     // Initialization
@@ -66,7 +68,16 @@ public final class LabConfigView extends AbstractConfigView<LabConfig, LabConfig
                 FXStyleClasses.CONFIG_COMBOBOX
         );
 
-        var layoutPane = createLayoutPane(colorModeControl, baseLayerControl);
+        var cellTextControl = FXComponentFactory.createLabeledChoiceCheckBox(
+                viewModel.cellTextProperty(),
+                LabCellText.SHOWN,
+                LabCellText.HIDDEN,
+                AppLocalization.getText(LabCellText.labelResourceKey()),
+                AppLocalization.getText(LAB_CONFIG_CELL_TEXT_TOOLTIP),
+                FXStyleClasses.CONFIG_CHECKBOX
+        );
+
+        var layoutPane = createLayoutPane(colorModeControl, baseLayerControl, cellTextControl);
 
         // Initialization
         var seedControl = createSeedControl();

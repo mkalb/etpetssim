@@ -9,6 +9,7 @@ import de.mkalb.etpetssim.simulations.core.viewmodel.AbstractConfigViewModel;
 import de.mkalb.etpetssim.simulations.core.viewmodel.SimulationState;
 import de.mkalb.etpetssim.simulations.lab.model.LabConfig;
 import de.mkalb.etpetssim.simulations.lab.shared.LabBaseLayer;
+import de.mkalb.etpetssim.simulations.lab.shared.LabCellText;
 import de.mkalb.etpetssim.simulations.lab.shared.LabColorMode;
 import de.mkalb.etpetssim.simulations.lab.shared.LabDistribution;
 import de.mkalb.etpetssim.simulations.lab.shared.LabGridModelType;
@@ -27,6 +28,8 @@ import static de.mkalb.etpetssim.simulations.lab.model.LabConstraints.CELL_EDGE_
 import static de.mkalb.etpetssim.simulations.lab.model.LabConstraints.CELL_EDGE_LENGTH_MIN;
 import static de.mkalb.etpetssim.simulations.lab.model.LabConstraints.CELL_SHAPE_DEFAULT;
 import static de.mkalb.etpetssim.simulations.lab.model.LabConstraints.CELL_SHAPE_VALUES;
+import static de.mkalb.etpetssim.simulations.lab.model.LabConstraints.CELL_TEXT_DEFAULT;
+import static de.mkalb.etpetssim.simulations.lab.model.LabConstraints.CELL_TEXT_VALUES;
 import static de.mkalb.etpetssim.simulations.lab.model.LabConstraints.COLOR_MODE_DEFAULT;
 import static de.mkalb.etpetssim.simulations.lab.model.LabConstraints.COLOR_MODE_VALUES;
 import static de.mkalb.etpetssim.simulations.lab.model.LabConstraints.DISTRIBUTION_DEFAULT;
@@ -92,6 +95,9 @@ public final class LabConfigViewModel extends AbstractConfigViewModel<LabConfig>
     private final InputChoiceProperty<LabBaseLayer> baseLayer = InputChoiceProperty.ofList(BASE_LAYER_DEFAULT,
             BASE_LAYER_VALUES,
             e -> AppLocalization.getText(e.resourceKey()));
+    private final InputChoiceProperty<LabCellText> cellText = InputChoiceProperty.ofList(CELL_TEXT_DEFAULT,
+            CELL_TEXT_VALUES,
+            e -> AppLocalization.getText(e.resourceKey()));
 
     // Initialization
     private final InputChoiceProperty<LabDistribution> distribution = InputChoiceProperty.ofList(
@@ -141,6 +147,7 @@ public final class LabConfigViewModel extends AbstractConfigViewModel<LabConfig>
                 cellDisplayModeProperty().property().getValue(),
                 colorMode.getValue(),
                 baseLayer.getValue(),
+                cellText.getValue(),
                 seedProperty().computeSeedAndUpdateLabel(),
                 distribution.getValue(),
                 highlightedPercent.getValue(),
@@ -159,6 +166,10 @@ public final class LabConfigViewModel extends AbstractConfigViewModel<LabConfig>
 
     public InputChoiceProperty<LabBaseLayer> baseLayerProperty() {
         return baseLayer;
+    }
+
+    public InputChoiceProperty<LabCellText> cellTextProperty() {
+        return cellText;
     }
 
     public InputChoiceProperty<LabDistribution> distributionProperty() {

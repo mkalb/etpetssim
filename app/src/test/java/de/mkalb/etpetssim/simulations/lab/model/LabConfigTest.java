@@ -5,6 +5,7 @@ import de.mkalb.etpetssim.engine.GridEdgeBehavior;
 import de.mkalb.etpetssim.engine.neighborhood.NeighborhoodMode;
 import de.mkalb.etpetssim.simulations.core.shared.CellDisplayMode;
 import de.mkalb.etpetssim.simulations.lab.shared.LabBaseLayer;
+import de.mkalb.etpetssim.simulations.lab.shared.LabCellText;
 import de.mkalb.etpetssim.simulations.lab.shared.LabColorMode;
 import de.mkalb.etpetssim.simulations.lab.shared.LabDistribution;
 import de.mkalb.etpetssim.simulations.lab.shared.LabGridModelType;
@@ -17,6 +18,7 @@ import static de.mkalb.etpetssim.simulations.lab.model.LabConstraints.BASE_LAYER
 import static de.mkalb.etpetssim.simulations.lab.model.LabConstraints.CELL_DISPLAY_MODE_DEFAULT;
 import static de.mkalb.etpetssim.simulations.lab.model.LabConstraints.CELL_EDGE_LENGTH_DEFAULT;
 import static de.mkalb.etpetssim.simulations.lab.model.LabConstraints.CELL_SHAPE_DEFAULT;
+import static de.mkalb.etpetssim.simulations.lab.model.LabConstraints.CELL_TEXT_DEFAULT;
 import static de.mkalb.etpetssim.simulations.lab.model.LabConstraints.COLOR_MODE_DEFAULT;
 import static de.mkalb.etpetssim.simulations.lab.model.LabConstraints.DISTRIBUTION_DEFAULT;
 import static de.mkalb.etpetssim.simulations.lab.model.LabConstraints.GRID_EDGE_BEHAVIOR_DEFAULT;
@@ -58,6 +60,7 @@ final class LabConfigTest {
             v.cellDisplayMode = CellDisplayMode.CIRCLE;
             v.colorMode = LabColorMode.GRAYSCALE;
             v.baseLayer = LabBaseLayer.PAINTER_TEST;
+            v.cellText = LabCellText.HIDDEN;
             v.distribution = LabDistribution.PATTERN;
             v.pattern = LabPattern.MIRRORS;
             v.neighborhoodMode = NeighborhoodMode.EDGES_ONLY;
@@ -113,6 +116,7 @@ final class LabConfigTest {
         CellDisplayMode cellDisplayMode = CELL_DISPLAY_MODE_DEFAULT;
         LabColorMode colorMode = COLOR_MODE_DEFAULT;
         LabBaseLayer baseLayer = BASE_LAYER_DEFAULT;
+        LabCellText cellText = CELL_TEXT_DEFAULT;
         LabDistribution distribution = DISTRIBUTION_DEFAULT;
         double highlightedPercent = HIGHLIGHTED_PERCENT_DEFAULT;
         LabPattern pattern = PATTERN_DEFAULT;
@@ -120,7 +124,7 @@ final class LabConfigTest {
 
         LabConfig toConfig() {
             return new LabConfig(cellShape, gridEdgeBehavior, gridWidth, gridHeight, gridModelType,
-                    CELL_EDGE_LENGTH_DEFAULT, cellDisplayMode, colorMode, baseLayer, 1L, distribution,
+                    CELL_EDGE_LENGTH_DEFAULT, cellDisplayMode, colorMode, baseLayer, cellText, 1L, distribution,
                     highlightedPercent, pattern, neighborhoodMode);
         }
 

@@ -23,6 +23,7 @@ import de.mkalb.etpetssim.simulations.lab.model.LabSimulationManager;
 import de.mkalb.etpetssim.simulations.lab.model.LabStatistics;
 import de.mkalb.etpetssim.simulations.lab.model.entity.LabEntity;
 import de.mkalb.etpetssim.simulations.lab.shared.LabBaseLayer;
+import de.mkalb.etpetssim.simulations.lab.shared.LabCellText;
 import de.mkalb.etpetssim.simulations.lab.shared.LabColorMode;
 import de.mkalb.etpetssim.simulations.lab.viewmodel.LabNeighborhoodHighlights;
 import de.mkalb.etpetssim.ui.CellDimension;
@@ -49,9 +50,9 @@ import java.util.SortedMap;
 /**
  * Main view of the Simulation Lab.
  *
- * <p>The base layer shows the configured {@link LabBaseLayer}; the dynamic layer shows the highlighted cells and the
- * neighborhood highlights of the selected cell; the overlay shows the selected cell, the cell under the mouse pointer,
- * and its distance from the selected cell.
+ * <p>The base layer shows the configured {@link LabBaseLayer}, with or without its texts ({@link LabCellText}); the
+ * dynamic layer shows the highlighted cells and the neighborhood highlights of the selected cell; the overlay shows
+ * the selected cell, the cell under the mouse pointer, and its distance from the selected cell.
  */
 public final class LabMainView
         extends AbstractMainView<
@@ -272,12 +273,13 @@ public final class LabMainView
 
         boolean colorModeGrayscale = (config.colorMode() == LabColorMode.GRAYSCALE);
         Color textColor = colorModeGrayscale ? COORDINATE_TEXT_COLOR_GRAYSCALE : COORDINATE_TEXT_COLOR;
+        Font textFont = (config.cellText() == LabCellText.SHOWN) ? cellFont : null;
 
         drawBaseCanvasBackground(basePainter, colorModeGrayscale);
 
         switch (config.baseLayer()) {
-            case CHECKERBOARD -> drawCheckerboard(basePainter, config, colorModeGrayscale, textColor);
-            case PAINTER_TEST -> drawPainterTest(basePainter, colorModeGrayscale, textColor);
+            case CHECKERBOARD -> drawCheckerboard(basePainter, config, colorModeGrayscale, textColor, textFont);
+            case PAINTER_TEST -> drawPainterTest(basePainter, colorModeGrayscale, textColor, textFont);
             case NONE -> {
                 // nothing to render
             }
@@ -328,7 +330,8 @@ public final class LabMainView
     private void drawCheckerboard(FXGridCanvasPainter basePainter,
                                   LabConfig config,
                                   boolean colorModeGrayscale,
-                                  Color textColor) {
+                                  Color textColor,
+                                  @Nullable Font textFont) {
         boolean renderingModeCircle = (config.cellDisplayMode() == CellDisplayMode.CIRCLE)
                 || (config.cellDisplayMode() == CellDisplayMode.CIRCLE_BORDERED);
         Color strokeColor = config.cellDisplayMode().hasBorder() ? CHECKER_STROKE_COLOR : null;
@@ -337,7 +340,7 @@ public final class LabMainView
                 .coordinatesStream()
                 .forEachOrdered(coordinate ->
                         drawBaseCanvasCoordinate(basePainter, coordinate, colorModeGrayscale, renderingModeCircle,
-                                strokeColor, textColor));
+                                strokeColor, textColor, textFont));
     }
 
     private void drawBaseCanvasCoordinate(FXGridCanvasPainter basePainter,
@@ -345,15 +348,16 @@ public final class LabMainView
                                           boolean colorModeGrayscale,
                                           boolean renderingModeCircle,
                                           @Nullable Color strokeColor,
-                                          Color textColor) {
+                                          Color textColor,
+                                          @Nullable Font textFont) {
         Color color = colorModeGrayscale ? computeCheckerGrayscaleColor(coordinate) : computeCheckerColor(coordinate);
         if (renderingModeCircle) {
             basePainter.drawCellInnerCircle(coordinate, color, strokeColor, CHECKER_LINE_WIDTH, StrokeType.CENTERED);
         } else {
             basePainter.drawCell(coordinate, color, strokeColor, CHECKER_LINE_WIDTH);
         }
-        if (cellFont != null) {
-            basePainter.drawCenteredTextInCell(coordinate, coordinate.toDisplayString(), textColor, cellFont);
+        if (textFont != null) {
+            basePainter.drawCenteredTextInCell(coordinate, coordinate.toDisplayString(), textColor, textFont);
         }
     }
 
@@ -364,8 +368,12 @@ public final class LabMainView
      * @param basePainter        the painter of the base layer
      * @param colorModeGrayscale whether the colors are drawn in grayscale
      * @param textColor          the color of the variant numbers
+     * @param textFont           the font of the variant numbers, or {@code null} to draw no numbers
      */
-    private void drawPainterTest(FXGridCanvasPainter basePainter, boolean colorModeGrayscale, Color textColor) {
+    private void drawPainterTest(FXGridCanvasPainter basePainter,
+                                 boolean colorModeGrayscale,
+                                 Color textColor,
+                                 @Nullable Font textFont) {
         List<PainterTestVariant> variants = createPainterTestVariants(
                 colorModeGrayscale ? PAINTER_TEST_FILL_COLOR_GRAYSCALE : PAINTER_TEST_FILL_COLOR,
                 colorModeGrayscale ? PAINTER_TEST_STROKE_COLOR_GRAYSCALE : PAINTER_TEST_STROKE_COLOR,
@@ -374,23 +382,25 @@ public final class LabMainView
         basePainter.gridStructure()
                 .coordinatesStream()
                 .forEachOrdered(coordinate -> drawPainterTestCell(basePainter, coordinate,
-                        ((coordinate.y() * gridWidth) + coordinate.x()) % variants.size(), variants, textColor));
+                        ((coordinate.y() * gridWidth) + coordinate.x()) % variants.size(), variants, textColor,
+                        textFont));
     }
 
     private void drawPainterTestCell(FXGridCanvasPainter basePainter,
                                      GridCoordinate coordinate,
                                      int variantNumber,
                                      List<PainterTestVariant> variants,
-                                     Color textColor) {
+                                     Color textColor,
+                                     @Nullable Font textFont) {
         basePainter.drawCell(coordinate, null, PAINTER_TEST_OUTLINE_COLOR, PAINTER_TEST_OUTLINE_LINE_WIDTH);
         variants.get(variantNumber).draw(basePainter, coordinate);
-        if (cellFont != null) {
+        if (textFont != null) {
             CellDimension cellDimension = basePainter.cellDimension();
             Point2D center = GridGeometry.computeCellCenter(coordinate, cellDimension,
                     basePainter.gridStructure().cellShape());
             basePainter.drawCenteredTextAt(
                     center.add(0.0d, cellDimension.innerRadius() * PAINTER_TEST_NUMBER_OFFSET_FACTOR),
-                    String.valueOf(variantNumber), textColor, cellFont);
+                    String.valueOf(variantNumber), textColor, textFont);
         }
     }
 

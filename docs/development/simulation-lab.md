@@ -18,7 +18,8 @@ The alias `simulationlab` works as well.
 - Structure: cell shape, edge behavior, grid width and height (8 to 16 384 each, `GridSize.MAX_SIZE`), and grid model
   (see "Grid Models").
 - Layout: cell edge length (1 to 1000), cell display mode (shape or circle, each with or without border; used by the
-  checkerboard), color mode (color or grayscale), and base layer (see "Base Layers").
+  checkerboard), color mode (color or grayscale), base layer (see "Base Layers"), and cell text (a checkbox, checked by
+  default).
 - Initialization: seed, distribution of the highlighted cells (see "Distributions"), the percentage of highlighted
   cells (0 to 100 %, default 10 %), and the pattern (see "Patterns").
 - Rules: neighborhood mode.
@@ -115,6 +116,10 @@ in grayscale). It does not depend on the distribution or the model.
 The texts and numbers need the cell font, which exists only from a minimum cell size. The painter test is a visual
 check that complements `FXGridCanvasPainterTest`.
 
+The checkbox "Cell text" (`LabCellText`) switches off the coordinates of the checkerboard and the variant numbers of
+the painter test, because text is the largest drawing cost on the FX thread. The variants 25 and 26, which test the
+text methods, and the texts of the dynamic layer and the hover stay.
+
 The base layer "None" draws nothing on the canvas and grid background, so that the dynamic layer and the overlay can be
 tested alone and the duration of a start contains no drawing time.
 
@@ -172,7 +177,8 @@ before a simulation meets them. Expected limits are findings, not bugs:
   about 1 GiB with compressed references at 16 384 x 16 384, independent of the distribution; with "Sparse", the
   memory grows with the number of highlighted cells. "Random cells (shuffle)" also holds a list of all normal cells
   during the initialization, with one coordinate object per cell.
-- Drawing time: the base layer draws all cells, also those outside the canvas limit of `AbstractMainView`.
+- Drawing time: the base layer draws all cells, also those outside the canvas limit of `AbstractMainView`; the
+  checkbox "Cell text" removes its largest cost, the texts.
 - Initialization time: "Grid edge", "Pattern", the shuffle of "Random cells (shuffle)", and the allocation of the grid
   models have no cancellation check; after Cancel, they run to their end in the background, and a new start waits
   for them.
