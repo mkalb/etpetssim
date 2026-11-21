@@ -289,6 +289,20 @@ public record GridCoordinate(int x, int y) implements Comparable<GridCoordinate>
     }
 
     /**
+     * Returns a hash code that is distinct for all coordinates with {@code 0 <= x, y < 65536}, which includes all
+     * coordinates of the largest grid ({@link GridSize#MAX_SIZE}).
+     *
+     * <p>The hash code spreads the coordinates of a grid over the low bits, so that hash-based collections such as
+     * {@link java.util.HashMap} keep few collisions also on large grids.
+     *
+     * @return the hash code of this coordinate
+     */
+    @Override
+    public int hashCode() {
+        return ((x << 16) ^ y) * 0x9E37_79B1;
+    }
+
+    /**
      * Returns a short, human-readable string representation of this coordinate.
      *
      * <p>Format: {@code (x, y)}, e.g., {@code (15, 20)}. Returns {@code (illegal)} if this coordinate equals the

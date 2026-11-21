@@ -2,13 +2,30 @@ package de.mkalb.etpetssim.engine;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.BitSet;
+import java.util.HashSet;
+import java.util.Set;
+
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 final class GridCoordinateTest {
+
+    private static final int HASH_GRID_SIZE = 1_024;
+    private static final int HASH_TABLE_BITS = 20;
+
+    @Test
+    void testRecord() {
+        GridCoordinate coordinate = new GridCoordinate(3, 4);
+        assertAll(
+                () -> assertEquals(3, coordinate.x()),
+                () -> assertEquals(4, coordinate.y())
+        );
+    }
 
     @Test
     void testIsIllegal() {
@@ -238,6 +255,54 @@ final class GridCoordinateTest {
                 () -> assertTrue(new GridCoordinate(5, 9).compareTo(new GridCoordinate(5, 10)) < 0),
                 () -> assertTrue(new GridCoordinate(5, 11).compareTo(new GridCoordinate(5, 10)) > 0)
         );
+    }
+
+    @Test
+    void testHashCode() {
+        assertAll(
+                () -> assertEquals(new GridCoordinate(5, 10).hashCode(), new GridCoordinate(5, 10).hashCode()),
+                () -> assertNotEquals(new GridCoordinate(5, 10).hashCode(), new GridCoordinate(10, 5).hashCode())
+        );
+    }
+
+    @Test
+    void testHashCodeReturnsDistinctValuesForLargeGrid() {
+        Set<Integer> hashCodes = new HashSet<>();
+        for (int x = 0; x < HASH_GRID_SIZE; x++) {
+            for (int y = 0; y < HASH_GRID_SIZE; y++) {
+                hashCodes.add(new GridCoordinate(x, y).hashCode());
+            }
+        }
+        assertEquals(HASH_GRID_SIZE * HASH_GRID_SIZE, hashCodes.size());
+    }
+
+    @Test
+    void testHashCodeReturnsDistinctValuesForMaxSizeEdges() {
+        int max = GridSize.MAX_SIZE - 1;
+        Set<Integer> hashCodes = new HashSet<>();
+        for (int i = 0; i <= max; i++) {
+            hashCodes.add(new GridCoordinate(i, 0).hashCode());
+            hashCodes.add(new GridCoordinate(i, max).hashCode());
+            hashCodes.add(new GridCoordinate(0, i).hashCode());
+            hashCodes.add(new GridCoordinate(max, i).hashCode());
+        }
+        assertEquals((4 * GridSize.MAX_SIZE) - 4, hashCodes.size());
+    }
+
+    @Test
+    void testHashCodeSpreadsOverHashTableBuckets() {
+        int mask = (1 << HASH_TABLE_BITS) - 1;
+        BitSet usedBuckets = new BitSet(1 << HASH_TABLE_BITS);
+        for (int x = 0; x < HASH_GRID_SIZE; x++) {
+            for (int y = 0; y < HASH_GRID_SIZE; y++) {
+                int hashCode = new GridCoordinate(x, y).hashCode();
+                usedBuckets.set((hashCode ^ (hashCode >>> 16)) & mask);
+            }
+        }
+        // HashMap folds the upper 16 bits into the lower ones before it masks the bucket index; random hash codes
+        // use about 63 % of the buckets, the generated record hash code (31 * x + y) only about 3 %.
+        assertTrue(usedBuckets.cardinality() > (1 << (HASH_TABLE_BITS - 1)),
+                "usedBuckets=" + usedBuckets.cardinality());
     }
 
     @Test
