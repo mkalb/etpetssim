@@ -131,7 +131,7 @@ tested alone and the duration of a start contains no drawing time.
 - The step duration starts at its minimum.
 - The observation panel shows the number of highlighted and normal cells with their extrema and a chart of the
   highlighted cells.
-- In edit mode, the action "Switch Cell" switches the selected cell between normal and highlighted.
+- In edit mode, the action "Switch cell" switches the selected cell between normal and highlighted.
 
 The colored bars around the canvas come from `lab.css` and make the border regions of the canvas visible.
 
