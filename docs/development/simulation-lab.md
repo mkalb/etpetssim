@@ -41,16 +41,21 @@ default.
 
 The distribution decides which cells are highlighted at the start (`LabEntity.HIGHLIGHTED` on `NORMAL`):
 
-| Distribution        | `GridInitializers` method | Amount                                         |
-|---------------------|---------------------------|------------------------------------------------|
-| Random, exact share | `fillWithPercent`         | exactly the percentage of all cells, rounded   |
-| Random per cell     | `fillWithProbability`     | each cell independently, with the percentage   |
-| Grid edge           | `placeBorder`             | the outermost rows and columns                 |
-| Pattern             | `placePattern`            | the selected pattern at the center of the grid |
+| Distribution           | `GridInitializers` method | Amount                                         |
+|------------------------|---------------------------|------------------------------------------------|
+| Random, exact share    | `fillWithPercent`         | exactly the percentage of all cells, rounded   |
+| Random per cell        | `fillWithProbability`     | each cell independently, with the percentage   |
+| Random cells (shuffle) | `placeAtRandomCells`      | exactly the percentage of all cells, rounded   |
+| Grid edge              | `placeBorder`             | the outermost rows and columns                 |
+| Pattern                | `placePattern`            | the selected pattern at the center of the grid |
 
-The same seed gives the same cells. `placeBorder` and `placePattern` have no cancellation check; the lab uses them
-deliberately without one (`// Rule deviation (simulations.md)` in `LabSimulationManager`), so that it shows their
-behavior on large grids before a simulation uses them.
+The same seed gives the same cells. "Random, exact share" and "Random cells (shuffle)" place the same number of cells
+with different algorithms: `fillWithPercent` decides cell by cell, `placeAtRandomCells` (as in Wa-Tor, Snake, and
+Rebounding) collects all normal cells in a list, shuffles it, and highlights its first cells.
+
+`placeBorder` and `placePattern` have no cancellation check; the lab uses them deliberately without one
+(`// Rule deviation (simulations.md)` in `LabSimulationManager`), so that it shows their behavior on large grids
+before a simulation uses them.
 
 ## Patterns
 
@@ -165,10 +170,12 @@ before a simulation meets them. Expected limits are findings, not bugs:
 - Memory: the step runner keeps two grid models of up to about 268 million cells, because `SynchronousStepRunner`
   creates the second one with `copyWithDefaultEntity()`. With "Array", each model holds one reference per cell, i.e.,
   about 1 GiB with compressed references at 16 384 x 16 384, independent of the distribution; with "Sparse", the
-  memory grows with the number of highlighted cells.
+  memory grows with the number of highlighted cells. "Random cells (shuffle)" also holds a list of all normal cells
+  during the initialization, with one coordinate object per cell.
 - Drawing time: the base layer draws all cells, also those outside the canvas limit of `AbstractMainView`.
-- Initialization time: "Grid edge", "Pattern", and the allocation of the grid models have no cancellation check;
-  after Cancel, they run to their end in the background, and a new start waits for them.
+- Initialization time: "Grid edge", "Pattern", the shuffle of "Random cells (shuffle)", and the allocation of the grid
+  models have no cancellation check; after Cancel, they run to their end in the background, and a new start waits
+  for them.
 
 ## Methods Used Only by the Lab
 

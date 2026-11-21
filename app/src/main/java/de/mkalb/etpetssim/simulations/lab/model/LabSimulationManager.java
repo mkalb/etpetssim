@@ -16,6 +16,7 @@ import de.mkalb.etpetssim.simulations.core.model.AbstractSimulationManager;
 import de.mkalb.etpetssim.simulations.core.model.SimulationInitializationCancellation;
 import de.mkalb.etpetssim.simulations.lab.model.entity.LabEntity;
 
+import java.util.Collections;
 import java.util.Random;
 
 /**
@@ -100,6 +101,12 @@ public final class LabSimulationManager
                     highlightedPercent,
                     () -> LabEntity.HIGHLIGHTED,
                     LabEntity.NORMAL,
+                    random,
+                    cancellation::checkCanceled);
+            case RANDOM_CELLS -> GridInitializers.placeAtRandomCells(
+                    Collections.nCopies(Math.toIntExact(Math.round(highlightedPercent * size.area())),
+                            LabEntity.HIGHLIGHTED),
+                    entity -> entity == LabEntity.NORMAL,
                     random,
                     cancellation::checkCanceled);
             // Rule deviation (simulations.md): no cancellation check; the lab exposes initializers without one.

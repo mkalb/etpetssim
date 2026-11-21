@@ -71,13 +71,14 @@ final class LabSimulationManagerTest {
         );
     }
 
-    @Test
-    void testConstructorPlacesExactShareForRandomPercent() {
-        assertHighlightedCount(HIGHLIGHTED_COUNT, createManager(LabDistribution.RANDOM_PERCENT));
+    @ParameterizedTest
+    @EnumSource(value = LabDistribution.class, names = {"RANDOM_PERCENT", "RANDOM_CELLS"})
+    void testConstructorPlacesExactShareForExactRandomDistributions(LabDistribution distribution) {
+        assertHighlightedCount(HIGHLIGHTED_COUNT, createManager(distribution));
     }
 
     @ParameterizedTest
-    @EnumSource(value = LabDistribution.class, names = {"RANDOM_PERCENT", "RANDOM_PROBABILITY"})
+    @EnumSource(value = LabDistribution.class, names = {"RANDOM_PERCENT", "RANDOM_PROBABILITY", "RANDOM_CELLS"})
     void testConstructorIsReproducibleForRandomDistributions(LabDistribution distribution) {
         LabSimulationManager first = createManager(distribution);
         LabSimulationManager second = createManager(distribution);

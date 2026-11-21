@@ -19,6 +19,12 @@ public enum LabDistribution {
     RANDOM_PROBABILITY("labdistribution.randomprobability"),
 
     /**
+     * The configured share of the cells is highlighted exactly, at the first cells of a shuffled list of all normal
+     * cells.
+     */
+    RANDOM_CELLS("labdistribution.randomcells"),
+
+    /**
      * The outermost rows and columns of the grid are highlighted.
      */
     BORDER("labdistribution.border"),
@@ -59,7 +65,7 @@ public enum LabDistribution {
      */
     public boolean usesHighlightedPercent() {
         return switch (this) {
-            case RANDOM_PERCENT, RANDOM_PROBABILITY -> true;
+            case RANDOM_PERCENT, RANDOM_PROBABILITY, RANDOM_CELLS -> true;
             case BORDER, PATTERN -> false;
         };
     }
