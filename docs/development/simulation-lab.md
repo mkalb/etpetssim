@@ -177,8 +177,10 @@ before a simulation meets them. Expected limits are findings, not bugs:
   about 1 GiB with compressed references at 16 384 x 16 384, independent of the distribution; with "Sparse", the
   memory grows with the number of highlighted cells. "Random cells (shuffle)" also holds a list of all normal cells
   during the initialization, with one coordinate object per cell.
-- Drawing time: the base layer draws all cells, also those outside the canvas limit of `AbstractMainView`; the
-  checkbox "Cell text" removes its largest cost, the texts.
+- Drawing time: `FXGridCanvasPainter` skips the cells outside the canvas limit of `AbstractMainView`, so the drawing
+  cost grows with the canvas size; the base layer and the dynamic layer still iterate over all cells or all
+  highlighted cells, which costs time on very large grids. The checkbox "Cell text" removes the largest cost of the
+  visible cells, the texts.
 - Initialization time: "Grid edge", "Pattern", the shuffle of "Random cells (shuffle)", and the allocation of the grid
   models have no cancellation check; after Cancel, they run to their end in the background, and a new start waits
   for them.

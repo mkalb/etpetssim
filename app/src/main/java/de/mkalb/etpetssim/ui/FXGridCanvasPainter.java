@@ -21,6 +21,13 @@ import org.jspecify.annotations.Nullable;
  *
  * <p>The cell edge length given at construction defines the length of each edge of the cell
  * (TRIANGLE, SQUARE, HEXAGON) in pixels; the cell and grid dimensions are computed once from it.
+ *
+ * <p>The methods that draw at a grid coordinate skip a cell outside the canvas, so that the drawing cost depends on
+ * the canvas size instead of the grid size. The grid starts at the canvas origin, so a cell is outside the canvas if
+ * the top-left corner of its bounds lies at or beyond the right or bottom edge of the canvas at the time of the call.
+ * Partly visible cells are drawn. The check is not exact: strokes, scale factors, shapes matching the cell width,
+ * outer circles, and texts that reach from a skipped cell into the canvas are missing. The methods that take canvas
+ * positions instead of grid coordinates do not skip cells.
  */
 public final class FXGridCanvasPainter {
 
@@ -164,6 +171,7 @@ public final class FXGridCanvasPainter {
 
     /**
      * Draws a cell at the specified grid coordinate using the given fill and stroke colors.
+     * Nothing is drawn for a cell outside the canvas (see the class description).
      *
      * @param coordinate      the grid coordinate of the cell to draw
      * @param fillColor       the color used to fill the cell, or {@code null} if no fill is desired
@@ -173,6 +181,9 @@ public final class FXGridCanvasPainter {
     public void drawCell(GridCoordinate coordinate,
                          @Nullable Paint fillColor, @Nullable Paint strokeColor,
                          double strokeLineWidth) {
+        if (isCellOutsideCanvas(coordinate)) {
+            return;
+        }
         // Optimization hint: Consider using `fillRect` or `PixelWriter.setColor()` for SQUARE cells.
         double[][] cellPolygon = GridGeometry.computeCellPolygon(coordinate, cellDimension, structure.cellShape());
         drawPolygon(cellPolygon[0], cellPolygon[1], fillColor, strokeColor, strokeLineWidth);
@@ -182,6 +193,7 @@ public final class FXGridCanvasPainter {
      * Draws a cell at the specified grid coordinate, scaling its polygon shape from the center
      * by the given scale factor before rendering. This can be used to slightly enlarge or shrink
      * the cell to avoid rendering gaps between adjacent cells.
+     * Nothing is drawn for a cell outside the canvas (see the class description).
      *
      * @param coordinate      the grid coordinate of the cell to draw
      * @param fillColor       the color used to fill the cell, or {@code null} if no fill is desired
@@ -193,6 +205,9 @@ public final class FXGridCanvasPainter {
                                @Nullable Paint fillColor, @Nullable Paint strokeColor,
                                double strokeLineWidth,
                                double scale) {
+        if (isCellOutsideCanvas(coordinate)) {
+            return;
+        }
         double[][] cellPolygon = GridGeometry.computeCellPolygon(coordinate, cellDimension, structure.cellShape());
         Point2D center = GridGeometry.computeCellCenter(coordinate, cellDimension, structure.cellShape());
         double[][] scaled = scalePolygonFromCenter(cellPolygon[0], cellPolygon[1], center.getX(), center.getY(), scale);
@@ -202,6 +217,7 @@ public final class FXGridCanvasPainter {
     /**
      * Draws a partial frame (one or more connected edges) of a cell at the specified grid coordinate.
      * The frame segment is defined by the cell's shape and the given side.
+     * Nothing is drawn for a cell outside the canvas (see the class description).
      *
      * @param coordinate      the grid coordinate of the cell whose frame segment is to be drawn
      * @param strokeColor     the color used to draw the frame segment
@@ -212,6 +228,9 @@ public final class FXGridCanvasPainter {
                                      Paint strokeColor,
                                      double strokeLineWidth,
                                      CellShapeSide side) {
+        if (isCellOutsideCanvas(coordinate)) {
+            return;
+        }
         double[][] polyline = GridGeometry.computeCellFrameSegmentPolyline(coordinate, cellDimension,
                 structure.cellShape(), side);
         drawPolyline(polyline[0], polyline[1], strokeColor, strokeLineWidth);
@@ -220,6 +239,7 @@ public final class FXGridCanvasPainter {
     /**
      * Draws the bounding box of a cell at the specified grid coordinate.
      * The bounding box is defined by the cell's shape and dimensions.
+     * Nothing is drawn for a cell outside the canvas (see the class description).
      *
      * @param coordinate      the grid coordinate of the cell whose bounding box is to be drawn
      * @param fillColor       the color used to fill the bounding box, or {@code null} if no fill is desired
@@ -230,6 +250,9 @@ public final class FXGridCanvasPainter {
     public void drawCellBoundingBox(GridCoordinate coordinate,
                                     @Nullable Paint fillColor, @Nullable Paint strokeColor,
                                     double strokeLineWidth, StrokeType strokeType) {
+        if (isCellOutsideCanvas(coordinate)) {
+            return;
+        }
         Rectangle2D cellBounds = GridGeometry.computeCellBounds(coordinate, cellDimension, structure.cellShape());
         drawRectangle(cellBounds, fillColor, strokeColor, strokeLineWidth, strokeType);
     }
@@ -237,6 +260,7 @@ public final class FXGridCanvasPainter {
     /**
      * Draws the inner circle of a cell at the specified grid coordinate.
      * The inner circle is defined by the cell's inner radius and center point.
+     * Nothing is drawn for a cell outside the canvas (see the class description).
      *
      * @param coordinate      the grid coordinate of the cell whose inner circle is to be drawn
      * @param fillColor       the color used to fill the inner circle, or {@code null} if no fill is desired
@@ -247,6 +271,9 @@ public final class FXGridCanvasPainter {
     public void drawCellInnerCircle(GridCoordinate coordinate,
                                     @Nullable Paint fillColor, @Nullable Paint strokeColor,
                                     double strokeLineWidth, StrokeType strokeType) {
+        if (isCellOutsideCanvas(coordinate)) {
+            return;
+        }
         Point2D cellCenter = GridGeometry.computeCellCenter(coordinate, cellDimension, structure.cellShape());
         drawCircle(cellCenter, cellDimension.innerRadius(), fillColor, strokeColor, strokeLineWidth, strokeType);
     }
@@ -254,6 +281,7 @@ public final class FXGridCanvasPainter {
     /**
      * Draws the outer circle of a cell at the specified grid coordinate.
      * The outer circle is defined by the cell's outer radius and center point.
+     * Nothing is drawn for a cell outside the canvas (see the class description).
      *
      * @param coordinate      the grid coordinate of the cell whose outer circle is to be drawn
      * @param fillColor       the color used to fill the outer circle, or {@code null} if no fill is desired
@@ -264,6 +292,9 @@ public final class FXGridCanvasPainter {
     public void drawCellOuterCircle(GridCoordinate coordinate,
                                     @Nullable Paint fillColor, @Nullable Paint strokeColor,
                                     double strokeLineWidth, StrokeType strokeType) {
+        if (isCellOutsideCanvas(coordinate)) {
+            return;
+        }
         Point2D cellCenter = GridGeometry.computeCellCenter(coordinate, cellDimension, structure.cellShape());
         drawCircle(cellCenter, cellDimension.outerRadius(), fillColor, strokeColor, strokeLineWidth, strokeType);
     }
@@ -271,6 +302,7 @@ public final class FXGridCanvasPainter {
     /**
      * Draws a triangle on the canvas at the specified grid coordinate.
      * The triangle is defined by its edge length and is drawn with optional fill and stroke properties.
+     * Nothing is drawn for a cell outside the canvas (see the class description).
      *
      * @param coordinate         the grid coordinate where the triangle will be drawn
      * @param triangleEdgeLength the length of each edge of the triangle in pixels
@@ -284,6 +316,9 @@ public final class FXGridCanvasPainter {
                              @Nullable Paint fillColor, @Nullable Paint strokeColor,
                              double strokeLineWidth) {
         Point2D cellTopLeft = GridGeometry.toCanvasPosition(coordinate, cellDimension, structure.cellShape());
+        if (isOutsideCanvas(cellTopLeft)) {
+            return;
+        }
         CellDimension triangleCellDimension = GridGeometry.computeCellDimension(triangleEdgeLength, CellShape.TRIANGLE);
         double[][] trianglePoints = GridGeometry.computeTrianglePolygon(cellTopLeft, triangleCellDimension,
                 coordinate.isTriangleCellPointingDown());
@@ -296,6 +331,7 @@ public final class FXGridCanvasPainter {
      * The triangle is drawn with optional fill and stroke properties.
      * Nothing is drawn if the converted edge length is outside
      * [{@link GridGeometry#MIN_EDGE_LENGTH}, {@link GridGeometry#MAX_EDGE_LENGTH}].
+     * Nothing is drawn for a cell outside the canvas (see the class description).
      *
      * @param coordinate      the grid coordinate where the triangle will be drawn
      * @param fillColor       the color used to fill the triangle, or {@code null} if no fill is desired
@@ -315,6 +351,7 @@ public final class FXGridCanvasPainter {
     /**
      * Draws a hexagon on the canvas at the specified grid coordinate.
      * The hexagon is defined by its edge length and is drawn with optional fill and stroke properties.
+     * Nothing is drawn for a cell outside the canvas (see the class description).
      *
      * @param coordinate        the grid coordinate where the hexagon will be drawn
      * @param hexagonEdgeLength the length of each edge of the hexagon in pixels
@@ -328,6 +365,9 @@ public final class FXGridCanvasPainter {
                             @Nullable Paint fillColor, @Nullable Paint strokeColor,
                             double strokeLineWidth) {
         Point2D cellTopLeft = GridGeometry.toCanvasPosition(coordinate, cellDimension, structure.cellShape());
+        if (isOutsideCanvas(cellTopLeft)) {
+            return;
+        }
         CellDimension hexagonCellDimension = GridGeometry.computeCellDimension(hexagonEdgeLength, CellShape.HEXAGON);
         double[][] hexagonPoints = GridGeometry.computeHexagonPolygon(cellTopLeft, hexagonCellDimension);
         drawPolygon(hexagonPoints[0], hexagonPoints[1], fillColor, strokeColor, strokeLineWidth);
@@ -339,6 +379,7 @@ public final class FXGridCanvasPainter {
      * The hexagon is drawn with optional fill and stroke properties.
      * Nothing is drawn if the converted edge length is outside
      * [{@link GridGeometry#MIN_EDGE_LENGTH}, {@link GridGeometry#MAX_EDGE_LENGTH}].
+     * Nothing is drawn for a cell outside the canvas (see the class description).
      *
      * @param coordinate      the grid coordinate where the hexagon will be drawn
      * @param fillColor       the color used to fill the hexagon, or {@code null} if no fill is desired
@@ -480,6 +521,7 @@ public final class FXGridCanvasPainter {
 
     /**
      * Draws text centered within the specified cell.
+     * Nothing is drawn and the text is not measured for a cell outside the canvas (see the class description).
      *
      * @param coordinate the grid coordinate of the cell
      * @param text       the text to draw
@@ -487,6 +529,9 @@ public final class FXGridCanvasPainter {
      * @param font       the font used for rendering the text
      */
     public void drawCenteredTextInCell(GridCoordinate coordinate, String text, Paint textColor, Font font) {
+        if (isCellOutsideCanvas(coordinate)) {
+            return;
+        }
         Point2D center = GridGeometry.computeCellCenter(coordinate, cellDimension, structure.cellShape());
         drawCenteredTextAt(center, text, textColor, font);
     }
@@ -598,6 +643,18 @@ public final class FXGridCanvasPainter {
     }
 
     /**
+     * Checks whether the cell at the given grid coordinate lies outside the canvas, as the class description defines.
+     * The current canvas size is used, because the canvas may be resized after the painter has been created.
+     *
+     * @param coordinate the grid coordinate of the cell
+     * @return {@code true} if the top-left corner of the cell bounds lies at or beyond the right or bottom edge of the
+     * canvas, {@code false} otherwise
+     */
+    boolean isCellOutsideCanvas(GridCoordinate coordinate) {
+        return isOutsideCanvas(GridGeometry.toCanvasPosition(coordinate, cellDimension, structure.cellShape()));
+    }
+
+    /**
      * Computes the width and height of the given text when rendered with the specified font.
      * It is not thread-safe and should not be called from multiple threads simultaneously.
      *
@@ -643,6 +700,10 @@ public final class FXGridCanvasPainter {
     @SuppressWarnings("NumericCastThatLosesPrecision")
     private boolean isOnCanvas(int x, int y) {
         return (x >= 0) && (x < (int) canvas.getWidth()) && (y >= 0) && (y < (int) canvas.getHeight());
+    }
+
+    private boolean isOutsideCanvas(Point2D cellTopLeft) {
+        return (cellTopLeft.getX() >= canvas.getWidth()) || (cellTopLeft.getY() >= canvas.getHeight());
     }
 
 }

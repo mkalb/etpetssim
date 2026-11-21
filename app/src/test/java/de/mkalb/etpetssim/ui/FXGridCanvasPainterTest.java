@@ -107,6 +107,13 @@ final class FXGridCanvasPainterTest {
         return false;
     }
 
+    private static boolean isCellOutsideCanvasWithSize(FXGridCanvasPainter painter, GridCoordinate coordinate,
+                                                       double canvasWidth, double canvasHeight) {
+        painter.canvas().setWidth(canvasWidth);
+        painter.canvas().setHeight(canvasHeight);
+        return painter.isCellOutsideCanvas(coordinate);
+    }
+
     private static void assertColorEquals(Color expected, Color actual) {
         assertAll(
                 () -> assertEquals(expected.getRed(), actual.getRed(), 0.000_001d),
@@ -260,6 +267,22 @@ final class FXGridCanvasPainterTest {
             assertAll(
                     () -> assertEquals(Color.RED, snapshotColorAt(canvas, centerX, centerY)),
                     () -> assertFalse(isPaintedAt(canvas, 0, 0))
+            );
+        });
+    }
+
+    @Test
+    void testDrawCellDrawsPartlyVisibleCellsAtCanvasEdges() {
+        FXTestSupport.runAndWait(() -> {
+            Canvas canvas = new Canvas(35, 35);
+            FXGridCanvasPainter painter = createPainter(canvas);
+
+            painter.drawCell(new GridCoordinate(3, 0), Color.RED, null, 0.0d);
+            painter.drawCell(new GridCoordinate(0, 3), Color.BLUE, null, 0.0d);
+
+            assertAll(
+                    () -> assertEquals(Color.RED, snapshotColorAt(canvas, 33, 5)),
+                    () -> assertEquals(Color.BLUE, snapshotColorAt(canvas, 5, 33))
             );
         });
     }
@@ -646,6 +669,29 @@ final class FXGridCanvasPainterTest {
                     Color.BLACK, 4.0d);
 
             assertTrue(snapshotColorAt(canvas, 30, 30).getOpacity() > 0.0d);
+        });
+    }
+
+    @ParameterizedTest
+    @EnumSource(CellShape.class)
+    void testIsCellOutsideCanvas(CellShape shape) {
+        FXTestSupport.runAndWait(() -> {
+            Canvas canvas = new Canvas(CANVAS_SIZE, CANVAS_SIZE);
+            FXGridCanvasPainter painter = new FXGridCanvasPainter(canvas, createStructure(shape), EDGE_LENGTH);
+            GridCoordinate coordinate = new GridCoordinate(3, 3);
+            Rectangle2D bounds = GridGeometry.computeCellBounds(coordinate, painter.cellDimension(), shape);
+            double left = bounds.getMinX();
+            double top = bounds.getMinY();
+
+            assertAll(
+                    () -> assertFalse(painter.isCellOutsideCanvas(GridCoordinate.ORIGIN)),
+                    () -> assertFalse(painter.isCellOutsideCanvas(coordinate)),
+                    () -> assertFalse(isCellOutsideCanvasWithSize(painter, coordinate, left + 0.5d, top + 0.5d)),
+                    () -> assertTrue(isCellOutsideCanvasWithSize(painter, coordinate, left, CANVAS_SIZE)),
+                    () -> assertTrue(isCellOutsideCanvasWithSize(painter, coordinate, CANVAS_SIZE, top)),
+                    () -> assertTrue(isCellOutsideCanvasWithSize(painter, coordinate, left - 0.5d, CANVAS_SIZE)),
+                    () -> assertTrue(isCellOutsideCanvasWithSize(painter, coordinate, CANVAS_SIZE, top - 0.5d))
+            );
         });
     }
 
