@@ -278,6 +278,9 @@ public final class LabMainView
         switch (config.baseLayer()) {
             case CHECKERBOARD -> drawCheckerboard(basePainter, config, colorModeGrayscale, textColor);
             case PAINTER_TEST -> drawPainterTest(basePainter, colorModeGrayscale, textColor);
+            case NONE -> {
+                // nothing to render
+            }
         }
     }
 

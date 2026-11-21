@@ -98,6 +98,9 @@ in grayscale). It does not depend on the distribution or the model.
 The texts and numbers need the cell font, which exists only from a minimum cell size. The painter test is a visual
 check that complements `FXGridCanvasPainterTest`.
 
+The base layer "None" draws nothing on the canvas and grid background, so that the dynamic layer and the overlay can be
+tested alone.
+
 ## Simulation
 
 - Start creates the grid. The dynamic layer fills the highlighted cells in translucent red.

@@ -14,7 +14,12 @@ public enum LabBaseLayer {
      * A numbered list of drawing variants of the canvas painter; cell <i>i</i> in row-major order shows variant
      * <i>i</i> modulo the number of variants.
      */
-    PAINTER_TEST("labbaselayer.paintertest");
+    PAINTER_TEST("labbaselayer.paintertest"),
+
+    /**
+     * Nothing; the base layer shows only the canvas and grid background.
+     */
+    NONE("labbaselayer.none");
 
     private final String resourceKey;
 
