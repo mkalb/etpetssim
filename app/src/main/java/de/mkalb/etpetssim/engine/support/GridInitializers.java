@@ -147,12 +147,15 @@ public final class GridInitializers {
     public static <ENT extends GridEntity> GridInitializer<ENT> placeBorder(ENT entity) {
         return model -> {
             GridSize size = model.structure().size();
-            for (GridCoordinate coordinate : model.structure().coordinatesList()) {
-                int x = coordinate.x();
-                int y = coordinate.y();
-                if ((x == 0) || (y == 0) || (x == (size.width() - 1)) || (y == (size.height() - 1))) {
-                    model.setEntity(coordinate, entity);
-                }
+            int lastX = size.width() - 1;
+            int lastY = size.height() - 1;
+            for (int x = 0; x <= lastX; x++) {
+                model.setEntity(new GridCoordinate(x, 0), entity);
+                model.setEntity(new GridCoordinate(x, lastY), entity);
+            }
+            for (int y = 1; y < lastY; y++) {
+                model.setEntity(new GridCoordinate(0, y), entity);
+                model.setEntity(new GridCoordinate(lastX, y), entity);
             }
         };
     }

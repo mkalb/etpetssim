@@ -240,17 +240,19 @@ final class GridInitializersTest {
 
     @Test
     void testPlaceBorder() {
-        SparseGridModel<TestEntity> model = createSmallModel();
+        SparseGridModel<TestEntity> model = createModel(8, 10);
 
         GridInitializers.placeBorder(TestEntity.FILLED).initialize(model);
 
         assertAll(
-                () -> assertEquals(28, count(model, TestEntity.FILLED)),
+                () -> assertEquals(32, count(model, TestEntity.FILLED)),
                 () -> assertEquals(TestEntity.FILLED, model.getEntity(new GridCoordinate(0, 0))),
-                () -> assertEquals(TestEntity.FILLED, model.getEntity(new GridCoordinate(7, 7))),
+                () -> assertEquals(TestEntity.FILLED, model.getEntity(new GridCoordinate(7, 9))),
                 () -> assertEquals(TestEntity.FILLED, model.getEntity(new GridCoordinate(7, 3))),
+                () -> assertEquals(TestEntity.FILLED, model.getEntity(new GridCoordinate(3, 9))),
+                () -> assertEquals(TestEntity.FILLED, model.getEntity(new GridCoordinate(0, 8))),
                 () -> assertEquals(TestEntity.EMPTY, model.getEntity(new GridCoordinate(1, 1))),
-                () -> assertEquals(TestEntity.EMPTY, model.getEntity(new GridCoordinate(6, 6)))
+                () -> assertEquals(TestEntity.EMPTY, model.getEntity(new GridCoordinate(6, 8)))
         );
     }
 
