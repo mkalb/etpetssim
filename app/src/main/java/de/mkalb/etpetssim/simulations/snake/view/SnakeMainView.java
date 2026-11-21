@@ -4,6 +4,7 @@ import de.mkalb.etpetssim.core.AppLocalization;
 import de.mkalb.etpetssim.engine.GridCoordinate;
 import de.mkalb.etpetssim.engine.model.GridCell;
 import de.mkalb.etpetssim.engine.model.WritableGridModel;
+import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptor;
 import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorRegistry;
 import de.mkalb.etpetssim.simulations.core.view.AbstractMainView;
 import de.mkalb.etpetssim.simulations.core.view.CanvasPainters;
@@ -87,6 +88,11 @@ public final class SnakeMainView
     private static final double SNAKE_SEGMENT_STROKE_LINE_WIDTH = 1.0d;
     private static final double SNAKE_HEAD_STROKE_LINE_WIDTH = 2.0d;
 
+    // Small cells skip details that would hide the fill or exceed the cell.
+    private static final double FOOD_STROKE_INNER_RADIUS_MIN = 2.0d * FOOD_STROKE_LINE_WIDTH;
+    private static final double SNAKE_HEAD_CIRCLE_INNER_RADIUS_MIN = 2.0d;
+    private static final double SNAKE_SEGMENT_STROKE_EDGE_LENGTH_MIN = 3.0d;
+
     private static final Color SELECTED_STROKE_COLOR = Color.PINK;
     private static final double SELECTED_STROKE_LINE_WIDTH = 1.5d;
     private static final double EDIT_OPTION_BOX_SPACING = 6.0d;
@@ -147,6 +153,17 @@ public final class SnakeMainView
         return Color.hsb(deadHue, DEAD_SATURATION, aliveColor.getBrightness() * brightnessFactor);
     }
 
+    private static void drawFood(FXGridCanvasPainter painter, CellDimension cellDimension,
+                                 GridCoordinate coordinate, GridEntityDescriptor foodDescriptor) {
+        if (isInnerCircleVisible(cellDimension)) {
+            painter.drawCellInnerCircle(coordinate, foodDescriptor.color(),
+                    (cellDimension.innerRadius() > FOOD_STROKE_INNER_RADIUS_MIN) ? foodDescriptor.borderColor() : null,
+                    FOOD_STROKE_LINE_WIDTH, StrokeType.INSIDE);
+        } else {
+            painter.drawCell(coordinate, foodDescriptor.color(), null, NO_STROKE_LINE_WIDTH);
+        }
+    }
+
     @Override
     protected void initializeSimulation(CanvasPainters painters, SnakeConfig config, CellDimension cellDimension) {
         Color backgroundColor = entityDescriptorRegistry
@@ -185,18 +202,17 @@ public final class SnakeMainView
         var wallDescriptor = entityDescriptorRegistry.requireByDescriptorId(SnakeEntity.DESCRIPTOR_ID_WALL);
         var growthFoodDescriptor = entityDescriptorRegistry
                 .requireByDescriptorId(SnakeEntity.DESCRIPTOR_ID_GROWTH_FOOD);
+        CellDimension cellDimension = painters.dynamic().cellDimension();
 
         currentGridModel.filteredCoordinates(SnakeEntity::isWall)
                 .forEach(coordinate ->
                         painters.dynamic().drawCell(coordinate, wallDescriptor.color(), wallDescriptor.borderColor(),
                                 WALL_STROKE_LINE_WIDTH));
         currentGridModel.filteredCoordinates(SnakeEntity::isFood)
-                .forEach(coordinate ->
-                        painters.dynamic().drawCellInnerCircle(coordinate, growthFoodDescriptor.color(),
-                                growthFoodDescriptor.borderColor(), FOOD_STROKE_LINE_WIDTH, StrokeType.INSIDE));
+                .forEach(coordinate -> drawFood(painters.dynamic(), cellDimension, coordinate, growthFoodDescriptor));
         for (var cell : currentGridModel.filteredCells(SnakeEntity::isAgent)) {
             if (cell.entity() instanceof SnakeHead head) {
-                drawSnake(painters.dynamic(), cell.coordinate(), head);
+                drawSnake(painters.dynamic(), cellDimension, cell.coordinate(), head);
             }
         }
     }
@@ -270,13 +286,20 @@ public final class SnakeMainView
         return optionPanel;
     }
 
-    private void drawSnake(FXGridCanvasPainter painter, GridCoordinate headCoordinate, SnakeHead head) {
+    private void drawSnake(FXGridCanvasPainter painter, CellDimension cellDimension,
+                           GridCoordinate headCoordinate, SnakeHead head) {
         SnakeColors colors = resolveSnakeColors(head);
+        Color segmentStrokeColor = (cellDimension.edgeLength() >= SNAKE_SEGMENT_STROKE_EDGE_LENGTH_MIN)
+                ? colors.segmentBorder() : null;
         for (GridCoordinate coordinate : head.currentSegments()) {
-            painter.drawCell(coordinate, colors.segment(), colors.segmentBorder(), SNAKE_SEGMENT_STROKE_LINE_WIDTH);
+            painter.drawCell(coordinate, colors.segment(), segmentStrokeColor, SNAKE_SEGMENT_STROKE_LINE_WIDTH);
         }
-        painter.drawCellInnerCircle(headCoordinate, colors.head(), colors.headBorder(), SNAKE_HEAD_STROKE_LINE_WIDTH,
-                StrokeType.OUTSIDE);
+        if (cellDimension.innerRadius() > SNAKE_HEAD_CIRCLE_INNER_RADIUS_MIN) {
+            painter.drawCellInnerCircle(headCoordinate, colors.head(), colors.headBorder(),
+                    SNAKE_HEAD_STROKE_LINE_WIDTH, StrokeType.OUTSIDE);
+        } else {
+            painter.drawCell(headCoordinate, colors.head(), null, NO_STROKE_LINE_WIDTH);
+        }
     }
 
     private SnakeColors resolveSnakeColors(SnakeHead head) {

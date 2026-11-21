@@ -15,6 +15,7 @@ import de.mkalb.etpetssim.simulations.core.SimulationShutdownHandle;
 import de.mkalb.etpetssim.simulations.core.model.AbstractSimulationManager;
 import de.mkalb.etpetssim.simulations.core.model.SimulationConfig;
 import de.mkalb.etpetssim.simulations.core.model.SimulationStatistics;
+import de.mkalb.etpetssim.simulations.core.shared.CellDisplayMode;
 import de.mkalb.etpetssim.simulations.core.shared.SimulationUserActionContext;
 import de.mkalb.etpetssim.simulations.core.viewmodel.MainViewModel;
 import de.mkalb.etpetssim.simulations.core.viewmodel.SimulationNotificationType;
@@ -85,7 +86,8 @@ public abstract class AbstractMainView<
     private static final String MAIN_FONT_FAMILY = "Verdana";
     private static final String FALLBACK_FONT_FAMILY = "System";
     private static final double MIN_CELL_FONT_SIZE = 7.0d;
-    private static final double MIN_EMOJI_FONT_SIZE = 3.0d;
+    private static final double MIN_EMOJI_FONT_SIZE = 5.0d;
+    private static final double MIN_CIRCLE_INNER_RADIUS = 1.0d;
     private static final double CENTER_SPLIT_PANE_DIVIDER_POSITION = 0.65d;
     private static final Color SKIP_OVERLAY_TEXT_COLOR = FXPaintFactory.adjustColorAlpha(FXPaintFactory.BORDER_COLOR,
             0.95);
@@ -160,6 +162,17 @@ public abstract class AbstractMainView<
             return NO_STROKE_LINE_WIDTH;
         }
         return Math.log(cellDimension.innerRadius());
+    }
+
+    /**
+     * Checks whether the inner circle of a cell is large enough to show an entity visibly; otherwise, the entity should
+     * fill the whole cell.
+     *
+     * @param cellDimension the dimension of the cells
+     * @return {@code true} if the inner radius is at least 1 pixel
+     */
+    protected static boolean isInnerCircleVisible(CellDimension cellDimension) {
+        return cellDimension.innerRadius() >= MIN_CIRCLE_INNER_RADIUS;
     }
 
     private static double computeCellFontSize(CellDimension cellDimension, CellShape cellShape) {
@@ -300,6 +313,31 @@ public abstract class AbstractMainView<
             return null;
         }
         return FXPaintFactory.computeBrightnessVariantsMap(baseColor, min, max, groupCount, maxFactorDelta);
+    }
+
+    /**
+     * Resolves the cell display mode that keeps the entities visible at the current cell size.
+     *
+     * <p>{@link CellDisplayMode#EMOJI} falls back to {@link CellDisplayMode#CIRCLE} when {@link #cellEmojiFont} is
+     * {@code null}. The circle modes fall back to the matching shape modes when the inner circle of a cell is too small
+     * to be visible. Must be called after the painters are created, e.g., in {@code initializeSimulation(..)}.
+     *
+     * @param cellDisplayMode the cell display mode of the config
+     * @param cellDimension   the dimension of the cells
+     * @return the cell display mode to draw with; {@link CellDisplayMode#EMOJI} only if {@link #cellEmojiFont} is set
+     */
+    protected final CellDisplayMode resolveCellDisplayMode(CellDisplayMode cellDisplayMode,
+                                                           CellDimension cellDimension) {
+        CellDisplayMode mode = ((cellDisplayMode == CellDisplayMode.EMOJI) && (cellEmojiFont == null))
+                ? CellDisplayMode.CIRCLE : cellDisplayMode;
+        if (isInnerCircleVisible(cellDimension)) {
+            return mode;
+        }
+        return switch (mode) {
+            case CIRCLE -> CellDisplayMode.SHAPE;
+            case CIRCLE_BORDERED -> CellDisplayMode.SHAPE_BORDERED;
+            case SHAPE, SHAPE_BORDERED, EMOJI -> mode;
+        };
     }
 
     protected abstract void handleSelectedGridCellChanged(FXGridCanvasPainter painter,

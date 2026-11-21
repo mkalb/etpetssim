@@ -20,6 +20,7 @@ import de.mkalb.etpetssim.simulations.conway.view.ConwayConfigView;
 import de.mkalb.etpetssim.simulations.conway.view.ConwayObservationView;
 import de.mkalb.etpetssim.simulations.conway.viewmodel.ConwayConfigViewModel;
 import de.mkalb.etpetssim.simulations.core.SimulationShutdownHandle;
+import de.mkalb.etpetssim.simulations.core.shared.CellDisplayMode;
 import de.mkalb.etpetssim.simulations.core.viewmodel.ControlViewModel;
 import de.mkalb.etpetssim.simulations.core.viewmodel.MainViewModel;
 import de.mkalb.etpetssim.simulations.core.viewmodel.ObservationViewModel;
@@ -47,6 +48,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 import org.jspecify.annotations.NonNull;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -141,6 +143,21 @@ final class AbstractMainViewTest {
         CellDimension cellDimension = GridGeometry.computeCellDimension(edgeLength, CellShape.SQUARE);
 
         assertEquals(expectedLineWidth, AbstractMainView.computeStrokeLineWidth(cellDimension), 1.0e-12);
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+            "TRIANGLE, 3.0, false",
+            "TRIANGLE, 4.0, true",
+            "SQUARE, 1.0, false",
+            "SQUARE, 2.0, true",
+            "HEXAGON, 1.0, false",
+            "HEXAGON, 2.0, true"
+    })
+    void testIsInnerCircleVisible(CellShape cellShape, double edgeLength, boolean expectedVisible) {
+        CellDimension cellDimension = GridGeometry.computeCellDimension(edgeLength, cellShape);
+
+        assertEquals(expectedVisible, AbstractMainView.isInnerCircleVisible(cellDimension));
     }
 
     @Test
@@ -239,6 +256,42 @@ final class AbstractMainViewTest {
                             view.computeBrightnessVariantsMap(createDescriptor(Color.RED), 0, 10, 5, 0.5d)),
                     () -> assertNull(view.computeBrightnessVariantsMap(createDescriptor(null), 0, 10, 5, 0.5d))
             );
+            view.shutdownSimulation();
+        });
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+            "SHAPE, 2.0, SHAPE",
+            "SHAPE_BORDERED, 2.0, SHAPE_BORDERED",
+            "CIRCLE, 2.0, CIRCLE",
+            "CIRCLE_BORDERED, 2.0, CIRCLE_BORDERED",
+            "EMOJI, 2.0, CIRCLE",
+            "SHAPE, 1.0, SHAPE",
+            "SHAPE_BORDERED, 1.0, SHAPE_BORDERED",
+            "CIRCLE, 1.0, SHAPE",
+            "CIRCLE_BORDERED, 1.0, SHAPE_BORDERED",
+            "EMOJI, 1.0, SHAPE"
+    })
+    void testResolveCellDisplayModeWithoutEmojiFont(CellDisplayMode cellDisplayMode, double edgeLength,
+                                                    CellDisplayMode expectedMode) {
+        CellDimension cellDimension = GridGeometry.computeCellDimension(edgeLength, CellShape.SQUARE);
+        FXTestSupport.runAndWait(() -> {
+            AbstractMainView<?, ?, ?, ?, ?, ?, ?, ?> view = createMainView();
+
+            assertEquals(expectedMode, view.resolveCellDisplayMode(cellDisplayMode, cellDimension));
+            view.shutdownSimulation();
+        });
+    }
+
+    @Test
+    void testResolveCellDisplayModeKeepsEmojiWithEmojiFont() {
+        CellDimension cellDimension = GridGeometry.computeCellDimension(1.0d, CellShape.SQUARE);
+        FXTestSupport.runAndWait(() -> {
+            AbstractMainView<?, ?, ?, ?, ?, ?, ?, ?> view = createMainView();
+            view.cellEmojiFont = Font.getDefault();
+
+            assertEquals(CellDisplayMode.EMOJI, view.resolveCellDisplayMode(CellDisplayMode.EMOJI, cellDimension));
             view.shutdownSimulation();
         });
     }

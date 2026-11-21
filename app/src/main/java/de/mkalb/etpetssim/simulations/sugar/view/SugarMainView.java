@@ -125,26 +125,36 @@ public final class SugarMainView
                         null,
                         NO_STROKE_LINE_WIDTH);
 
-        cellAgentDrawer = (descriptor, painter, cell, stepCount) -> {
-            if ((stepCount > 0)
-                    && (cell.entity() instanceof Agent agent)
-                    && (agent.stepIndexOfSpawn() == (stepCount - 1))) {
-                // draw newly spawned agents with a white border (not for stepCount == 0, as all agents are new then)
-                painter.drawCellInnerCircle(
-                        cell.coordinate(),
-                        resolveAgentFillColor(descriptor, cell.entity()),
-                        Color.WHITE,
-                        strokeLineWidth,
-                        StrokeType.CENTERED);
-            } else {
-                painter.drawCellInnerCircle(
-                        cell.coordinate(),
-                        resolveAgentFillColor(descriptor, cell.entity()),
-                        null,
-                        NO_STROKE_LINE_WIDTH,
-                        StrokeType.CENTERED);
-            }
-        };
+        if (isInnerCircleVisible(cellDimension)) {
+            cellAgentDrawer = (descriptor, painter, cell, stepCount) -> {
+                if ((stepCount > 0)
+                        && (cell.entity() instanceof Agent agent)
+                        && (agent.stepIndexOfSpawn() == (stepCount - 1))) {
+                    // draw newly spawned agents with a white border
+                    // (not for stepCount == 0, as all agents are new then)
+                    painter.drawCellInnerCircle(
+                            cell.coordinate(),
+                            resolveAgentFillColor(descriptor, cell.entity()),
+                            Color.WHITE,
+                            strokeLineWidth,
+                            StrokeType.CENTERED);
+                } else {
+                    painter.drawCellInnerCircle(
+                            cell.coordinate(),
+                            resolveAgentFillColor(descriptor, cell.entity()),
+                            null,
+                            NO_STROKE_LINE_WIDTH,
+                            StrokeType.CENTERED);
+                }
+            };
+        } else {
+            cellAgentDrawer = (descriptor, painter, cell, _) ->
+                    painter.drawCell(
+                            cell.coordinate(),
+                            resolveAgentFillColor(descriptor, cell.entity()),
+                            null,
+                            NO_STROKE_LINE_WIDTH);
+        }
     }
 
     @Override

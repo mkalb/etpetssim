@@ -514,7 +514,7 @@ public final class FXGridCanvasPainter {
     /**
      * Draws a circle on the canvas with optional fill and stroke properties.
      * The stroke can be adjusted to be inside, outside, or centered relative to the circle's outline.
-     * An inside stroke at least as wide as the diameter is not drawn.
+     * An inside stroke at least as wide as the diameter is not drawn, and the fill then keeps the full diameter.
      *
      * @param center          the center point of the circle
      * @param radius          the radius of the circle in pixels
@@ -527,7 +527,12 @@ public final class FXGridCanvasPainter {
                            @Nullable Paint fillColor, @Nullable Paint strokeColor,
                            double strokeLineWidth, StrokeType strokeType) {
         if (radius > 0.0d) {
-            boolean hasStroke = (strokeColor != null) && (strokeLineWidth > 0.0d);
+            double adjustedRadius = switch (strokeType) {
+                case INSIDE -> radius - (strokeLineWidth / 2.0d);
+                case OUTSIDE -> radius + (strokeLineWidth / 2.0d);
+                case CENTERED -> radius;
+            };
+            boolean hasStroke = (strokeColor != null) && (strokeLineWidth > 0.0d) && (adjustedRadius > 0.0d);
 
             if (fillColor != null) {
                 double diameter = radius * 2;
@@ -554,20 +559,12 @@ public final class FXGridCanvasPainter {
             }
 
             if (hasStroke) {
-                double adjustedRadius = switch (strokeType) {
-                    case INSIDE -> radius - (strokeLineWidth / 2.0d);
-                    case OUTSIDE -> radius + (strokeLineWidth / 2.0d);
-                    case CENTERED -> radius;
-                };
-
-                if (adjustedRadius > 0.0d) {
-                    double strokeDiameter = adjustedRadius * 2;
-                    double strokeX = center.getX() - adjustedRadius;
-                    double strokeY = center.getY() - adjustedRadius;
-                    graphicsContext2D.setStroke(strokeColor);
-                    graphicsContext2D.setLineWidth(strokeLineWidth);
-                    graphicsContext2D.strokeOval(strokeX, strokeY, strokeDiameter, strokeDiameter);
-                }
+                double strokeDiameter = adjustedRadius * 2;
+                double strokeX = center.getX() - adjustedRadius;
+                double strokeY = center.getY() - adjustedRadius;
+                graphicsContext2D.setStroke(strokeColor);
+                graphicsContext2D.setLineWidth(strokeLineWidth);
+                graphicsContext2D.strokeOval(strokeX, strokeY, strokeDiameter, strokeDiameter);
             }
         }
     }

@@ -30,6 +30,7 @@ import org.jspecify.annotations.Nullable;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Main view of Wa-Tor.
@@ -105,7 +106,7 @@ public final class WatorMainView
 
         double strokeLineWidth = computeStrokeLineWidth(cellDimension);
 
-        cellDrawer = switch (config.cellDisplayMode()) {
+        cellDrawer = switch (resolveCellDisplayMode(config.cellDisplayMode(), cellDimension)) {
             case CellDisplayMode.SHAPE -> (descriptor, painter, cell, stepCount) ->
                     painter.drawCell(
                             cell.coordinate(),
@@ -133,16 +134,7 @@ public final class WatorMainView
                             strokeLineWidth,
                             StrokeType.INSIDE);
             case CellDisplayMode.EMOJI -> {
-                Font emojiFont = cellEmojiFont;
-                if (emojiFont == null) {
-                    yield (descriptor, painter, cell, stepCount) ->
-                            painter.drawCellInnerCircle(
-                                    cell.coordinate(),
-                                    resolveEntityFillColor(descriptor, cell.entity(), stepCount),
-                                    null,
-                                    NO_STROKE_LINE_WIDTH,
-                                    StrokeType.INSIDE);
-                }
+                Font emojiFont = Objects.requireNonNull(cellEmojiFont);
                 yield (descriptor, painter, cell, stepCount) ->
                         painter.drawCenteredTextInCell(
                                 cell.coordinate(),

@@ -25,6 +25,7 @@ import javafx.scene.text.Font;
 import org.jspecify.annotations.Nullable;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Consumer;
 
 /**
@@ -73,7 +74,7 @@ public final class ForestMainView
 
         double strokeLineWidth = computeStrokeLineWidth(cellDimension);
 
-        cellDrawer = switch (config.cellDisplayMode()) {
+        cellDrawer = switch (resolveCellDisplayMode(config.cellDisplayMode(), cellDimension)) {
             case CellDisplayMode.SHAPE -> (descriptor, painter, cell, _) ->
                     painter.drawCell(
                             cell.coordinate(),
@@ -101,16 +102,7 @@ public final class ForestMainView
                             strokeLineWidth,
                             StrokeType.INSIDE);
             case CellDisplayMode.EMOJI -> {
-                Font emojiFont = cellEmojiFont;
-                if (emojiFont == null) {
-                    yield (descriptor, painter, cell, _) ->
-                            painter.drawCellInnerCircle(
-                                    cell.coordinate(),
-                                    descriptor.color(),
-                                    null,
-                                    NO_STROKE_LINE_WIDTH,
-                                    StrokeType.INSIDE);
-                }
+                Font emojiFont = Objects.requireNonNull(cellEmojiFont);
                 yield (descriptor, painter, cell, _) ->
                         painter.drawCenteredTextInCell(
                                 cell.coordinate(),

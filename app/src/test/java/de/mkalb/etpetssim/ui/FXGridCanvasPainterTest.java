@@ -625,6 +625,18 @@ final class FXGridCanvasPainterTest {
     }
 
     @Test
+    void testDrawCircleKeepsFillDiameterWhenInsideStrokeIsSkipped() {
+        FXTestSupport.runAndWait(() -> {
+            Canvas canvas = new Canvas(CANVAS_SIZE, CANVAS_SIZE);
+            FXGridCanvasPainter painter = createPainter(canvas);
+
+            painter.drawCircle(new Point2D(60, 60), 10.0d, Color.GREEN, Color.RED, 20.0d, StrokeType.INSIDE);
+
+            assertTrue(isPaintedAt(canvas, 69, 60));
+        });
+    }
+
+    @Test
     void testDrawCenteredTextWithBackgroundAt() {
         FXTestSupport.runAndWait(() -> {
             Canvas canvas = new Canvas(CANVAS_SIZE, CANVAS_SIZE);

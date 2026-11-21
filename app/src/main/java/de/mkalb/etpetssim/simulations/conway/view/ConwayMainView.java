@@ -103,7 +103,7 @@ public final class ConwayMainView
 
         double strokeLineWidth = computeStrokeLineWidth(cellDimension);
 
-        coordinateDrawer = switch (config.cellDisplayMode()) {
+        coordinateDrawer = switch (resolveCellDisplayMode(config.cellDisplayMode(), cellDimension)) {
             case SHAPE -> (painter, coordinate, _) ->
                     painter.drawCell(
                             coordinate,
