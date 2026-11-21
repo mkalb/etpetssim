@@ -13,8 +13,7 @@ import org.jspecify.annotations.Nullable;
 public enum EntityDescriptors implements SpecBackedGridEntityDescriptorProvider {
     WATER(
             WatorEntity.DESCRIPTOR_ID_WATER,
-            "wator.entity.water.short",
-            "wator.entity.water.long",
+            "wator.entity.water.name",
             "wator.entity.water.description",
             null,
             Color.rgb(20, 25, 100),
@@ -22,8 +21,7 @@ public enum EntityDescriptors implements SpecBackedGridEntityDescriptorProvider 
     ),
     FISH(
             WatorEntity.DESCRIPTOR_ID_FISH,
-            "wator.entity.fish.short",
-            "wator.entity.fish.long",
+            "wator.entity.fish.name",
             "wator.entity.fish.description",
             "wator.entity.fish.emoji",
             Color.rgb(0, 160, 100),
@@ -31,8 +29,7 @@ public enum EntityDescriptors implements SpecBackedGridEntityDescriptorProvider 
     ),
     SHARK(
             WatorEntity.DESCRIPTOR_ID_SHARK,
-            "wator.entity.shark.short",
-            "wator.entity.shark.long",
+            "wator.entity.shark.name",
             "wator.entity.shark.description",
             "wator.entity.shark.emoji",
             Color.rgb(115, 120, 120),
@@ -42,16 +39,14 @@ public enum EntityDescriptors implements SpecBackedGridEntityDescriptorProvider 
     private final GridEntityDescriptorSpec spec;
 
     EntityDescriptors(String descriptorId,
-                      String shortNameKey,
-                      String longNameKey,
+                      String nameKey,
                       String descriptionKey,
                       @Nullable String emojiKey,
                       @Nullable Color color,
                       @Nullable Color borderColor) {
         spec = new GridEntityDescriptorSpec(
                 descriptorId,
-                shortNameKey,
-                longNameKey,
+                nameKey,
                 descriptionKey,
                 emojiKey,
                 color,

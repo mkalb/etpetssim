@@ -13,8 +13,7 @@ import org.jspecify.annotations.Nullable;
 public enum EntityDescriptors implements SpecBackedGridEntityDescriptorProvider {
     ANT(
             LangtonEntity.DESCRIPTOR_ID_ANT,
-            "langton.entity.ant.short",
-            "langton.entity.ant.long",
+            "langton.entity.ant.name",
             "langton.entity.ant.description",
             null,
             Color.RED,
@@ -25,16 +24,14 @@ public enum EntityDescriptors implements SpecBackedGridEntityDescriptorProvider 
 
     @SuppressWarnings("SameParameterValue")
     EntityDescriptors(String descriptorId,
-                      String shortNameKey,
-                      String longNameKey,
+                      String nameKey,
                       String descriptionKey,
                       @Nullable String emojiKey,
                       @Nullable Color color,
                       @Nullable Color borderColor) {
         spec = new GridEntityDescriptorSpec(
                 descriptorId,
-                shortNameKey,
-                longNameKey,
+                nameKey,
                 descriptionKey,
                 emojiKey,
                 color,

@@ -28,7 +28,7 @@ final class LocalizationTestSupportTest {
     void testAssertDescriptorKeysInAllBundlesRejectsMissingKey() {
         SpecBackedGridEntityDescriptorProvider provider = () -> new GridEntityDescriptorSpec(
                 "test", CellShape.labelResourceKey(), CellShape.labelResourceKey(),
-                CellShape.labelResourceKey(), "missing.emoji.key.for.test", null, null);
+                "missing.emoji.key.for.test", null, null);
         assertThrows(AssertionError.class,
                 () -> LocalizationTestSupport.assertDescriptorKeysInAllBundles(List.of(provider)));
     }

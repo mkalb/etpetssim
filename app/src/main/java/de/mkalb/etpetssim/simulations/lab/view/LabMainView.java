@@ -678,7 +678,7 @@ public final class LabMainView
         LabEntity entity = viewModel.getCurrentGridModel().getEntity(coordinate);
         entityDescriptorRegistry.findByDescriptorId(entity.descriptorId())
                 .ifPresent(descriptor -> overlayPainter.drawCenteredTextInCell(
-                        coordinate, descriptor.shortName(), HOVER_TEXT_COLOR, cellFont));
+                        coordinate, descriptor.name(), HOVER_TEXT_COLOR, cellFont));
     }
 
     @FunctionalInterface

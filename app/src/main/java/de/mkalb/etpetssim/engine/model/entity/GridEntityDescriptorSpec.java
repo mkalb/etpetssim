@@ -10,8 +10,7 @@ import org.jspecify.annotations.Nullable;
  * {@link GridEntityDescriptorRegistry}.
  *
  * @param descriptorId   unique descriptor identifier
- * @param shortNameKey   localization key for the short name
- * @param longNameKey    localization key for the long name
+ * @param nameKey        localization key for the name
  * @param descriptionKey localization key for the description
  * @param emojiKey       optional localization key for the emoji
  * @param color          optional fill color
@@ -19,8 +18,7 @@ import org.jspecify.annotations.Nullable;
  */
 public record GridEntityDescriptorSpec(
         String descriptorId,
-        String shortNameKey,
-        String longNameKey,
+        String nameKey,
         String descriptionKey,
         @Nullable String emojiKey,
         @Nullable Color color,

@@ -13,8 +13,7 @@ final class SpecBackedGridEntityDescriptorProviderTest {
     void testDefaultAccessorsDelegateToDescriptorSpec() {
         GridEntityDescriptorSpec spec = new GridEntityDescriptorSpec(
                 "entity-id",
-                "short.key",
-                "long.key",
+                "name.key",
                 "description.key",
                 "emoji.key",
                 Color.RED,
@@ -24,8 +23,7 @@ final class SpecBackedGridEntityDescriptorProviderTest {
 
         assertAll(
                 () -> assertEquals("entity-id", provider.descriptorId()),
-                () -> assertEquals("short.key", provider.shortNameKey()),
-                () -> assertEquals("long.key", provider.longNameKey()),
+                () -> assertEquals("name.key", provider.nameKey()),
                 () -> assertEquals("description.key", provider.descriptionKey()),
                 () -> assertEquals("emoji.key", provider.emojiKey()),
                 () -> assertEquals(Color.RED, provider.color()),
@@ -37,8 +35,7 @@ final class SpecBackedGridEntityDescriptorProviderTest {
     void testDefaultAccessorsReturnNullForUnsetOptionalValues() {
         GridEntityDescriptorSpec spec = new GridEntityDescriptorSpec(
                 "entity-id",
-                "short.key",
-                "long.key",
+                "name.key",
                 "description.key",
                 null,
                 null,

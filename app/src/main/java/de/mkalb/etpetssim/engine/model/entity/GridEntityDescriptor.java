@@ -9,12 +9,11 @@ import java.util.Optional;
  * Represents a fully resolved descriptor for a grid entity, containing display-ready values.
  *
  * <p>Instances are created by {@link GridEntityDescriptorRegistry}, which resolves the localization keys supplied by
- * a {@link GridEntityDescriptorProvider} (for example {@code shortNameKey} and {@code longNameKey}) into concrete
+ * a {@link GridEntityDescriptorProvider} (for example {@code nameKey} and {@code descriptionKey}) into concrete
  * display strings via {@code AppLocalization}.
  *
  * @param descriptorId unique identifier for the entity descriptor
- * @param shortName    resolved short display name
- * @param longName     resolved long display name
+ * @param name         resolved display name
  * @param description  resolved description text
  * @param emoji        optional resolved emoji representation, or {@code null} if not set
  * @param color        optional fill color for rendering, or {@code null} if not set
@@ -22,8 +21,7 @@ import java.util.Optional;
  */
 public record GridEntityDescriptor(
         String descriptorId,
-        String shortName,
-        String longName,
+        String name,
         String description,
         @Nullable String emoji,
         @Nullable Color color,
@@ -82,12 +80,12 @@ public record GridEntityDescriptor(
     /**
      * Returns a short, human-readable string representation of this grid entity descriptor.
      *
-     * <p>Format: {@code [<short-name>]}, for example {@code [Wall]}.
+     * <p>Format: {@code [<name>]}, for example {@code [Wall]}.
      *
      * @return a concise display string for this grid entity descriptor
      */
     public String toDisplayString() {
-        return "[" + shortName + "]";
+        return "[" + name + "]";
     }
 
 }

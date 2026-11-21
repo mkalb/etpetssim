@@ -90,8 +90,7 @@ public final class GridEntityDescriptorRegistry {
         String emojiKey = provider.emojiKey();
         GridEntityDescriptor descriptor = new GridEntityDescriptor(
                 provider.descriptorId(),
-                AppLocalization.getText(provider.shortNameKey()),
-                AppLocalization.getText(provider.longNameKey()),
+                AppLocalization.getText(provider.nameKey()),
                 AppLocalization.getText(provider.descriptionKey()),
                 (emojiKey != null) ? AppLocalization.getText(emojiKey) : null,
                 provider.color(),

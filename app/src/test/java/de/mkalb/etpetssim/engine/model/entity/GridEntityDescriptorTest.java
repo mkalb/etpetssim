@@ -13,7 +13,6 @@ final class GridEntityDescriptorTest {
         return new GridEntityDescriptor(
                 "id-1",
                 "Wall",
-                "Wall Cell",
                 "An obstacle",
                 "🙂",
                 Color.GREEN,
@@ -24,8 +23,7 @@ final class GridEntityDescriptorTest {
     private static GridEntityDescriptor createDescriptorWithoutValues() {
         return new GridEntityDescriptor(
                 "id-2",
-                "Short",
-                "Long",
+                "Name",
                 "Description",
                 null,
                 null,

@@ -140,7 +140,7 @@ The colored bars around the canvas come from `lab.css` and make the border regio
 On hover, after the start and except during batch runs:
 
 - red outline: the estimated cell (`GridGeometry.estimateGridCoordinate`),
-- dark slate blue bounding box and white inner circle with the short name of the entity in red: the exact cell
+- dark slate blue bounding box and white inner circle with the name of the entity in red: the exact cell
   (`GridGeometry.fromCanvasPosition`), the circle only from an edge length of 6,
 - green dot: the mouse position,
 - while a cell is selected, a label above the pointer: the ring distance from the selected cell and the coordinate

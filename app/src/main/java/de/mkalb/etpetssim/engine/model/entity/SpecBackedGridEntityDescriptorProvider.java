@@ -25,13 +25,8 @@ public interface SpecBackedGridEntityDescriptorProvider extends GridEntityDescri
     }
 
     @Override
-    default String shortNameKey() {
-        return descriptorSpec().shortNameKey();
-    }
-
-    @Override
-    default String longNameKey() {
-        return descriptorSpec().longNameKey();
+    default String nameKey() {
+        return descriptorSpec().nameKey();
     }
 
     @Override

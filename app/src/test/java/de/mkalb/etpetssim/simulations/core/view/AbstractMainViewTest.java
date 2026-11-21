@@ -130,7 +130,7 @@ final class AbstractMainViewTest {
     }
 
     private static GridEntityDescriptor createDescriptor(Color color) {
-        return new GridEntityDescriptor("test", "short", "long", "description", null, color, null);
+        return new GridEntityDescriptor("test", "name", "description", null, color, null);
     }
 
     @ParameterizedTest

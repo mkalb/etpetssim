@@ -14,8 +14,7 @@ import org.jspecify.annotations.Nullable;
 public enum ConwayEntity implements ConstantGridEntityDescriptorProvider {
     DEAD(
             "dead",
-            "conway.entity.dead.short",
-            "conway.entity.dead.long",
+            "conway.entity.dead.name",
             "conway.entity.dead.description",
             null,
             Color.LIGHTYELLOW,
@@ -23,8 +22,7 @@ public enum ConwayEntity implements ConstantGridEntityDescriptorProvider {
     ),
     ALIVE(
             "alive",
-            "conway.entity.alive.short",
-            "conway.entity.alive.long",
+            "conway.entity.alive.name",
             "conway.entity.alive.description",
             null,
             Color.DARKRED,
@@ -35,16 +33,14 @@ public enum ConwayEntity implements ConstantGridEntityDescriptorProvider {
 
     @SuppressWarnings("SameParameterValue")
     ConwayEntity(String descriptorId,
-                 String shortNameKey,
-                 String longNameKey,
+                 String nameKey,
                  String descriptionKey,
                  @Nullable String emojiKey,
                  @Nullable Color color,
                  @Nullable Color borderColor) {
         spec = new GridEntityDescriptorSpec(
                 descriptorId,
-                shortNameKey,
-                longNameKey,
+                nameKey,
                 descriptionKey,
                 emojiKey,
                 color,

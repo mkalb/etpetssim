@@ -13,8 +13,7 @@ import org.jspecify.annotations.Nullable;
 public enum EntityDescriptors implements SpecBackedGridEntityDescriptorProvider {
     GROUND(
             SnakeEntity.DESCRIPTOR_ID_GROUND,
-            "snake.entity.ground.short",
-            "snake.entity.ground.long",
+            "snake.entity.ground.name",
             "snake.entity.ground.description",
             null,
             Color.web("#0b1220"),
@@ -22,8 +21,7 @@ public enum EntityDescriptors implements SpecBackedGridEntityDescriptorProvider 
     ),
     WALL(
             SnakeEntity.DESCRIPTOR_ID_WALL,
-            "snake.entity.wall.short",
-            "snake.entity.wall.long",
+            "snake.entity.wall.name",
             "snake.entity.wall.description",
             null,
             Color.web("#4a4a4a"),
@@ -31,8 +29,7 @@ public enum EntityDescriptors implements SpecBackedGridEntityDescriptorProvider 
     ),
     GROWTH_FOOD(
             SnakeEntity.DESCRIPTOR_ID_GROWTH_FOOD,
-            "snake.entity.growthfood.short",
-            "snake.entity.growthfood.long",
+            "snake.entity.growthfood.name",
             "snake.entity.growthfood.description",
             null,
             Color.web("#ffcc00"),
@@ -40,8 +37,7 @@ public enum EntityDescriptors implements SpecBackedGridEntityDescriptorProvider 
     ),
     SNAKE_SEGMENT(
             SnakeEntity.DESCRIPTOR_ID_SNAKE_SEGMENT,
-            "snake.entity.snakesegment.short",
-            "snake.entity.snakesegment.long",
+            "snake.entity.snakesegment.name",
             "snake.entity.snakesegment.description",
             null,
             Color.web("#4caf50"),
@@ -49,8 +45,7 @@ public enum EntityDescriptors implements SpecBackedGridEntityDescriptorProvider 
     ),
     SNAKE_HEAD(
             SnakeEntity.DESCRIPTOR_ID_SNAKE_HEAD,
-            "snake.entity.snakehead.short",
-            "snake.entity.snakehead.long",
+            "snake.entity.snakehead.name",
             "snake.entity.snakehead.description",
             null,
             Color.web("#00bcd4"),
@@ -61,16 +56,14 @@ public enum EntityDescriptors implements SpecBackedGridEntityDescriptorProvider 
 
     @SuppressWarnings("SameParameterValue")
     EntityDescriptors(String descriptorId,
-                      String shortNameKey,
-                      String longNameKey,
+                      String nameKey,
                       String descriptionKey,
                       @Nullable String emojiKey,
                       @Nullable Color color,
                       @Nullable Color borderColor) {
         spec = new GridEntityDescriptorSpec(
                 descriptorId,
-                shortNameKey,
-                longNameKey,
+                nameKey,
                 descriptionKey,
                 emojiKey,
                 color,

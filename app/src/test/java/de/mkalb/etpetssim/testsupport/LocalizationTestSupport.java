@@ -44,15 +44,14 @@ public final class LocalizationTestSupport {
      * Asserts that all localization keys of the given descriptor providers exist in the main resource bundle
      * of each supported locale.
      *
-     * <p>Checks the short name, long name, and description keys, and the emoji key when it is set.
+     * <p>Checks the name and description keys, and the emoji key when it is set.
      *
      * @param providers the descriptor providers to check
      */
     public static void assertDescriptorKeysInAllBundles(Collection<? extends GridEntityDescriptorProvider> providers) {
         List<String> keys = new ArrayList<>();
         for (GridEntityDescriptorProvider provider : providers) {
-            keys.add(provider.shortNameKey());
-            keys.add(provider.longNameKey());
+            keys.add(provider.nameKey());
             keys.add(provider.descriptionKey());
             String emojiKey = provider.emojiKey();
             if (emojiKey != null) {

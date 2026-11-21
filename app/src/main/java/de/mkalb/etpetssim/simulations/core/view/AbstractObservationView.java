@@ -3,6 +3,7 @@ package de.mkalb.etpetssim.simulations.core.view;
 import de.mkalb.etpetssim.core.AppLocalization;
 import de.mkalb.etpetssim.engine.model.GridCellView;
 import de.mkalb.etpetssim.engine.model.entity.GridEntity;
+import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptor;
 import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorRegistry;
 import de.mkalb.etpetssim.simulations.core.model.SimulationStatistics;
 import de.mkalb.etpetssim.simulations.core.model.StatisticsChartGroup;
@@ -51,6 +52,7 @@ public abstract class AbstractObservationView<
     private final Label totalCellsLabel = new Label();
     private final Label selectedCellCoordinateLabel = new Label();
     private final Label selectedCellTypeLabel = new Label();
+    private final Tooltip selectedCellTypeTooltip = new Tooltip();
     private final List<StatisticsHistoryChartView> statisticsHistoryChartViews = new ArrayList<>();
     private @Nullable GC selectedGridCell;
     private @Nullable VBox selectedCellSection;
@@ -204,7 +206,8 @@ public abstract class AbstractObservationView<
      * Handles a change of the selected grid cell.
      *
      * <p>The default implementation updates the selected cell section visibility
-     * and the standard coordinate and cell type labels.
+     * and the standard coordinate and cell type labels; the cell type label shows the description of the
+     * entity as its tooltip.
      * Override to add simulation-specific selected cell behavior.
      *
      * @param gridCell the newly selected grid cell, or {@code null} if no cell is selected
@@ -215,11 +218,12 @@ public abstract class AbstractObservationView<
             selectedCellSection.setManaged(hasSelectedCell);
             selectedCellSection.setVisible(hasSelectedCell);
             setUnknownValues(selectedCellCoordinateLabel, selectedCellTypeLabel);
+            selectedCellTypeLabel.setTooltip(null);
 
             if (hasSelectedCell) {
                 selectedCellCoordinateLabel.setText(gridCell.coordinate().toDisplayString());
                 entityDescriptorRegistry.findByDescriptorId(gridCell.entity().descriptorId())
-                        .ifPresent(descriptor -> selectedCellTypeLabel.setText(descriptor.shortName()));
+                        .ifPresent(this::setSelectedCellType);
             }
         }
     }
@@ -355,6 +359,12 @@ public abstract class AbstractObservationView<
 
     final boolean hasSelectedGridCellListener() {
         return selectedGridCellListener != null;
+    }
+
+    private void setSelectedCellType(GridEntityDescriptor descriptor) {
+        selectedCellTypeLabel.setText(descriptor.name());
+        selectedCellTypeTooltip.setText(descriptor.description());
+        selectedCellTypeLabel.setTooltip(selectedCellTypeTooltip);
     }
 
     private void updateGridSectionLabel() {

@@ -8,6 +8,7 @@ import de.mkalb.etpetssim.engine.GridSize;
 import de.mkalb.etpetssim.engine.GridStructure;
 import de.mkalb.etpetssim.engine.GridTopology;
 import de.mkalb.etpetssim.engine.model.GridCell;
+import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptor;
 import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorRegistry;
 import de.mkalb.etpetssim.simulations.conway.model.ConwayStatistics;
 import de.mkalb.etpetssim.simulations.conway.model.entity.ConwayEntity;
@@ -21,6 +22,7 @@ import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TitledPane;
+import javafx.scene.control.Tooltip;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
@@ -224,17 +226,21 @@ final class AbstractObservationViewTest {
             boolean visibleWithSelection = section.isVisible() && section.isManaged();
             String coordinateText = cell(section, 1, 0).getText();
             String cellTypeText = cell(section, 1, 1).getText();
+            Tooltip cellTypeTooltip = cell(section, 1, 1).getTooltip();
             view.viewModel.selectedGridCellProperty().set(null);
 
+            GridEntityDescriptor descriptor =
+                    entityDescriptorRegistry.requireByDescriptorId(ConwayEntity.ALIVE.descriptorId());
             assertAll(
                     () -> assertFalse(visibleWithoutSelection),
                     () -> assertTrue(visibleWithSelection),
                     () -> assertEquals(SELECTED_COORDINATE.toDisplayString(), coordinateText),
-                    () -> assertEquals(entityDescriptorRegistry
-                            .requireByDescriptorId(ConwayEntity.ALIVE.descriptorId()).shortName(), cellTypeText),
+                    () -> assertEquals(descriptor.name(), cellTypeText),
+                    () -> assertEquals(descriptor.description(), cellTypeTooltip.getText()),
                     () -> assertFalse(section.isVisible()),
                     () -> assertEquals(unknown(), cell(section, 1, 0).getText()),
-                    () -> assertEquals(unknown(), cell(section, 1, 1).getText())
+                    () -> assertEquals(unknown(), cell(section, 1, 1).getText()),
+                    () -> assertNull(cell(section, 1, 1).getTooltip())
             );
         });
     }

@@ -13,8 +13,7 @@ import org.jspecify.annotations.Nullable;
 public enum EntityDescriptors implements SpecBackedGridEntityDescriptorProvider {
     GROUND(
             ReboundingEntity.DESCRIPTOR_ID_GROUND,
-            "rebounding.entity.ground.short",
-            "rebounding.entity.ground.long",
+            "rebounding.entity.ground.name",
             "rebounding.entity.ground.description",
             null,
             Color.web("#0b1220"),
@@ -22,8 +21,7 @@ public enum EntityDescriptors implements SpecBackedGridEntityDescriptorProvider 
     ),
     WALL(
             ReboundingEntity.DESCRIPTOR_ID_WALL,
-            "rebounding.entity.wall.short",
-            "rebounding.entity.wall.long",
+            "rebounding.entity.wall.name",
             "rebounding.entity.wall.description",
             null,
             Color.web("#4a4a4a"),
@@ -31,8 +29,7 @@ public enum EntityDescriptors implements SpecBackedGridEntityDescriptorProvider 
     ),
     REBOUNDER(
             ReboundingEntity.DESCRIPTOR_ID_REBOUNDER,
-            "rebounding.entity.rebounder.short",
-            "rebounding.entity.rebounder.long",
+            "rebounding.entity.rebounder.name",
             "rebounding.entity.rebounder.description",
             null,
             Color.web("#ffcc00"),
@@ -43,16 +40,14 @@ public enum EntityDescriptors implements SpecBackedGridEntityDescriptorProvider 
 
     @SuppressWarnings("SameParameterValue")
     EntityDescriptors(String descriptorId,
-                      String shortNameKey,
-                      String longNameKey,
+                      String nameKey,
                       String descriptionKey,
                       @Nullable String emojiKey,
                       @Nullable Color color,
                       @Nullable Color borderColor) {
         spec = new GridEntityDescriptorSpec(
                 descriptorId,
-                shortNameKey,
-                longNameKey,
+                nameKey,
                 descriptionKey,
                 emojiKey,
                 color,

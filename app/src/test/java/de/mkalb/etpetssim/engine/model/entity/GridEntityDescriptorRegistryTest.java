@@ -23,8 +23,7 @@ final class GridEntityDescriptorRegistryTest {
 
     private static final GridEntityDescriptorProvider PROVIDER_A = new TestDescriptorProvider(
             "entity.a",
-            "conway.entity.alive.short",
-            "conway.entity.alive.long",
+            "conway.entity.alive.name",
             "conway.entity.alive.description",
             null,
             Color.GREEN,
@@ -32,8 +31,7 @@ final class GridEntityDescriptorRegistryTest {
     );
     private static final GridEntityDescriptorProvider PROVIDER_B = new TestDescriptorProvider(
             "entity.b",
-            "conway.entity.dead.short",
-            "conway.entity.dead.long",
+            "conway.entity.dead.name",
             "conway.entity.dead.description",
             "forest.entity.tree.emoji",
             Color.DARKGRAY,
@@ -41,8 +39,7 @@ final class GridEntityDescriptorRegistryTest {
     );
     private static final GridEntityDescriptorProvider PROVIDER_B_REPLACEMENT = new TestDescriptorProvider(
             "entity.b",
-            "conway.entity.alive.short",
-            "conway.entity.alive.long",
+            "conway.entity.alive.name",
             "conway.entity.alive.description",
             null,
             Color.BLACK,
@@ -66,8 +63,7 @@ final class GridEntityDescriptorRegistryTest {
 
         assertAll(
                 () -> assertEquals(provider.descriptorId(), descriptor.descriptorId()),
-                () -> assertEquals(AppLocalization.getText(provider.shortNameKey()), descriptor.shortName()),
-                () -> assertEquals(AppLocalization.getText(provider.longNameKey()), descriptor.longName()),
+                () -> assertEquals(AppLocalization.getText(provider.nameKey()), descriptor.name()),
                 () -> assertEquals(AppLocalization.getText(provider.descriptionKey()), descriptor.description()),
                 () -> assertEquals(expectedEmoji, descriptor.emoji()),
                 () -> assertEquals(provider.color(), descriptor.color()),
@@ -123,8 +119,7 @@ final class GridEntityDescriptorRegistryTest {
 
     private record TestDescriptorProvider(
             String descriptorId,
-            String shortNameKey,
-            String longNameKey,
+            String nameKey,
             String descriptionKey,
             String emojiKey,
             Color color,
