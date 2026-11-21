@@ -111,7 +111,7 @@ The texts and numbers need the cell font, which exists only from a minimum cell 
 check that complements `FXGridCanvasPainterTest`.
 
 The base layer "None" draws nothing on the canvas and grid background, so that the dynamic layer and the overlay can be
-tested alone.
+tested alone and the duration of a start contains no drawing time.
 
 ## Simulation
 
@@ -167,7 +167,8 @@ before a simulation meets them. Expected limits are findings, not bugs:
   about 1 GiB with compressed references at 16 384 x 16 384, independent of the distribution; with "Sparse", the
   memory grows with the number of highlighted cells.
 - Drawing time: the base layer draws all cells, also those outside the canvas limit of `AbstractMainView`.
-- Initialization time: the initializers without a cancellation check cannot be canceled.
+- Initialization time: "Grid edge", "Pattern", and the allocation of the grid models have no cancellation check;
+  after Cancel, they run to their end in the background, and a new start waits for them.
 
 ## Methods Used Only by the Lab
 

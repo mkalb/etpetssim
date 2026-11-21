@@ -21,7 +21,8 @@ public enum SimulationState {
     /**
      * A simulation manager is being initialized in the background.
      *
-     * <p>All simulation controls and configuration controls are disabled.
+     * <p>Configuration controls are disabled. Only the cancel action is available; it interrupts the
+     * initialization, which stops at its next cancellation check.
      */
     INITIALIZING,
 

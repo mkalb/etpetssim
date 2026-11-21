@@ -700,6 +700,48 @@ final class MainViewModelTest {
     }
 
     @Test
+    void testHandleCancelButtonCancelsInitialization() throws InterruptedException {
+        CountDownLatch constructionStarted = new CountDownLatch(1);
+        CountDownLatch constructionEnded = new CountDownLatch(1);
+        AtomicBoolean managerCreated = new AtomicBoolean();
+        ExecutorService lifecycleExecutor = Executors.newSingleThreadExecutor();
+        Fixture fixture = FXTestSupport.supplyAndWaitNonNull(() -> createFixture((config, cancellation) -> {
+            try {
+                constructionStarted.countDown();
+                try {
+                    new CountDownLatch(1).await();
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                }
+                ConwaySimulationManager manager = new ConwaySimulationManager(config, cancellation);
+                managerCreated.set(true);
+                return manager;
+            } finally {
+                constructionEnded.countDown();
+            }
+        }, lifecycleExecutor));
+        List<SimulationState> states = new ArrayList<>();
+
+        FXTestSupport.runAndWait(() -> {
+            recordStates(fixture, states);
+            fixture.controlViewModel().requestActionButton();
+        });
+        assertTrue(constructionStarted.await(FXTestSupport.DEFAULT_TIMEOUT_SECONDS, TimeUnit.SECONDS));
+
+        FXTestSupport.runAndWait(fixture.controlViewModel()::requestCancelButton);
+        assertTrue(constructionEnded.await(FXTestSupport.DEFAULT_TIMEOUT_SECONDS, TimeUnit.SECONDS));
+
+        FXTestSupport.runAndWait(() -> assertAll(
+                () -> assertEquals(List.of(SimulationState.INITIALIZING, SimulationState.CANCELED),
+                        statesFrom(states, SimulationState.INITIALIZING)),
+                () -> assertFalse(managerCreated.get()),
+                () -> assertFalse(fixture.mainViewModel().hasSimulationManager())
+        ));
+        FXTestSupport.runAndWait(fixture.mainViewModel()::shutdownSimulation);
+        assertTrue(lifecycleExecutor.awaitTermination(FXTestSupport.DEFAULT_TIMEOUT_SECONDS, TimeUnit.SECONDS));
+    }
+
+    @Test
     void testHandleCancelButtonCancelsRunningBatch() throws InterruptedException {
         Fixture fixture = FXTestSupport.supplyAndWaitNonNull(MainViewModelTest::createFixture);
         List<SimulationState> states = new ArrayList<>();

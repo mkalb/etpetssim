@@ -516,6 +516,11 @@ public final class MainViewModel<
         resetClickedCoordinate();
 
         switch (getSimulationState()) {
+            case INITIALIZING -> {
+                cancelInitialization();
+                setSimulationState(SimulationState.CANCELED);
+                logSimulationInfo("Simulation initialization was canceled by the user");
+            }
             case RUNNING_TIMED -> {
                 stopTimer();
                 setSimulationState(SimulationState.CANCELED);
@@ -621,12 +626,14 @@ public final class MainViewModel<
         try {
             AppLogger.infof("%s: Simulation initialization started: generation=%d, request=%s", LOG_COMPONENT,
                     generation, request);
+            long managerStartNanos = System.nanoTime();
             SM manager = simulationManagerFactory.apply(request.config(),
                     SimulationInitializationCancellation.interruptionAware());
+            long managerDurationMillis = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - managerStartNanos);
             AppLogger
                     .infof("%s: Simulation manager was created; scheduling initialization completion: generation=%d, "
-                                    + "request=%s",
-                            LOG_COMPONENT, generation, request);
+                                    + "managerDurationMillis=%d, request=%s",
+                            LOG_COMPONENT, generation, managerDurationMillis, request);
             Platform.runLater(() -> completeInitialization(request, generation, startNanos, manager));
         } catch (SimulationInitializationCanceledException e) {
             AppLogger.infof("%s: Simulation initialization was canceled: generation=%d, request=%s",

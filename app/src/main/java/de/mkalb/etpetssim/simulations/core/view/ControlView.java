@@ -4,6 +4,7 @@ import de.mkalb.etpetssim.core.AppLocalization;
 import de.mkalb.etpetssim.simulations.core.viewmodel.ControlViewModel;
 import de.mkalb.etpetssim.simulations.core.viewmodel.SimulationExecutionMode;
 import de.mkalb.etpetssim.simulations.core.viewmodel.SimulationStartMode;
+import de.mkalb.etpetssim.simulations.core.viewmodel.SimulationState;
 import de.mkalb.etpetssim.simulations.core.viewmodel.SimulationTerminationCheckMode;
 import de.mkalb.etpetssim.ui.FXComponentFactory;
 import de.mkalb.etpetssim.ui.FXStyleClasses;
@@ -207,7 +208,8 @@ public final class ControlView {
     private void bindCancelButtonDisabled(Button cancelButton) {
         cancelButton.disableProperty().bind(Bindings.createBooleanBinding(
                 () -> !viewModel.getSimulationState().isRunning()
-                        && !viewModel.getSimulationState().isPaused(),
+                        && !viewModel.getSimulationState().isPaused()
+                        && (viewModel.getSimulationState() != SimulationState.INITIALIZING),
                 viewModel.simulationStateProperty()
         ));
     }

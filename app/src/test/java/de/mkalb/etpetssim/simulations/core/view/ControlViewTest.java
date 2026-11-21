@@ -140,7 +140,7 @@ final class ControlViewTest {
     @ParameterizedTest
     @CsvSource({
             "READY,            false, true,  false, false",
-            "INITIALIZING,     true,  true,  true,  true",
+            "INITIALIZING,     true,  false, true,  true",
             "RUNNING_TIMED,    false, false, true,  true",
             "RUNNING_BATCH,    false, false, true,  true",
             "PAUSING_BATCH,    true,  true,  true,  true",
