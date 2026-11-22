@@ -92,7 +92,9 @@ update it when these rules change.
   `metrics()`); keep the constants and factories that only build the catalog private, also when tests used them, and
   test them through the accessor.
 - Keep an early return that avoids a random draw (e.g., when there is no tie among the candidates) and explain it in
-  a comment; removing it changes the random sequence of a seed.
+  a comment. Changing the random sequence of a seed (e.g., by removing such a return or reordering random draws) is
+  allowed, but the same seed must still produce identical runs; update the affected golden values (e.g., in
+  `SimulationManagerTest`) and name the change in the commit message.
 
 ### View
 

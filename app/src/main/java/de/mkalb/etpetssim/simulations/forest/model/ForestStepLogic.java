@@ -49,8 +49,7 @@ public final class ForestStepLogic implements SynchronousStepLogic<ForestEntity,
                     }
                 }
                 case TREE -> {
-                    // A tree with a burning neighbor ignites without a random draw; keep the order of the
-                    // conditions, because it determines the random sequence of a seed.
+                    // A tree with a burning neighbor ignites without a random draw for lightning.
                     if (burningNeighborCoordinates.contains(coordinate)) {
                         nextGridModel.setEntity(coordinate, ForestEntity.BURNING);
                         burningCells++;
