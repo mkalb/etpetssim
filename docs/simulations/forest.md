@@ -19,10 +19,10 @@ grid, you see green forest areas grow back slowly while fire fronts sweep throug
 
 - At the start, trees are placed on randomly chosen cells according to the tree density; all other cells are empty.
 - In each step, all cells change at the same time, based on the state of the grid before the step.
-- An empty cell grows a new tree with the tree growth chance.
+- An empty cell grows a new tree with the tree growth probability.
 - A tree catches fire if at least one of its neighbors is burning; the neighborhood setting decides which cells count
   as neighbors.
-- A tree without a burning neighbor can still be struck by lightning and catch fire with the lightning chance.
+- A tree without a burning neighbor can still be struck by lightning and catch fire with the lightning probability.
 - A burning tree burns down in one step and leaves an empty cell.
 - With wrapping edges, fire spreads across the grid edge to the opposite side; with blocking edges, it stops at the
   edge.
@@ -32,21 +32,21 @@ grid, you see green forest areas grow back slowly while fire fronts sweep throug
 
 - **Empty:** ground without a tree, where a new tree can grow; shown as the very dark brown background of the grid.
 - **Tree:** a living tree that can catch fire; shown in sea green, or as the 🌲 emoji in the **Emoji** display mode.
-- **Burning:** a tree on fire that sets its neighboring trees on fire and is gone after one step; shown in gold, with
-  an orange-red border in the bordered display modes, or as the 🔥 emoji in the **Emoji** display mode.
+- **Burning tree:** a tree on fire that sets its neighboring trees on fire and is gone after one step; shown in gold,
+  with an orange-red border in the bordered display modes, or as the 🔥 emoji in the **Emoji** display mode.
 
 Depending on the **Cell display** setting, trees and burning trees fill the whole cell shape or are drawn as an inner
 circle, with or without a border, or as an emoji.
 
 ## Interactive editing
 
-- **Cycle state:** switches the selected cell to its next state, from Empty to Tree, from Tree to Burning, and from
-  Burning back to Empty.
+- **Cycle state:** switches the selected cell to its next state, from Empty to Tree, from Tree to Burning tree, and
+  from Burning tree back to Empty.
 
 ## Configuration
 
-You can adjust the grid, how the cells are displayed, the initial share of trees, and the chances of tree growth and
-lightning.
+You can adjust the grid, how the cells are displayed, the initial share of trees, and the probabilities of tree growth
+and lightning.
 
 ### Structure
 
@@ -69,8 +69,8 @@ number or any text to repeat a run.
 ### Rules
 
 **Neighborhood mode** (Edges only (default), Edges and vertices) decides which cells count as neighbors when fire
-spreads. **Tree growth** (0% to 5%, default 1.0%) is the chance that a new tree grows on an empty cell in a step.
-**Lightning chance** (0% to 0.01%, default 0.0020%) is the chance that lightning sets a tree on fire in a step.
+spreads. **Tree growth** (0% to 5%, default 1.0%) is the probability that a new tree grows on an empty cell in a
+step. **Lightning** (0% to 0.01%, default 0.0020%) is the probability that lightning sets a tree on fire in a step.
 
 ## Screenshot
 

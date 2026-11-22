@@ -189,14 +189,14 @@ de_DE keeps these English terms (`.claude/rules/i18n.md`, "English terms in de_D
 
 ## Forest-Fire Model
 
-| en_US          | de_DE             | Source      | Notes                                       |
-|----------------|-------------------|-------------|---------------------------------------------|
-| `tree`         | `Baum`            | [Forest-en] |                                             |
-| `burning tree` | `brennender Baum` | [Forest-en] |                                             |
-| `empty cell`   | `leere Zelle`     | [Forest-en] |                                             |
-| `tree density` | `Baumdichte`      | project     | initial share of trees                      |
-| `tree growth`  | `Baumwachstum`    | [Forest-en] | probability per step                        |
-| `lightning`    | `Blitz`           | [Forest-en] | lightning chance: `Blitzwahrscheinlichkeit` |
+| en_US          | de_DE             | Source      | Notes                  |
+|----------------|-------------------|-------------|------------------------|
+| `tree`         | `Baum`            | [Forest-en] |                        |
+| `burning tree` | `brennender Baum` | [Forest-en] |                        |
+| `empty cell`   | `leere Zelle`     | [Forest-en] |                        |
+| `tree density` | `Baumdichte`      | project     | initial share of trees |
+| `tree growth`  | `Baumwachstum`    | [Forest-en] | probability per step   |
+| `lightning`    | `Blitzschlag`     | [Forest-en] | probability per step   |
 
 ## Langton's Ant
 
