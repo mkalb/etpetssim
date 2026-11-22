@@ -23,7 +23,9 @@ Use GitHub issues only. Please do not contact the maintainer by email or other p
 
 ## Security
 
-Do not report security vulnerabilities in public issues.
+Do not report security vulnerabilities in public issues. Report them via
+[private vulnerability reporting](https://github.com/mkalb/etpetssim/security/advisories/new) as described in the
+[security policy](SECURITY.md).
 
 ## Pull Requests
 

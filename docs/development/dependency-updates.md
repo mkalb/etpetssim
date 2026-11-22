@@ -66,3 +66,14 @@ notes on JavaFX in `THIRD-PARTY-LICENSES` (bundled native libraries) with the le
 
 - JSpecify and JUnit: version in `gradle/libs.versions.toml`, version in `THIRD-PARTY-LICENSES`.
 - Foojay toolchain resolver plugin: version in `settings.gradle.kts`; not listed in `THIRD-PARTY-LICENSES`.
+
+## Dependabot
+
+The repository has Dependabot alerts and Dependabot security updates enabled. For a dependency with a known
+vulnerability, Dependabot opens an alert on the tab "Security" and a pull request with the label `dependencies`. Do
+not merge such a pull request as is: apply the update by the rules above (including `README.md` and
+`THIRD-PARTY-LICENSES`) and close the pull request. Dependabot version updates are not enabled; they are re-evaluated
+after the CI workflow (#14).
+
+Secret scanning with push protection and private vulnerability reporting are enabled as well; `SECURITY.md` describes
+how to report a vulnerability.
