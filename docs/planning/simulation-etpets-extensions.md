@@ -176,8 +176,8 @@ Open points:
 
 - The effect of the fixes and the development of the traits over many generations are observed in the running
   simulation. Decision: no manual headless runner is added.
-- The points of the checklist of #24 that need the running application (colors, performance with large grids,
-  start, pause, and restart, log output) are tracked in #70.
+- The colors (checked in the running application) and the step duration with large grids (checklist of #24, sections
+  3 and 4) are tracked in #70; the other checks in the running application belong to #155.
 
 ### Not changed
 
