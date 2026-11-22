@@ -64,13 +64,13 @@ of the grid.
 **Seed** (empty by default) sets the start value of the random numbers: leave it empty for a random seed, or enter a
 number or any text to repeat a run.
 
-**Tree density** (0% to 100%, default 20%) sets the share of cells that start with a tree.
+**Tree density** (0% to 100%, default 5%) sets the share of cells that start with a tree.
 
 ### Rules
 
 **Neighborhood mode** (Edges only (default), Edges and vertices) decides which cells count as neighbors when fire
-spreads. **Tree growth** (0% to 20%, default 0.2%) is the chance that a new tree grows on an empty cell in a step.
-**Lightning chance** (0% to 2%, default 0.10%) is the chance that lightning sets a tree on fire in a step.
+spreads. **Tree growth** (0% to 5%, default 1.0%) is the chance that a new tree grows on an empty cell in a step.
+**Lightning chance** (0% to 0.01%, default 0.0020%) is the chance that lightning sets a tree on fire in a step.
 
 ## Screenshot
 

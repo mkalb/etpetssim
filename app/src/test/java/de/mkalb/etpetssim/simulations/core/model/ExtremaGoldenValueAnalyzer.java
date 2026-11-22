@@ -17,7 +17,8 @@ import java.util.Locale;
 
 /**
  * Manual utility to re-capture extrema golden values for Conway, Forest, and Wator
- * using seed 1L and 20 steps with default constraints. Run once when simulation logic changes
+ * using seed 1L and 20 steps with default constraints; Forest uses fixed rule values instead of its defaults, so
+ * that tuning the defaults does not change its golden values. Run once when simulation logic changes
  * to refresh the hard-coded expectations in {@code SimulationManagerTest}
  * ({@code testStatisticsExtremaFor<Simulation>MatchesGoldenValues}).
  */
@@ -26,6 +27,9 @@ public final class ExtremaGoldenValueAnalyzer {
     private static final long SEED = 1L;
     private static final int STEP_COUNT = 20;
     private static final int INITIAL_BUFFER_CAPACITY = 512;
+    private static final double FOREST_TREE_DENSITY = 0.2d;
+    private static final double FOREST_TREE_GROWTH_PROBABILITY = 0.002d;
+    private static final double FOREST_LIGHTNING_IGNITION_PROBABILITY = 0.001d;
 
     private ExtremaGoldenValueAnalyzer() {
     }
@@ -71,10 +75,10 @@ public final class ExtremaGoldenValueAnalyzer {
                 ForestConstraints.CELL_EDGE_LENGTH_DEFAULT,
                 ForestConstraints.CELL_DISPLAY_MODE_DEFAULT,
                 SEED,
-                ForestConstraints.TREE_DENSITY_DEFAULT,
+                FOREST_TREE_DENSITY,
                 ForestConstraints.NEIGHBORHOOD_MODE_DEFAULT,
-                ForestConstraints.TREE_GROWTH_PROBABILITY_DEFAULT,
-                ForestConstraints.LIGHTNING_IGNITION_PROBABILITY_DEFAULT
+                FOREST_TREE_GROWTH_PROBABILITY,
+                FOREST_LIGHTNING_IGNITION_PROBABILITY
         );
     }
 

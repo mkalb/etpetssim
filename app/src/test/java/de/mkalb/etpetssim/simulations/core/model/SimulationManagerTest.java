@@ -53,6 +53,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 final class SimulationManagerTest {
 
+    private static final double FOREST_TREE_DENSITY = 0.2d;
+    private static final double FOREST_TREE_GROWTH_PROBABILITY = 0.002d;
+    private static final double FOREST_LIGHTNING_IGNITION_PROBABILITY = 0.001d;
+
     private static ConwayConfig createConwayConfig() {
         return new ConwayConfig(
                 ConwayConstraints.CELL_SHAPE_DEFAULT,
@@ -77,10 +81,10 @@ final class SimulationManagerTest {
                 ForestConstraints.CELL_EDGE_LENGTH_DEFAULT,
                 ForestConstraints.CELL_DISPLAY_MODE_DEFAULT,
                 1L,
-                ForestConstraints.TREE_DENSITY_DEFAULT,
+                FOREST_TREE_DENSITY,
                 ForestConstraints.NEIGHBORHOOD_MODE_DEFAULT,
-                ForestConstraints.TREE_GROWTH_PROBABILITY_DEFAULT,
-                ForestConstraints.LIGHTNING_IGNITION_PROBABILITY_DEFAULT
+                FOREST_TREE_GROWTH_PROBABILITY,
+                FOREST_LIGHTNING_IGNITION_PROBABILITY
         );
     }
 

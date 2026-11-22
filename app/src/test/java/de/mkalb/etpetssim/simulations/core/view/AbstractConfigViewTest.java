@@ -301,9 +301,10 @@ final class AbstractConfigViewTest {
                 InputDoubleProperty.of(0.002d, 0.001d, 0.2d), 1);
 
         assertAll(
-                () -> assertEquals("Set the probability that lightning sets a tree on fire (0% – 2%)",
+                () -> assertEquals("Set the probability per step that lightning sets a tree on fire (0% – 2%)",
                         wholeBounds),
-                () -> assertEquals("Set the probability that a new tree grows on an empty cell (0.1% – 20%)",
+                () -> assertEquals(
+                        "Set the probability per step that a new tree grows on an empty cell (0.1% – 20%)",
                         fractionalBounds)
         );
     }

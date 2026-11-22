@@ -51,7 +51,7 @@ public final class ForestConfigViewModel extends AbstractConfigViewModel<ForestC
     /**
      * Number of decimal places of the lightning ignition probability, shown as percentage in the config view.
      */
-    public static final int LIGHTNING_IGNITION_PERCENT_DECIMALS = 2;
+    public static final int LIGHTNING_IGNITION_PERCENT_DECIMALS = 4;
 
     private static final CommonConfigConstraints COMMON_CONSTRAINTS = new CommonConfigConstraints(
             CELL_SHAPE_DEFAULT,
