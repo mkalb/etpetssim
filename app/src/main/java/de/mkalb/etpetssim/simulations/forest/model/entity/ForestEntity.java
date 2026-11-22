@@ -33,8 +33,8 @@ public enum ForestEntity implements ConstantGridEntityDescriptorProvider {
             "forest.entity.burning.name",
             "forest.entity.burning.description",
             "forest.entity.burning.emoji",
-            Color.ORANGERED,
-            Color.ORANGE
+            Color.GOLD,
+            Color.ORANGERED
     );
 
     private final GridEntityDescriptorSpec spec;

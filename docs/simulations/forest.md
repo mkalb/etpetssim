@@ -32,8 +32,8 @@ grid, you see green forest areas grow back slowly while fire fronts sweep throug
 
 - **Empty:** ground without a tree, where a new tree can grow; shown as the very dark brown background of the grid.
 - **Tree:** a living tree that can catch fire; shown in sea green, or as the 🌲 emoji in the **Emoji** display mode.
-- **Burning:** a tree on fire that sets its neighboring trees on fire and is gone after one step; shown in orange-red,
-  with an orange border in the bordered display modes, or as the 🔥 emoji in the **Emoji** display mode.
+- **Burning:** a tree on fire that sets its neighboring trees on fire and is gone after one step; shown in gold, with
+  an orange-red border in the bordered display modes, or as the 🔥 emoji in the **Emoji** display mode.
 
 Depending on the **Cell display** setting, trees and burning trees fill the whole cell shape or are drawn as an inner
 circle, with or without a border, or as an emoji.
