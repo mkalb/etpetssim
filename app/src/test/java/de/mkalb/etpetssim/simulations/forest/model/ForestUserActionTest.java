@@ -5,12 +5,16 @@ import de.mkalb.etpetssim.engine.model.GridCell;
 import de.mkalb.etpetssim.simulations.core.shared.NoUserActionContext;
 import de.mkalb.etpetssim.simulations.forest.model.entity.ForestEntity;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
 final class ForestUserActionTest {
+
+    private static final GridCoordinate COORDINATE = new GridCoordinate(0, 0);
 
     private static ForestConfig createConfig() {
         return new ForestConfig(
@@ -28,75 +32,46 @@ final class ForestUserActionTest {
         );
     }
 
-    private static GridCell<ForestEntity> createSelectedCell(ForestSimulationManager manager,
-                                                             GridCoordinate coordinate) {
-        return new GridCell<>(coordinate, manager.currentGridModel().getEntity(coordinate));
+    private static ForestSimulationManager createManagerWithEntity(ForestEntity entity) {
+        ForestSimulationManager manager = new ForestSimulationManager(createConfig());
+        manager.currentGridModel().setEntity(COORDINATE, entity);
+        manager.statistics().setCellCounts(entity.isTree() ? 1 : 0, entity.isBurning() ? 1 : 0);
+        return manager;
+    }
+
+    private static void assertCellCounts(int treeCells, int burningCells, ForestStatistics statistics) {
+        assertAll(
+                () -> assertEquals(statistics.totalCells() - treeCells - burningCells, statistics.emptyCells()),
+                () -> assertEquals(treeCells, statistics.treeCells()),
+                () -> assertEquals(burningCells, statistics.burningCells())
+        );
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+            "EMPTY,   TREE,    1, 0",
+            "TREE,    BURNING, 0, 1",
+            "BURNING, EMPTY,   0, 0"
+    })
+    void testApply(ForestEntity entity, ForestEntity expectedEntity, int expectedTreeCells,
+                   int expectedBurningCells) {
+        ForestSimulationManager manager = createManagerWithEntity(entity);
+
+        new ForestUserAction().apply(manager, NoUserActionContext.NO_CONTEXT, new GridCell<>(COORDINATE, entity));
+
+        assertAll(
+                () -> assertSame(expectedEntity, manager.currentGridModel().getEntity(COORDINATE)),
+                () -> assertCellCounts(expectedTreeCells, expectedBurningCells, manager.statistics())
+        );
     }
 
     @Test
     void testApplyIgnoresMissingSelection() {
         ForestSimulationManager manager = new ForestSimulationManager(createConfig());
-        ForestUserAction userAction = new ForestUserAction();
 
-        userAction.apply(manager, NoUserActionContext.NO_CONTEXT, null);
+        new ForestUserAction().apply(manager, NoUserActionContext.NO_CONTEXT, null);
 
-        assertAll(
-                () -> assertEquals(manager.statistics().totalCells(), manager.statistics().emptyCells()),
-                () -> assertEquals(0, manager.statistics().treeCells()),
-                () -> assertEquals(0, manager.statistics().burningCells())
-        );
-    }
-
-    @Test
-    void testApplyTurnsEmptyCellIntoTree() {
-        ForestSimulationManager manager = new ForestSimulationManager(createConfig());
-        ForestUserAction userAction = new ForestUserAction();
-        GridCoordinate coordinate = new GridCoordinate(0, 0);
-
-        userAction.apply(manager, NoUserActionContext.NO_CONTEXT, createSelectedCell(manager, coordinate));
-
-        assertAll(
-                () -> assertSame(ForestEntity.TREE, manager.currentGridModel().getEntity(coordinate)),
-                () -> assertEquals(manager.statistics().totalCells() - 1, manager.statistics().emptyCells()),
-                () -> assertEquals(1, manager.statistics().treeCells()),
-                () -> assertEquals(0, manager.statistics().burningCells())
-        );
-    }
-
-    @Test
-    void testApplyTurnsTreeCellIntoBurningCell() {
-        ForestSimulationManager manager = new ForestSimulationManager(createConfig());
-        ForestUserAction userAction = new ForestUserAction();
-        GridCoordinate coordinate = new GridCoordinate(0, 0);
-        manager.currentGridModel().setEntity(coordinate, ForestEntity.TREE);
-        manager.statistics().setCellCounts(1, 0);
-
-        userAction.apply(manager, NoUserActionContext.NO_CONTEXT, createSelectedCell(manager, coordinate));
-
-        assertAll(
-                () -> assertSame(ForestEntity.BURNING, manager.currentGridModel().getEntity(coordinate)),
-                () -> assertEquals(manager.statistics().totalCells() - 1, manager.statistics().emptyCells()),
-                () -> assertEquals(0, manager.statistics().treeCells()),
-                () -> assertEquals(1, manager.statistics().burningCells())
-        );
-    }
-
-    @Test
-    void testApplyTurnsBurningCellIntoEmptyCell() {
-        ForestSimulationManager manager = new ForestSimulationManager(createConfig());
-        ForestUserAction userAction = new ForestUserAction();
-        GridCoordinate coordinate = new GridCoordinate(0, 0);
-        manager.currentGridModel().setEntity(coordinate, ForestEntity.BURNING);
-        manager.statistics().setCellCounts(0, 1);
-
-        userAction.apply(manager, NoUserActionContext.NO_CONTEXT, createSelectedCell(manager, coordinate));
-
-        assertAll(
-                () -> assertSame(ForestEntity.EMPTY, manager.currentGridModel().getEntity(coordinate)),
-                () -> assertEquals(manager.statistics().totalCells(), manager.statistics().emptyCells()),
-                () -> assertEquals(0, manager.statistics().treeCells()),
-                () -> assertEquals(0, manager.statistics().burningCells())
-        );
+        assertCellCounts(0, 0, manager.statistics());
     }
 
 }

@@ -44,12 +44,12 @@ import static de.mkalb.etpetssim.simulations.forest.model.ForestConstraints.TREE
 public final class ForestConfigViewModel extends AbstractConfigViewModel<ForestConfig> {
 
     /**
-     * Number of decimal places of the tree growth probability, shown as percentage in the config view.
+     * Number of decimal places of the tree growth probability, shown as a percentage in the config view.
      */
     public static final int TREE_GROWTH_PERCENT_DECIMALS = 1;
 
     /**
-     * Number of decimal places of the lightning ignition probability, shown as percentage in the config view.
+     * Number of decimal places of the lightning ignition probability, shown as a percentage in the config view.
      */
     public static final int LIGHTNING_IGNITION_PERCENT_DECIMALS = 4;
 

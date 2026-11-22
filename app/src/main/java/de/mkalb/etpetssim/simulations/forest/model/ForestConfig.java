@@ -31,8 +31,9 @@ import static de.mkalb.etpetssim.simulations.forest.model.ForestConstraints.TREE
  * @param seed                         the random seed used for initialization
  * @param treeDensity                  the initial share of tree cells as a fraction of all cells
  * @param neighborhoodMode             the neighborhood mode used during updates
- * @param treeGrowthProbability        the probability that an empty cell grows a tree
- * @param lightningIgnitionProbability the probability that a tree ignites spontaneously
+ * @param treeGrowthProbability        the probability per step that an empty cell grows a tree
+ * @param lightningIgnitionProbability the probability per step that lightning sets a tree without a burning
+ *                                     neighbor on fire
  */
 public record ForestConfig(
         // Structure

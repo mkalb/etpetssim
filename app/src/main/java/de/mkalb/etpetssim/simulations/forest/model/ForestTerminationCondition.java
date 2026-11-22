@@ -5,7 +5,7 @@ import de.mkalb.etpetssim.engine.model.ReadableGridModel;
 import de.mkalb.etpetssim.simulations.forest.model.entity.ForestEntity;
 
 /**
- * Termination condition of the Forest-fire model that ends the simulation when no tree and no burning cell is left.
+ * Termination condition of the Forest-fire model that ends the simulation when no tree and no burning tree is left.
  */
 public final class ForestTerminationCondition
         implements SimulationTerminationCondition<ForestEntity, ReadableGridModel<ForestEntity>, ForestStatistics> {

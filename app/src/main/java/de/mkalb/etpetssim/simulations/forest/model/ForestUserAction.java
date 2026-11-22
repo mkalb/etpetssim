@@ -8,7 +8,7 @@ import de.mkalb.etpetssim.simulations.forest.model.entity.ForestEntity;
 import org.jspecify.annotations.Nullable;
 
 /**
- * User action of the Forest-fire model that cycles a cell from empty to tree to burning and back to empty.
+ * User action of the Forest-fire model that cycles a cell from empty to tree to burning tree and back to empty.
  */
 public final class ForestUserAction
         implements SimulationUserAction<
@@ -30,22 +30,22 @@ public final class ForestUserAction
         var model = manager.currentGridModel();
         var statistics = manager.statistics();
         var coordinate = selectedCell.coordinate();
-        var entity = model.getEntity(coordinate);
-
-        ForestEntity newEntity = switch (entity) {
-            case ForestEntity.EMPTY -> ForestEntity.TREE;
-            case ForestEntity.TREE -> ForestEntity.BURNING;
-            case ForestEntity.BURNING -> ForestEntity.EMPTY;
-        };
-
-        model.setEntity(coordinate, newEntity);
-
         int treeCells = statistics.treeCells();
         int burningCells = statistics.burningCells();
-        switch (entity) {
-            case ForestEntity.EMPTY -> statistics.setCellCounts(treeCells + 1, burningCells);
-            case ForestEntity.TREE -> statistics.setCellCounts(treeCells - 1, burningCells + 1);
-            case ForestEntity.BURNING -> statistics.setCellCounts(treeCells, burningCells - 1);
+
+        switch (model.getEntity(coordinate)) {
+            case EMPTY -> {
+                model.setEntity(coordinate, ForestEntity.TREE);
+                statistics.setCellCounts(treeCells + 1, burningCells);
+            }
+            case TREE -> {
+                model.setEntity(coordinate, ForestEntity.BURNING);
+                statistics.setCellCounts(treeCells - 1, burningCells + 1);
+            }
+            case BURNING -> {
+                model.setEntity(coordinate, ForestEntity.EMPTY);
+                statistics.setCellCounts(treeCells, burningCells - 1);
+            }
         }
     }
 
