@@ -13,17 +13,18 @@ maintainer workflow. The sections "Issues and Plans", "External Contributions", 
 
 Give each issue exactly one kind label and any number of area and process labels:
 
-| Label              | Group   | Meaning                                                                     |
-|--------------------|---------|-----------------------------------------------------------------------------|
-| `bug`              | kind    | Something does not work as intended.                                        |
-| `enhancement`      | kind    | New functionality, including executable agent tools (skills, hooks).        |
-| `refactoring`      | kind    | Code cleanup or restructuring without new functionality.                    |
-| `documentation`    | kind    | Documentation, including agent instructions (`AGENTS.md`, rules).           |
-| `area-build`       | area    | Gradle build, CI, packaging, and code checks.                               |
-| `area-styling`     | area    | JavaFX CSS, layout, and visual design.                                      |
-| `area-agents`      | area    | Agent instructions, rules, skills, and hooks.                               |
-| `needs-refinement` | process | Not ready for implementation; needs refinement with the maintainer.         |
-| `release-1.0`      | process | Required before the first 1.0 release.                                      |
+| Label              | Group        | Meaning                                                                     |
+|--------------------|--------------|-----------------------------------------------------------------------------|
+| `bug`              | kind         | Something does not work as intended.                                        |
+| `enhancement`      | kind         | New functionality, including executable agent tools (skills, hooks).        |
+| `refactoring`      | kind         | Code cleanup or restructuring without new functionality.                    |
+| `documentation`    | kind         | Documentation, including agent instructions (`AGENTS.md`, rules).           |
+| `area-build`       | area         | Gradle build, CI, packaging, and code checks.                               |
+| `area-styling`     | area         | JavaFX CSS, layout, and visual design.                                      |
+| `area-agents`      | area         | Agent instructions, rules, skills, and hooks.                               |
+| `needs-refinement` | process      | Not ready for implementation; needs refinement with the maintainer.         |
+| `release-1.0`      | process      | Required before the first 1.0 release.                                      |
+| `dependencies`     | pull request | Dependabot pull request that updates a dependency; not used for issues.     |
 
 - The GitHub default labels `question`, `duplicate`, `invalid`, `wontfix`, `good first issue`, and `help wanted` keep
   their default meaning. `question` is for questions from outside that expect an answer, not an implementation; if
