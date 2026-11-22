@@ -63,7 +63,11 @@ final class StatisticsMetricLayoutTest {
                 new ExpectedMetric(ForestStatistics.KEY_TREE_CELLS,
                         StatisticsExtremaMode.MIN_AND_MAX, StatisticsChartGroup.PRIMARY),
                 new ExpectedMetric(ForestStatistics.KEY_BURNING_CELLS,
-                        StatisticsExtremaMode.MAX, StatisticsChartGroup.SECONDARY)
+                        StatisticsExtremaMode.MAX, StatisticsChartGroup.SECONDARY),
+                new ExpectedMetric(ForestStatistics.KEY_CUMULATIVE_LIGHTNING_STRIKE_COUNT,
+                        StatisticsExtremaMode.NONE, StatisticsChartGroup.NONE),
+                new ExpectedMetric(ForestStatistics.KEY_CUMULATIVE_BURNED_TREE_COUNT,
+                        StatisticsExtremaMode.NONE, StatisticsChartGroup.NONE)
         );
     }
 
@@ -147,7 +151,7 @@ final class StatisticsMetricLayoutTest {
                 () -> assertChartWindowSizes(ConwayStatistics.metrics(), 50, 0, 0),
                 () -> assertChartWindowSizes(EtpetsStatistics.metrics(), 1_000, 0, 0),
                 () -> assertChartWindowSizes(ForestStatistics.metrics(), 0,
-                        StatisticsMetric.DEFAULT_CHART_WINDOW_SIZE, StatisticsMetric.DEFAULT_CHART_WINDOW_SIZE),
+                        StatisticsMetric.DEFAULT_CHART_WINDOW_SIZE, StatisticsMetric.DEFAULT_CHART_WINDOW_SIZE, 0, 0),
                 () -> assertChartWindowSizes(LangtonStatistics.metrics(), 0, 0),
                 () -> assertChartWindowSizes(ReboundingStatistics.metrics(), 0, 0),
                 () -> assertChartWindowSizes(SnakeStatistics.metrics(), 0, 0, 0, 0, 0),

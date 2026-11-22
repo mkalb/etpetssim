@@ -90,11 +90,14 @@ final class ForestStepLogicTest {
         return nextGridModel;
     }
 
-    private static void assertCellCounts(int treeCells, int burningCells, ForestStatistics statistics) {
+    private static void assertStepCounts(int treeCells, int burningCells, int lightningStrikes, int burnedTrees,
+                                         ForestStatistics statistics) {
         assertAll(
                 () -> assertEquals(treeCells, statistics.treeCells()),
                 () -> assertEquals(burningCells, statistics.burningCells()),
-                () -> assertEquals(statistics.totalCells() - treeCells - burningCells, statistics.emptyCells())
+                () -> assertEquals(statistics.totalCells() - treeCells - burningCells, statistics.emptyCells()),
+                () -> assertEquals(lightningStrikes, statistics.cumulativeLightningStrikeCount()),
+                () -> assertEquals(burnedTrees, statistics.cumulativeBurnedTreeCount())
         );
     }
 
@@ -113,7 +116,7 @@ final class ForestStepLogicTest {
                 () -> assertSame(ForestEntity.EMPTY, nextGridModel.getEntity(BURNING_COORDINATE)),
                 () -> assertSame(ForestEntity.BURNING, nextGridModel.getEntity(EDGE_NEIGHBOR_COORDINATE)),
                 () -> assertSame(ForestEntity.TREE, nextGridModel.getEntity(DISTANT_COORDINATE)),
-                () -> assertCellCounts(1, 1, statistics)
+                () -> assertStepCounts(1, 1, 0, 1, statistics)
         );
     }
 
@@ -129,7 +132,7 @@ final class ForestStepLogicTest {
         assertAll(
                 () -> assertSame(ForestEntity.EMPTY, nextGridModel.getEntity(BURNING_COORDINATE)),
                 () -> assertEquals(statistics.totalCells() - 1, nextGridModel.countEntities(ForestEntity::isTree)),
-                () -> assertCellCounts(statistics.totalCells() - 1, 0, statistics)
+                () -> assertStepCounts(statistics.totalCells() - 1, 0, 0, 1, statistics)
         );
     }
 
@@ -137,6 +140,7 @@ final class ForestStepLogicTest {
     void testPerformSynchronousStepIgnitesTreesWithLightningProbabilityOne() {
         ForestConfig config = createConfig(0.0d, 1.0d);
         var currentGridModel = createGridModel(config);
+        currentGridModel.setEntity(BURNING_COORDINATE, ForestEntity.BURNING);
         currentGridModel.setEntity(EDGE_NEIGHBOR_COORDINATE, ForestEntity.TREE);
         currentGridModel.setEntity(DISTANT_COORDINATE, ForestEntity.TREE);
         var statistics = new ForestStatistics(currentGridModel.structure());
@@ -146,7 +150,8 @@ final class ForestStepLogicTest {
         assertAll(
                 () -> assertSame(ForestEntity.BURNING, nextGridModel.getEntity(EDGE_NEIGHBOR_COORDINATE)),
                 () -> assertSame(ForestEntity.BURNING, nextGridModel.getEntity(DISTANT_COORDINATE)),
-                () -> assertCellCounts(0, 2, statistics)
+                // The tree next to the burning cell ignites from it; only the distant tree counts as lightning.
+                () -> assertStepCounts(0, 2, 1, 1, statistics)
         );
     }
 

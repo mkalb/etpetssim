@@ -39,6 +39,10 @@ final class ForestSimulationManagerTest {
                 () -> assertEquals(first.currentGridModel().allCells(), second.currentGridModel().allCells()),
                 () -> assertEquals(first.statistics().treeCells(), second.statistics().treeCells()),
                 () -> assertEquals(first.statistics().burningCells(), second.statistics().burningCells()),
+                () -> assertEquals(first.statistics().cumulativeLightningStrikeCount(),
+                        second.statistics().cumulativeLightningStrikeCount()),
+                () -> assertEquals(first.statistics().cumulativeBurnedTreeCount(),
+                        second.statistics().cumulativeBurnedTreeCount()),
                 () -> assertEquals(STEPS, second.statistics().stepCount()),
                 // A different seed must change the run; otherwise the equality above would prove nothing.
                 () -> assertNotEquals(first.currentGridModel().allCells(), otherSeed.currentGridModel().allCells())

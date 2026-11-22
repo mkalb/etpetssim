@@ -37,19 +37,38 @@ public final class ForestStepLogic implements SynchronousStepLogic<ForestEntity,
         Set<GridCoordinate> burningNeighborCoordinates = collectBurningNeighborCoordinates(currentGridModel);
         int treeCells = 0;
         int burningCells = 0;
+        int lightningStrikes = 0;
+        int burnedTrees = 0;
         for (GridCell<ForestEntity> cell : currentGridModel.allCells()) {
-            ForestEntity nextEntity = computeNextEntity(cell, burningNeighborCoordinates);
-            if (nextEntity.isTree()) {
-                treeCells++;
-            } else if (nextEntity.isBurning()) {
-                burningCells++;
-            }
-            if (!nextEntity.isEmpty()) {
-                nextGridModel.setEntity(cell.coordinate(), nextEntity);
+            GridCoordinate coordinate = cell.coordinate();
+            switch (cell.entity()) {
+                case EMPTY -> {
+                    if (random.nextDouble() < config.treeGrowthProbability()) {
+                        nextGridModel.setEntity(coordinate, ForestEntity.TREE);
+                        treeCells++;
+                    }
+                }
+                case TREE -> {
+                    // A tree with a burning neighbor ignites without a random draw; keep the order of the
+                    // conditions, because it determines the random sequence of a seed.
+                    if (burningNeighborCoordinates.contains(coordinate)) {
+                        nextGridModel.setEntity(coordinate, ForestEntity.BURNING);
+                        burningCells++;
+                    } else if (random.nextDouble() < config.lightningIgnitionProbability()) {
+                        nextGridModel.setEntity(coordinate, ForestEntity.BURNING);
+                        burningCells++;
+                        lightningStrikes++;
+                    } else {
+                        nextGridModel.setEntity(coordinate, ForestEntity.TREE);
+                        treeCells++;
+                    }
+                }
+                // The next grid model starts empty, so a burned-down tree needs no write.
+                case BURNING -> burnedTrees++;
             }
         }
 
-        statistics.setCellCounts(treeCells, burningCells);
+        statistics.updateStepCounts(treeCells, burningCells, lightningStrikes, burnedTrees);
     }
 
     /**
@@ -71,20 +90,6 @@ public final class ForestStepLogic implements SynchronousStepLogic<ForestEntity,
                 .filter(result -> result.action().isWithinGrid())
                 .map(EdgeBehaviorResult::mapped)
                 .collect(Collectors.toSet());
-    }
-
-    private ForestEntity computeNextEntity(GridCell<ForestEntity> cell,
-                                           Set<GridCoordinate> burningNeighborCoordinates) {
-        return switch (cell.entity()) {
-            case EMPTY -> (random.nextDouble() < config.treeGrowthProbability())
-                    ? ForestEntity.TREE : ForestEntity.EMPTY;
-            // A tree with a burning neighbor ignites without a random draw; keep the order of the conditions,
-            // because it determines the random sequence of a seed.
-            case TREE -> (burningNeighborCoordinates.contains(cell.coordinate())
-                    || (random.nextDouble() < config.lightningIgnitionProbability()))
-                    ? ForestEntity.BURNING : ForestEntity.TREE;
-            case BURNING -> ForestEntity.EMPTY;
-        };
     }
 
 }
