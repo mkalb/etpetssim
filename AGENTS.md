@@ -25,7 +25,7 @@ Other locations:
   update them with code changes. They are regenerated on demand with the `java-code-inventory` skill.
 - `assets`: screenshots and SVG icons.
 - `.editorconfig`, `.run`, and the shared files in `.idea`: IntelliJ settings, described in
-  `docs/development/intellij-setup.md`. Read them as needed, but do not change them.
+  `docs/development/development-setup.md`. Read them as needed, but do not change them.
 - `.vscode/tasks.json`: committed VS Code tasks that mirror the run configurations in `.run`; the rest of `.vscode`
   is local and ignored. Update the tasks when the commands they call change (e.g., Gradle tasks, application
   arguments, or skill script paths).

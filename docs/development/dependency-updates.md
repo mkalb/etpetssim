@@ -30,7 +30,7 @@ project uses the latest stable versions whenever possible. Dependency updates ar
    `https://github.com/gradle/gradle/blob/v<version>/LICENSE`).
 6. For a minor or major release (not for a patch release), check the release notes for changes to the Java versions
    that can run Gradle. The supported range ("Java 17 to 27") appears in `README.md` (Prerequisites) and
-   `docs/development/intellij-setup.md` (Terminal).
+   `docs/development/development-setup.md` ("Common Prerequisites").
 
 The `wrapper` task updates `gradle/wrapper/gradle-wrapper.properties` and `gradle/wrapper/gradle-wrapper.jar`, and
 `gradlew` and `gradlew.bat` if their templates changed.
@@ -50,7 +50,8 @@ Java version references:
   single-file source programs. A new JDK may deprecate APIs these programs use; `app:skillTest` covers them.
 - `README.md`: badge, Prerequisites (toolchain and upper bound of the range for running Gradle), the runtime of the
   distribution ZIP, and the technology table.
-- `docs/development/intellij-setup.md`: "Manual Setup" (Project SDK, Gradle, Terminal).
+- `docs/development/development-setup.md`: "Common Prerequisites" (Java for the Gradle Wrapper) and "Manual Setup" of
+  IntelliJ IDEA (Project SDK, Gradle).
 
 JavaFX version references:
 
