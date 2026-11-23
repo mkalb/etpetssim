@@ -35,6 +35,11 @@ project uses the latest stable versions whenever possible. Dependency updates ar
 The `wrapper` task updates `gradle/wrapper/gradle-wrapper.properties` and `gradle/wrapper/gradle-wrapper.jar`, and
 `gradlew` and `gradlew.bat` if their templates changed.
 
+If the optional plugin `gradle-skills` is installed (see
+[Development Setup](development-setup.md#optional-plugin-gradle-skills)), steps 1 to 3 may be done with the skill
+`gradle-skills:gradle-wrapper-upgrade` (e.g., "Upgrade the Gradle wrapper to `<version>`"). Steps 4 to 6 and the
+checks of "General Rules" remain required.
+
 ## Java and JavaFX
 
 Java and JavaFX share the major version and are updated together. Gradle must support the new Java version as a

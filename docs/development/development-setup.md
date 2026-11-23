@@ -109,3 +109,20 @@ The repository provides the configuration for Claude Code:
 - `.claude/skills`: agent skills; their scripts need `java` on the `PATH`.
 - `.claude/settings.json`: shared permissions.
 - `.claude/settings.local.json`: personal settings; ignored by `.gitignore`.
+
+### Optional Plugin gradle-skills
+
+The official plugin [gradle-skills](https://github.com/gradle/gradle-skills) (Apache-2.0) is optional and installed at
+user scope, not enabled in `.claude/settings.json`:
+
+```text
+/plugin marketplace add gradle/gradle-skills
+/plugin install gradle-skills@gradle-skills
+```
+
+It provides two skills:
+
+- `gradle-skills:gradle-wrapper-upgrade`: upgrades the Gradle Wrapper (see "Gradle" in
+  [Dependency Updates](dependency-updates.md#gradle)). It needs a POSIX shell; on Windows, Claude Code runs it in Git
+  Bash (Bash tool).
+- `gradle-skills:gradle-best-practices`: audits the build against the official Gradle best practices.
