@@ -15,10 +15,6 @@ base {
     archivesName = baseName
 }
 
-repositories {
-    mavenCentral()
-}
-
 // JavaFX artifacts are platform-specific. The OpenJFX POMs select the platform through Maven OS profiles,
 // which Gradle does not evaluate, so each module is declared explicitly with its classifier and without transitive
 // dependencies, which would add empty placeholder jars without classifier.
