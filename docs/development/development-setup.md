@@ -21,6 +21,15 @@ These settings do not depend on an IDE:
   tracked files with the line endings of `.gitattributes`; untracked and ignored files stay unchanged.
   (`git checkout-index --force --all` is not enough: it skips files whose stat data in the index is unchanged.)
 
+### Linux and WSL
+
+Linux x64 is supported for development (see "Platform Support" in the README). On Windows 11, WSL 2 provides such an
+environment:
+
+- Clone the repository inside the Linux file system (e.g., `~/dev/etpetssim`), not under `/mnt/c`, where file access
+  is slow.
+- WSLg displays the JavaFX window on the Windows desktop; no X server is needed.
+
 ## IntelliJ IDEA
 
 Some IDE settings are committed to the repository, so that every working copy uses the same code style, inspections,
@@ -106,9 +115,23 @@ The repository provides the configuration for Claude Code:
 
 - `AGENTS.md`: project instructions for all agents.
 - `.claude/rules`: path-scoped coding rules.
-- `.claude/skills`: agent skills; their scripts need `java` on the `PATH`.
+- `.claude/skills`: agent skills; their scripts need Java 27 as `java` on the `PATH`.
 - `.claude/settings.json`: shared permissions.
 - `.claude/settings.local.json`: personal settings; ignored by `.gitignore`.
+
+With the Bash sandbox of Claude Code enabled (`/sandbox`), Gradle cannot use `~/.gradle` or download Gradle,
+dependencies, and the Java toolchain, and `gh` cannot read its login. Exclude both commands from the sandbox in the
+personal settings (`~/.claude/settings.json` or `.claude/settings.local.json`):
+
+```json
+{
+  "sandbox": {
+    "excludedCommands": ["./gradlew *", "gh *"]
+  }
+}
+```
+
+Excluded commands run outside the sandbox and are subject to the permission rules of `.claude/settings.json`.
 
 ### Optional Plugin gradle-skills
 

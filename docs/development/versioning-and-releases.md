@@ -29,12 +29,14 @@ with `git fetch --tags`), or the latest matching tag is not valid SemVer. Only t
 
 ## Creating a Release
 
-The commands use PowerShell on Windows; on Linux, use `./gradlew` instead of `gradlew.bat`.
+The commands use PowerShell on Windows; on Linux, use `./gradlew` instead of `.\gradlew.bat`. Build a release
+distribution on Windows only: the ZIP contains the JavaFX artifacts of the build platform, and only the Windows
+distribution is supported.
 
 1. Merge all changes into `main` and check out `main` with a clean working tree.
-2. Run `gradlew.bat app:test` and make sure it passes.
+2. Run `.\gradlew.bat app:test` and make sure it passes.
 3. Create the annotated tag on the current `main` commit: `git tag -a v0.1.0 -m "Release 0.1.0"`.
-4. Verify the version: `gradlew.bat app:distZip` must produce `ExtraterrestrialPetsSimulation-0.1.0.zip`.
+4. Verify the version: `.\gradlew.bat app:distZip` must produce `ExtraterrestrialPetsSimulation-0.1.0.zip`.
 5. Publish the tag: `git push origin v0.1.0`.
 
 Never move or delete a pushed tag. If a release is faulty, fix it and create a new tag with a higher version.

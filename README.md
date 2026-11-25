@@ -99,6 +99,8 @@ scientific classification.
 | Linux (x64)   | Supported for development (build, tests, and run with Gradle); no distribution |
 | macOS         | Not supported                                                                  |
 
+Linux support was verified on Ubuntu 26.04 LTS in WSL 2 on Windows 11.
+
 JavaFX artifacts are platform-specific. `app/build.gradle.kts` resolves the Windows x64 or Linux x64 variant and fails
 with a clear error message on any other operating system or architecture.
 
