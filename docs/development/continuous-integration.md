@@ -33,8 +33,8 @@ Each job runs these steps:
    | `ubuntu-latest`  | `app:test`, `app:skillTest`, `app:javadoc` |
 
    Windows x64 is the supported distribution platform, so only the Windows job builds the distribution ZIP. Javadoc
-   is platform-independent and runs once, on Linux. The JavaFX tests run headless (`-Djavafx.headless=true`,
-   `-Dprism.order=sw`), without a virtual display.
+   is platform-independent and runs once, on Linux. The JavaFX tests run on the headless Glass platform
+   (`-Dglass.platform=headless`, `-Dprism.order=sw`), without a virtual display.
 5. Windows only: print the name of the ZIP in `app/build/distributions` and fail if its version contains `-dirty`,
    which means that the build modified tracked files.
 6. Only if the job fails: upload the test reports as an artifact (see "Test Reports").
@@ -97,3 +97,9 @@ manually:
 2. Read the commit SHA of the release tag, e.g., `gh api repos/actions/checkout/commits/v7.0.1 --jq .sha`.
 3. Replace the SHA and the version comment in `.github/workflows/ci.yml`.
 4. Start a run and check that both jobs pass.
+
+The repository settings (Settings, Actions, General, "Actions permissions") restrict the actions that workflows may
+use: only actions owned by `mkalb` or created by GitHub, plus the explicitly allowed `gradle/actions/setup-gradle@*`,
+and every action must be pinned to a full-length commit SHA. A run that uses any other action fails with a startup
+failure before a job starts; allow a new action in these settings before using it. A new release of
+`gradle/actions/setup-gradle` needs no change there, because the entry allows every version.

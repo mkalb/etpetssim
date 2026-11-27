@@ -118,11 +118,11 @@ tasks.named<Test>("test") {
     useJUnitPlatform {
         excludeTags("skill")
     }
-    // Set JVM args for JavaFX headless testing
+    // Runs JavaFX on the headless Glass platform with software rendering, so the tests need no display
     jvmArgs(
         "--enable-native-access=javafx.graphics",
         "-Dprism.order=sw",
-        "-Djavafx.headless=true"
+        "-Dglass.platform=headless"
     )
 }
 
