@@ -1,6 +1,7 @@
 package de.mkalb.etpetssim.simulations.conway.viewmodel;
 
 import de.mkalb.etpetssim.engine.CellShape;
+import de.mkalb.etpetssim.simulations.conway.shared.ConwayRulePresetSquare;
 import de.mkalb.etpetssim.simulations.conway.shared.ConwayTransitionRules;
 import de.mkalb.etpetssim.simulations.core.viewmodel.SimulationState;
 import javafx.beans.property.SimpleObjectProperty;
@@ -10,6 +11,7 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import static de.mkalb.etpetssim.simulations.conway.model.ConwayConstraints.TRANSITION_RULES_DEFAULT;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 final class ConwayConfigViewModelTest {
@@ -72,6 +74,56 @@ final class ConwayConfigViewModelTest {
         viewModel.ruleProperty().stringProperty().set("34/27");
 
         assertEquals(ConwayTransitionRules.parse("34/2"), viewModel.transitionRulesProperty().get());
+    }
+
+    @Test
+    void testUpdateRuleText() {
+        ConwayConfigViewModel viewModel = createViewModel(CellShape.SQUARE);
+
+        viewModel.getBirthProperties().get(6).set(true);
+        viewModel.getSurviveProperties().get(2).set(false);
+
+        assertEquals("3/36", viewModel.ruleProperty().stringProperty().get());
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"B36/S23", "b36/s23", " 23/36 ", "223/36"})
+    void testUpdateRuleTextKeepsTypedInput(String input) {
+        ConwayConfigViewModel viewModel = createViewModel(CellShape.SQUARE);
+
+        viewModel.ruleProperty().stringProperty().set(input);
+
+        assertAll(
+                () -> assertEquals(input, viewModel.ruleProperty().stringProperty().get()),
+                () -> assertEquals(ConwayTransitionRules.parse("23/36"), viewModel.transitionRulesProperty().get())
+        );
+    }
+
+    @Test
+    void testUpdateRuleTextAfterCellShapeChange() {
+        ConwayConfigViewModel viewModel = createViewModel(CellShape.SQUARE);
+        viewModel.ruleProperty().stringProperty().set("B378/S238");
+
+        viewModel.cellShapeProperty().property().setValue(CellShape.HEXAGON);
+
+        assertAll(
+                () -> assertEquals("23/3", viewModel.ruleProperty().stringProperty().get()),
+                () -> assertEquals(ConwayTransitionRules.parse("23/3"), viewModel.transitionRulesProperty().get())
+        );
+    }
+
+    @Test
+    void testUpdateRuleTextForPresetSelection() {
+        ConwayConfigViewModel viewModel = createViewModel(CellShape.SQUARE);
+
+        viewModel.ruleProperty().presetSquareProperty().property().setValue(ConwayRulePresetSquare.HIGHLIFE);
+
+        assertAll(
+                () -> assertEquals(ConwayRulePresetSquare.HIGHLIFE.ruleString(),
+                        viewModel.ruleProperty().stringProperty().get()),
+                () -> assertEquals(ConwayTransitionRules.parse(ConwayRulePresetSquare.HIGHLIFE.ruleString()),
+                        viewModel.transitionRulesProperty().get())
+        );
     }
 
 }
