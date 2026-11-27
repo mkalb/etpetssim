@@ -135,7 +135,7 @@ final class ConwayTransitionRulesTest {
 
     @ParameterizedTest
     @ValueSource(strings = {"2 3/3", "23/3!", "23/-3", "B3/23", "3/S23", "S23/B3", "S23/3", "B3/S2B3", "BB3/S23",
-            "x23/3", "23/\u0663"})
+            "x23/3", "23/\u0663", "B3/\u017F23"})
     void testParseRejectsUnexpectedCharacters(String ruleString) {
         assertThrows(IllegalArgumentException.class, () -> ConwayTransitionRules.parse(ruleString));
     }

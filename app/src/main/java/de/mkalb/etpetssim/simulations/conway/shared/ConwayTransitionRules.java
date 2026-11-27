@@ -101,7 +101,7 @@ public record ConwayTransitionRules(
     }
 
     private static boolean startsWithIgnoreCase(String part, char letter) {
-        return !part.isEmpty() && (Character.toUpperCase(part.charAt(0)) == letter);
+        return !part.isEmpty() && ((part.charAt(0) == letter) || (part.charAt(0) == Character.toLowerCase(letter)));
     }
 
     private static SortedSet<Integer> parseNeighborCounts(String digits, String ruleString) {
