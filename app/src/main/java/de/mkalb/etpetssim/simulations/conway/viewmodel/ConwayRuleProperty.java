@@ -71,6 +71,8 @@ public final class ConwayRuleProperty {
      * Sets the callback that is invoked whenever a valid {@link ConwayTransitionRules} is
      * derived from a preset selection or a text-field change; replaces any previous callback.
      *
+     * <p>The parsed rules are not checked against the cell shape; the callback decides whether to apply them.
+     *
      * @param listener the consumer to call with the parsed rules
      */
     public void setRulesChangedListener(Consumer<ConwayTransitionRules> listener) {

@@ -7,6 +7,8 @@ import de.mkalb.etpetssim.engine.neighborhood.NeighborhoodMode;
 import de.mkalb.etpetssim.simulations.conway.shared.ConwayTransitionRules;
 import de.mkalb.etpetssim.simulations.core.shared.CellDisplayMode;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 import java.util.Set;
 import java.util.function.Consumer;
@@ -23,6 +25,7 @@ import static de.mkalb.etpetssim.simulations.conway.model.ConwayConstraints.GRID
 import static de.mkalb.etpetssim.simulations.conway.model.ConwayConstraints.NEIGHBORHOOD_MODE_DEFAULT;
 import static de.mkalb.etpetssim.simulations.conway.model.ConwayConstraints.TRANSITION_RULES_DEFAULT;
 import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -32,6 +35,24 @@ final class ConwayConfigTest {
         ConfigValues values = new ConfigValues();
         change.accept(values);
         return values.toConfig().isValid();
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+            "23/3, SQUARE, true",
+            "8/8, SQUARE, true",
+            "9/3, SQUARE, false",
+            "23/9, SQUARE, false",
+            "23/03, SQUARE, false",
+            "6/6, HEXAGON, true",
+            "7/3, HEXAGON, false",
+            "23/78, HEXAGON, false",
+            "9/9, TRIANGLE, true",
+            "23/03, TRIANGLE, false"
+    })
+    void testAreValidTransitionRules(String ruleString, CellShape cellShape, boolean expected) {
+        assertEquals(expected, ConwayConfig.areValidTransitionRules(ConwayTransitionRules.parse(ruleString),
+                NEIGHBORHOOD_MODE_DEFAULT, cellShape));
     }
 
     @Test

@@ -179,6 +179,11 @@ public final class ConwayConfigViewModel extends AbstractConfigViewModel<ConwayC
     }
 
     private void updateCheckboxesFromRules(ConwayTransitionRules rules) {
+        // Rules with neighbor counts that the cell shape does not allow are ignored like a parsing error.
+        if (!ConwayConfig.areValidTransitionRules(rules, NEIGHBORHOOD_MODE_DEFAULT,
+                cellShapeProperty().property().getValue())) {
+            return;
+        }
         for (int i = ConwayTransitionRules.MIN_NEIGHBOR_COUNT; i <= ConwayTransitionRules.MAX_NEIGHBOR_COUNT; i++) {
             int index = i - ConwayTransitionRules.MIN_NEIGHBOR_COUNT;
             surviveProperties.get(index).set(rules.surviveCounts().contains(i));

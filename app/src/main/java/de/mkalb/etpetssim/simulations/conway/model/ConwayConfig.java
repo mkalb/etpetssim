@@ -51,6 +51,25 @@ public record ConwayConfig(
         implements SimulationConfig {
 
     /**
+     * Checks whether the transition rules use only neighbor counts that the cell shape and neighborhood mode allow:
+     * no birth count below {@link ConwayConstraints#BIRTH_NEIGHBOR_COUNT_MIN} and no count above the maximum neighbor
+     * count of the cell shape.
+     *
+     * @param transitionRules  the transition rules to check
+     * @param neighborhoodMode the neighborhood mode that determines the maximum neighbor count
+     * @param cellShape        the cell shape that determines the maximum neighbor count
+     * @return {@code true} if all neighbor counts are allowed, otherwise {@code false}
+     */
+    public static boolean areValidTransitionRules(ConwayTransitionRules transitionRules,
+                                                  NeighborhoodMode neighborhoodMode,
+                                                  CellShape cellShape) {
+        int maxNeighborCount = CellNeighborhoods.maxNeighborCount(neighborhoodMode, cellShape);
+        return transitionRules.birthCounts().stream().noneMatch(count -> count < BIRTH_NEIGHBOR_COUNT_MIN)
+                && transitionRules.surviveCounts().stream().allMatch(count -> count <= maxNeighborCount)
+                && transitionRules.birthCounts().stream().allMatch(count -> count <= maxNeighborCount);
+    }
+
+    /**
      * Validates the common simulation settings and the Conway-specific selections, ranges, and transition rules.
      *
      * @return {@code true} if this configuration is valid, otherwise {@code false}
@@ -69,10 +88,7 @@ public record ConwayConfig(
     }
 
     private boolean hasValidTransitionRules() {
-        int maxNeighborCount = CellNeighborhoods.maxNeighborCount(neighborhoodMode, cellShape);
-        return transitionRules.birthCounts().stream().noneMatch(count -> count < BIRTH_NEIGHBOR_COUNT_MIN)
-                && transitionRules.surviveCounts().stream().allMatch(count -> count <= maxNeighborCount)
-                && transitionRules.birthCounts().stream().allMatch(count -> count <= maxNeighborCount);
+        return areValidTransitionRules(transitionRules, neighborhoodMode, cellShape);
     }
 
 }
