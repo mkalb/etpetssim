@@ -81,9 +81,10 @@ with a known vulnerability, Dependabot opens an alert on the tab "Security" and 
 `THIRD-PARTY-LICENSES`) and close the pull request.
 
 GitHub does not detect the Gradle dependencies from the build files. The repository setting "Automatic dependency
-submission" (Settings, Advanced Security) is enabled: on every push to `main`, GitHub runs a Gradle build in its own
-workflow run and submits the resolved dependencies, including transitive ones, to the dependency graph. Alerts and
-security updates rely on these submitted dependencies.
+submission" (Settings, Advanced Security) is enabled: on a push to `main` and to other branches (e.g., the branches of
+Dependabot pull requests), GitHub runs a Gradle build in its own workflow run and submits the resolved dependencies,
+including transitive ones. The dependency graph of `main`, on which alerts and security updates rely, lists these
+submitted dependencies.
 
 `.github/dependabot.yml` enables monthly version updates with the label `dependencies`:
 
