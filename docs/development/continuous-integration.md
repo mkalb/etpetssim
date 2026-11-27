@@ -35,6 +35,10 @@ Each job runs these steps:
    Windows x64 is the supported distribution platform, so only the Windows job builds the distribution ZIP. Javadoc
    is platform-independent and runs once, on Linux. The JavaFX tests run on the headless Glass platform
    (`-Dglass.platform=headless`, `-Dprism.order=sw`), without a virtual display.
+
+   The Windows job runs Gradle with `--no-daemon`. A daemon that keeps running after the build holds lock files in
+   the Gradle User Home, which `setup-gradle` cannot read on Windows when it saves the cache. On Linux, the daemon
+   does not block saving the cache.
 5. Windows only: print the name of the ZIP in `app/build/distributions` and fail if its version contains `-dirty`,
    which means that the build modified tracked files.
 6. Only if the job fails: upload the test reports as an artifact (see "Test Reports").

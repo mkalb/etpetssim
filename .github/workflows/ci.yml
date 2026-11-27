@@ -38,11 +38,14 @@ jobs:
         with:
           cache-provider: basic
 
-      # The property is quoted, because PowerShell may split unquoted native arguments at a dot.
+      # The property is quoted, because PowerShell may split unquoted native arguments at a dot. Without a daemon,
+      # Gradle releases its lock files when the build ends; Windows cannot read locked files when the cache is saved.
       - name: Build and test (Windows)
         if: runner.os == 'Windows'
         shell: pwsh
-        run: .\gradlew.bat "-Porg.gradle.java.installations.auto-download=false" app:test app:skillTest app:distZip
+        run: >-
+          .\gradlew.bat --no-daemon "-Porg.gradle.java.installations.auto-download=false"
+          app:test app:skillTest app:distZip
 
       - name: Build and test (Linux)
         if: runner.os == 'Linux'
