@@ -1,0 +1,74 @@
+# Builds and tests the committed state on Windows x64 and Linux x64.
+# See docs/development/continuous-integration.md.
+name: CI
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Build (${{ matrix.os }})
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, ubuntu-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 30
+    steps:
+      # The full history with tags is required to derive the version with 'git describe'. The build needs no
+      # authenticated Git commands, so the token is not stored in the Git config.
+      - name: Check out
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Set up JDK 27
+        uses: actions/setup-java@d1374f8ac74474200d16ef8ecee22c7ae7a51880 # v6.3.0
+        with:
+          distribution: temurin
+          java-version: '27'
+
+      # Caches the Gradle User Home and validates the Gradle Wrapper.
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@8da46b539cd8fe6ab27ca75128919a18d757604c # v6.4.1
+        with:
+          cache-provider: basic
+
+      # The property is quoted, because PowerShell may split unquoted native arguments at a dot.
+      - name: Build and test (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: .\gradlew.bat "-Porg.gradle.java.installations.auto-download=false" app:test app:skillTest app:distZip
+
+      - name: Build and test (Linux)
+        if: runner.os == 'Linux'
+        shell: bash
+        run: ./gradlew -Porg.gradle.java.installations.auto-download=false app:test app:skillTest app:javadoc
+
+      - name: Check distribution version
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $zips = @(Get-ChildItem -Path app/build/distributions -Filter *.zip)
+          if ($zips.Count -ne 1) {
+            Write-Output "::error::Expected exactly one ZIP in app/build/distributions, found $($zips.Count)."
+            exit 1
+          }
+          $name = $zips[0].Name
+          Write-Output "Distribution: $name"
+          if ($name -like '*-dirty*') {
+            Write-Output "::error::The version of '$name' contains '-dirty': the build modified tracked files."
+            exit 1
+          }
+
+      - name: Upload test reports
+        if: failure()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: test-reports-${{ matrix.os }}
+          path: app/build/reports/tests
+          retention-days: 7
