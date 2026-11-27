@@ -3,6 +3,8 @@ package de.mkalb.etpetssim.skills;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -227,7 +229,7 @@ final class I18nConsistencyCheckTest {
     }
 
     @Test
-    void testFixPrintsPostFixReportAndWritesExactLfAndCrlfBytes() throws Exception {
+    void testFixPrintsPostFixReportAndWritesExactLfBytes() throws Exception {
         byte[] enUsBytes = bytesWithLineEnding(
                 "\n", "\uFEFFgamma = C:\\\\temp", "beta = Caf\\u00E9", "alpha = A\u200BB"
         );
@@ -239,7 +241,7 @@ final class I18nConsistencyCheckTest {
         ProcessResult result = runHelper("fix");
 
         byte[] expectedEnUsBytes = bytesWithLineEnding("\n", "alpha = AB", "beta  = Café", "gamma = C:\\\\temp");
-        byte[] expectedDeDeBytes = bytesWithLineEnding("\r\n", "alpha = AB", "beta  = Kaffee", "gamma = C:\\\\temp");
+        byte[] expectedDeDeBytes = bytesWithLineEnding("\n", "alpha = AB", "beta  = Kaffee", "gamma = C:\\\\temp");
         String expected = expectedOutput(
                 "i18n consistency auto-fix",
                 "- " + EN_US_RELATIVE_PATH + ": updated encoding (BOM/invisible characters), line endings, sorting, alignment, or Unicode escapes; removed 1 invisible character",
@@ -265,7 +267,7 @@ final class I18nConsistencyCheckTest {
                 "",
                 "Rule: line ending consistency",
                 "PASS line ending consistency: messages_en_US.properties (en_US) consistently uses LF line endings",
-                "PASS line ending consistency: messages_de_DE.properties (de_DE) consistently uses CRLF line endings",
+                "PASS line ending consistency: messages_de_DE.properties (de_DE) consistently uses LF line endings",
                 "",
                 "Rule: trailing newline",
                 "PASS trailing newline: messages_en_US.properties (en_US) ends with exactly one trailing line break",
@@ -652,9 +654,11 @@ final class I18nConsistencyCheckTest {
         );
     }
 
-    @Test
-    void testReportCannotVerifyTrailingNewlineForUnsupportedCrLineEndings() throws Exception {
-        byte[] bundleBytes = bytesWithLineEnding("\r", "alpha = one", "beta  = two");
+    @ParameterizedTest
+    @ValueSource(strings = {"CR", "CRLF"})
+    void testReportRejectsUnsupportedLineEndings(String style) throws Exception {
+        String lineEnding = style.equals("CR") ? "\r" : "\r\n";
+        byte[] bundleBytes = bytesWithLineEnding(lineEnding, "alpha = one", "beta  = two");
         writeBundles(bundleBytes, bundleBytes);
 
         ProcessResult result = runHelper("report");
@@ -662,7 +666,8 @@ final class I18nConsistencyCheckTest {
         assertAll(
                 () -> assertEquals(2, result.exitCode()),
                 () -> assertTrue(result.output().contains(
-                        "FAIL line ending consistency: messages_en_US.properties (en_US) uses unsupported CR line endings; use LF or CRLF"
+                        "FAIL line ending consistency: messages_en_US.properties (en_US) uses unsupported " + style
+                                + " line endings; use LF"
                 )),
                 () -> assertTrue(result.output().contains(
                         "FAIL trailing newline: messages_en_US.properties (en_US): cannot verify the trailing line break"

@@ -9,6 +9,7 @@ public final class I18nConsistencyCheck {
     private static final int MAX_REPORTED_INVISIBLE_CHARACTERS = 20;
 
     private static final Pattern LINE_ENDING_PATTERN = Pattern.compile("\r\n|\n|\r");
+    private static final String LINE_SEPARATOR = "\n";
 
     private static final Comparator<String> KEY_COMPARATOR =
             Comparator.comparing((String key) -> key.toLowerCase(Locale.ROOT))
@@ -108,9 +109,8 @@ public final class I18nConsistencyCheck {
         Path relativePath = source.relativePath();
         Path path = source.path();
         byte[] originalBytes = source.originalBytes();
-        String originalContent = decodeUtf8(stripUtf8Bom(originalBytes));
         SanitizedEntries sanitized = sanitizeEntries(bundle);
-        String fixedContent = formatEntries(sanitized.entries(), lineSeparatorOf(originalContent));
+        String fixedContent = formatEntries(sanitized.entries());
         byte[] fixedBytes = encodeUtf8(fixedContent);
         validateRenderedBundle(relativePath, sanitized.entries(), fixedBytes);
 
@@ -388,11 +388,7 @@ public final class I18nConsistencyCheck {
         return relativePath.getFileName().toString() + " (" + localeFrom(relativePath) + ")";
     }
 
-    private static String lineSeparatorOf(String content) {
-        return content.contains("\r\n") ? "\r\n" : "\n";
-    }
-
-    private static String formatEntries(Collection<Entry> entries, String lineSeparator) {
+    private static String formatEntries(Collection<Entry> entries) {
         List<RenderedEntry> sortedEntries = entries.stream()
                 .map(I18nConsistencyCheck::renderEntry)
                 .sorted(Comparator.comparing(RenderedEntry::decodedKey, KEY_COMPARATOR))
@@ -404,8 +400,8 @@ public final class I18nConsistencyCheck {
 
         String content = sortedEntries.stream()
                 .map(entry -> formatEntry(entry, maxKeyLength))
-                .collect(Collectors.joining(lineSeparator));
-        return content + lineSeparator;
+                .collect(Collectors.joining(LINE_SEPARATOR));
+        return content + LINE_SEPARATOR;
     }
 
     private static String formatEntry(RenderedEntry entry, int maxKeyLength) {
@@ -557,21 +553,20 @@ public final class I18nConsistencyCheck {
         while (matcher.find()) {
             styles.add(lineEndingStyleName(matcher.group()));
         }
-        String consistentStyle = ((styles.size() == 1) && !styles.contains("CR"))
-                ? styles.iterator().next()
-                : null;
+        boolean lfOnly = styles.equals(Set.of("LF"));
 
-        if (styles.contains("CR")) {
-            findings.add(Finding.fail("line ending consistency", fileName + " uses unsupported CR line endings; use LF or CRLF"));
-        } else if (styles.size() > 1) {
+        if (styles.size() > 1) {
             findings.add(Finding.fail("line ending consistency", fileName + " mixes line ending styles: " + String.join(", ", styles)));
         } else if (styles.isEmpty()) {
             findings.add(Finding.fail("line ending consistency", fileName + " has no line endings"));
+        } else if (!lfOnly) {
+            findings.add(Finding.fail("line ending consistency", fileName + " uses unsupported "
+                    + styles.iterator().next() + " line endings; use LF"));
         } else {
-            findings.add(Finding.pass("line ending consistency", fileName + " consistently uses " + consistentStyle + " line endings"));
+            findings.add(Finding.pass("line ending consistency", fileName + " consistently uses LF line endings"));
         }
 
-        findings.add(analyzeTrailingNewline(fileName, content, consistentStyle));
+        findings.add(analyzeTrailingNewline(fileName, content, lfOnly));
         return findings;
     }
 
@@ -583,16 +578,15 @@ public final class I18nConsistencyCheck {
         };
     }
 
-    private static Finding analyzeTrailingNewline(String fileName, String content, String consistentStyle) {
-        if (consistentStyle == null) {
+    private static Finding analyzeTrailingNewline(String fileName, String content, boolean lfOnly) {
+        if (!lfOnly) {
             return Finding.fail("trailing newline", fileName
                     + ": cannot verify the trailing line break because line endings are inconsistent, missing, or unsupported");
         }
-        String separator = Objects.equals(consistentStyle, "CRLF") ? "\r\n" : "\n";
-        if (!content.endsWith(separator)) {
+        if (!content.endsWith(LINE_SEPARATOR)) {
             return Finding.fail("trailing newline", fileName + " does not end with a trailing line break");
         }
-        if (content.substring(0, content.length() - separator.length()).endsWith(separator)) {
+        if (content.substring(0, content.length() - LINE_SEPARATOR.length()).endsWith(LINE_SEPARATOR)) {
             return Finding.fail("trailing newline", fileName + " has extra blank lines at the end of the file");
         }
         return Finding.pass("trailing newline", fileName + " ends with exactly one trailing line break");

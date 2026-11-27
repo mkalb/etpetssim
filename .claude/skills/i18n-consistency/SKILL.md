@@ -63,9 +63,9 @@ Only syntactically effective `\uXXXX` sequences produce Unicode-escape
 warnings. Escaped-backslash text such as `\\u0041`, whose decoded value is the
 literal text `\u0041`, is not reported.
 
-It also checks that each bundle uses one consistent line ending throughout
-(either all LF or all CRLF, never a mix) and ends with exactly one trailing
-line break (no missing trailing newline, no extra trailing blank lines).
+It also checks that each bundle uses LF line endings throughout (CR, CRLF, or
+a mix are failures) and ends with exactly one trailing line break (no missing
+trailing newline, no extra trailing blank lines).
 
 Alphabetical ordering is case-insensitive as the primary sort key, with a
 case-sensitive tiebreak for keys that differ only by letter case.
@@ -103,8 +103,7 @@ different `%` URL-encoding.
   helper, report that and stop — do not hand-edit the bundles.
 - `fix` strips a UTF-8 BOM, removes invisible/non-printable characters (except
   regular spaces) that are literally present in decoded keys or values,
-  normalizes line endings to one consistent style with exactly one trailing
-  newline (CRLF is used when the file contains any CRLF, otherwise LF), sorts
+  normalizes line endings to LF with exactly one trailing newline, sorts
   entries, re-aligns the `=` column, and converts only unescaped, valid Unicode
   scalar escapes in values or keys that are safe to materialize as UTF-8.
   Unsafe control, invisible, malformed-surrogate, and escaped-backslash
