@@ -80,9 +80,18 @@ with a known vulnerability, Dependabot opens an alert on the tab "Security" and 
 `dependencies`. Do not merge such a pull request as is: apply the update by the rules above (including `README.md` and
 `THIRD-PARTY-LICENSES`) and close the pull request.
 
-GitHub does not detect the Gradle dependencies from the build files: the dependency graph lists no libraries, so
-Dependabot reports nothing until a workflow submits the dependencies. Automatic dependency submission and Dependabot
-version updates are not enabled; both are re-evaluated after the CI workflow (#14).
+GitHub does not detect the Gradle dependencies from the build files. The repository setting "Automatic dependency
+submission" (Settings, Advanced Security) is enabled: on every push to `main`, GitHub runs a Gradle build in its own
+workflow run and submits the resolved dependencies, including transitive ones, to the dependency graph. Alerts and
+security updates rely on these submitted dependencies.
+
+`.github/dependabot.yml` enables monthly version updates with the label `dependencies`:
+
+- `github-actions`: a pull request updates the commit SHA and the version comment of an action in
+  `.github/workflows`. Check the diff and the release notes of the action, start a CI run on the branch of the pull
+  request (`gh workflow run ci.yml --ref <branch>`), and merge the pull request when both jobs pass.
+- `gradle`: a pull request reports a new version of Gradle, a plugin, or a library. Do not merge it as is: apply the
+  update by the rules above and close the pull request, as for security updates.
 
 Secret scanning with push protection and private vulnerability reporting are enabled as well; `SECURITY.md` describes
 how to report a vulnerability.

@@ -1,0 +1,18 @@
+# Dependabot version updates. See "Dependabot" in docs/development/dependency-updates.md.
+version: 2
+updates:
+  # Keeps the pinned commit SHAs and version comments of the actions in .github/workflows current.
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly
+    labels:
+      - dependencies
+
+  # Notifies about new versions of Gradle, plugins, and libraries; the pull requests are not merged as is.
+  - package-ecosystem: gradle
+    directory: /
+    schedule:
+      interval: monthly
+    labels:
+      - dependencies

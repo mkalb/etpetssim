@@ -92,8 +92,9 @@ The settings of `gradle.properties` are not changed for the workflow.
 ## Updating the Actions
 
 Every action is pinned to the full-length commit SHA of a release, with the version as a comment, e.g.
-`uses: actions/checkout@<sha> # v7.0.1`. A tag can be moved to other code; a commit SHA cannot. The SHAs are updated
-manually:
+`uses: actions/checkout@<sha> # v7.0.1`. A tag can be moved to other code; a commit SHA cannot. Dependabot opens
+monthly pull requests that update the SHAs (see "Dependabot" in [Dependency Updates](dependency-updates.md#dependabot)).
+To update a SHA manually:
 
 1. Determine the latest release of the action, e.g., `gh release view --repo actions/checkout --json tagName`, and read
    its release notes, especially for a new major version. `gradle/actions/setup-gradle` is released in the repository
