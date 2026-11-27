@@ -43,9 +43,9 @@ the population settles down or dies out.
   top-left corner of the pattern. The pattern includes a border of dead cells and overwrites the cells it covers; it
   is placed only if it fits completely inside the grid.
 
-The **Pattern** option offers classic still lifes, oscillators, methuselahs, a replicator, and spaceships. Patterns
-are available only for square cells and only for the rules they are made for: the replicator for the HighLife rule
-23/36, all other patterns for Conway's rule 23/3. For other cell shapes or rules, the list is empty.
+The **Pattern** option offers classic still lifes, oscillators, methuselahs, a replicator, spaceships, and a glider
+gun. Patterns are available only for square cells and only for the rules they are made for: the replicator for the
+HighLife rule 23/36, all other patterns for Conway's rule 23/3. For other cell shapes or rules, the list is empty.
 
 ## Configuration
 
@@ -75,8 +75,9 @@ Depending on the cell shape, one preset list is shown: the **Triangle**, **Squar
 offers well-known rules for its cell shape; no preset is selected by default. Selecting a preset fills in the
 transition rule.
 
-**S/B notation** (empty by default) takes a rule as single-digit survival counts, a slash, and single-digit birth
-counts, e.g. 23/3. A valid entry updates the checkboxes of the transition rule; invalid input leaves them unchanged.
+**Rule input** (empty by default) takes a rule in S/B notation, with single-digit survival counts, a slash, and
+single-digit birth counts (e.g. 23/3), or in B/S notation (e.g. B3/S23). A valid entry updates the checkboxes of the
+transition rule; invalid input, including counts that the cell shape does not allow, leaves them unchanged.
 
 **Transition rule** (default 23/3) is a grid of checkboxes with a Survival row and a Birth row for 0 to 9 living
 neighbors. Counts above the number of neighbors of the cell shape are disabled (above 8 for square cells and above 6
