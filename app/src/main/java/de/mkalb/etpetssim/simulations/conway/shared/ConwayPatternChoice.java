@@ -8,7 +8,7 @@ import java.util.function.BiPredicate;
 import java.util.function.Supplier;
 
 /**
- * Pattern that the Conway edit toolbar offers for placement on the grid.
+ * Pattern choice of Conway's Game of Life that the edit toolbar offers for placement on the grid.
  *
  * <p>The pattern is created on demand by the supplier; the availability rule decides for which cell shape and
  * transition rules the pattern is offered.

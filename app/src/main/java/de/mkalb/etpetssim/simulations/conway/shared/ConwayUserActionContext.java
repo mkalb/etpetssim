@@ -3,7 +3,7 @@ package de.mkalb.etpetssim.simulations.conway.shared;
 import de.mkalb.etpetssim.simulations.core.shared.SimulationUserActionContext;
 
 /**
- * Identifies which Conway edit action should be applied.
+ * Edit action context of Conway's Game of Life that identifies which edit action should be applied.
  */
 public sealed interface ConwayUserActionContext extends SimulationUserActionContext
         permits ConwayUserActionContext.FixedAction, ConwayUserActionContext.PlacePattern {

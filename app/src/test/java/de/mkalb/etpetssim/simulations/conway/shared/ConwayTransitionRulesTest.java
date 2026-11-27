@@ -1,6 +1,8 @@
 package de.mkalb.etpetssim.simulations.conway.shared;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -100,19 +102,42 @@ final class ConwayTransitionRulesTest {
         assertEquals(ConwayTransitionRules.parse("23/3"), ConwayTransitionRules.parse("223/33"));
     }
 
-    @Test
-    void testParseIgnoresNonDigitCharacters() {
-        assertEquals(ConwayTransitionRules.parse("23/3"), ConwayTransitionRules.parse("2 3/3!"));
+    @ParameterizedTest
+    @ValueSource(strings = {"B3/S23", "b3/s23", "B3/s23", "  B3/S23\t", "B33/S322"})
+    void testParseAcceptsBirthSurvivalNotation(String ruleString) {
+        assertEquals(ConwayTransitionRules.of(List.of(2, 3), List.of(3)), ConwayTransitionRules.parse(ruleString));
     }
 
     @Test
-    void testParseRejectsMissingSlash() {
-        assertThrows(IllegalArgumentException.class, () -> ConwayTransitionRules.parse("23"));
+    void testParseReturnsEmptySetsForEmptyBirthSurvivalParts() {
+        ConwayTransitionRules rules = ConwayTransitionRules.parse("B/S");
+        assertAll(
+                () -> assertTrue(rules.surviveCounts().isEmpty()),
+                () -> assertTrue(rules.birthCounts().isEmpty())
+        );
+    }
+
+    @Test
+    void testParseIgnoresSurroundingWhitespace() {
+        assertEquals(ConwayTransitionRules.parse("23/3"), ConwayTransitionRules.parse(" 23/3 \n"));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"23", "B3S23", "", "  "})
+    void testParseRejectsMissingSlash(String ruleString) {
+        assertThrows(IllegalArgumentException.class, () -> ConwayTransitionRules.parse(ruleString));
     }
 
     @Test
     void testParseRejectsMultipleSlashes() {
         assertThrows(IllegalArgumentException.class, () -> ConwayTransitionRules.parse("2/3/4"));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"2 3/3", "23/3!", "23/-3", "B3/23", "3/S23", "S23/B3", "S23/3", "B3/S2B3", "BB3/S23",
+            "x23/3", "23/\u0663", "B3/\u017F23"})
+    void testParseRejectsUnexpectedCharacters(String ruleString) {
+        assertThrows(IllegalArgumentException.class, () -> ConwayTransitionRules.parse(ruleString));
     }
 
     @Test

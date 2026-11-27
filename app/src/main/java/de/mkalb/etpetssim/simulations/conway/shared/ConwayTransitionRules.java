@@ -7,7 +7,7 @@ import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 /**
- * Represents the transition rule set for Conway-style cellular automata.
+ * Transition rules of Conway's Game of Life with the neighbor counts for survival and birth.
  *
  * <p>The rules are defined by two sets:
  * <ul>
@@ -64,41 +64,56 @@ public record ConwayTransitionRules(
     }
 
     /**
-     * Parses a display string in S/B notation into a new {@code ConwayTransitionRules} instance.
+     * Parses a rule string in S/B or B/S notation into a new {@code ConwayTransitionRules} instance.
      *
-     * <p>S/B notation (also called <em>traditional notation</em>) is one of two common rule string formats for
-     * Conway-style cellular automata. It places survival counts before the slash and birth counts after the slash.
+     * <p>Two rule string formats are common for Conway-style cellular automata:
+     * <ul>
+     *   <li><em>S/B notation</em> (also called <em>traditional notation</em>) places the survival counts before the
+     *   slash and the birth counts after it, e.g., {@code 23/3} (Conway's Game of Life) or {@code 1257/1357}.</li>
+     *   <li><em>B/S notation</em> places the birth counts, prefixed with {@code B}, before the slash and the survival
+     *   counts, prefixed with {@code S}, after it, e.g., {@code B3/S23}. The letters may be in upper or lower
+     *   case.</li>
+     * </ul>
      *
-     * <p>The input string must be in the format {@code S/B}, where each part is a sequence of digits representing
-     * allowed neighbor counts. Non-digit characters other than the slash separator are silently ignored during
-     * parsing. Examples: {@code 23/3} (Conway's Game of Life) or {@code 1257/1357}.
+     * <p>Each count is a single ASCII digit; duplicate digits are ignored. Leading and trailing whitespace of the rule
+     * string is ignored; any other character is rejected.
      *
-     * <p>The alternative <em>B/S notation</em> ({@code B3/S23}) is not supported by this method.
-     *
-     * @param displayString the S/B rule string to parse
+     * @param ruleString the rule string in S/B or B/S notation
      * @return a new {@code ConwayTransitionRules} instance parsed from the string
-     * @throws IllegalArgumentException if the string does not contain exactly one slash
+     * @throws IllegalArgumentException if the string does not contain exactly one slash or contains a character that
+     *                                  is not allowed by the notation
      * @see #toDisplayString()
      */
-    public static ConwayTransitionRules parse(String displayString) {
-        String[] parts = displayString.split("/", -1);
+    public static ConwayTransitionRules parse(String ruleString) {
+        String[] parts = ruleString.strip().split("/", -1);
         if (parts.length != 2) {
-            throw new IllegalArgumentException("Unable to parse displayString: expected exactly one '/', "
-                    + "displayString=" + displayString);
+            throw new IllegalArgumentException("Unable to parse ruleString: expected exactly one '/', "
+                    + "ruleString=" + ruleString);
         }
-        SortedSet<Integer> survive = new TreeSet<>();
-        SortedSet<Integer> birth = new TreeSet<>();
-        for (char c : parts[0].toCharArray()) {
-            if (Character.isDigit(c)) {
-                survive.add(Character.getNumericValue(c));
+        if (startsWithIgnoreCase(parts[0], 'B') && startsWithIgnoreCase(parts[1], 'S')) {
+            return new ConwayTransitionRules(
+                    parseNeighborCounts(parts[1].substring(1), ruleString),
+                    parseNeighborCounts(parts[0].substring(1), ruleString));
+        }
+        return new ConwayTransitionRules(
+                parseNeighborCounts(parts[0], ruleString),
+                parseNeighborCounts(parts[1], ruleString));
+    }
+
+    private static boolean startsWithIgnoreCase(String part, char letter) {
+        return !part.isEmpty() && ((part.charAt(0) == letter) || (part.charAt(0) == Character.toLowerCase(letter)));
+    }
+
+    private static SortedSet<Integer> parseNeighborCounts(String digits, String ruleString) {
+        SortedSet<Integer> neighborCounts = new TreeSet<>();
+        for (char c : digits.toCharArray()) {
+            if ((c < '0') || (c > '9')) {
+                throw new IllegalArgumentException("Unable to parse ruleString: unexpected character '" + c
+                        + "', ruleString=" + ruleString);
             }
+            neighborCounts.add(c - '0');
         }
-        for (char c : parts[1].toCharArray()) {
-            if (Character.isDigit(c)) {
-                birth.add(Character.getNumericValue(c));
-            }
-        }
-        return new ConwayTransitionRules(survive, birth);
+        return neighborCounts;
     }
 
     private static void checkNeighborCounts(String componentName, Collection<Integer> neighborCounts) {

@@ -40,7 +40,8 @@ final class ConwayPatternsTest {
             new PatternExpectation("conway.rpentomino", 5, 5, 5),
             new PatternExpectation(HIGHLIFE_REPLICATOR_ID, 7, 7, 12),
             new PatternExpectation("conway.glider", 5, 5, 5),
-            new PatternExpectation("conway.lwss", 7, 6, 9)
+            new PatternExpectation("conway.lwss", 7, 6, 9),
+            new PatternExpectation("conway.gosperglidergun", 38, 11, 36)
     );
 
     private static ConwayConfig createConfig(CellShape cellShape) {

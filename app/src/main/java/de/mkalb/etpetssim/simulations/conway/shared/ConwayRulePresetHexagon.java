@@ -1,7 +1,7 @@
 package de.mkalb.etpetssim.simulations.conway.shared;
 
 /**
- * Preset rule sets for Conway-style cellular automata with hexagon cells.
+ * Rule presets of Conway's Game of Life for hexagon cells.
  *
  * <p>Each constant provides a well-known S/B rule string for hexagonal grids.
  * In hexagonal grids each cell has at most 6 neighbors, so valid digit range is 0-6.

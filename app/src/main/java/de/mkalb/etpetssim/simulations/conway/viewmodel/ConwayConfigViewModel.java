@@ -83,6 +83,7 @@ public final class ConwayConfigViewModel extends AbstractConfigViewModel<ConwayC
     private final ObjectProperty<ConwayTransitionRules> transitionRules =
             new SimpleObjectProperty<>(TRANSITION_RULES_DEFAULT);
     private final IntegerProperty maxNeighborCount = new SimpleIntegerProperty(0);
+    private boolean applyingRuleInput;
 
     public ConwayConfigViewModel(ReadOnlyObjectProperty<SimulationState> simulationState) {
         super(simulationState, COMMON_CONSTRAINTS);
@@ -97,6 +98,7 @@ public final class ConwayConfigViewModel extends AbstractConfigViewModel<ConwayC
         birthProperties.forEach(p -> p.addListener(updateListener));
 
         ruleProperty.setRulesChangedListener(this::updateCheckboxesFromRules);
+        transitionRules.addListener((_, _, newRules) -> updateRuleText(newRules));
 
         maxNeighborCountProperty().addListener((_, _, _) -> disableUnusedNeighborProperties());
 
@@ -179,10 +181,27 @@ public final class ConwayConfigViewModel extends AbstractConfigViewModel<ConwayC
     }
 
     private void updateCheckboxesFromRules(ConwayTransitionRules rules) {
-        for (int i = ConwayTransitionRules.MIN_NEIGHBOR_COUNT; i <= ConwayTransitionRules.MAX_NEIGHBOR_COUNT; i++) {
-            int index = i - ConwayTransitionRules.MIN_NEIGHBOR_COUNT;
-            surviveProperties.get(index).set(rules.surviveCounts().contains(i));
-            birthProperties.get(index).set(rules.birthCounts().contains(i));
+        // Rules with neighbor counts that the cell shape does not allow are ignored like a parsing error.
+        if (!ConwayConfig.areValidTransitionRules(rules, NEIGHBORHOOD_MODE_DEFAULT,
+                cellShapeProperty().property().getValue())) {
+            return;
+        }
+        applyingRuleInput = true;
+        try {
+            for (int i = ConwayTransitionRules.MIN_NEIGHBOR_COUNT; i <= ConwayTransitionRules.MAX_NEIGHBOR_COUNT; i++) {
+                int index = i - ConwayTransitionRules.MIN_NEIGHBOR_COUNT;
+                surviveProperties.get(index).set(rules.surviveCounts().contains(i));
+                birthProperties.get(index).set(rules.birthCounts().contains(i));
+            }
+        } finally {
+            applyingRuleInput = false;
+        }
+    }
+
+    private void updateRuleText(ConwayTransitionRules rules) {
+        // The text field is not rewritten while its own input is applied, so that B/S input stays as typed.
+        if (!applyingRuleInput) {
+            ruleProperty.stringProperty().set(rules.toDisplayString());
         }
     }
 

@@ -1,7 +1,7 @@
 package de.mkalb.etpetssim.simulations.conway.shared;
 
 /**
- * Preset rule sets for Conway-style cellular automata with triangle cells.
+ * Rule presets of Conway's Game of Life for triangle cells.
  *
  * <p>Each constant provides a well-known S/B rule string for triangular grids.
  * In triangular grids with edge-and-vertex neighborhood each cell has up to 12 neighbors;

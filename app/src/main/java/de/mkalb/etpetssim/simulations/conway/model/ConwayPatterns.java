@@ -18,8 +18,8 @@ import java.util.Map;
  *
  * <p>Each pattern is normalized (top-left at offset (0, 0)) and fully filled with {@link ConwayEntity#ALIVE} and
  * {@link ConwayEntity#DEAD} cells, surrounded by a border of dead cells. The patterns are classic configurations of
- * the categories Still Life, Oscillator, Methuselah, Replicator, and Spaceship; the catalog order follows these
- * categories. A pattern is available only for square cells and the rules it is intended for: the HighLife rules
+ * the categories Still Life, Oscillator, Methuselah, Replicator, Spaceship, and Glider Gun; the catalog order follows
+ * these categories. A pattern is available only for square cells and the rules it is intended for: the HighLife rules
  * ({@code 23/36}) for the replicator, Conway's Life rules for all other patterns.
  */
 @SuppressWarnings("SpellCheckingInspection")
@@ -32,6 +32,7 @@ public final class ConwayPatterns {
     private static final String PATTERN_ID_BLOCK = "conway.block";
     private static final String PATTERN_ID_BOAT = "conway.boat";
     private static final String PATTERN_ID_GLIDER = "conway.glider";
+    private static final String PATTERN_ID_GOSPER_GLIDER_GUN = "conway.gosperglidergun";
     private static final String PATTERN_ID_HIGHLIFE_REPLICATOR = "conway.highlife.replicator";
     private static final String PATTERN_ID_LIGHTWEIGHT_SPACESHIP = "conway.lwss";
     private static final String PATTERN_ID_LOAF = "conway.loaf";
@@ -48,6 +49,7 @@ public final class ConwayPatterns {
     private static final String PATTERN_LABEL_KEY_BLOCK = "conway.pattern.block";
     private static final String PATTERN_LABEL_KEY_BOAT = "conway.pattern.boat";
     private static final String PATTERN_LABEL_KEY_GLIDER = "conway.pattern.glider";
+    private static final String PATTERN_LABEL_KEY_GOSPER_GLIDER_GUN = "conway.pattern.gosperglidergun";
     private static final String PATTERN_LABEL_KEY_HIGHLIFE_REPLICATOR = "conway.pattern.highlife.replicator";
     private static final String PATTERN_LABEL_KEY_LIGHTWEIGHT_SPACESHIP = "conway.pattern.lwss";
     private static final String PATTERN_LABEL_KEY_LOAF = "conway.pattern.loaf";
@@ -137,6 +139,11 @@ public final class ConwayPatterns {
                     PATTERN_ID_LIGHTWEIGHT_SPACESHIP,
                     PATTERN_LABEL_KEY_LIGHTWEIGHT_SPACESHIP,
                     ConwayPatterns::lightweightSpaceship,
+                    ConwayPatterns::isAvailableForClassicSquareRules),
+            new ConwayPatternChoice(
+                    PATTERN_ID_GOSPER_GLIDER_GUN,
+                    PATTERN_LABEL_KEY_GOSPER_GLIDER_GUN,
+                    ConwayPatterns::gosperGliderGun,
                     ConwayPatterns::isAvailableForClassicSquareRules)
     );
 
@@ -345,6 +352,21 @@ public final class ConwayPatterns {
                 "DADDDAD",
                 "DAAAADD",
                 "DDDDDDD");
+    }
+
+    private static GridPattern<ConwayEntity> gosperGliderGun() {
+        return createPattern(
+                "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+                "DDDDDDDDDDDDDDDDDDDDDDDDDADDDDDDDDDDDD",
+                "DDDDDDDDDDDDDDDDDDDDDDDADADDDDDDDDDDDD",
+                "DDDDDDDDDDDDDAADDDDDDAADDDDDDDDDDDDAAD",
+                "DDDDDDDDDDDDADDDADDDDAADDDDDDDDDDDDAAD",
+                "DAADDDDDDDDADDDDDADDDAADDDDDDDDDDDDDDD",
+                "DAADDDDDDDDADDDADAADDDDADADDDDDDDDDDDD",
+                "DDDDDDDDDDDADDDDDADDDDDDDADDDDDDDDDDDD",
+                "DDDDDDDDDDDDADDDADDDDDDDDDDDDDDDDDDDDD",
+                "DDDDDDDDDDDDDAADDDDDDDDDDDDDDDDDDDDDDD",
+                "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD");
     }
 
 }
