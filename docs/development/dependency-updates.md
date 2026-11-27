@@ -65,8 +65,9 @@ JavaFX version references:
 - `README.md`: badge and technology table.
 - `THIRD-PARTY-LICENSES`: version and the `<version>-ga` links to the source code and to `jpeg_fx.md`.
 
-The distribution ZIP ships the JavaFX JARs together with the license texts in `licenses`. Compare these texts and the
-notes on JavaFX in `THIRD-PARTY-LICENSES` (bundled native libraries) with the legal files of the new JavaFX release.
+The distribution ZIP ships the JavaFX JARs together with the license texts in `licenses`. For a new major version
+(e.g., 28), compare these texts and the notes on JavaFX in `THIRD-PARTY-LICENSES` (bundled native libraries) with the
+legal files of the new JavaFX release. Update and hotfix releases (e.g., 27.0.1 or 27.0.1.1) need no comparison.
 
 ## Libraries and Plugins
 
