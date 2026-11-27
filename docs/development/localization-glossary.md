@@ -140,37 +140,39 @@ de_DE keeps these English terms (`.claude/rules/i18n.md`, "English terms in de_D
 
 ## Conway's Game of Life
 
-| en_US                          | de_DE                 | Source               | Notes                                                      |
-|--------------------------------|-----------------------|----------------------|------------------------------------------------------------|
-| `alive`                        | `lebend`              | [GoL-en], [GoL-de]   | living cell: `lebende Zelle`                               |
-| `dead`                         | `tot`                 | [GoL-en], [GoL-de]   |                                                            |
-| `birth`                        | `Geburt`              | [GoL-de]             | a dead cell becomes alive; also the rule checkbox label    |
-| `survival`                     | `Überleben`           | [GoL-de]             | a living cell stays alive; also the rule checkbox label    |
-| `transition rule`              | `Übergangsregel`      | general              | survival and birth counts                                  |
-| `S/B notation`                 | `S/B-Notation`        | [LifeLike-en]        | survival counts, slash, birth counts (`23/3`)              |
-| `B/S notation`                 | `B/S-Notation`        | [LifeLike-en]        | B, birth counts, slash, S, survival counts (`B3/S23`)      |
-| `changed cell`                 | `veränderte Zelle`    | project              | cell whose state changed in the last step                  |
-| `pattern`                      | `Muster`              | [LifeWiki]           |                                                            |
-| `still life`                   | `Stillleben`          | [LifeWiki], [GoL-de] |                                                            |
-| `oscillator`                   | `Oszillator`          | [LifeWiki], [GoL-de] |                                                            |
-| `spaceship`                    | `Raumschiff`          | [LifeWiki], [GoL-de] |                                                            |
-| `methuselah`                   | `Methusalem`          | [LifeWiki]           |                                                            |
-| `replicator`                   | `Replikator`          | [LifeWiki]           |                                                            |
-| `block`                        | `Block`               | [LifeWiki], [GoL-de] |                                                            |
-| `beehive`                      | `Bienenstock`         | [LifeWiki], [GoL-de] |                                                            |
-| `loaf`                         | `Brotlaib`            | [LifeWiki], [GoL-de] |                                                            |
-| `boat`                         | `Boot`                | [LifeWiki], [GoL-de] |                                                            |
-| `tub`                          | `Kübel`               | [LifeWiki], [GoL-de] |                                                            |
-| `blinker`                      | `Blinker`             | [LifeWiki], [GoL-de] |                                                            |
-| `toad`                         | `Kröte`               | [LifeWiki], [GoL-de] |                                                            |
-| `beacon`                       | `Leuchtfeuer`         | [LifeWiki]           | no German source found                                     |
-| `pulsar`                       | `Pulsar`              | [LifeWiki]           |                                                            |
-| `pentadecathlon`               | `Pentadecathlon`      | [LifeWiki]           | de.wikipedia calls it `Pulsator`; kept apart from `Pulsar` |
-| `glider`                       | `Gleiter`             | [LifeWiki], [GoL-de] |                                                            |
-| `lightweight spaceship (LWSS)` | `Segler 1 (LWSS)`     | [LifeWiki], [GoL-de] |                                                            |
-| `R-pentomino`                  | `R-Pentomino`         | [LifeWiki], [GoL-de] |                                                            |
-| `acorn`                        | `Eichel`              | [LifeWiki]           | no German source found                                     |
-| `HighLife replicator`          | `HighLife-Replikator` | [LifeWiki]           |                                                            |
+| en_US                          | de_DE                  | Source               | Notes                                                      |
+|--------------------------------|------------------------|----------------------|------------------------------------------------------------|
+| `alive`                        | `lebend`               | [GoL-en], [GoL-de]   | living cell: `lebende Zelle`                               |
+| `dead`                         | `tot`                  | [GoL-en], [GoL-de]   |                                                            |
+| `birth`                        | `Geburt`               | [GoL-de]             | a dead cell becomes alive; also the rule checkbox label    |
+| `survival`                     | `Überleben`            | [GoL-de]             | a living cell stays alive; also the rule checkbox label    |
+| `transition rule`              | `Übergangsregel`       | general              | survival and birth counts                                  |
+| `S/B notation`                 | `S/B-Notation`         | [LifeLike-en]        | survival counts, slash, birth counts (`23/3`)              |
+| `B/S notation`                 | `B/S-Notation`         | [LifeLike-en]        | B, birth counts, slash, S, survival counts (`B3/S23`)      |
+| `changed cell`                 | `veränderte Zelle`     | project              | cell whose state changed in the last step                  |
+| `pattern`                      | `Muster`               | [LifeWiki]           |                                                            |
+| `still life`                   | `Stillleben`           | [LifeWiki], [GoL-de] |                                                            |
+| `oscillator`                   | `Oszillator`           | [LifeWiki], [GoL-de] |                                                            |
+| `spaceship`                    | `Raumschiff`           | [LifeWiki], [GoL-de] |                                                            |
+| `methuselah`                   | `Methusalem`           | [LifeWiki]           |                                                            |
+| `replicator`                   | `Replikator`           | [LifeWiki]           |                                                            |
+| `glider gun`                   | `Gleiterkanone`        | [LifeWiki], [GoL-de] |                                                            |
+| `block`                        | `Block`                | [LifeWiki], [GoL-de] |                                                            |
+| `beehive`                      | `Bienenstock`          | [LifeWiki], [GoL-de] |                                                            |
+| `loaf`                         | `Brotlaib`             | [LifeWiki], [GoL-de] |                                                            |
+| `boat`                         | `Boot`                 | [LifeWiki], [GoL-de] |                                                            |
+| `tub`                          | `Kübel`                | [LifeWiki], [GoL-de] |                                                            |
+| `blinker`                      | `Blinker`              | [LifeWiki], [GoL-de] |                                                            |
+| `toad`                         | `Kröte`                | [LifeWiki], [GoL-de] |                                                            |
+| `beacon`                       | `Leuchtfeuer`          | [LifeWiki]           | no German source found                                     |
+| `pulsar`                       | `Pulsar`               | [LifeWiki]           |                                                            |
+| `pentadecathlon`               | `Pentadecathlon`       | [LifeWiki]           | de.wikipedia calls it `Pulsator`; kept apart from `Pulsar` |
+| `glider`                       | `Gleiter`              | [LifeWiki], [GoL-de] |                                                            |
+| `lightweight spaceship (LWSS)` | `Segler 1 (LWSS)`      | [LifeWiki], [GoL-de] |                                                            |
+| `R-pentomino`                  | `R-Pentomino`          | [LifeWiki], [GoL-de] |                                                            |
+| `acorn`                        | `Eichel`               | [LifeWiki]           | no German source found                                     |
+| `HighLife replicator`          | `HighLife-Replikator`  | [LifeWiki]           |                                                            |
+| `Gosper glider gun`            | `Gosper-Gleiterkanone` | [LifeWiki]           | de.wikipedia uses the English name                         |
 
 ## Extraterrestrial Pets
 
