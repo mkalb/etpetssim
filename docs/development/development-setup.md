@@ -120,13 +120,14 @@ The repository provides the configuration for Claude Code:
 - `.claude/settings.local.json`: personal settings; ignored by `.gitignore`.
 
 With the Bash sandbox of Claude Code enabled (`/sandbox`), Gradle cannot use `~/.gradle` or download Gradle,
-dependencies, and the Java toolchain, and `gh` cannot read its login. Exclude both commands from the sandbox in the
-personal settings (`~/.claude/settings.json` or `.claude/settings.local.json`):
+dependencies, and the Java toolchain, and `gh` cannot read its login. `git push` cannot reach GitHub, and with `gh` as
+the Git credential helper, it cannot read the login either. Exclude these commands from the sandbox in the personal
+settings (`~/.claude/settings.json` or `.claude/settings.local.json`):
 
 ```json
 {
   "sandbox": {
-    "excludedCommands": ["./gradlew *", "gh *"]
+    "excludedCommands": ["./gradlew *", "gh *", "git push *"]
   }
 }
 ```
