@@ -16,10 +16,6 @@ These settings do not depend on an IDE:
   overrides the local Git setting `core.autocrlf`, and `.editorconfig` overrides the line separator of the editor.
   Keep the line separator of existing files. `git ls-files --eol` shows the line endings of the working copy in the
   column `w/` (`w/lf`, `w/crlf`, or `w/mixed`).
-- Existing clones with CRLF files: commit or stash all changes so that the working tree is clean, then run
-  `git rm --cached -r --quiet .` and `git reset --hard` once. They rebuild the index from `HEAD` and rewrite all
-  tracked files with the line endings of `.gitattributes`; untracked and ignored files stay unchanged.
-  (`git checkout-index --force --all` is not enough: it skips files whose stat data in the index is unchanged.)
 
 ### Linux and WSL
 
@@ -70,7 +66,7 @@ These settings are not committed and must be set once per working copy, in addit
   build uses a Java 27 toolchain.
 - Inspections: select the profile "Project Default" (stored in the project) in Settings > Editor > Inspections.
 - Code style (Settings > Editor > Code Style), with the IDE scheme "Default"; `.editorconfig` overrides the scheme:
-    - General: line separator "System-Dependent", hard wrap at 120 columns, "Wrap on typing" off, "Detect and use
+    - General: line separator "Unix and macOS (\n)", hard wrap at 120 columns, "Wrap on typing" off, "Detect and use
       existing file indents for editing" off, "Enable EditorConfig support" on.
     - Formatter: do not format `*.md`, because the IntelliJ formatter joined wrapped lines that start with special
       characters into very long lines; formatter markers in code comments off.
