@@ -77,7 +77,8 @@ transition rule.
 
 **Rule input** (empty by default) takes a rule in S/B notation, with single-digit survival counts, a slash, and
 single-digit birth counts (e.g. 23/3), or in B/S notation (e.g. B3/S23). A valid entry updates the checkboxes of the
-transition rule; invalid input, including counts that the cell shape does not allow, leaves them unchanged.
+transition rule; invalid input, including counts that the cell shape does not allow, leaves them unchanged. After a
+change of the checkboxes, the field shows the current rule in S/B notation.
 
 **Transition rule** (default 23/3) is a grid of checkboxes with a Survival row and a Birth row for 0 to 9 living
 neighbors. Counts above the number of neighbors of the cell shape are disabled (above 8 for square cells and above 6
