@@ -131,7 +131,9 @@ personal settings (`~/.claude/settings.json` or `.claude/settings.local.json`):
 }
 ```
 
-Excluded commands run outside the sandbox and are subject to the permission rules of `.claude/settings.json`.
+Excluded commands run outside the sandbox and are subject to the permission rules of `.claude/settings.json`. A call
+is excluded only if it matches a pattern as a whole: with a redirection (e.g., `gh issue list > issues.txt`) or an
+environment variable before the command, it stays in the sandbox and fails.
 
 ### Optional Plugin gradle-skills
 
