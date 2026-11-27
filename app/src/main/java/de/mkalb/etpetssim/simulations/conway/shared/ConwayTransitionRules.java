@@ -7,7 +7,7 @@ import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 /**
- * Represents the transition rule set for Conway-style cellular automata.
+ * Transition rules of Conway's Game of Life with the neighbor counts for survival and birth.
  *
  * <p>The rules are defined by two sets:
  * <ul>

@@ -1,7 +1,7 @@
 package de.mkalb.etpetssim.simulations.conway.shared;
 
 /**
- * Common sealed interface for Conway-style preset rule sets.
+ * Common sealed interface of the rule presets of Conway's Game of Life.
  *
  * <p>Exactly three implementations are permitted, one per supported cell shape:
  * {@link ConwayRulePresetSquare}, {@link ConwayRulePresetTriangle}, and {@link ConwayRulePresetHexagon}.

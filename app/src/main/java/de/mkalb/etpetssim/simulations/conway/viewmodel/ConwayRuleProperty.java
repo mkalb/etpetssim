@@ -12,7 +12,7 @@ import org.jspecify.annotations.Nullable;
 import java.util.function.Consumer;
 
 /**
- * Encapsulates the preset selection and free-text rule input for Conway transition rules.
+ * Rule input of Conway's Game of Life with one preset selection per cell shape and the editable rule string.
  *
  * <p>Three {@link InputChoiceProperty} instances hold shape-specific preset selections
  * (one per {@link de.mkalb.etpetssim.engine.CellShape}). Selecting a preset sets the
