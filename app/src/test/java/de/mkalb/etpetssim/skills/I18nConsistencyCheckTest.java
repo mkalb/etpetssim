@@ -681,6 +681,28 @@ final class I18nConsistencyCheckTest {
         );
     }
 
+    @Test
+    void testReportRejectsMixedLineEndings() throws Exception {
+        byte[] bundleBytes = "alpha = one\nbeta  = two\r\ngamma = three\r".getBytes(StandardCharsets.UTF_8);
+        writeBundles(bundleBytes, bundleBytes);
+
+        ProcessResult result = runHelper("report");
+
+        assertAll(
+                () -> assertEquals(2, result.exitCode()),
+                () -> assertTrue(result.output().contains(
+                        "FAIL line ending consistency: messages_en_US.properties (en_US) mixes line ending styles:"
+                                + " LF, CRLF, CR"
+                )),
+                () -> assertTrue(result.output().contains(
+                        "FAIL trailing newline: messages_en_US.properties (en_US): cannot verify the trailing line break"
+                                + " because line endings are inconsistent, missing, or unsupported"
+                )),
+                () -> assertArrayEquals(bundleBytes, Files.readAllBytes(temporaryDirectory.resolve(EN_US_RELATIVE_PATH))),
+                () -> assertArrayEquals(bundleBytes, Files.readAllBytes(temporaryDirectory.resolve(DE_DE_RELATIVE_PATH)))
+        );
+    }
+
     @SuppressWarnings("SpellCheckingInspection")
     @Test
     void testReportWarnsAboutValidUnicodeEscapesInKeys() throws Exception {
