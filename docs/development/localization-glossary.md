@@ -148,6 +148,7 @@ de_DE keeps these English terms (`.claude/rules/i18n.md`, "English terms in de_D
 | `survival`                     | `Überleben`           | [GoL-de]             | a living cell stays alive; also the rule checkbox label    |
 | `transition rule`              | `Übergangsregel`      | general              | survival and birth counts                                  |
 | `S/B notation`                 | `S/B-Notation`        | [LifeLike-en]        | survival counts, slash, birth counts (`23/3`)              |
+| `B/S notation`                 | `B/S-Notation`        | [LifeLike-en]        | B, birth counts, slash, S, survival counts (`B3/S23`)      |
 | `changed cell`                 | `veränderte Zelle`    | project              | cell whose state changed in the last step                  |
 | `pattern`                      | `Muster`              | [LifeWiki]           |                                                            |
 | `still life`                   | `Stillleben`          | [LifeWiki], [GoL-de] |                                                            |

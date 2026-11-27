@@ -12,7 +12,7 @@ import org.jspecify.annotations.Nullable;
 import java.util.function.Consumer;
 
 /**
- * Encapsulates the preset selection and free-text S/B input for Conway transition rules.
+ * Encapsulates the preset selection and free-text rule input for Conway transition rules.
  *
  * <p>Three {@link InputChoiceProperty} instances hold shape-specific preset selections
  * (one per {@link de.mkalb.etpetssim.engine.CellShape}). Selecting a preset sets the
@@ -20,7 +20,7 @@ import java.util.function.Consumer;
  * triggers the registered {@link #setRulesChangedListener(Consumer) rulesChangedListener} callback
  * so the ViewModel can update the checkbox grid.
  *
- * <p>Manual S/B text entered in the text field also triggers the callback; parsing errors
+ * <p>Manual text in S/B or B/S notation entered in the text field also triggers the callback; parsing errors
  * are silently ignored and the checkbox grid remains unchanged.
  * The combo boxes are never updated by manual checkbox or text-field changes.
  */
@@ -62,7 +62,7 @@ public final class ConwayRuleProperty {
                     rulesChangedListener.accept(rules);
                 }
             } catch (IllegalArgumentException _) {
-                // Silently ignore invalid S/B input; the checkbox grid remains unchanged.
+                // Silently ignore invalid rule input; the checkbox grid remains unchanged.
             }
         });
     }
@@ -78,7 +78,7 @@ public final class ConwayRuleProperty {
     }
 
     /**
-     * Returns the S/B text input property, bound bidirectionally to the text field.
+     * Returns the rule text input property, bound bidirectionally to the text field.
      *
      * @return the string property
      */
