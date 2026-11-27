@@ -25,6 +25,18 @@ final class ConwayConfigViewModelTest {
 
     @ParameterizedTest
     @CsvSource({
+            "TRIANGLE, 9",
+            "SQUARE,   8",
+            "HEXAGON,  6"
+    })
+    void testUpdateMaxNeighborCount(CellShape cellShape, int expectedMaxNeighborCount) {
+        ConwayConfigViewModel viewModel = createViewModel(cellShape);
+
+        assertEquals(expectedMaxNeighborCount, viewModel.maxNeighborCountProperty().get());
+    }
+
+    @ParameterizedTest
+    @CsvSource({
             "23/36, SQUARE, 23/36",
             "B36/S23, SQUARE, 23/36",
             "8/8, SQUARE, 8/8",
