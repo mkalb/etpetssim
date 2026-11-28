@@ -24,9 +24,8 @@ No compilation, Gradle, or `JAVA_HOME` setup is needed.
 ## Interpreting the result
 
 The helper prints findings grouped by rule and ends with an `Overall:` verdict.
-Determine the result **only** from the printed `Overall:` line. Do **not** read,
-evaluate, rely on, or report the observed process exit code as the verdict —
-terminal integrations may misreport it.
+Take the result from this line, not from the process exit code, which terminal
+wrappers may report differently.
 
 | Verdict | Meaning                                                                                                                                                                                                                                                                                                                                                                         |
 |---------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -34,15 +33,9 @@ terminal integrations may misreport it.
 | `WARN`  | Convention deviation: alphabetical ordering, `=` column alignment, decoded trailing whitespace in a value, or `\uXXXX` Unicode escapes in values or keys. Trailing whitespace is not changed by `fix`; safe value and key escapes are eligible for conversion.                                                                                                                  |
 | `FAIL`  | Hard consistency violation: UTF-8 BOM or encoding, invisible characters, inconsistent/unsupported/missing line endings, an invalid trailing newline, malformed properties syntax, duplicate decoded keys, an empty bundle, key parity, or placeholder (`%`) count parity. Syntax, duplicates, empty bundles, UTF-8 encoding, key parity, and placeholder count are not fixable. |
 
-The helper uses this stable exit-code contract: `0` for `PASS`, `1` for `WARN`,
-`2` for a successfully produced report with `Overall: FAIL`, `3` for usage
-errors, and `4` for I/O or unexpected execution errors. These codes describe
-the helper contract, but the printed `Overall:` line remains authoritative for
-the agent workflow because terminal wrappers can surface a different code.
-
-A `WARN` or `FAIL` verdict is an
-**expected finding, not a skill execution error**. Read it off the printed
-output and report it.
+A `WARN` or `FAIL` verdict is an expected finding, not a skill execution error;
+report it. Without an `Overall:` line, the helper failed (usage, I/O, or an
+unexpected error); report its output.
 
 The helper checks encoding first: each bundle must be valid UTF-8 without a
 byte order mark (BOM), and it scans every character in the file for invisible
@@ -141,8 +134,7 @@ java .claude/skills/i18n-consistency/I18nConsistencyCheck.java fix
 ```
 
 Fix mode writes only the two production bundles, then re-runs the report so any
-remaining `WARN` or `FAIL` findings stay visible. As with `report`, judge the
-result from the printed `Overall:` line rather than the observed exit code.
+remaining `WARN` or `FAIL` findings stay visible.
 
 ## Scope
 

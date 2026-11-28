@@ -34,7 +34,7 @@ idea, and what a user sees happening on the grid. Avoid implementation detail.>
 - **Edge behavior:** <e.g. Wrap X and Y (default), Block X and Y>
 - **Neighborhood:** <e.g. Edges only (fixed)>
 
-<Optional category note: include it ONLY for a borderline case as described
+<Optional category note: include it only for a borderline case as described
 under "Category note" in SKILL.md (currently only Langton's ant); otherwise
 delete this paragraph.>
 
@@ -66,11 +66,11 @@ grid.>
 - **<Short entity name>:** <what it is and how it behaves; how it looks>
 - **<Short entity name>:** <what it is and how it behaves; how it looks>
 
-<Display paragraph: include it ONLY if the shapes of several entities depend
+<Display paragraph: include it only if the shapes of several entities depend
 on the **Cell display** setting. One sentence on the shape of each display
 mode, shared by these entities; otherwise delete this paragraph.>
 
-<Layer paragraph: include it ONLY for a simulation with several grid layers
+<Layer paragraph: include it only for a simulation with several grid layers
 (e.g. resources and agents). One or two sentences on which entities can share a
 cell and which one is drawn on top; otherwise delete this paragraph.>
 
@@ -83,7 +83,7 @@ cell and which one is drawn on top; otherwise delete this paragraph.>
 ## Interactive editing
 
 <!--
-  Include this section ONLY if the simulation's MainView declares user actions
+  Include this section only if the simulation's MainView declares user actions
   in createUserActionDescriptors() (i.e. the run-time edit toolbar is not
   empty). Otherwise delete the whole section including its heading. Derive the
   precise per-tool behavior from the simulation's `*UserAction` class. Trace
@@ -146,7 +146,7 @@ settings.>
 ## References
 
 <!--
-  Include this section ONLY if simulation.<name>.url in messages_en_US.properties
+  Include this section only if simulation.<name>.url in messages_en_US.properties
   is set to a non-empty value. Otherwise delete the whole section including its
   heading.
 -->

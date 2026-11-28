@@ -42,9 +42,8 @@ Rules for test sources only; repository-wide and Java instructions still apply.
       `testConstructorRejectsNegativeWidth`).
     - `testRecord` is the fixed name for the basic test of a record: canonical constructor and accessors, and
       `toString()` when the record overrides it; "Common Contract Patterns" defines which records have one.
-    - The fixed enum test name `testDeclarationOrder` remains; it names the declaration-order test of one enum. An
-      `<Interface>Test` names order checks across the constants of its implementing enums freely (e.g.,
-      `testConstantsAreSortedByDisplayName`).
+    - `testDeclarationOrder` is the fixed name of the declaration-order test of one enum. An `<Interface>Test` names
+      order checks across the constants of its implementing enums freely (e.g., `testConstantsAreSortedByDisplayName`).
     - Tests of a nested type put its simple name before a fixed name (e.g., `testFixedActionDeclarationOrder`).
     - A test of a single constant is named `test<ConstantName>` in UpperCamelCase (e.g., `ORIGIN` -> `testOrigin`); a
       check across all constants of a type describes the contract freely (e.g., `testConstantsUseCssTokenFormat`).
